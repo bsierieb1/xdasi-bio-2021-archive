@@ -1,0 +1,346 @@
+---
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    toc_depth: 4
+    highlight: pygments
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# [xdas-bio-2020](https://xdas.bio.nyu.edu/)
+
+# Base R Graphics
+
+Here we introduct the basic elements of the [**graphics**](https://www.rdocumentation.org/packages/graphics/versions/3.6.2) package, which is part of the base R distribution. 
+
+The **graphics** package provides ***functions*** for creating all different kinds of plots. Many of these can be used to conveniently get a quick idea of what your data look like. They are simple yet powerful and can be used to create high quality publication ready images.
+
+There are also many graphical ***parameters*** that can be set in order to control the appearance of points and lines, axis ticks, plot labels, text, and arrangement of plots when multiple plots are generated at the same time. Other packages will come with their own plotting functions, but generally they access the same range of parameters.
+
+The **graphics** package includes many, many different options for specifying plot type, appearance, and output. You may always consult the documentation to check on available options and the correct syntax, either on the web or directly in R (`?cmd_name`) or Rstudio (**Help** tab).
+
+Learning to fine-tune the appearance of plots using the base graphics package can be very tedious and unrewarding. This is why we will transition to mainly using the **ggplot2** package to take our graphics to the next level. Nevertheless, we think it is important for you to know that these base functions exist and are available if you want to use them.
+
+
+## Output devices
+
+To produce any kind of plot, you need some sort of "canvas" to draw on. In the RStudio GUI, as a default, plots will be printed in a new window, or if you are using R Markdown they will appear inline. 
+
+The kind of output that is produced is controlled by a ***device*** directive, which by default is set to `null device`. On a windows machine it is actually a device called `windows()`; on a Mac it is called `quartz()`.
+
++ You may choose the kind of output that is produced by redirecting the output to another type.
++ Different devices include: PDF, PostScript, bitmap, jpeg, png, and LaTeX.
++ These devices will not print to the GUI -- instead they will save a file in the working directory.
+
+```{r}
+#open a new window
+#windows() #on a pc
+quartz() #on a mac
+
+#current device
+dev.cur()
+
+```
+
+PDF output is really useful. You can add filenames, dots per inch (dpi), etc.
+
+```{r, collapse=TRUE}
+#start pdf device
+pdf("mycoolplot.pdf")
+
+# make a plot
+seq.vec = seq(-4,4,length=100)
+plot(x=seq.vec,y=dnorm(seq.vec),type="l",
+     xlab = "z-score", ylab="density", 
+     main="Standard normal distribution")
+
+#list of devices
+dev.list()
+dev.cur()
+```
+
+```{r, collapse=TRUE}
+#select a device
+dev.set(3)
+
+#end a device or close a file
+dev.off()
+dev.cur()
+
+dev.off()
+dev.cur()
+```
+
+
+## Some common plots
+
+There are a number of different functions to specify the plot type: barplot, histogram, boxplot, etc. It's always a good idea to check on the **syntax** for the commands you want to use, using either the **Help** tab or by typing `?commandname` in the Console.
+
+### The Plot function
+
+The generic function for plotting R objects is aptly called `plot()`. The default output
+of the function depends on the object it is passed.
+
+`ldeaths` is an object of class `ts` (time series) that is provided in R.
+This dataset provides the number of deaths in UK from 1974-1979 due to lung disease.
+Since it is a numerical vector, the plot function plots a line.
+
+```{r}
+plot(ldeaths)
+```
+
+The built-in `iris` dataset contains measurements on sepals and petals of three different species of iris.
+Its class is `data.frame`. In this case, `plot()` shows all comparisons between the 5 columns in the data frame.
+
+```{r}
+head(iris)
+plot(iris)
+```
+
+
+### Bar plots
+
+Bar plots are among the most common plots and are useful for comparing data values.
+More complex bar plots can show the different factors that contribute to the value.
+
++ The first argument to `barplot()` is `height`, which is expected to be a vector or a matrix.
++ The arrangment of bars is given by the `beside` argument. The default value is `FALSE`.
++ If `height` is a matrix, the default setting makes a stacked barplot.
+
+```{r}
+sampleData.df = data.frame(Control=sample(20,5),
+                           Nitrogen=sample(20,5),
+                           Phospate=sample(20,5))
+rownames(sampleData.df)=c("GeneA","GeneB","GeneC", "GeneD", "GeneE")
+
+# genes in one condition
+barplot(sampleData.df$Control, names.arg=row.names(sampleData.df))
+
+# matrix with stacked bars
+barplot(height = as.matrix(sampleData.df))
+#barplot(height = sampleData.df) # this does not work!
+
+# side-by-side bars in the rainbow palette, horizontal orientation
+barplot(as.matrix(sampleData.df), beside = T, horiz = TRUE, col = rainbow(4))
+```
+
+Oops! What happened? `rainbow(4)` makes a palette that just recycles four different colors. Since we have 5 genes, and we want the colors to match across groups, we need the right number of colors. Let's fix this up, and also add a legend. We will place the legend somewhere on the graph by specifying x- and y-coordinates.
+
+```{r}
+barplot(as.matrix(sampleData.df), beside = T, horiz = TRUE, col = rainbow(5))
+legend(15, 10, legend = rownames(sampleData.df), fill = rainbow(5))
+```
+
+For publication we would need to play around with the graph a bit, including setting the x-axis limits, to get this prettied up more. 
+
+
+### Histograms
+
+Histograms help visualize the distribution of the data values. One can think of them as a barplot of the **frequency table**.
+
+```{r}
+hist(as.matrix(sampleData.df), col="salmon")
+
+
+```
+
+### Boxplots
+
+Boxplots (or box and whisker plots) allow you to compare the **median**, and quartiles of the data sets.
+
+```{r}
+boxplot(sampleData.df)
+```
+
+If you have a data frame with multiple quantitative measures for a single categorical variable, you can make multiple plots and arrange them in a grid. We show this here for the iris dataset.
+
+Notice that to plot each flow attribute by the species, we use a **formula** that specifies ***y*** vs. ***x***, using the **tilde** symbol ("~"). We will encounter the formula synax a lot more later in the course.
+
+```{r}
+head(iris)
+
+par(mfrow=c(2,2))
+boxplot(iris$Sepal.Length ~ iris$Species,main="Sepal Length",xlab="Species",ylab="cm")
+boxplot(iris$Sepal.Width ~ iris$Species,main="Sepal Width",xlab="Species",ylab="cm")
+boxplot(iris$Petal.Length ~ iris$Species,main="Petal Length",xlab="Species",ylab="cm")
+boxplot(iris$Petal.Length ~ iris$Species,main="Petal Width",xlab="Species",ylab="cm")
+
+# reset display to one graph only
+par(morow=c(1,1))
+```
+
+### Pie charts
+
+Pie charts can be useful for visualizing the proportion of different categories, though
+many people discourage their use since it is more difficult to compare patterns this way.
+
+```{r}
+pie(sampleData.df[,"Control"], labels = rownames(sampleData.df))
+```
+
+### Scatterplots
+
+you can also use the `plot()` command to plot two quantitative variables against each other by specifying the data to be plotted on the ***x*** and ***y*** axes:
+
+```{r}
+plot(x=iris$Petal.Length, y=iris$Petal.Width)
+
+plot(x=iris$Petal.Length, y=iris$Petal.Width, col="blue", pch=16)
+
+```
+
+
+## Getting and setting parameters
+
+There are many ***parameters*** that control the appearance and output format of a plot.
+These include points and lines, axis ticks, plot labels, etc.
+
+All the basic plotting functions have default settings that can be changed manually using the `par()` command.
+
+Some useful graphical parameters include:
+
+### Graph elements
+
++ pch – style of points (circle, cross, start, etc)
++ bty – plot border type
++ tck – draw gridlines of tick marks
++ xaxt/yaxt - Plot x or y tick marks and labels
++ lab – number of tick marks on each axis
++ las – orientation of axes labels
+
+The `type` parameter controls the appearance of the data points on a plot.
+
++ "p" – points
++ "l" – lines
++ "b" – both lines and points
++ "c" – lines but not where points are
++ "o" – non overlapping points and lines
++ "h" – histogram-like vertical lines
++ "s" – draw lines as steps
++ "n" – draw only axes.
+
+```{r}
+par(mfrow = c(2,2))
+plot(ldeaths, type="p")
+plot(ldeaths, type="l")
+plot(ldeaths, type="h")
+plot(ldeaths, type="s")
+
+```
+
+### Color
+
+R comes with a lot of colors and tools for controlling colors. There are also a variety of additional packages
+that provide support for colors.
+
+In base R, colors for different graph elements can also be set using the `col` parameter:
+
++ col – default color plotting
+  + also col.axis, col.lab, col.main, col.sub
+
+You can specify colors in several different ways:
+
++ **Named colors** - e.g. "blue", salmon", "violet", etc.
++ **Numbers** - e.g. `col = 1`, or draw numbers from col()[1:657]
++ **Hexadecimal RGB codes** - e.g."#00C0FFD3" is a light blue
++ **hcl** - hue, chroma, luminescence, and transparency (I am not so familiar with these)
+
+You may find a graphical display of 657 named R colors [**here**](https://www.datanovia.com/en/blog/awesome-list-of-657-r-color-names/). You can also access the list of 657 built-in named colors using `colors()`:
+
+```{r}
+head(colors())
+tail(colors())
+```
+
+#### Palettes
+
+A palette is a group of colors that are used together to represent categorical or quantitative data.
+The current color palette in R can be accessed using `palette()`. 
+The built-in package **grDevices** comes with a range of functions for defining palettes.
+The default one is not so nice, which is why it's good to know about other options!
+
+In the Graphics overview section, we talked about **RColorBrewer**, which provides
+nice alternatives for choosing palettes for different display purposes.
+RColorBrewer palettes can be accessed using `brewer.pal()`.
+
+```{r}
+#install.packages("RColorBrewer")
+library(RColorBrewer)
+#display.brewer.all()
+
+data(iris)
+par(mfrow=c(2,2))
+boxplot(iris$Sepal.Length~iris$Species,col="lightblue")
+boxplot(iris$Sepal.Length~iris$Species,col=heat.colors(3))
+boxplot(iris$Sepal.Length~iris$Species,col=topo.colors(3))
+boxplot(iris$Sepal.Length~iris$Species,col=brewer.pal(n=3,name="Accent"))
+```
+
+### Lines
+
++ lty – "line type" (dashed, solid, dotted,etc)
++ lwd – "line width"
+
+### Text
+
++ cex – scaling of point size and text ("character expansion")
++ cex.axis – scaling of axis label text size
++ cex.lab – scaling of axis title text size
++ cex.main – scaling of plot title text size
+
+### Fonts
+
++ family – font family(arial, courier,etc)
++ font – Font selection (bold, italic, etc)
+  + font.axis, font.lab, font.main, font.sub
+
+## Overlaying plot elements
+
+It is also possible to draw a basic plot, and then overlay additional elements on top with additional functions. Useful commands for this include:
+
++ axis() – add an axis
++ title() – add a title and subtitle
++ legend() – add a legend
++ text() – add text such as point labels
++ points() – add new points to a plot
++ lines() – draw lines specified by points provided as argument
++ polygon() – draw polygon given the coordinates
++ abline() – draw a diagonal, horizontal, or vertical line
+
+```{r}
+sys = c(124,118,130,127,103,141,114)
+dia = c(75,80,95,77,68,105,84)
+plot(dia, sys,
+     xlab="diastolic", ylab="systolic",
+     xlim=c(60,110), ylim=c(90,150),
+     pch=16, col="red", cex=1.3
+     )
+
+text(dia, sys,
+     labels=c("A","B","C","D","E","F","G"),
+     pos=2)
+
+title(main="Arterial pressure measurements")
+axis(side=1, col="lightgray", tck=1, lty="dotted")
+axis(side=2, col="darkgray", tck=1, lty="dotted")
+abline(lm(sys~dia)) # adds the best-fit linear regression line
+```
+
+
+## Arranging multiple plots
+
++ mfrow – number of plots to be drawn in a window (also mfcol)
+
+The `mfrow()` argument in the `par()` function allows you to define the number of
+figure panels you want in the device, and how they are to be arranged in terms of rows and columns.
+
+Note that repeated calls to plotting functions will fill up the device according to the number of panels specified by `mfrow()`. If `plot()` is called more times than the number of plots specified, then a new window is opened with the same `mfrow()` options.
+
+Several examples of using `par(mfrow=c(2,2))` to display four graphs together were illustrated above.
+
+---
+
+**Authors: Manny Katari / Kris Gunsalus**
