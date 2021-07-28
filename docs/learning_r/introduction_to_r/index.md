@@ -1,10 +1,13 @@
 ---
-title: R Tutorial
-hide: true
+title: Introduction to R
+layout: default
+parent: Learning R
+nav_order: 1
+has_children: true
 ---
 
 -   [What is R ?](what_is_r.md)
--   [Installing R](installing_r.md) 
+-   [Installing R](installing_r.md)
 -   [Interfacing with R](interfacing_with_r.md)
 -   [Executing R commands](executing_r.md)
 -   [R Session Management](r_session_management.md)

@@ -3,7 +3,7 @@ title: Home
 layout: default
 nav_order: 1
 has_children: false
-------
+---
 
 # XDAS: Exploratory Data Analysis and Statistics
 ## NYU Biology Fall 2020: BIOL-GA 2030
