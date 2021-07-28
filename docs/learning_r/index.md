@@ -1,3 +1,10 @@
+---
+title: Learning R
+layout: default
+nav_order: 2
+has_children: true
+---
+
 # Where to go for help with R
 
 ### The Basics
