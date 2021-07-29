@@ -29,7 +29,7 @@ aux_links_new_tab: true
 
 R is a free software environment for statistical computing and graphics. It compiles and runs on a wide variety of UNIX platforms, Windows and MacOS.
 
-The [*R project website*](https://r-project.org) provides a short introduction to basic features of the R environment, basic features, how to get help in R, R manuals, and a long list of books on R.
+The [**R project**](https://r-project.org) website provides a short introduction to basic features of the R environment, basic features, how to get help in R, R manuals, and a long list of books on R.
 
 The following is excerpted from the [*About R*](https://www.r-project.org/about.html) page on the R project website:
 
@@ -63,9 +63,15 @@ R has its own LaTeX-like documentation format, which is used to supply comprehen
 
 ## RStudio
 
-R can be used directly on the commandline, however this is not the most convenient way to interact with R. Instead, the preferred way to interact with R is to use [**RStudio**](https://www.rstudio.com/products/rstudio/), an integrated development environment (IDE) for that provides a much richer interface for writing and running R code. It includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging and workspace management.
+R can be used directly on the commandline, however this is not the most convenient way to interact with R. Instead, the preferred way to interact with R is to use [**RStudio**](https://www.rstudio.com/products/rstudio/){:target="_blank"}, an integrated development environment (IDE) for that provides a much richer interface for writing and running R code. It includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging and workspace management.
 
-In addition, RStudio supports the production of R markdown files that can be rendered as static PDF, HTML, or Word documents. It also enables direct production of slide presentations and dynamic web pages that enable interactive data exploration.
+In addition, RStudio supports the generation of publication-quality documents in many formats:
+
+- PDF
+- HTML
+- Word
+- Slide presentations
+- Dynamic web pages (enabling interactive data exploration)
 
 RStudio is available in open source and commercial editions and runs on the desktop (Windows, Mac, and Linux) or in a browser connected to RStudio Server or RStudio Workbench (Debian/Ubuntu, Red Hat/CentOS, and SUSE Linux).
 
