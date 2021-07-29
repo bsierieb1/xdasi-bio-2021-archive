@@ -1,9 +1,13 @@
 ---
 title: R and RStudio
-layout: default
 parent: Learning R
 nav_order: 1
 has_children: true
+# Back to top link
+back_to_top: true
+back_to_top_text: "Back to top"
+# Makes Aux links open in a new tab. Default is false
+aux_links_new_tab: true
 ---
 
 # Introduction to R and RStudio
@@ -39,14 +43,16 @@ One of R’s strengths is the ease with which well-designed publication-quality 
 
 R is available as Free Software under the terms of the Free Software Foundation’s GNU General Public License in source code form. It compiles and runs on a wide variety of UNIX platforms and similar systems (including FreeBSD and Linux), Windows and MacOS.
 
-The R environment
+## The R environment
+
 R is an integrated suite of software facilities for data manipulation, calculation and graphical display. It includes
 
-an effective data handling and storage facility,
-a suite of operators for calculations on arrays, in particular matrices,
-a large, coherent, integrated collection of intermediate tools for data analysis,
-graphical facilities for data analysis and display either on-screen or on hardcopy, and
-a well-developed, simple and effective programming language which includes conditionals, loops, user-defined recursive functions and input and output facilities.
+- an effective data handling and storage facility,
+- a suite of operators for calculations on arrays, in particular matrices,
+- a large, coherent, integrated collection of intermediate tools for data analysis,
+- graphical facilities for data analysis and display either on-screen or on hardcopy, and
+- a well-developed, simple and effective programming language which includes conditionals, loops, user-defined recursive functions and input and output facilities.
+
 The term “environment” is intended to characterize it as a fully planned and coherent system, rather than an incremental accretion of very specific and inflexible tools, as is frequently the case with other data analysis software.
 
 R, like S, is designed around a true computer language, and it allows users to add additional functionality by defining new functions. Much of the system is itself written in the R dialect of S, which makes it easy for users to follow the algorithmic choices made. For computationally-intensive tasks, C, C++ and Fortran code can be linked and called at run time. Advanced users can write C code to manipulate R objects directly.
@@ -54,6 +60,14 @@ R, like S, is designed around a true computer language, and it allows users to a
 Many users think of R as a statistics system. We prefer to think of it as an environment within which statistical techniques are implemented. R can be extended (easily) via packages. There are about eight packages supplied with the R distribution and many more are available through the CRAN family of Internet sites covering a very wide range of modern statistics.
 
 R has its own LaTeX-like documentation format, which is used to supply comprehensive documentation, both on-line in a number of formats and in hardcopy.
+
+## RStudio
+
+R can be used directly on the commandline, however this is not the most convenient way to interact with R. Instead, the preferred way to interact with R is to use [**RStudio**](https://www.rstudio.com/products/rstudio/), an integrated development environment (IDE) for that provides a much richer interface for writing and running R code. It includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging and workspace management.
+
+In addition, RStudio supports the production of R markdown files that can be rendered as static PDF, HTML, or Word documents. It also enables direct production of slide presentations and dynamic web pages that enable interactive data exploration.
+
+RStudio is available in open source and commercial editions and runs on the desktop (Windows, Mac, and Linux) or in a browser connected to RStudio Server or RStudio Workbench (Debian/Ubuntu, Red Hat/CentOS, and SUSE Linux).
 
 
 -   [Installing R](installing_r.md)
