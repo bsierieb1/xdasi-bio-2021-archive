@@ -9,19 +9,18 @@ has_children: true
 # Introduction to R and RStudio
 {: .no_toc }
 
-## Table of contents
+<!-- ## Table of contents
 {: .no_toc .text-delta }
 
 1. What is R?
-{:toc}
+{:toc} -->
 
 <details open markdown="block">
   <summary>
     Table of contents
   </summary>
   {: .text-delta }
-1. What is R?
-2. Introduction to R
+1. TOC
 {:toc}
 
 </details>
