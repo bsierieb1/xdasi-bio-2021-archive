@@ -23,7 +23,11 @@ has_children: true
 
 ## What is R?
 
-The [*R project website*](https://r-project.org) provides a short introduction to basic features of the R environment, basic features, how to get help in R, R manuals, and a long list of books on R. The following is excerpted from the [*About*]() page on the R project website:
+R is a free software environment for statistical computing and graphics. It compiles and runs on a wide variety of UNIX platforms, Windows and MacOS.
+
+The [*R project website*](https://r-project.org) provides a short introduction to basic features of the R environment, basic features, how to get help in R, R manuals, and a long list of books on R.
+
+The following is excerpted from the [*About R*](https://www.r-project.org/about.html) page on the R project website:
 
 ## Introduction to R
 
@@ -51,13 +55,14 @@ Many users think of R as a statistics system. We prefer to think of it as an env
 
 R has its own LaTeX-like documentation format, which is used to supply comprehensive documentation, both on-line in a number of formats and in hardcopy.
 
-[Back to top](#introduction-to-r-and-rstudio)
 
-
--   [What is R ?](what_is_r.md)
 -   [Installing R](installing_r.md)
 -   [Interfacing with R](interfacing_with_r.md)
 -   [Executing R commands](executing_r.md)
 -   [R Session Management](r_session_management.md)
 -   [R packages](r_packages.md)
 -   [Getting help in R](help_r.md)
+
+***
+
+[Back to top](#introduction-to-r-and-rstudio)
