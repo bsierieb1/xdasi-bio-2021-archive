@@ -1,4 +1,6 @@
 ---
+title: R and RStudio
+subtitle: "`r knitr::current_input(dir = FALSE)`"
 parent: Learning R
 nav_order: 1
 has_children: true
