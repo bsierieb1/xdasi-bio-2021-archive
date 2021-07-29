@@ -82,5 +82,6 @@ RStudio is available in open source and commercial editions and runs on the desk
 -   [Getting help in R](help_r.md)
 
 ***
-
-[Back to top](#introduction-to-r-and-rstudio)
+<a href="#top">Back to top test1</a>
+[Back to top test2](#introduction-to-r-and-rstudio)
+[Back to top test3](#top)
