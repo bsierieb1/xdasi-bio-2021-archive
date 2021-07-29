@@ -1,5 +1,5 @@
 ---
-title: Introduction to R and RStudio
+title: R and RStudio
 layout: default
 parent: Learning R
 nav_order: 1
@@ -8,12 +8,6 @@ has_children: true
 
 # Introduction to R and RStudio
 {: .no_toc }
-
-<!-- ## Table of contents
-{: .no_toc .text-delta }
-
-1. What is R?
-{:toc} -->
 
 <details open markdown="block">
   <summary>
@@ -24,6 +18,8 @@ has_children: true
 {:toc}
 
 </details>
+
+***
 
 ## What is R?
 
@@ -55,7 +51,7 @@ Many users think of R as a statistics system. We prefer to think of it as an env
 
 R has its own LaTeX-like documentation format, which is used to supply comprehensive documentation, both on-line in a number of formats and in hardcopy.
 
-[Back to top](# Introduction to R and RStudio)
+[Back to top](#introduction-to-r-and-rstudio)
 
 
 -   [What is R ?](what_is_r.md)
