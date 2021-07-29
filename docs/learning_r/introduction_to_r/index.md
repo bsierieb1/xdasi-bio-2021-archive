@@ -2,11 +2,8 @@
 parent: Learning R
 nav_order: 1
 has_children: true
-# Back to top link
 back_to_top: true
-back_to_top_text: "Back to top"
-# Makes Aux links open in a new tab. Default is false
-aux_links_new_tab: true
+back_to_top_text: "Back to top TEST"
 ---
 
 # Introduction to R and RStudio
@@ -28,9 +25,9 @@ aux_links_new_tab: true
 
 R is a free software environment for statistical computing and graphics. It compiles and runs on a wide variety of UNIX platforms, Windows and MacOS.
 
-The [**R project**](https://r-project.org) website provides a short introduction to basic features of the R environment, basic features, how to get help in R, R manuals, and a long list of books on R.
+The [**R project**](https://r-project.org){:target="_blank"} website provides a short introduction to basic features of the R environment, basic features, how to get help in R, R manuals, and a long list of books on R.
 
-The following is excerpted from the [*About R*](https://www.r-project.org/about.html) page on the R project website:
+The following is excerpted from the [*About R*](https://www.r-project.org/about.html){:target="_blank"} page on the R project website:
 
 ## Introduction to R
 
