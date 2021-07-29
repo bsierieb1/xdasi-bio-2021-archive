@@ -1,10 +1,10 @@
 ---
 title: R and RStudio
-subtitle: "`r knitr::current_input(dir = FALSE)`"
+subtitle: "`r knitr::current_input(dir = FALSE)`" # doesnt seem to do anything
 parent: Learning R
 nav_order: 1
 has_children: true
-back_to_top: true
+back_to_top: true # doesnt work
 back_to_top_text: "Back to top TEST"
 ---
 
@@ -29,7 +29,7 @@ R is a free software environment for statistical computing and graphics. It comp
 
 The [**R project**](https://r-project.org){:target="_blank"} website provides a short introduction to basic features of the R environment, basic features, how to get help in R, R manuals, and a long list of books on R.
 
-The following is excerpted from the [*About R*](https://www.r-project.org/about.html){:target="_blank"} page on the R project website:
+The following two sections are excerpted from the [*About R*](https://www.r-project.org/about.html){:target="_blank"} page on the R project website:
 
 ## Introduction to R
 
