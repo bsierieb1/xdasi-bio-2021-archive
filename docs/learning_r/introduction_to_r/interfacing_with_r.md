@@ -1,41 +1,61 @@
 ---
-title: Interfacing R
+title: Interfacing with R
 ---
+
+# Interfacing with R {#top}
 
 Once you have R installed on your computer, there are two main main ways that you can start interactive with R: - R command line - R GUI
 
-### Using R on command line
+## Using R on command line
 
-To use R on command line simply start a `terminal` on a MAC or `cmd` on a PC to get a black box with a prompt. Type **R** and you should see something like what is shown below. You can start typeing R commands here directly. Although this is a very cumbersome way of interacting with R, you should familiarize yourself with this environment as you may need it in the future, for example when connecting to the HPC ( High Performance Computing ) systems.
+To use R on command line simply start a `terminal` on a MAC or `cmd` on a PC to get a black box with a prompt. Type **R** and you should see something like what is shown below. You can start typing R commands here directly. Although this is a very cumbersome way of interacting with R, it is useful to familiarize yourself with this environment as you may need it in the future, for example when connecting to HPC (High Performance Computing) systems.
 
-![](UsingR-Commandline.png)
+![](images/UsingR-Commandline.png)
 
-### The Window System (Rgui)
+## The Window System (Rgui)
 
-Once you have installed R on your desktop, you are also provided with a GUI (Graphical User Interface) to R. This is much more convenient way to use R because it provides you with a windowing system which comes with buttons and tabs to help you navigate around the R environment. The image below also demonstrates an R script editor which allows you to write commads on a separate window and execute them in the console.
+Once you have installed R on your desktop, you are also provided with a GUI (Graphical User Interface) to R. This is much more convenient way to use R because it provides you with a windowing system which comes with buttons and tabs to help you navigate around the R environment. The image below demonstrates the R script editor, which allows you to write commands on a separate window and execute them in the console.
 
-![](UsingRGUI.png)
+![](images/UsingRGUI.png)
 
-### RStudio (www.rstudio.org)
+## RStudio (www.rstudio.org)
 
 <https://www.rstudio.org/>
 
-RStudio is the a very powerful way of interacting with R. In addition to the features provided in RGui, RStudio also provides:
-- Easy way to look at the functions and variables that are in your environment.
-- Integration with packages to enable easily repeatable code ( more on this later )
-- Project management that allows you to change workspace and working directory with a simple selection from a pull down menu.
+RStudio is the a very powerful interface for R that we will use in this class that provides many more features and utilities then the base RGui:
 
-Note that RStudio does not come with R, R needs to be installed first separately.
+* A windows- and menu-driven graphical user interface (GUI) for writing, running, and debugging R scripts
+* An easy way to manage working directories, workspaces, and R Projects
+* An easy way to inspect functions, variables, and data structures in your environment
+* Visualization of graphical output
+* Generation of PDF, HTML, and Word documents; slide shows; and interactive graphics
+* Integration with specialized R packages for graphics and various analytical applications
+
+### RStudio Interface
+
+RStudio's GUI comprises four windows that display different kinds of information. By default, windows will appear as follows (this can be customized to suit your working style):
+
+- **Script Editor** _(top left)_
+    - Opens when you select to create a new R script, R Markdown or Notebook, or other kinds of files; all of these can be saved for future use
+    - Run scripts or code snippets within other kinds of R documents
+    - Provides suggestions for command completion
+    - Provides menus for formatting code and other actions
+- **Console** _(bottom left)_
+    - Displays all R commands executed within scripts and code snippets in the Editor
+    - Provides direct access to the commandline - particularly useful for testing out commands and inspecting data structures
+    - Get help with R command syntax
+    - Access built-in tutorials
+- **History and Environment** _(top right)_
+    - Shows all variables in the working environment
+    - Shows all previous commands that you have executed, either from the console or within a script (even incorrect commands containing errors are included here, so be careful!)
+- **Files, Plots, Packages, and Help** _(bottom right)_
+    - Easily peruse and navigate directories and files
+    - Display plots as they are created
+    - See which packages are installed
+    - Display R documentation for command syntax
 
 ![](RStudio/Slide3.png)
 
-#### The RStudio interface is separated into 4 sections:
+***
 
-- **Script Editor** (top left)
-    - This window opens when you select to create a new R script
-- **History and Environment** ( top right)
-    - This window shows all previous commands that you have typed, even the ones that are incorrect so be careful. Ideally you want to save the correct ones to the R script window on the left.
-- **Console** (bottom left)
-    The way to execute commands to R directly. This is particularly useful for testing out commands. Commands executed in scripts and code snippets in the Editor will also appear here.
-- **Files, Plots, Packages, and Help** (bottom right)
-    - Easy way to look for files in the directories and packages that are installed. It also has a tab for all the plots that are created.
+[Back to top](#top)
