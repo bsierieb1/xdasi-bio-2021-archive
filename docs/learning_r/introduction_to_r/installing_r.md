@@ -1,8 +1,10 @@
 ---
 title: Installing R and RStudio
+layout: default
 parent: Learning R
 nav_order: 2
 has_children: true
+toc: false
 ---
 
 # Installing R and RStudio
