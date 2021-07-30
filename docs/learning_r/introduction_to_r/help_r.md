@@ -1,7 +1,12 @@
 ---
-title: Getting help
+title: Getting Help
+layout: default
+parent: R and RStudio
+nav_order: 5
+has_children: false
 ---
-## Getting Help with Functions and Features
+
+# Getting Help with Functions and Features
 
 Below are some examples of how to get help about a command.
 

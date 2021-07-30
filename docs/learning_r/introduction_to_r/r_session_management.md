@@ -1,8 +1,13 @@
 ---
-title: R session management
+title: R Session Management
+layout: default
+parent: R and RStudio
+nav_order: 3
+has_children: false
+toc: true
 ---
 
-## R Session Management
+# R Session Management
 
 [R session management](https://youtu.be/LO13lbX_inY)
 

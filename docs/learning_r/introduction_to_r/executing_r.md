@@ -1,5 +1,9 @@
 ---
 title: Executing R
+layout: default
+parent: R and RStudio
+nav_order: 4
+has_children: false
 ---
 
 ##  Executing R commands
@@ -27,4 +31,3 @@ Once you have a list of commands that you want to execute, you save it with a .R
 R Markdown and R Notebook files enable you to intersperse text and code for rendering as HTML or PDF. These provide a great way to document your work and prepare publication-ready materials. We will be using this R Markdowns to submit your homeworks.
 
 *Note: It is not recommended to copy and paste from applications such as MS Word or even PDFs, since these can insert funny characters upon pasting the code into the console or the editor.*
-

@@ -1,23 +1,25 @@
 ---
 title: Installing R and RStudio
 layout: default
-parent: Learning R
-nav_order: 2
-has_children: false
-toc: false
+parent: R and RStudio
+nav_order: 1
 ---
 
 # Installing R and RStudio
 
-RStudio is the popular IDE we will use in this course to help us manage our R data and code. To install RStudio on your computer, you first need to download and install R, and then install RStudio. These can be downloaded from the following sites:
+The **Comprehensive R Archive Network (CRAN)** maintains and distributes up-to-date versions of R binaries and source code for Linux, MacOS, and Windows. You will want to download and install _**precompiled binaries**_ for the operating system you are running on your laptop (just follow the installation instructions provided).
 
-* [Download R](https://cran.r-project.org/)
-* [Download RStudio Desktop Free](https://www.rstudio.org/)
+* [**Download R from CRAN**](https://cran.r-project.org/){:target="_blank"}
+  - You may also choose a [CRAN mirror](https://cran.r-project.org/mirrors.html){:target="_blank"} from another geographic location close to you.
 
-If you are installing R on a Windows machine, you should also download and install [Rtools](https://cloud.r-project.org/bin/windows/Rtools/).
+**RStudio** is the popular IDE we will use in this course to help us manage our R data and code. To install RStudio on your computer, you first need to download and install **R**, and then install RStudio. Make sure you select the open-source **RStudio Desktop** (you don't need the server version).
 
-# Tutorials
+* [**Download RStudio Desktop**](https://www.rstudio.com/products/rstudio/){:target="_blank"}
 
-There are many tutorials on the web that will help you install R and R Studio. If you would like a step-by-step guide, check out the following video created by Manny Katari:
+If you are installing R on a Windows machine, you should also download and install [**Rtools**](https://cloud.r-project.org/bin/windows/Rtools/){:target="_blank"}.
 
-[Installing R and RStudio on a MAC](https://www.youtube.com/watch?v=0Ii_rpTc03k)
+# Troubleshooting
+
+Installing R and RStudio should be pretty easy. If you encounter problems, there are many tutorials on the web that can help you with this. Feel free to reach out to us if you are stuck, or we can work it out together during the first class.
+
+---

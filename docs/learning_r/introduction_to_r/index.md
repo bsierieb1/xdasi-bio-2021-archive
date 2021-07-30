@@ -2,7 +2,7 @@
 title: R and RStudio
 parent: Learning R
 nav_order: 1
-has_children: false
+has_children: true
 ---
 
 # Introduction to R and RStudio {#top}
@@ -19,17 +19,18 @@ has_children: false
 </details>
 
 ---
+![](images/RLogo.png)
 
 ## What is R?
 
 R is a free software environment for statistical computing and graphics. It compiles and runs on a wide variety of UNIX platforms, Windows and MacOS.
 
-The [**R project**](https://r-project.org){:target="_blank"} website provides a short introduction to basic features of the R environment, how to get help in R, R manuals, and a long list of books on R.
+The [**R project**](https://www.r-project.org/){:target="_blank"} website provides a short introduction to basic features of the R environment, [how to get help in R](https://www.r-project.org/help.html){:target="_blank"}, and extensive documentation (e.g. [manuals](https://cran.r-project.org/manuals.html){:target="_blank"}, [FAQs](https://cran.r-project.org/faqs.html){:target="_blank"}, [books](https://www.r-project.org/doc/bib/R-books.html){:target="_blank"}), and links to a variety of other resources.
+
+The following two sections are excerpted from the [*About R*](https://www.r-project.org/about.html){:target="_blank"} page on the R project website.
 
 
-## Introduction to R[^1]
-
-[^1]: Excerpted from the [*About R*](https://www.r-project.org/about.html){:target="_blank"} page on the R project website.
+## Introduction to R
 
 R is a language and environment for statistical computing and graphics. It is a GNU project which is similar to the S language and environment which was developed at Bell Laboratories (formerly AT&T, now Lucent Technologies) by John Chambers and colleagues. R can be considered as a different implementation of S. There are some important differences, but much code written for S runs unaltered under R.
 
@@ -39,7 +40,7 @@ One of R’s strengths is the ease with which well-designed publication-quality 
 
 R is available as Free Software under the terms of the Free Software Foundation’s GNU General Public License in source code form. It compiles and runs on a wide variety of UNIX platforms and similar systems (including FreeBSD and Linux), Windows and MacOS.
 
-## The R environment[^1]
+## The R environment
 
 R is an integrated suite of software facilities for data manipulation, calculation and graphical display. It includes
 
@@ -56,6 +57,10 @@ R, like S, is designed around a true computer language, and it allows users to a
 Many users think of R as a statistics system. We prefer to think of it as an environment within which statistical techniques are implemented. R can be extended (easily) via packages. There are about eight packages supplied with the R distribution and many more are available through the CRAN family of Internet sites covering a very wide range of modern statistics.
 
 R has its own LaTeX-like documentation format, which is used to supply comprehensive documentation, both on-line in a number of formats and in hardcopy.
+
+---
+
+![](images/RStudioLogo.png){:target="_blank"}
 
 ## RStudio
 

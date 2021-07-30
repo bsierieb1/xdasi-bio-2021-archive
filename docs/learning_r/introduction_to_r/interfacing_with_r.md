@@ -1,8 +1,8 @@
 ---
 title: Interfacing with R
 layout: default
-parent: Learning R
-nav_order: 3
+parent: R and RStudio
+nav_order: 2
 has_children: false
 ---
 
@@ -25,13 +25,13 @@ Once you have installe R, you may simply start a `terminal` on a MAC or `cmd` on
 
 Although this is a very cumbersome way of interacting with R, it is useful to familiarize yourself with this environment as you may need it in the future, for example when connecting to HPC (High Performance Computing) systems.
 
-![](images/UsingR-Commandline.png)
+![](images/UsingR-Commandline.png){ width=60% }
 
 ## The RGui Window System
 
 R comes with a built-in GUI for R called **Rgui**. This is more convenient way to use R because it provides you with a windowing system that comes with buttons and tabs to help you navigate around the R environment. The image below demonstrates the RGui script editor, which allows you to write commands on a separate window and execute them in the console.
 
-![](images/UsingRGUI.png)
+![](images/UsingRGUI.png){ width=60% }
 
 ## RStudio
 
@@ -69,7 +69,7 @@ RStudio's GUI comprises four windows that display different kinds of information
     - See which packages are installed
     - Display R documentation for command syntax
 
-![](RStudio/Slide3.png)
+![](RStudio/Slide3.png){ width=60% }
 
 ---
 
