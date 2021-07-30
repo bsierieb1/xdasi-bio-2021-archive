@@ -2,10 +2,10 @@
 title: R and RStudio
 parent: Learning R
 nav_order: 1
-has_children: true
+has_children: false
 ---
 
-# Introduction to R and RStudio
+# Introduction to R and RStudio {#top}
 {: .no_toc }
 
 <details open markdown="block">
@@ -59,7 +59,7 @@ R has its own LaTeX-like documentation format, which is used to supply comprehen
 
 ## RStudio
 
-R can be used directly on the commandline, however this is not the most convenient way to interact with R. Instead, the preferred way to interact with R is to use [**RStudio**](https://www.rstudio.com/products/rstudio/){:target="_blank"}, an integrated development environment (IDE) for that provides a much richer interface for writing and running R code. It includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging and workspace management.
+The most convenient way to interact with R is to use [**RStudio**](https://www.rstudio.com/products/rstudio/){:target="_blank"}, an integrated development environment (IDE) that provides a much richer interface for writing and running R code. It includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging and workspace management.
 
 In addition, RStudio supports the generation of publication-quality documents in many formats:
 

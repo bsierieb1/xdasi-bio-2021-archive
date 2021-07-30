@@ -17,23 +17,27 @@ has_children: false
 
 ---
 
-Once you have installed R on your computer, you can start an interactive R session either on the commandline or using the built-in R graphical user interface (GUI). RStudio provides a richer and more powerful interface for R that we will use in this class. These three options are described below.
+Once you have installed R on your computer, you can start an interactive R session either on the **commandline** or using **RGui**, the built-in R graphical user interface (GUI). **RStudio** provides a richer and more powerful interface for R that we will use in this class.
 
-## Using R on command line
+## Using R on commandline
 
-To use R on command line simply start a `terminal` on a MAC or `cmd` on a PC to get a black box with a prompt. Type **R** and you should see something like what is shown below. You can start typing R commands here directly. Although this is a very cumbersome way of interacting with R, it is useful to familiarize yourself with this environment as you may need it in the future, for example when connecting to HPC (High Performance Computing) systems.
+Once you have installe R, you may simply start a `terminal` on a MAC or `cmd` on a PC to get a black box with a prompt. Type **R** and you should see something like what is shown below. You can start typing R commands here directly.
+
+Although this is a very cumbersome way of interacting with R, it is useful to familiarize yourself with this environment as you may need it in the future, for example when connecting to HPC (High Performance Computing) systems.
 
 ![](images/UsingR-Commandline.png)
 
 ## The RGui Window System
 
-Once you have installed R on your desktop, you are also provided with a GUI (Graphical User Interface) to R. This is much more convenient way to use R because it provides you with a windowing system which comes with buttons and tabs to help you navigate around the R environment. The image below demonstrates the R script editor, which allows you to write commands on a separate window and execute them in the console.
+R comes with a built-in GUI for R called **Rgui**. This is more convenient way to use R because it provides you with a windowing system that comes with buttons and tabs to help you navigate around the R environment. The image below demonstrates the RGui script editor, which allows you to write commands on a separate window and execute them in the console.
 
 ![](images/UsingRGUI.png)
 
 ## RStudio
 
-[**RStudio**](https://www.rstudio.org/) provides a much more convenient way to interact with R that offers many more features and utilities than the base RGui:
+[**RStudio**](https://www.rstudio.org/) offers many more features and utilities than the base RGui and is the preferred way to interact with R.
+
+### RStudio features
 
 * A windows- and menu-driven GUI for writing, running, and debugging R scripts
 * An easy way to manage working directories, workspaces, and R Projects
