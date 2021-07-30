@@ -1,5 +1,5 @@
 ---
-title: R and RStudio
+title: Introduction
 parent: Learning R
 nav_order: 1
 has_children: true
@@ -9,15 +9,11 @@ has_toc: false
 # What is R? {#top}
 {: .no_toc }
 
-<details open markdown="block">
-  <summary>
-    Table of contents
-  </summary>
-  {: .text-delta }
+## Table of contents
+{: .no_toc .text-delta }
+
 1. TOC
 {:toc}
-
-</details>
 
 ---
 
@@ -34,7 +30,6 @@ R provides a wide variety of statistical (linear and nonlinear modelling, classi
 One of R’s strengths is the ease with which well-designed publication-quality plots can be produced, including mathematical symbols and formulae where needed. Great care has been taken over the defaults for the minor design choices in graphics, but the user retains full control.
 
 R is available as Free Software under the terms of the Free Software Foundation’s GNU General Public License in source code form. It compiles and runs on a wide variety of UNIX platforms and similar systems (including FreeBSD and Linux), Windows and MacOS.
-
 
 ## The R environment
 
@@ -56,7 +51,7 @@ R has its own LaTeX-like documentation format, which is used to supply comprehen
 
 ---
 
-![](images/RStudioLogo.png){ width =10% }{#rstudio}
+## RStudio
 
 The most convenient way to interact with R is to use [**RStudio**](https://www.rstudio.com/products/rstudio/){:target="_blank"}, an integrated development environment (IDE) that provides a much richer interface for writing and running R code. It includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging and workspace management.
 

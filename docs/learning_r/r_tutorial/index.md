@@ -1,7 +1,7 @@
 ---
 title: R Tutorial
 layout: default
-arent: Learning R
+parent: Learning R
 nav_order: 2
 has_children: true
 has_toc: false

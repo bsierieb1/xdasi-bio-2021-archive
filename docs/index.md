@@ -6,7 +6,7 @@ has_children: false
 ---
 
 # XDAS: Exploratory Data Analysis and Statistics
-## NYU Biology Fall 2020: BIOL-GA 2030
+## NYU Biology Fall 2021
 
 * [**Course Overview**](overview.md)
 * [**Syllabus**](syllabus.html)
