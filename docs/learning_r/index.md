@@ -1,82 +1,72 @@
 ---
-title: Learning R
-layout: default
-nav_order: 2
+title: R and RStudio
+parent: Learning R
+nav_order: 1
 has_children: true
 ---
 
-# Where to go for help with R
+# What is R? {#top}
+{: .no_toc }
 
-### The Basics
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
 
-The tutorials below provide an introduction to the basic building blocks for programming in R. Each contains links to YouTube videos that walk you through different topics. Ideally you should watch the video first and then read and repeat the code at your own pace.
+</details>
 
-* [**R Tutorial**](introduction_to_r/index.md)
-    + Contains instructions on installing and getting going with R and R Studio.
+---
+![](images/Rlogo.png){ width=10% }
 
-* [**R Data  Structures**](RDataStructures.md)
-    + The basic building blocks of working with data.
+Where better to start than going straight to the source? The following short *Introduction to R* and *The R environment* are excerpted from the [*About R*](https://www.r-project.org/about.html){:target="_blank"} page on the [**R project**](https://www.r-project.org) website. There you may also find extensive documentation (e.g. [manuals](https://cran.r-project.org/manuals.html){:target="_blank"}, [FAQs](https://cran.r-project.org/faqs.html){:target="_blank"}, information about [how to get help in R](https://www.r-project.org/help.html){:target="_blank"}, [books](https://www.r-project.org/doc/bib/R-books.html){:target="_blank"}), and links to a variety of related resources.
 
-### Manny Katari's video tutorials
+## Introduction to R
 
-If you would rather watch all videos back to back first, feel free to watch the different playlists:
+R is a language and environment for statistical computing and graphics. It is a GNU project which is similar to the S language and environment which was developed at Bell Laboratories (formerly AT&T, now Lucent Technologies) by John Chambers and colleagues. R can be considered as a different implementation of S. There are some important differences, but much code written for S runs unaltered under R.
 
-* [**Intro to R Videos**](https://www.youtube.com/playlist?list=PLv9k4CPCZjhyLgE7RgQI0moWiPqLsg2o_)
+R provides a wide variety of statistical (linear and nonlinear modelling, classical statistical tests, time-series analysis, classification, clustering, …) and graphical techniques, and is highly extensible. The S language is often the vehicle of choice for research in statistical methodology, and R provides an Open Source route to participation in that activity.
 
-* [**Writing Functions in R Videos**](https://www.youtube.com/playlist?list=PLv9k4CPCZjhy2xwsuZh-ZpVDjH4iWU6Nh)
+One of R’s strengths is the ease with which well-designed publication-quality plots can be produced, including mathematical symbols and formulae where needed. Great care has been taken over the defaults for the minor design choices in graphics, but the user retains full control.
 
+R is available as Free Software under the terms of the Free Software Foundation’s GNU General Public License in source code form. It compiles and runs on a wide variety of UNIX platforms and similar systems (including FreeBSD and Linux), Windows and MacOS.
 
-### Interactive Tutorials
+## The R environment
 
-* [**DataCamp**](https://datacamp.com)
-    + We have set up a DataCamp custom course for you that will be freely accessible throughout the semester. The modules we have selected cover R data structures, operations, functions, data manipulation, programming concepts, and visualization. You will work through these during the first few weeks of the semester.
+R is an integrated suite of software facilities for data manipulation, calculation and graphical display. It includes
 
-* [**Swirl Website**](https://swirlstats.com)
-    + You may also wish to work your way through the **swirl** tutorial that comes with RStudio. Similar to the DataCamp series, it provides interactive feedback and covers the basic commands and data structures that we will use throughout the course. Since it runs through your R console instead of a browser, you can work through this anytime on your own without needing to be online. To use it, follow the simple instructions at the link above.
+- an effective data handling and storage facility,
+- a suite of operators for calculations on arrays, in particular matrices,
+- a large, coherent, integrated collection of intermediate tools for data analysis,
+- graphical facilities for data analysis and display either on-screen or on hardcopy, and
+- a well-developed, simple and effective programming language which includes conditionals, loops, user-defined recursive functions and input and output facilities.
 
+The term “environment” is intended to characterize it as a fully planned and coherent system, rather than an incremental accretion of very specific and inflexible tools, as is frequently the case with other data analysis software.
 
-### Useful R Functions
+R, like S, is designed around a true computer language, and it allows users to add additional functionality by defining new functions. Much of the system is itself written in the R dialect of S, which makes it easy for users to follow the algorithmic choices made. For computationally-intensive tasks, C, C++ and Fortran code can be linked and called at run time. Advanced users can write C code to manipulate R objects directly.
 
-* [**Syntax Equivalents: Base R vs. Tidyverse**](base-r_tidyverse_equivalents.html)
-  + A comparison of basic syntax for working with data frames, by Hugo Tavares.
-* [**Introduction to functions for probability distributions (d, q, p, r)**](Intro_R_dqpr_functions.html)
-  + Random sampling, PDF, CDF, and inverse CDF functions for standard probability distributions
+Many users think of R as a statistics system. We prefer to think of it as an environment within which statistical techniques are implemented. R can be extended (easily) via packages. There are about eight packages supplied with the R distribution and many more are available through the CRAN family of Internet sites covering a very wide range of modern statistics.
 
-### Graphics
+R has its own LaTeX-like documentation format, which is used to supply comprehensive documentation, both on-line in a number of formats and in hardcopy.
 
-  * [**R Graphics Overview**](graphics/graphics.html) (xdas) * [**Base R
-  * Plotting**](graphics/base_r_plotting.html) (xdas) *
-  * [**ggplot2**](graphics/ggplot2.html) (xdas)
+---
 
+![](images/RStudioLogo.png){ width =10% }{#rstudio}
 
-### Cheat Sheets and Quick Reference
+The most convenient way to interact with R is to use [**RStudio**](https://www.rstudio.com/products/rstudio/){:target="_blank"}, an integrated development environment (IDE) that provides a much richer interface for writing and running R code. It includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging and workspace management.
 
-* [**RStudio Cheat Sheets**](https://www.rstudio.com/resources/cheatsheets/)  _includes dplyr, ggplot2, R Markdown, and many others_
-  * [**RStudio IDE Cheat Sheet**](rstudio-ide.pdf)
-  * [**R Markdown Cheatsheets**](http://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf)
+In addition, RStudio supports the generation of publication-quality documents in many formats:
 
-You can also find these cheatsheets and other help topics in R studio under **"Help=>Cheatsheets"**.
+- PDF
+- HTML
+- Word
+- Slide presentations
+- Dynamic web pages (enabling interactive data exploration)
 
-* [**RStudio R Markdown guide**](http://rmarkdown.rstudio.com)
+RStudio is available in open source and commercial editions and runs on the desktop (Windows, Mac, and Linux) or in a browser connected to RStudio Server or RStudio Workbench (Debian/Ubuntu, Red Hat/CentOS, and SUSE Linux).
 
-* [**250+ Abbreviations of R commands explained**](http://jeromyanglim.blogspot.com/2010/05/abbreviations-of-r-commands-explained.html)  _If you find yourself wondering what different command stand for, look here!_
+---
 
-
-### Data Wrangling in R for Data Science (mainly tidyverse utilities)
-
-* [**Tidyverse**](http://www.tidyverse.org)  _dplyr, ggplot2, tibbles, and other packages in the tidy universe_
-
-* [**Data Carpentry: Data Analyis and Visualization in R for Ecologists**](https://datacarpentry.org/R-ecology-lesson/index.html)
-
-* [**Dat Science for Psychologists**](https://bookdown.org/hneth/ds4psy/)
-
-
-### Additional Resources
-
-There are many other R tutorials and reference materials online. Here are a few to get you started:
-
-* [**R tutorial - NYU Gencore**](https://learn.gencore.bio.nyu.edu/rna-seq-analysis/introduction-to-r/) _basic R tutorial similar to the one provided here_
-
-* [**Quick-R**](http://www.statmethods.net/index.html) _all the basics, with standard statistical methods and built-in graphics \(does not cover dplyr and ggplot2\)_
-
-* [**Introduction to R**](Intro_to_R_Aho.pdf)  _Electronic supplement to Aho textbook_
+[Back to top](#top)
