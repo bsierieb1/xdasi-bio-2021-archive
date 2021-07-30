@@ -1,10 +1,23 @@
 ---
 title: Interfacing with R
+layout: default
+parent: Learning R
+nav_order: 3
+has_children: false
 ---
 
 # Interfacing with R {#top}
+{: .no_toc }
 
-Once you have R installed on your computer, there are two main main ways that you can start interactive with R: - R command line - R GUI
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
+
+Once you have installed R on your computer, you can start an interactive R session either on the commandline or using the built-in R graphical user interface (GUI). RStudio provides a richer and more powerful interface for R that we will use in this class. These three options are described below.
 
 ## Using R on command line
 
@@ -12,19 +25,17 @@ To use R on command line simply start a `terminal` on a MAC or `cmd` on a PC to 
 
 ![](images/UsingR-Commandline.png)
 
-## The Window System (Rgui)
+## The RGui Window System
 
 Once you have installed R on your desktop, you are also provided with a GUI (Graphical User Interface) to R. This is much more convenient way to use R because it provides you with a windowing system which comes with buttons and tabs to help you navigate around the R environment. The image below demonstrates the R script editor, which allows you to write commands on a separate window and execute them in the console.
 
 ![](images/UsingRGUI.png)
 
-## RStudio (www.rstudio.org)
+## RStudio
 
-<https://www.rstudio.org/>
+[**RStudio**](https://www.rstudio.org/) provides a much more convenient way to interact with R that offers many more features and utilities than the base RGui:
 
-RStudio is the a very powerful interface for R that we will use in this class that provides many more features and utilities then the base RGui:
-
-* A windows- and menu-driven graphical user interface (GUI) for writing, running, and debugging R scripts
+* A windows- and menu-driven GUI for writing, running, and debugging R scripts
 * An easy way to manage working directories, workspaces, and R Projects
 * An easy way to inspect functions, variables, and data structures in your environment
 * Visualization of graphical output
@@ -56,6 +67,6 @@ RStudio's GUI comprises four windows that display different kinds of information
 
 ![](RStudio/Slide3.png)
 
-***
+---
 
 [Back to top](#top)

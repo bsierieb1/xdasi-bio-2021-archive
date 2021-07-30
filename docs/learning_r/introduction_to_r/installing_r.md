@@ -3,7 +3,7 @@ title: Installing R and RStudio
 layout: default
 parent: Learning R
 nav_order: 2
-has_children: true
+has_children: false
 toc: false
 ---
 
