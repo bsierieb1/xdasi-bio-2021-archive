@@ -1,5 +1,7 @@
 ---
 title: R Packages
+parent: R Tutorial
+nav_order: 5
 ---
 R Packages
 

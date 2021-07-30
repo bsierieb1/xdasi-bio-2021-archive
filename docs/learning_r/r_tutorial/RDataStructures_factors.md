@@ -1,7 +1,7 @@
 ---
-title: R Data
-permalink: /r_data_factors/
-hide: true
+title: Factors
+parent: R Tutorial
+nav_order: 3
 ---
 
 Factors

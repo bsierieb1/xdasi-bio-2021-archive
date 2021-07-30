@@ -1,7 +1,6 @@
 ---
-title: R Data
-permalink: /r_data/
-hide: true
+title: R Data Structures
+parent: R Tutorial
 ---
 - [R data types](#r-data-types)
 - [R Data Structures](#r-data-structures)

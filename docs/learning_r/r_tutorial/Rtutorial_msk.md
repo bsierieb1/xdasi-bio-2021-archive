@@ -1,7 +1,6 @@
 ---
 title: R Tutorial
-permalink: /r_tutorial_msk/
-hide: true
+nav_exclude: true
 ---
 
 -   [What is R ?](#what-is-r)

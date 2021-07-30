@@ -1,8 +1,10 @@
 ---
-title: Learning R
+title: R Tutorial
 layout: default
+arent: Learning R
 nav_order: 2
 has_children: true
+has_toc: false
 ---
 
 # Where to go for help with R
@@ -80,3 +82,14 @@ There are many other R tutorials and reference materials online. Here are a few 
 * [**Quick-R**](http://www.statmethods.net/index.html) _all the basics, with standard statistical methods and built-in graphics \(does not cover dplyr and ggplot2\)_
 
 * [**Introduction to R**](Intro_to_R_Aho.pdf)  _Electronic supplement to Aho textbook_
+
+
+
+
+
+
+
+-   [Executing R commands](executing_r.md)
+-   [R Session Management](r_session_management.md)
+-   [R packages](r_packages.md)
+-   [Getting help in R](help_r.md)
