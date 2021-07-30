@@ -2,8 +2,8 @@
 title: Interfacing with R
 layout: default
 parent: R and RStudio
+grand_parent: Learning R
 nav_order: 2
-has_children: false
 ---
 
 # Interfacing with R {#top}
@@ -21,7 +21,7 @@ Once you have installed R on your computer, you can start an interactive R sessi
 
 ## Using R on commandline
 
-Once you have installe R, you may simply start a `terminal` on a MAC or `cmd` on a PC to get a black box with a prompt. Type **R** and you should see something like what is shown below. You can start typing R commands here directly.
+Once you have installed R, you may simply start a `terminal` on a MAC or `cmd` on a PC to get a black box with a prompt. Type **R** and you should see something like what is shown below. You can start typing R commands here directly.
 
 Although this is a very cumbersome way of interacting with R, it is useful to familiarize yourself with this environment as you may need it in the future, for example when connecting to HPC (High Performance Computing) systems.
 

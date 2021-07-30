@@ -2,6 +2,7 @@
 title: Installing R and RStudio
 layout: default
 parent: R and RStudio
+grand_parent: Learning R
 nav_order: 1
 ---
 

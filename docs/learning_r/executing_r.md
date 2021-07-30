@@ -2,8 +2,8 @@
 title: Executing R
 layout: default
 parent: R and RStudio
+grand_parent: Learning R
 nav_order: 4
-has_children: false
 ---
 
 ##  Executing R commands

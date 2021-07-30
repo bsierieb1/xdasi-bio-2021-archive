@@ -2,8 +2,8 @@
 title: R Session Management
 layout: default
 parent: R and RStudio
+grand_parent: Learning R
 nav_order: 3
-has_children: false
 toc: true
 ---
 
