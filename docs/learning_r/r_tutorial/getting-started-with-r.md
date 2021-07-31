@@ -1,46 +1,8 @@
 ---
 title: What is R?
-hide: true
+nav_exclude: true
 ---
 
-* R is a free software environment for statistical computing and graphics.
-* It is similar to the S language and environment which was developed at Bell Laboratories \(formerly AT&T, now Lucent Technologies\) by John Chambers.
-* One of R's strengths is the ease with which well-designed publication-quality plots can be produced, including mathematical symbols and formulae where needed.
-* Great care has been taken over the defaults for the minor design choices in graphics, but the user retains full control.
-
-# The R environment
-
-* an effective data handling and storage facility
-* a suite of operators for calculations on arrays, in particular matrices
-* a large, coherent, integrated collection of intermediate tools for data analysis
-* graphical facilities for data analysis and display either directly at the computer or on hardcopy
-* well developed, simple and effective programming language \(called "S"\) which includes conditionals, loops, user defined recursive functions and input and output facilities.
-
-# Install R
-
-Check out the Youtube Video \( [https://youtu.be/0Ii\_rpTc03k \)](https://youtu.be/0Ii_rpTc03k)
-
-## Main website for R project
-
-[http://www.r-project.org](http://www.r-project.org)
-
-[https://cran.r-project.org/](https://cran.r-project.org/)
-
-# Using R
-
-## Using R on command line
-
-Requires knowledge of command-line operations. Will use less computer resources because window system not required.
-
-## The Window System \(Rgui\)
-
-The most convenient way to use R is at a graphics workstation running a windowing system. R uses the X window system bundled with R software.
-
-## RStudio \(www.rstudio.org\)
-
-[https://www.rstudio.org/](https://www.rstudio.org/)
-
-Much more powerful and user-friendly interface compared to Rgui. Requires that R be already installed on the system.
 
 # R Console Prompt
 
