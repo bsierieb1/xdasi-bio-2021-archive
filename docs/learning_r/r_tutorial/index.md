@@ -1,13 +1,12 @@
 ---
 title: R Tutorial
-parent: R tutorial
-grand_parent: Learning R
+parent: Learning R
 nav_order: 2
 has_children: true
 has_toc: false
 ---
 
-# Where to go for help with R
+# Learning R Syntax
 
 ### The Basics
 
