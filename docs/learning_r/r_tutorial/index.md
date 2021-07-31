@@ -1,8 +1,8 @@
 ---
 title: R Tutorial
-layout: default
-parent: Learning R
-nav_order: 3
+parent: R tutorial
+grand_parent: Learning R
+nav_order: 2
 has_children: true
 has_toc: false
 ---

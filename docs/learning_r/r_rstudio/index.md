@@ -1,6 +1,8 @@
 ---
 title: R and RStudio
-nav_order: 2
+parent: R and RStudio
+grand_parent: Learning R
+nav_order: 1
 has_children: true
 ---
 
