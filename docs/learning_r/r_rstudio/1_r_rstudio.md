@@ -1,9 +1,8 @@
 ---
 title: Introduction
-parent: Learning R
+parent: R and RStudio
+grand_parent: Learning R
 nav_order: 1
-has_children: true
-has_toc: false
 ---
 
 # What is R? {#top}

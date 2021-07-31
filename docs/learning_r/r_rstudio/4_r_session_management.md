@@ -1,10 +1,8 @@
 ---
 title: R Session Management
-layout: default
 parent: R and RStudio
 grand_parent: Learning R
-nav_order: 3
-toc: true
+nav_order: 4
 ---
 
 # R Session Management

@@ -1,9 +1,8 @@
 ---
 title: Interfacing with R
-layout: default
 parent: R and RStudio
 grand_parent: Learning R
-nav_order: 2
+nav_order: 3
 ---
 
 # Interfacing with R {#top}
