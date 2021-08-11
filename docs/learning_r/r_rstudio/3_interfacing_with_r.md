@@ -41,7 +41,7 @@ The image below demonstrates the RGui script editor, which allows you to write R
 
 # RStudio
 
-The most convenient way to interact with R is to use <a href="https://www.rstudio.com/products/rstudio/""><img src="images/RStudioLogo.png" style="width:100px;" target="_blank"/>, an integrated development environment (IDE) that provides a much richer interface for writing and running R code.
+The most convenient way to interact with R is to use <a href="https://www.rstudio.com/products/rstudio/"><img src="images/RStudioLogo.png" style="width:100px;" target="_blank"/>, an integrated development environment (IDE) that provides a much richer interface for writing and running R code.
 
 RStudio is available in open source and commercial editions and runs on the desktop (Windows, Mac, and Linux) or in a browser connected to RStudio Server or RStudio Workbench (Debian/Ubuntu, Red Hat/CentOS, and SUSE Linux).
 
@@ -65,20 +65,20 @@ RStudio's GUI comprises four windows that display different kinds of information
 ![](images/RStudio_windows_labeled.png)
 
 
-- **Script Editor**{: .text-green-100} _(top left)_
+- **Script Editor**{: .text-green-200} _(top left)_
     - Opens when you select to create a new R script, R Markdown or Notebook, or other kinds of files; all of these can be saved for future use
     - Run scripts or code snippets within other kinds of R documents
     - Provides suggestions for command completion
     - Provides menus for formatting code and other actions
-- **Console** _(bottom left)_
+- **Console**{: .text-green-200} _(bottom left)_
     - Displays all R commands executed within scripts and code snippets in the Editor
     - Provides direct access to the commandline - particularly useful for testing out commands and inspecting data structures
     - Get help with R command syntax
     - Access built-in tutorials
-- **History and Environment** _(top right)_
+- **History and Environment**{: .text-green-200} _(top right)_
     - Shows all variables in the working environment
     - Shows all previous commands that you have executed, either from the console or within a script (even incorrect commands containing errors are included here, so be careful!)
-- **Files, Plots, Packages, and Help** _(bottom right)_
+- **Files, Plots, Packages, and Help**{: .text-green-200} _(bottom right)_
     - Easily peruse and navigate directories and files
     - Display plots as they are created
     - See which packages are installed
