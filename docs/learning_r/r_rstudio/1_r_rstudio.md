@@ -17,7 +17,7 @@ nav_order: 1
 ---
 <img src="images/Rlogo.png" style="width:100px;"/>
 
-## What is R?
+# What is R?
 
 Where better to start than going straight to the source? The following short *Introduction to R* is adapted from the [*About R*](https://www.r-project.org/about.html){:target="_blank"} page on the [**R project**](https://www.r-project.org) website. There you may also find extensive documentation (e.g. [manuals](https://cran.r-project.org/manuals.html){:target="_blank"}, [FAQs](https://cran.r-project.org/faqs.html){:target="_blank"}, information about [how to get help in R](https://www.r-project.org/help.html){:target="_blank"}, [books](https://www.r-project.org/doc/bib/R-books.html){:target="_blank"}), and links to a variety of related resources.
 
@@ -33,7 +33,7 @@ R provides a wide variety of statistical (linear and nonlinear modelling, classi
 
 One of R’s strengths is the ease with which **well-designed publication-quality plots** can be produced, including **mathematical symbols and formulae** where needed. Great care has been taken over the defaults for the minor design choices in graphics, but the user retains full control.
 
-## The R environment
+# The R environment
 
 R is an integrated suite of software facilities for data manipulation, calculation and graphical display. It includes
 
@@ -51,7 +51,7 @@ Many users think of R as a statistics system. We prefer to think of it as an env
 
 R has its own LaTeX-like documentation format, which is used to supply comprehensive documentation, both on-line in a number of formats and in hardcopy.
 
-## R Interfaces
+# R Interfaces
 
 There are three ways to interact with R:
 

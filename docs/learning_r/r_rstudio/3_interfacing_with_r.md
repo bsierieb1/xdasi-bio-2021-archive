@@ -11,44 +11,41 @@ nav_order: 3
 ## Table of contents
 {: .no_toc .text-delta }
 
-1. TOC
+- TOC
 {:toc}
 
 ---
 
 Once you have installed R on your computer, you can start an interactive R session either on the **commandline** or using **RGui**, the built-in R graphical user interface (GUI). **RStudio** provides a richer and more powerful interface for R that we will use in this class. Below is a brief introduction to each of these interfaces.
 
----
 
-## Using R on commandline
+# Using R on commandline
 
 Once you have installed R, you may simply start a `terminal` on a MAC or `cmd` on a PC to get a black box with a prompt. Type **R** and you should see something like what is shown below. You can start typing R commands here directly.
 
 Although this is a very cumbersome way of interacting with R, it is useful to familiarize yourself with this environment as you may need it in the future, for example when connecting to HPC (High Performance Computing) systems.
 
-![](images/R_commandline.png){ width=60% }
+![](images/R_commandline.png)
 
----
 
-## The RGui Window System
+
+# The RGui Window System
 
 R comes with a built-in GUI for R called **Rgui**, which can be started by clicking on the app icon on your computer. This is more convenient way to use R because it provides you with a windowing system that comes with buttons and tabs to help you navigate around the R environment.
 
 The image below demonstrates the RGui script editor, which allows you to write R scripts in a separate window and execute them in the console. The first command, `print("Hello world!")` was entered directly on the console, and the second one, `print("Top of the day to you!")` , was executed from the simple script on the right.
 
-![](images/Rgui.png){ width=60% }
+![](images/Rgui.png)
 
----
 
-## RStudio
 
-![](images/RStudioLogo.png){ width =10% }{#rstudio}
+# ![](images/RStudioLogo.png){ width =10% }{#rstudio}
 
 The most convenient way to interact with R is to use [**RStudio**](https://www.rstudio.com/products/rstudio/){:target="_blank"}, an integrated development environment (IDE) that provides a much richer interface for writing and running R code.
 
 RStudio is available in open source and commercial editions and runs on the desktop (Windows, Mac, and Linux) or in a browser connected to RStudio Server or RStudio Workbench (Debian/Ubuntu, Red Hat/CentOS, and SUSE Linux).
 
-### RStudio Features
+## RStudio Features
 
 * A windows- and menu-driven GUI for writing, running, and debugging R scripts
 * An easy way to manage working directories, workspaces, and R Projects
@@ -57,7 +54,7 @@ RStudio is available in open source and commercial editions and runs on the desk
 * Generation of PDF, HTML, and Word documents; slide shows; interactive graphics; dynamic web pages
 * Integration with specialized R packages for graphics and various analytical applications
 
-### RStudio Interface
+## RStudio Interface
 
 RStudio includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging, and workspace management.
 
@@ -82,7 +79,7 @@ RStudio's GUI comprises four windows that display different kinds of information
     - See which packages are installed
     - Display R documentation for command syntax
 
-![](images/RStudio_windows_labeled.png){ width=60% }
+![](images/RStudio_windows_labeled.png)
 
 ---
 
