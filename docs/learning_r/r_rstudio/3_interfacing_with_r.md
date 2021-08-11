@@ -16,7 +16,9 @@ nav_order: 3
 
 ---
 
-Once you have installed R on your computer, you can start an interactive R session either on the **commandline** or using **RGui**, the built-in R graphical user interface (GUI). **RStudio** provides a richer and more powerful interface for R that we will use in this class.
+Once you have installed R on your computer, you can start an interactive R session either on the **commandline** or using **RGui**, the built-in R graphical user interface (GUI). **RStudio** provides a richer and more powerful interface for R that we will use in this class. Below is a brief introduction to each of these interfaces.
+
+---
 
 ## Using R on commandline
 
@@ -24,28 +26,40 @@ Once you have installed R, you may simply start a `terminal` on a MAC or `cmd` o
 
 Although this is a very cumbersome way of interacting with R, it is useful to familiarize yourself with this environment as you may need it in the future, for example when connecting to HPC (High Performance Computing) systems.
 
-![](images/UsingR-Commandline.png){ width=60% }
+![](images/R_commandline.png){ width=60% }
+
+---
 
 ## The RGui Window System
 
-R comes with a built-in GUI for R called **Rgui**. This is more convenient way to use R because it provides you with a windowing system that comes with buttons and tabs to help you navigate around the R environment. The image below demonstrates the RGui script editor, which allows you to write commands on a separate window and execute them in the console.
+R comes with a built-in GUI for R called **Rgui**, which can be started by clicking on the app icon on your computer. This is more convenient way to use R because it provides you with a windowing system that comes with buttons and tabs to help you navigate around the R environment.
 
-![](images/UsingRGUI.png){ width=60% }
+The image below demonstrates the RGui script editor, which allows you to write R scripts in a separate window and execute them in the console. The first command, `print("Hello world!")` was entered directly on the console, and the second one, `print("Top of the day to you!")` , was executed from the simple script on the right.
+
+![](images/Rgui.png){ width=60% }
+
+---
 
 ## RStudio
 
-[**RStudio**](https://www.rstudio.org/) offers many more features and utilities than the base RGui and is the preferred way to interact with R.
+![](images/RStudioLogo.png){ width =10% }{#rstudio}
 
-### RStudio features
+The most convenient way to interact with R is to use [**RStudio**](https://www.rstudio.com/products/rstudio/){:target="_blank"}, an integrated development environment (IDE) that provides a much richer interface for writing and running R code.
+
+RStudio is available in open source and commercial editions and runs on the desktop (Windows, Mac, and Linux) or in a browser connected to RStudio Server or RStudio Workbench (Debian/Ubuntu, Red Hat/CentOS, and SUSE Linux).
+
+### RStudio Features
 
 * A windows- and menu-driven GUI for writing, running, and debugging R scripts
 * An easy way to manage working directories, workspaces, and R Projects
 * An easy way to inspect functions, variables, and data structures in your environment
-* Visualization of graphical output
-* Generation of PDF, HTML, and Word documents; slide shows; and interactive graphics
+* A great toolbox for visualization of graphical output
+* Generation of PDF, HTML, and Word documents; slide shows; interactive graphics; dynamic web pages
 * Integration with specialized R packages for graphics and various analytical applications
 
 ### RStudio Interface
+
+RStudio includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging, and workspace management.
 
 RStudio's GUI comprises four windows that display different kinds of information. By default, windows will appear as follows (this can be customized to suit your working style):
 
@@ -68,7 +82,7 @@ RStudio's GUI comprises four windows that display different kinds of information
     - See which packages are installed
     - Display R documentation for command syntax
 
-![](RStudio/Slide3.png){ width=60% }
+![](images/RStudio_windows_labeled.png){ width=60% }
 
 ---
 

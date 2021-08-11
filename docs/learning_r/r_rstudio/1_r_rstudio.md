@@ -5,7 +5,7 @@ grand_parent: Learning R
 nav_order: 1
 ---
 
-# What is R? {#top}
+# Introduction to R {#top}
 {: .no_toc }
 
 ## Table of contents
@@ -18,17 +18,21 @@ nav_order: 1
 
 ![](images/Rlogo.png){ width=10% }
 
-Where better to start than going straight to the source? The following short *Introduction to R* is excerpted from the [*About R*](https://www.r-project.org/about.html){:target="_blank"} page on the [**R project**](https://www.r-project.org) website. There you may also find extensive documentation (e.g. [manuals](https://cran.r-project.org/manuals.html){:target="_blank"}, [FAQs](https://cran.r-project.org/faqs.html){:target="_blank"}, information about [how to get help in R](https://www.r-project.org/help.html){:target="_blank"}, [books](https://www.r-project.org/doc/bib/R-books.html){:target="_blank"}), and links to a variety of related resources.
+Where better to start than going straight to the source? The following short *Introduction to R* is adapted from the [*About R*](https://www.r-project.org/about.html){:target="_blank"} page on the [**R project**](https://www.r-project.org) website. There you may also find extensive documentation (e.g. [manuals](https://cran.r-project.org/manuals.html){:target="_blank"}, [FAQs](https://cran.r-project.org/faqs.html){:target="_blank"}, information about [how to get help in R](https://www.r-project.org/help.html){:target="_blank"}, [books](https://www.r-project.org/doc/bib/R-books.html){:target="_blank"}), and links to a variety of related resources.
 
-## Introduction to R
+## What is R?
 
-R is a language and environment for statistical computing and graphics. It is a GNU project which is similar to the S language and environment which was developed at Bell Laboratories (formerly AT&T, now Lucent Technologies) by John Chambers and colleagues. R can be considered as a different implementation of S. There are some important differences, but much code written for S runs unaltered under R.
+### A free language and environment for statistical computing and graphics
+
+  R is a GNU project which is similar to the S language and environment which was developed at Bell Laboratories (formerly AT&T, now Lucent Technologies) by John Chambers and colleagues. R can be considered as a different implementation of S. There are some important differences, but much code written for S runs unaltered under R.
+
+  R is available as Free Software under the terms of the Free Software Foundation’s GNU General Public License in source code form. It compiles and runs on a wide variety of UNIX platforms and similar systems (including FreeBSD and Linux), Windows and MacOS.
+
+### A framework for statistical analyses and graphics
 
 R provides a wide variety of statistical (linear and nonlinear modelling, classical statistical tests, time-series analysis, classification, clustering, …) and graphical techniques, and is highly extensible. The S language is often the vehicle of choice for research in statistical methodology, and R provides an Open Source route to participation in that activity.
 
-One of R’s strengths is the ease with which well-designed publication-quality plots can be produced, including mathematical symbols and formulae where needed. Great care has been taken over the defaults for the minor design choices in graphics, but the user retains full control.
-
-R is available as Free Software under the terms of the Free Software Foundation’s GNU General Public License in source code form. It compiles and runs on a wide variety of UNIX platforms and similar systems (including FreeBSD and Linux), Windows and MacOS.
+One of R’s strengths is the ease with which **well-designed publication-quality plots** can be produced, including **mathematical symbols and formulae** where needed. Great care has been taken over the defaults for the minor design choices in graphics, but the user retains full control.
 
 ## The R environment
 
@@ -48,36 +52,15 @@ Many users think of R as a statistics system. We prefer to think of it as an env
 
 R has its own LaTeX-like documentation format, which is used to supply comprehensive documentation, both on-line in a number of formats and in hardcopy.
 
----
+## R Interfaces
 
-## RStudio
+There are three ways to interact with R:
 
-The most convenient way to interact with R is to use [**RStudio**](https://www.rstudio.com/products/rstudio/){:target="_blank"}, an integrated development environment (IDE) that provides a much richer interface for writing and running R code. It includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging and workspace management.
+- **R commandline** - the simplest interface for R
+- **Rgui** - a rudimentary graphical user interface (GUI) distributed with R
+- **RStudio** - An integrated development environment (IDE) for R, the preferred way to use R
 
-In addition, RStudio supports the generation of publication-quality documents in many formats:
-
-- PDF
-- HTML
-- Word
-- Slide presentations
-- Dynamic web pages (enabling interactive data exploration)
-
-RStudio is available in open source and commercial editions and runs on the desktop (Windows, Mac, and Linux) or in a browser connected to RStudio Server or RStudio Workbench (Debian/Ubuntu, Red Hat/CentOS, and SUSE Linux).
-
-![](images/RStudioLogo.png){ width =10% }{#rstudio}
-
-The most convenient way to interact with R is to use [**RStudio**](https://www.rstudio.com/products/rstudio/){:target="_blank"}, an integrated development environment (IDE) that provides a much richer interface for writing and running R code. It includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging and workspace management.
-
-In addition, RStudio supports the generation of publication-quality documents in many formats:
-
-- PDF
-- HTML
-- Word
-- Slide presentations
-- Dynamic web pages (enabling interactive data exploration)
-
-RStudio is available in open source and commercial editions and runs on the desktop (Windows, Mac, and Linux) or in a browser connected to RStudio Server or RStudio Workbench (Debian/Ubuntu, Red Hat/CentOS, and SUSE Linux).
-
+See [**Interfacing with R**](3_interfacing_with_r.md) and [**R Session Management**](4_r_session_management.md) for an overview of these.
 ---
 
 [Back to top](#top)

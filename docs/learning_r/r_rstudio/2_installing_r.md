@@ -16,6 +16,7 @@ The **Comprehensive R Archive Network (CRAN)** maintains and distributes up-to-d
 **RStudio** is the popular IDE we will use in this course to help us manage our R data and code. To install RStudio on your computer, you first need to download and install **R**, and then install RStudio. Make sure you select the open-source **RStudio Desktop** (you don't need the server version).
 
 * [**Download RStudio Desktop**](https://www.rstudio.com/products/rstudio/download/){:target="_blank"}
+  - As of May 19, 2021, the **latest version is RStudio 1.4.1717**.
 
 If you are installing R on a Windows machine, you should also download and install [**Rtools**](https://cloud.r-project.org/bin/windows/Rtools/){:target="_blank"}.
 
