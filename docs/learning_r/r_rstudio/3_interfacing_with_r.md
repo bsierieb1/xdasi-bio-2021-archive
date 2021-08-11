@@ -39,11 +39,12 @@ The image below demonstrates the RGui script editor, which allows you to write R
 
 
 
-# ![](images/RStudioLogo.png){#rstudio}
+# <img src="images/RStudioLogo.png" style="width:200px;"/>
 
 The most convenient way to interact with R is to use [**RStudio**](https://www.rstudio.com/products/rstudio/){:target="_blank"}, an integrated development environment (IDE) that provides a much richer interface for writing and running R code.
 
 RStudio is available in open source and commercial editions and runs on the desktop (Windows, Mac, and Linux) or in a browser connected to RStudio Server or RStudio Workbench (Debian/Ubuntu, Red Hat/CentOS, and SUSE Linux).
+
 
 ## RStudio Features
 
@@ -54,13 +55,17 @@ RStudio is available in open source and commercial editions and runs on the desk
 * Generation of PDF, HTML, and Word documents; slide shows; interactive graphics; dynamic web pages
 * Integration with specialized R packages for graphics and various analytical applications
 
+
 ## RStudio Interface
 
 RStudio includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging, and workspace management.
 
-RStudio's GUI comprises four windows that display different kinds of information. By default, windows will appear as follows (this can be customized to suit your working style):
+RStudio's GUI comprises four windows that display different kinds of information. By default, windows will appear as shown below (this can be customized to suit your working style).
 
-- **Script Editor** _(top left)_
+![](images/RStudio_windows_labeled.png)
+
+
+- **Script Editor**{: .text-green-100} _(top left)_
     - Opens when you select to create a new R script, R Markdown or Notebook, or other kinds of files; all of these can be saved for future use
     - Run scripts or code snippets within other kinds of R documents
     - Provides suggestions for command completion
@@ -78,8 +83,6 @@ RStudio's GUI comprises four windows that display different kinds of information
     - Display plots as they are created
     - See which packages are installed
     - Display R documentation for command syntax
-
-![](images/RStudio_windows_labeled.png)
 
 ---
 

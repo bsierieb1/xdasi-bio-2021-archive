@@ -22,7 +22,6 @@ The **Comprehensive R Archive Network (CRAN)** maintains and distributes up-to-d
 [Download RStudio Desktop](https://www.rstudio.com/products/rstudio/download/){: .btn .btn-green target="_blank"}
 
 - As of May 19, 2021, the **latest version is RStudio 1.4.1717**.
-- If you are installing R on a Windows machine, you should also download and install [**Rtools**](https://cloud.r-project.org/bin/windows/Rtools/){:target="_blank"}.
 
 
 # Troubleshooting
