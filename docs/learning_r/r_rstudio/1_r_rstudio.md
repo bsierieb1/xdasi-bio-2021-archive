@@ -5,7 +5,7 @@ grand_parent: Learning R
 nav_order: 1
 ---
 
-# <img src="images/Rlogo.png" style="width:100px;"/> \ \ \ \ Introduction to R {#top}
+# ![](images/Rlogo.png){: width=100} Introduction to R {#top}
 {: .no_toc }
 
 ## Table of contents
@@ -15,18 +15,19 @@ nav_order: 1
 {:toc}
 
 ---
+<img src="images/Rlogo.png" style="width:100px;"/>
 
 ## What is R?
 
 Where better to start than going straight to the source? The following short *Introduction to R* is adapted from the [*About R*](https://www.r-project.org/about.html){:target="_blank"} page on the [**R project**](https://www.r-project.org) website. There you may also find extensive documentation (e.g. [manuals](https://cran.r-project.org/manuals.html){:target="_blank"}, [FAQs](https://cran.r-project.org/faqs.html){:target="_blank"}, information about [how to get help in R](https://www.r-project.org/help.html){:target="_blank"}, [books](https://www.r-project.org/doc/bib/R-books.html){:target="_blank"}), and links to a variety of related resources.
 
-### A free language and environment for statistical computing and graphics
+**A free language and environment for statistical computing and graphics**
 
   R is a GNU project which is similar to the S language and environment which was developed at Bell Laboratories (formerly AT&T, now Lucent Technologies) by John Chambers and colleagues. R can be considered as a different implementation of S. There are some important differences, but much code written for S runs unaltered under R.
 
   R is available as Free Software under the terms of the Free Software Foundation’s GNU General Public License in source code form. It compiles and runs on a wide variety of UNIX platforms and similar systems (including FreeBSD and Linux), Windows and MacOS.
 
-### A framework for statistical analyses and graphics
+**A framework for statistical analyses and graphics**
 
 R provides a wide variety of statistical (linear and nonlinear modelling, classical statistical tests, time-series analysis, classification, clustering, …) and graphical techniques, and is highly extensible. The S language is often the vehicle of choice for research in statistical methodology, and R provides an Open Source route to participation in that activity.
 
