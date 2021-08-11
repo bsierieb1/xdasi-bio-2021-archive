@@ -1,8 +1,7 @@
 ---
 title: R Resources
-parent: home
-nav_order: 2
-has_children: true
+nav_order: 4
+has_children: false
 ---
 
 # Resources for Learning R
