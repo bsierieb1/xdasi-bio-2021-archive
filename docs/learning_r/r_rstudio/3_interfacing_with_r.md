@@ -39,7 +39,7 @@ The image below demonstrates the RGui script editor, which allows you to write R
 
 
 
-# ![](images/RStudioLogo.png){ width =10% }{#rstudio}
+# ![](images/RStudioLogo.png){#rstudio}
 
 The most convenient way to interact with R is to use [**RStudio**](https://www.rstudio.com/products/rstudio/){:target="_blank"}, an integrated development environment (IDE) that provides a much richer interface for writing and running R code.
 

@@ -5,14 +5,9 @@ grand_parent: Learning R
 nav_order: 1
 ---
 
-# Introduction to R ![](images/Rlogo.png){: width=10} {#top}
-{: .no_toc }
-# Introduction to R ![](images/Rlogo.png){: width=20px} {#top}
-{: .no_toc }
-# Introduction to R <img src="images/Rlogo.png" style="width:100px;"/> {#top}
+# Introduction to <img src="images/Rlogo.png" style="width:50px;"/> {#top}
 {: .no_toc }
 
-[comment]: # (<img src="images/Rlogo.png" style="width:100px;"/>)
 
 ## Table of contents
 {: .no_toc .text-delta }
