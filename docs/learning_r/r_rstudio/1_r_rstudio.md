@@ -5,7 +5,10 @@ grand_parent: Learning R
 nav_order: 1
 ---
 
-# ![](images/Rlogo.png){width=5%} Introduction to R {#top}
+# ![](images/Rlogo.png | width=100) Introduction to R {#top}
+
+<img src="images/Rlogo.png" style="width:100px;"/>
+
 {: .no_toc }
 
 ## Table of contents
@@ -58,7 +61,8 @@ There are three ways to interact with R:
 - **Rgui** - a rudimentary graphical user interface (GUI) distributed with R
 - **RStudio** - An integrated development environment (IDE) for R, the preferred way to use R
 
-See [**Interfacing with R**](3_interfacing_with_r.md) and [**R Session Management**](4_r_session_management.md) for an overview of these.
+[**Interfacing with R**](3_interfacing_with_r.md) and [**R Session Management**](4_r_session_management.md) provide a short overview.
+
 ---
 
 [Back to top](#top)
