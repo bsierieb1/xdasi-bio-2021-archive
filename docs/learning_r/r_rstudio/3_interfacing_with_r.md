@@ -39,9 +39,9 @@ The image below demonstrates the RGui script editor, which allows you to write R
 
 
 
-# <img src="images/RStudioLogo.png" style="width:200px;"/>
+# RStudio
 
-The most convenient way to interact with R is to use [**RStudio**](https://www.rstudio.com/products/rstudio/){:target="_blank"}, an integrated development environment (IDE) that provides a much richer interface for writing and running R code.
+The most convenient way to interact with R is to use <a href="https://www.rstudio.com/products/rstudio/""><img src="images/RStudioLogo.png" style="width:100px;" target="_blank"/>, an integrated development environment (IDE) that provides a much richer interface for writing and running R code.
 
 RStudio is available in open source and commercial editions and runs on the desktop (Windows, Mac, and Linux) or in a browser connected to RStudio Server or RStudio Workbench (Debian/Ubuntu, Red Hat/CentOS, and SUSE Linux).
 
