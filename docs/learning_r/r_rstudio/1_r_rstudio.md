@@ -5,7 +5,7 @@ grand_parent: Learning R
 nav_order: 1
 ---
 
-# ![](images/Rlogo.png | width=100px) Introduction to R {#top}
+# <div><img src="images/Rlogo.png" style="width:100px;"/>Introduction to R</div> {#top}
 {: .no_toc }
 
 ## Table of contents
