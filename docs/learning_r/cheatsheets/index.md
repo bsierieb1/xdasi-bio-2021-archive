@@ -1,5 +1,9 @@
 ---
 title: Cheat Sheets
+layout: default
+parent: Learning R
+nav_order: 3
+has_children: false
 ---
 
 # Quick guides for R commands and syntax!
