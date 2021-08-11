@@ -2,7 +2,7 @@
 title: Home
 layout: default
 nav_order: 1
-has_children: true
+has_children: false
 ---
 
 # XDASI: Exploratory Data Analysis and Statistical Inference
