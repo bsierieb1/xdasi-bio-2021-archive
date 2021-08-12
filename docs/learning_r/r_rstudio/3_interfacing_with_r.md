@@ -21,7 +21,7 @@ Once you have installed R on your computer, you can start an interactive R sessi
 
 # Using R on commandline
 
-Once you have installed R, you may start a `terminal` on a MAC or `cmd` on a PC to get a commandline window with a prompt. Type **R** and you should see something like what is shown below. You can start typing R commands here directly after the R the prompt, `>`(below the command `print("Hello world!")` has already been executed).
+Once you have installed R, you may start a `terminal` on a MAC or `cmd` on a PC to get a commandline window with a prompt. Type **R** and you should see something like what is shown below. You can start typing R commands here directly after the R the prompt, `>`. After you type a command and its arguments, simply press the Return key. Separate commands using ; or newline (enter).
 
 ![](images/R_commandline.png)
 

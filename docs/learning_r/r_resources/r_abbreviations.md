@@ -1,14 +1,17 @@
 ---
-title: 250+ Abbreviations of R commands explained
+title: R Command Abbreviations
 layout: default
-parent: Learning R
-nav_order: 3
+parent: R Resources
+grand_parent: Learning R
+nav_order: 1
 has_children: false
 ---
 
+# 250+ Abbreviations of R commands explained
+
 There are a lot of commands and command arguments in R, and some of the names
-can seem cryptic and hard to remember. Fortunately, someone has compiled [a large
- list of R commands](http://jeromyanglim.blogspot.com/2010/05/abbreviations-of-r-commands-explained.html),
+can seem cryptic and hard to remember. Fortunately, someone has compiled [**a large
+ list of R commands**](http://jeromyanglim.blogspot.com/2010/05/abbreviations-of-r-commands-explained.html),
  along with an explanation of the abbreviations that they stand for, which is reproduced below.
 
 ***If you find yourself wondering what different command stand for, look here!***
