@@ -1,7 +1,8 @@
 ---
 title: "Reproducible Science"
-nav_order: 5
-has_children: true
+parent: "Useful Resources"
+nav_order: 2
+has_children: false
 ---
 
 # Reproducible Science: What, Why, and How
@@ -18,9 +19,7 @@ has_children: true
 
 # What is Reproducible Science?
 
-The following short horror film encapsulates the motivation behind the recent trend toward the inclusion of reproducible workflows in scientific puclishing:
-
-![**A Non-reproducible Workflow**](https://www.youtube.com/watch?v=s3JldKoA0zw){: target="blank"}
+The following short horror film encapsulates the motivation behind the recent trend toward the inclusion of reproducible workflows in scientific publishing:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/s3JldKoA0zw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
