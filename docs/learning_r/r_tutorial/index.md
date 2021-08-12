@@ -1,9 +1,11 @@
 ---
 title: R Tutorial
+layout: default
 parent: Learning R
 nav_order: 2
-has_children: true
+has_children: false
 ---
+
 
 # Learning R Syntax
 {: .no_toc }
@@ -93,10 +95,10 @@ There are many other R tutorials and reference materials online. Here are a few 
 * [**Introduction to R**](Intro_to_R_Aho.pdf)  _Electronic supplement to Aho textbook_
 
 
+### NEXT
 
-
-
-
+-   [R data types](r_data_types.md)
+-   [R data structures](r_data_structures.md)
 
 -   [Executing R commands](executing_r.md)
 -   [R Session Management](r_session_management.md)
