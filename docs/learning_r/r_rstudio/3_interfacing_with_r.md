@@ -40,7 +40,7 @@ The image below demonstrates the RGui script editor, which allows you to write R
 
 # RStudio
 
-The most convenient way to interact with R is to use <a href="https://www.rstudio.com/products/rstudio/"><img src="images/RStudioLogo.png" style="width:100px;" target="_blank"/>, an integrated development environment (IDE) that provides a much richer interface for writing and running R code.
+<a href="https://www.rstudio.com/products/rstudio/"><img src="images/RStudioLogo.png" style="width:100px;" target="_blank"/></a> is an integrated development environment (IDE) that is the most convenient way to interact with R because it provides a much richer interface for writing and running R code.
 
 RStudio is available in open source and commercial editions and runs on the desktop (Windows, Mac, and Linux) or in a browser connected to RStudio Server or RStudio Workbench (Debian/Ubuntu, Red Hat/CentOS, and SUSE Linux).
 
@@ -59,14 +59,16 @@ RStudio is available in open source and commercial editions and runs on the desk
 
 RStudio includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging, and workspace management.
 
-RStudio's GUI comprises four windows that display different kinds of information. By default, windows will appear as shown below (this can be customized to suit your working style).
+The **top-level menus** (File, Edit, Code, etc.) provide a lot of options for managing all the different features of RStudio, including very convenient **keyboard shortcuts** (go to Tools => Keyboard Shortcuts Help).
+
+The **graphical user interface** comprises four windows that display different kinds of information:
 
 ![](images/RStudio_windows_labeled.png)
 
 
 - **Script Editor**{: .text-green-200} _(top left)_
-    - Opens when you select to create a new R script, R Markdown or Notebook, or other kinds of files; all of these can be saved for future use
-    - Run scripts or code snippets within other kinds of R documents
+    - This window will open when you create a new R script, R Markdown, or other kinds of files (all of these can be saved for future use)
+    - Run scripts or code snippets within R documents
     - Provides suggestions for command completion
     - Provides menus for formatting code and other actions
 - **Console**{: .text-green-200} _(bottom left)_
@@ -77,6 +79,7 @@ RStudio's GUI comprises four windows that display different kinds of information
 - **History and Environment**{: .text-green-200} _(top right)_
     - Shows all variables in the working environment
     - Shows all previous commands that you have executed, either from the console or within a script (even incorrect commands containing errors are included here, so be careful!)
+    - Provides integration for version control (git, svn) -- connecting RStudio to a GitHub repository is a great way to back up and share your work!
 - **Files, Plots, Packages, and Help**{: .text-green-200} _(bottom right)_
     - Easily peruse and navigate directories and files
     - Display plots as they are created

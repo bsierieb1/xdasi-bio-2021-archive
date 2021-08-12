@@ -1,6 +1,7 @@
 ---
-title: "Additional Resources"
-nav_order: 5
+title: Additional Resources
+parent: Useful Resources
+nav_order: 2
 has_children: true
 ---
 
