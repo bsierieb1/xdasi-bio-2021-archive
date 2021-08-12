@@ -1,6 +1,8 @@
 ---
 title: R Resources
-nav_order: 4
+layout: default
+parent: Learning R
+nav_order: 3
 has_children: false
 ---
 

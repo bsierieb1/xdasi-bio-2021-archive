@@ -2,7 +2,7 @@
 title: Cheat Sheets
 layout: default
 parent: Learning R
-nav_order: 3
+nav_order: 4
 has_children: false
 ---
 

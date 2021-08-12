@@ -3,12 +3,21 @@ title: R Tutorial
 parent: Learning R
 nav_order: 2
 has_children: true
-has_toc: false
 ---
 
 # Learning R Syntax
+{: .no_toc }
 
-### The Basics
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
+
+---
+
+# The Basics
 
 The tutorials below provide an introduction to the basic building blocks for programming in R. Each contains links to YouTube videos that walk you through different topics. Ideally you should watch the video first and then read and repeat the code at your own pace.
 
@@ -17,6 +26,7 @@ The tutorials below provide an introduction to the basic building blocks for pro
 
 * [**R Data  Structures**](RDataStructures.md)
     + The basic building blocks of working with data.
+
 
 ### Manny Katari's video tutorials
 
@@ -27,7 +37,7 @@ If you would rather watch all videos back to back first, feel free to watch the 
 * [**Writing Functions in R Videos**](https://www.youtube.com/playlist?list=PLv9k4CPCZjhy2xwsuZh-ZpVDjH4iWU6Nh)
 
 
-### Interactive Tutorials
+# Interactive Tutorials
 
 * [**DataCamp**](https://datacamp.com)
     + We have set up a DataCamp custom course for you that will be freely accessible throughout the semester. The modules we have selected cover R data structures, operations, functions, data manipulation, programming concepts, and visualization. You will work through these during the first few weeks of the semester.
@@ -36,7 +46,7 @@ If you would rather watch all videos back to back first, feel free to watch the 
     + You may also wish to work your way through the **swirl** tutorial that comes with RStudio. Similar to the DataCamp series, it provides interactive feedback and covers the basic commands and data structures that we will use throughout the course. Since it runs through your R console instead of a browser, you can work through this anytime on your own without needing to be online. To use it, follow the simple instructions at the link above.
 
 
-### Useful R Functions
+# Useful R Functions
 
 * [**Syntax Equivalents: Base R vs. Tidyverse**](base-r_tidyverse_equivalents.html)
   + A comparison of basic syntax for working with data frames, by Hugo Tavares.
@@ -53,8 +63,8 @@ If you would rather watch all videos back to back first, feel free to watch the 
 ### Cheat Sheets and Quick Reference
 
 * [**RStudio Cheat Sheets**](https://www.rstudio.com/resources/cheatsheets/)  _includes dplyr, ggplot2, R Markdown, and many others_
-  * [**RStudio IDE Cheat Sheet**](rstudio-ide.pdf)
-  * [**R Markdown Cheatsheets**](http://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf)
+* [**RStudio IDE Cheat Sheet**](rstudio-ide.pdf)
+* [**R Markdown Cheatsheets**](http://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf)
 
 You can also find these cheatsheets and other help topics in R studio under **"Help=>Cheatsheets"**.
 
