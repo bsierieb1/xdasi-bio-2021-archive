@@ -59,7 +59,7 @@ There are three ways to interact with R:
 - **Rgui** - a rudimentary graphical user interface (GUI) distributed with R
 - **RStudio** - An integrated development environment (IDE) for R, the preferred way to use R
 
-[**Interfacing with R**](3_interfacing_with_r.md) and [**R Session Management**](4_r_session_management.md) provide a short overview.
+See [**Interfacing with R**](3_interfacing_with_r.md) and [**R Session Management**](4_r_session_management.md) for more info on these.
 
 ---
 
