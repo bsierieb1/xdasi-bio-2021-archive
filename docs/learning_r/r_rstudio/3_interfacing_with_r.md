@@ -59,11 +59,13 @@ RStudio is available in open source and commercial editions and runs on the desk
 
 RStudio includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging, and workspace management.
 
-The **top-level menus** (File, Edit, Code, etc.) provide a lot of options for managing all the different features of RStudio, including very convenient **keyboard shortcuts** (go to Tools => Keyboard Shortcuts Help).
++ The **top-level menus** (File, Edit, Code, etc.) provide a lot of options for managing all the different features of RStudio, including very convenient **keyboard shortcuts** (go to Tools => Keyboard Shortcuts Help).
 
-The **graphical user interface** comprises four windows that display different kinds of information:
++ The RStudio 1.4 workbench introduces a new [**Command Palette**](https://blog.rstudio.com/2020/10/14/rstudio-v1-4-preview-command-palette/) feature, which gives instant, searchable access to all available commands in RStudio (Tools => Show Command Palette).
 
-![](images/RStudio_windows_labeled.png)
++ The **graphical user interface (GUI)** comprises four windows that display different kinds of information:
+
+![RStudio GUI](images/RStudio_windows_labeled.png)
 
 
 - **Script Editor**{: .text-green-200} _(top left)_
@@ -71,15 +73,18 @@ The **graphical user interface** comprises four windows that display different k
     - Run scripts or code snippets within R documents
     - Provides suggestions for command completion
     - Provides menus for formatting code and other actions
+
 - **Console**{: .text-green-200} _(bottom left)_
     - Displays all R commands executed within scripts and code snippets in the Editor
     - Provides direct access to the commandline - particularly useful for testing out commands and inspecting data structures
     - Get help with R command syntax
     - Access built-in tutorials
+
 - **History and Environment**{: .text-green-200} _(top right)_
     - Shows all variables in the working environment
     - Shows all previous commands that you have executed, either from the console or within a script (even incorrect commands containing errors are included here, so be careful!)
     - Provides integration for version control (git, svn) -- connecting RStudio to a GitHub repository is a great way to back up and share your work!
+
 - **Files, Plots, Packages, and Help**{: .text-green-200} _(bottom right)_
     - Easily peruse and navigate directories and files
     - Display plots as they are created
