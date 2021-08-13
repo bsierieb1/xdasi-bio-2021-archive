@@ -78,25 +78,25 @@ RStudio includes a console, syntax-highlighting editor that supports direct code
 
 [**Console** _(bottom left)_](https://support.rstudio.com/hc/en-us/articles/200404846-Working-in-the-Console){: .btn .btn-green target="_blank"}
 
-    - Displays all R commands executed within scripts and code snippets in the Editor
-    - Provides direct access to the commandline - particularly useful for testing out commands and inspecting data structures
-    - Get help with R command syntax
-    - Access built-in tutorials
+  - Displays all R commands executed within scripts and code snippets in the Editor
+  - Provides direct access to the commandline - particularly useful for testing out commands and inspecting data structures
+  - Get help with R command syntax
+  - Access built-in tutorials
 
+  [**Console** _(top right)_](https://support.rstudio.com/hc/en-us/articles/200404846-Working-in-the-Console){: .btn .btn-green target="_blank"}
 
-
-- **History and Environment**{: .text-green-200} _(top right)_
-    - Shows all variables in the working environment
-    - Shows all previous commands that you have executed, either from the console or within a script (even incorrect commands containing errors are included here, so be careful!)
-    - Provides integration for version control (git, svn) -- connecting RStudio to a GitHub repository is a great way to back up and share your work!
+  - Shows all variables in the working environment
+  - Shows all previous commands that you have executed, either from the console or within a script (even incorrect commands containing errors are included here, so be careful!)
+  - Provides integration for version control (git, svn) -- connecting RStudio to a GitHub repository is a great way to back up and share your work!
 
     https://support.rstudio.com/hc/en-us/articles/200526217-Command-History-in-the-RStudio-IDE
 
-- **Files, Plots, Packages, and Help**{: .text-green-200} _(bottom right)_
-    - Easily peruse and navigate directories and files
-    - Display plots as they are created
-    - See which packages are installed
-    - Display R documentation for command syntax
+[**Files, Plots, Packages, and Help** _(bottom left)_](){: .btn .btn-green }
+
+  - Easily peruse and navigate directories and files
+  - Display plots as they are created
+  - See which packages are installed
+  - Display R documentation for command syntax
 
 ---
 
