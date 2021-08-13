@@ -21,7 +21,12 @@ Once you have installed R on your computer, you can start an interactive R sessi
 
 # Using R on commandline
 
-Once you have installed R, you may start a `terminal` on a MAC or `cmd` on a PC to get a commandline window with a prompt. Type **R** and you should see something like what is shown below. You can start typing R commands here directly after the R the prompt, `>`. After you type a command and its arguments, simply press the Return key. Separate commands using ; or newline (enter).
+Once you have installed R, you may start a `terminal` on a MAC or `cmd` on a PC to get a commandline window with a prompt. Type **R** and you should see something like what is shown below.
+
+- You can start typing R commands here directly after the R the prompt, `>`.
+- After you type a command and its arguments, simply press the Return/Enter key.
+- You may also enter multiple commands on the same line by separating them with a colon (`;`).
+- If you don't complete a command, you will see a `+` symbol displayed on the next line, indicating that R is waiting for you to complete the command you started.
 
 ![](images/R_commandline.png)
 
@@ -83,13 +88,12 @@ RStudio includes a console, syntax-highlighting editor that supports direct code
   - Get help with R command syntax
   - Access built-in tutorials
 
-  [**Console** _(top right)_](https://support.rstudio.com/hc/en-us/articles/200404846-Working-in-the-Console){: .btn .btn-green target="_blank"}
+[**History and Environment** _(top right)_](https://support.rstudio.com/hc/en-us/articles/200526217-Command-History-in-the-RStudio-IDE){: .btn .btn-green target="_blank"}
 
   - Shows all variables in the working environment
   - Shows all previous commands that you have executed, either from the console or within a script (even incorrect commands containing errors are included here, so be careful!)
   - Provides integration for version control (git, svn) -- connecting RStudio to a GitHub repository is a great way to back up and share your work!
 
-    https://support.rstudio.com/hc/en-us/articles/200526217-Command-History-in-the-RStudio-IDE
 
 [**Files, Plots, Packages, and Help** _(bottom left)_](){: .btn .btn-green }
 
