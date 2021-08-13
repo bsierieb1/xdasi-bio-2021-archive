@@ -36,23 +36,47 @@ All of the **R data objects** you create in your current session will be stored 
 
 [Command History](https://support.rstudio.com/hc/en-us/articles/200526217-Command-History-in-the-RStudio-IDE){: .btn .btn-green target="blank"}
 
-This file keeps a record of all the commands you have executed in the current R session.
+R keeps a record of all the commands you have executed in the current R session. Your command history can be accessed from the Console by using the **up**{: .text-green-200} and **down**{: .text-green-200} keys, or you can select to re-run previous commands from the History window in the GUI.
+
+Your commandline history is also saved as an **.Rhistory**{: .text-green-200} file in your working directory. You may want to save your successful commands in a separate file (or script) because your history will also contain your mistakes!
+
 
 [R Projects](https://support.rstudio.com/hc/en-us/articles/200526207){: .btn .btn-green target="blank"}
 
-R Projects are an RStudio convenience that enables you to easily manage workspaces and associated files for any R project.
+**R Projects** are an RStudio convenience that enables you to easily manage working directories, workspaces, and associated files for any R project.
+
+Projects provide a super easy way to collect all of your files and data associated with a particular project in one place. You can use the Projects menu in the top right-hand corner of RStudio to create, save, and select R Projects.
+
+Whenever a Project is opened, the working directory is automatically set to the location of the project folder, the workspace is loaded, and any scripts or data files are available. You should see all of these in the Files menu, along with the **.Rproj** file. If you click on the .Rproj icon in the Files menu, a new window will pop up that displays all the configuration options for the project.
 
 **It is highly recommended to use R Projects for all of your work.**{: .text-green-200}
 
+---
 
-# Workspaces
+# R Editor and Scripts
+
+RStudio's [**Script Editor**](https://support.rstudio.com/hc/en-us/articles/200484448){:target="_blank"} allows you to write a series of executable commands that can be saved for future use.
+
+To **create a new script**, select "New File" from the File menu. You will see many options for creating different types of files. Most commonly we will use the following two types of files:
+
+- Simple **R scripts** - these contain code and comments and are saved with the file extension **.R**. Any R script can also be executed from the commandline using the `source()` function. This essentially executes the commands in the R script line by line.
+- **R Markdown** and **R Notebook** files enable you to intersperse text and code for rendering as HTML, PDF, or other types of documents. These provide a great way to document your work and prepare publication-ready materials. You will become very familiar with these by the end of the course!
+
+Once you have written some lines of code, you may run them one at a time, in chunks, or all at once using the "Run" button. You may also execute code using keyboard shortcuts (listed in the "Run" menu).
+
+*Note: It is not recommended to copy and paste from applications such as MS Word or even PDFs, since these can insert funny characters upon pasting the code into the console or the editor.*
+
+When you are done with a script, simply save and close it. RStudio will ask you if you want your files to be saved if you try to close them, to quit a Project, or to close RStudio without saving your work first. 
+
+---
+
+# More on Workspaces
 
 The workspace contains the different **R objects**{: .text-green-200} and **functions**{: .text-green-200} from your current R session only (not the code; the commandline history and any code in your R scripts or R markdown files are saved separately).
 
 Workspaces can be **saved**{: .text-green-200} to preserve this data and a saved workspace file can be **loaded**{: .text-green-200} to start using the previously created objects in them again.
 
 At the end of each session, or when you change RProjects, you will be asked whether you want to save your current workspace. If you're just playing around, you won't need to save the temporary data objects you've created. Otherwise it's generally useful to save the state of the data structures you have created for a particular workflow.
-
 
 ## Default Workspace
 
@@ -89,32 +113,10 @@ The key commands for managing workspaces are:
 
 ## Workspace Hygiene
 
-It is good practice to save workspaces for different projects, along with associated scripts and data files, in different directories (folders). You can navigate and manage directories using either the commandline or RStudio drop-down menus (see below).
+It is good practice to save workspaces for different projects, along with associated scripts and data files, in different directories (folders). You can navigate and manage directories using either the commandline or RStudio drop-down menus.
 
 **If you are working in an Rproject, the workspace associated with that project will be loaded automatically each time you open the project.**{: .text-green-200}
 
+---
 
-# R History
-
-A history of your commands is saved and it can be accessed from the Console by using the **up**{: .text-green-200} and **down**{: .text-green-200} keys. 
-
-Your command history is also saved as an **.Rhistory**{: .text-green-200} file in your working directory. It is a good idea to save your successful commands in a separate file (or script) because your history will also contain your mistakes!
-
-
-# R Editor and Scripts
-
-Most of the time we will be creating a script that has a series of commands that can be executed. RStudio comes with an R script editor. Open editor by selecting "New Script" from the File Menu. Similar to Notepad, it will allow you to type and save code as text.
-
-Once you have a list of commands that you want to execute, you save it with a .R extension. Any R script can be sourced in using the source() function. This essentially executes the commands in the R script line by line.
-
-R Markdown and R Notebook files enable you to intersperse text and code for rendering as HTML or PDF. These provide a great way to document your work and prepare publication-ready materials. We will be using this R Markdowns to submit your homeworks.
-
-*Note: It is not recommended to copy and paste from applications such as MS Word or even PDFs, since these can insert funny characters upon pasting the code into the console or the editor.*
-
-# R Projects
-
-RStudio simplifies management of workspaces and working directories using **Projects**. Projects provide a super easy way to collect all of your files and data associated with a particular project in one place. You can use the Projects menu in the top right-hand corner of RStudio to create, save, and select R Projects.
-
-Whenever a Project is opened, the working directory is automatically set to the location of the project folder, the workspace is loaded, and any scripts or data files are available. You should see all of these in the Files menu, along with the **.Rproj** file. If you click on the .Rproj icon in the Files menu, a new window will pop up that displays all the configuration options for the project.
-
-**It is good practice to keep workspaces for different projects saved in different directories (folders)**. You can navigate and manage directories using either the commandline or RStudio drop-down menus (see below).
+[Back to top](#top)
