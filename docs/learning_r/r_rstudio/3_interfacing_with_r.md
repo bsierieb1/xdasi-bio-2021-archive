@@ -64,11 +64,11 @@ RStudio is available in open source and commercial editions and runs on the desk
 
 RStudio includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging, and workspace management.
 
-+ The **top-level menus** (File, Edit, Code, etc.) provide a lot of options for managing all the different features of RStudio, including very convenient **keyboard shortcuts** (go to Tools => Keyboard Shortcuts Help). A list of keyboard shortcuts is also available online [**here**](https://support.rstudio.com/hc/en-us/articles/200711853-Keyboard-Shortcuts-in-the-RStudio-IDE).
++ The **top-level menus**{: .text-green-200} (File, Edit, Code, etc.) provide a lot of options for managing all the different features of RStudio, including very convenient **keyboard shortcuts**{: .text-green-200} (go to Tools => Keyboard Shortcuts Help). A list of keyboard shortcuts is also available online [**here**](https://support.rstudio.com/hc/en-us/articles/200711853-Keyboard-Shortcuts-in-the-RStudio-IDE){: .text-green-200}.
 
-+ The RStudio 1.4 workbench introduces a new [**Command Palette**](https://blog.rstudio.com/2020/10/14/rstudio-v1-4-preview-command-palette/) feature, which gives instant, searchable access to all available commands in RStudio (Tools => Show Command Palette).
++ **Command Palette**{: .text-green-200}: The RStudio 1.4 workbench introduces a new [**Command Palette**](https://blog.rstudio.com/2020/10/14/rstudio-v1-4-preview-command-palette/) feature, which gives instant, searchable access to all available commands in RStudio (Tools => Show Command Palette).
 
-+ The **graphical user interface (GUI)** comprises four windows that display different kinds of information:
++ The **graphical user interface (GUI)**{: .text-green-200} comprises four windows that display different kinds of information:
 
 ![RStudio GUI](images/RStudio_windows_labeled.png)
 
@@ -79,6 +79,7 @@ RStudio includes a console, syntax-highlighting editor that supports direct code
   - Provides suggestions for command completion
   - Provides menus for formatting code and other actions
   - Provides many utilities for [**navigating code**](https://support.rstudio.com/hc/en-us/articles/200710523-Navigating-Code){: target="blank"}
+  - Provides tools for [**debugging**](https://support.rstudio.com/hc/en-us/articles/205612627-Debugging-with-the-RStudio-IDE){: target="blank"}
 
 
 [**Console** _(bottom left)_](https://support.rstudio.com/hc/en-us/articles/200404846-Working-in-the-Console){: .btn .btn-green target="_blank"}
