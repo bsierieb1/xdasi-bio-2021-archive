@@ -20,7 +20,7 @@ nav_order: 4
 
 There are **four components** you need to keep in mind in order to work effectively in R/RStudio:
 
-[Working Directory](https://support.rstudio.com/hc/en-us/articles/200711843-Working-Directories-and-Workspaces){: .btn .btn-green }
+[Working Directory](https://support.rstudio.com/hc/en-us/articles/200711843-Working-Directories-and-Workspaces){: .btn .btn-green target="blank"}
 
 Whenever you are working on a project, your code (scripts and markdown files), workspace (data structures), commandline history, and data files are located somewhere on your filesystem.
 
@@ -29,16 +29,16 @@ Whenever you are working on a project, your code (scripts and markdown files), w
 For example, it's a good idea to create a parent folder called something like "R_homework", and then create a separate folder for each week's assignment. Fortunately, RStudio can help you organize your work using **RProjects**. More on this below.
 
 
-[Workspace](https://support.rstudio.com/hc/en-us/articles/200711843-Working-Directories-and-Workspaces){: .btn .btn-green }
+[Workspace](https://support.rstudio.com/hc/en-us/articles/200711843-Working-Directories-and-Workspaces){: .btn .btn-green target="blank"}
 
 All of the **R data objects** you create in your current session will be stored in a **file with the extension .Rdata** that can be reloaded next time you want to work on the same project. This will include anything like variables, vectors, data frames, etc.
 
 
-[Command History](https://support.rstudio.com/hc/en-us/articles/200526217-Command-History-in-the-RStudio-IDE){: .btn .btn-green }
+[Command History](https://support.rstudio.com/hc/en-us/articles/200526217-Command-History-in-the-RStudio-IDE){: .btn .btn-green target="blank"}
 
 This file keeps a record of all the commands you have executed in the current R session.
 
-[R Projects](https://support.rstudio.com/hc/en-us/articles/200526207){: .btn .btn-green }
+[R Projects](https://support.rstudio.com/hc/en-us/articles/200526207){: .btn .btn-green target="blank"}
 
 R Projects are an RStudio convenience that enables you to easily manage workspaces and associated files for any R project.
 
