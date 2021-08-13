@@ -67,23 +67,30 @@ RStudio includes a console, syntax-highlighting editor that supports direct code
 
 ![RStudio GUI](images/RStudio_windows_labeled.png)
 
+[**Script Editor** _(top left)_](https://support.rstudio.com/hc/en-us/articles/200484448){: .btn .btn-green target="_blank"}
 
-- **Script Editor**{: .text-green-200} _(top left)_
-    - This window will open when you create a new R script, R Markdown, or other kinds of files (all of these can be saved for future use)
-    - Run scripts or code snippets within R documents
-    - Provides suggestions for command completion
-    - Provides menus for formatting code and other actions
+  - This window will open when you create a new R script, R Markdown, or other kinds of files (all of these can be saved for future use)
+  - Run scripts or code snippets within R documents
+  - Provides suggestions for command completion
+  - Provides menus for formatting code and other actions
+  - Provides many utilities for [**navigating code**](https://support.rstudio.com/hc/en-us/articles/200710523-Navigating-Code){: target="blank"}
 
-- **Console**{: .text-green-200} _(bottom left)_
+
+[**Console** _(bottom left)_](https://support.rstudio.com/hc/en-us/articles/200404846-Working-in-the-Console){: .btn .btn-green target="_blank"}
+
     - Displays all R commands executed within scripts and code snippets in the Editor
     - Provides direct access to the commandline - particularly useful for testing out commands and inspecting data structures
     - Get help with R command syntax
     - Access built-in tutorials
 
+
+
 - **History and Environment**{: .text-green-200} _(top right)_
     - Shows all variables in the working environment
     - Shows all previous commands that you have executed, either from the console or within a script (even incorrect commands containing errors are included here, so be careful!)
     - Provides integration for version control (git, svn) -- connecting RStudio to a GitHub repository is a great way to back up and share your work!
+
+    https://support.rstudio.com/hc/en-us/articles/200526217-Command-History-in-the-RStudio-IDE
 
 - **Files, Plots, Packages, and Help**{: .text-green-200} _(bottom right)_
     - Easily peruse and navigate directories and files
