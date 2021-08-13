@@ -47,29 +47,29 @@ R Projects are an RStudio convenience that enables you to easily manage workspac
 
 # Workspaces
 
-The workspace contains the different **R objects** and **functions** from your current R session only (not the code; the commandline history and any code in your R scripts or R markdown files are saved separately).
+The workspace contains the different **R objects**{: .text-green-200} and **functions**{: .text-green-200} from your current R session only (not the code; the commandline history and any code in your R scripts or R markdown files are saved separately).
 
-Workspaces can be **saved** to preserve this data and a saved workspace file can be **loaded** to start using the previously created objects in them again.
+Workspaces can be **saved**{: .text-green-200} to preserve this data and a saved workspace file can be **loaded**{: .text-green-200} to start using the previously created objects in them again.
 
 At the end of each session, or when you change RProjects, you will be asked whether you want to save your current workspace. If you're just playing around, you won't need to save the temporary data objects you've created. Otherwise it's generally useful to save the state of the data structures you have created for a particular workflow.
 
 
 ## Default Workspace
 
-The **default workspace**{: .text-green-200} is saved as **.Rdata**. This file will be automatically created when you fire up RStudio and you have not loaded a named workspace.
+The **default workspace**{: .text-green-200} is saved as **.Rdata**{: .text-green-200}. This file will be automatically created when you fire up RStudio and you have not loaded a named workspace.
 
 
 ## Named Workspace
 
-A **named workspace**{: .text-green-200} will have a filename of the form **myproject.Rdata**.
+A **named workspace**{: .text-green-200} will have a filename of the form **myproject.Rdata**{: .text-green-200}.
 
-Instead of saving your current workspace with the default name .Rdata, you may save a workspace for a particular project you are working on as a named .RData file that you can load later (e.g. "myproject.Rdata").
+Instead of saving your current workspace with the default name .Rdata, you may save a workspace for a particular project you are working on as a named .RData file that you can load later.
 
-If you are working in an **Rproject**, this file will be loaded automatically when you open the project.
+**If you are working in an RProject, a named .Rdata file will be created automatically when you set up the RProject and will be loaded each time you open the project.**{: .text-green-200}
 
 ## Saving and Loading Workspaces
 
-You may save and load workspaces manually, however if you are using an **RProject** (see below) all of this will be handled magically for you.
+You may save and load workspaces manually, however if you are using an **RProject**{: .text-green-200} (see below) all of this will be handled magically for you.
 
 To manually load a previously saved .RData file, set your **current working directory** to the one where .RData is located, and then use the **load()** command or use the RStudio menus to load it. You can do this using the Session menu or by clicking on the filename in the Files pane.
 
@@ -77,33 +77,33 @@ To manually load a previously saved .RData file, set your **current working dire
 
 The key commands for managing workspaces are:
 
-**getwd()** - returns an absolute filepath representing the current working directory of the R process
+**getwd()**{: .text-green-200} - returns an absolute filepath representing the current working directory of the R process
 
-**setwd(dir)** - set the working directory to dir
+**setwd("path_to_dir")**{: .text-green-200} - set the working directory to dir
 
-**load()** - load an existing (default or named) workspace
+**load("myproject.Rdata")**{: .text-green-200} - load an existing (default or named) workspace
 
-**save.image()** - save your current workspace
+**save.image()**{: .text-green-200} - save your current workspace
 
-**ls()** - list the R data objects that belong to your current workspace
+**ls()**{: .text-green-200} - list the R data objects that belong to your current workspace
 
 ## Workspace Hygiene
 
 It is good practice to save workspaces for different projects, along with associated scripts and data files, in different directories (folders). You can navigate and manage directories using either the commandline or RStudio drop-down menus (see below).
 
-**If you are working in an Rproject, the workspace associated with that project will be loaded automatically when you open the project.**
+**If you are working in an Rproject, the workspace associated with that project will be loaded automatically each time you open the project.**{: .text-green-200}
 
 
 # R History
 
-A history of your commands is saved and it can be accessed by using the up and down keys. Your history is also saved as .Rhistory in your working directory. It is a good idea to save your successful commands in a separate file (or script) because your history will also contain your mistakes!
+A history of your commands is saved and it can be accessed from the Console by using the **up**{: .text-green-200} and **down**{: .text-green-200} keys. 
+
+Your command history is also saved as an **.Rhistory**{: .text-green-200} file in your working directory. It is a good idea to save your successful commands in a separate file (or script) because your history will also contain your mistakes!
 
 
 # R Editor and Scripts
 
-YouTube Video: [R Scripting](https://youtu.be/NbBOss9CjuE)
-
-But most of the time we will be creating a script that has a series of commands that can be executed. RStudio comes with an R script editor. Open editor by selecting "New Script" from the File Menu. Similar to Notepad, it will allow you to type and save code as text.
+Most of the time we will be creating a script that has a series of commands that can be executed. RStudio comes with an R script editor. Open editor by selecting "New Script" from the File Menu. Similar to Notepad, it will allow you to type and save code as text.
 
 Once you have a list of commands that you want to execute, you save it with a .R extension. Any R script can be sourced in using the source() function. This essentially executes the commands in the R script line by line.
 
