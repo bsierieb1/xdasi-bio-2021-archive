@@ -59,7 +59,7 @@ RStudio is available in open source and commercial editions and runs on the desk
 
 RStudio includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging, and workspace management.
 
-+ The **top-level menus** (File, Edit, Code, etc.) provide a lot of options for managing all the different features of RStudio, including very convenient **keyboard shortcuts** (go to Tools => Keyboard Shortcuts Help).
++ The **top-level menus** (File, Edit, Code, etc.) provide a lot of options for managing all the different features of RStudio, including very convenient **keyboard shortcuts** (go to Tools => Keyboard Shortcuts Help). A list of keyboard shortcuts is also available online [**here**](https://support.rstudio.com/hc/en-us/articles/200711853-Keyboard-Shortcuts-in-the-RStudio-IDE).
 
 + The RStudio 1.4 workbench introduces a new [**Command Palette**](https://blog.rstudio.com/2020/10/14/rstudio-v1-4-preview-command-palette/) feature, which gives instant, searchable access to all available commands in RStudio (Tools => Show Command Palette).
 

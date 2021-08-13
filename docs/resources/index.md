@@ -1,7 +1,6 @@
 ---
-title: Useful Resources
-layout: default
-nav_order: 4
+title: Other Resources
+nav_order: 3
 has_children: true
 ---
 

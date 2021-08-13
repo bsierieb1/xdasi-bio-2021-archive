@@ -1,6 +1,6 @@
 ---
 title: Reproducible Science
-parent: Useful Resources
+parent: Other Resources
 nav_order: 1
 has_children: false
 ---
