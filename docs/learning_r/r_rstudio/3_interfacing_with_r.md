@@ -97,6 +97,7 @@ RStudio includes a console, syntax-highlighting editor that supports direct code
 
 
 [**Files, Plots, Packages, and Help** _(bottom left)_](){: .btn .btn-green }
+<button type="button" name="button" class="btn">Button element</button>{: .btn .btn-green }
 
   - Easily peruse and navigate directories and files
   - Display plots as they are created
