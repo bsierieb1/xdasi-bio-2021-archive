@@ -21,26 +21,36 @@ Once you have installed R on your computer, you can start an interactive R sessi
 
 # Using R on commandline
 
-Once you have installed R, you may start a `terminal` on a MAC or `cmd` on a PC to get a commandline window with a prompt. Type **R** and you should see something like what is shown below.
+Once you have installed R, you may start a `terminal` on a MAC or `cmd` on a PC to get a commandline window with a prompt.
 
 - You can start typing R commands here directly after the R the prompt, `>`.
-- After you type a command and its arguments, simply press the Return/Enter key.
+- After you type a command and its arguments, simply press the `Return/Enter` key.
+- Anything you type after a hashtag, `#`, is a comment and will be ignored.
 - You may also enter multiple commands on the same line by separating them with a colon (`;`).
 - If you don't complete a command, you will see a `+` symbol displayed on the next line, indicating that R is waiting for you to complete the command you started.
 
-![](images/R_commandline.png)
+Type **R** and you should see something like what is shown below. Try out the examples shown to get a feel for the commandline. If you make a syntax error, you will get an error message and you can try again (for example, you could forget the quotes and see what happens.)
 
-Although this is a very cumbersome way of interacting with R, it is useful to familiarize yourself with this environment as you may need it in the future, for example when connecting to HPC (High Performance Computing) systems.
+![](images/R_commandline_example.png)
+
+Although the commandline is a very basic way of interacting with R, it is useful to familiarize yourself with this environment as you may need it in the future, for example when connecting to HPC (High Performance Computing) systems.
+
+---
+
+[Back to top](#top)
 
 
 # The RGui Window System
 
-R comes with a built-in GUI for R called **Rgui**, which can be started by clicking on the app icon on your computer. This is more convenient way to use R because it provides you with a windowing system that comes with buttons and tabs to help you navigate around the R environment.
+R comes with a built-in GUI for R called **Rgui**, which can be started by clicking on the **app icon** on your computer. This is more convenient way to use R because it provides you with a windowing system that comes with buttons and tabs to help you navigate around the R environment.
 
 The image below demonstrates the RGui script editor, which allows you to write R scripts in a separate window and execute them in the console. The first command, `print("Hello world!")` was entered directly on the console, and the second one, `print("Top of the day to you!")` , was executed from the simple script on the right.
 
 ![](images/Rgui.png)
 
+---
+
+[Back to top](#top)
 
 
 # RStudio
@@ -93,7 +103,7 @@ RStudio includes a console, syntax-highlighting editor that supports direct code
 
   - Shows all variables in the working environment
   - Shows all previous commands that you have executed, either from the console or within a script (even incorrect commands containing errors are included here, so be careful!)
-  - Provides integration for version control (git, svn) -- connecting RStudio to a GitHub repository is a great way to back up and share your work!
+  - Provides integration for version control (git, svn) - connecting RStudio to a GitHub repository is a great way to back up and share your work!
 
 {#files}
 [**Files, Plots, Packages, and Help** _(bottom left)_](#files){: .btn .btn-green}
