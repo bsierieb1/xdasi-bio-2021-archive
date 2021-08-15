@@ -24,14 +24,16 @@ There are **four components** you need to keep in mind in order to work effectiv
 
 Whenever you are working on a project, your code (scripts and markdown files), workspace (data structures), commandline history, and data files are located somewhere on your filesystem.
 
-**You need to know where you are in order to keep your work organized!** It is recommended that you keep each of your projects in a separate folder containing all of the scripts, data, and any other relevant files pertaining to that project.
+**You need to know where you are in order to keep your work organized!**{: .text-green-200}
 
-For example, it's a good idea to create a parent folder called something like "R_homework", and then create a separate folder for each week's assignment. Fortunately, RStudio can help you organize your work using **RProjects**. More on this below.
+It is recommended that you keep each of your projects in a separate folder containing all of the scripts, data, and any other relevant files pertaining to that project.
+
+For example, it's a good idea to create a parent folder called something like "R_homework", and then create a separate folder for each week's assignment. Fortunately, RStudio can help you organize your work using **RProjects**{: .text-green-200}. More on this below.
 
 
 [Workspace](https://support.rstudio.com/hc/en-us/articles/200711843-Working-Directories-and-Workspaces){: .btn .btn-green target="blank"}
 
-All of the **R data objects** you create in your current session will be stored in a **file with the extension .Rdata** that can be reloaded next time you want to work on the same project. This will include anything like variables, vectors, data frames, etc.
+All of the **R data objects**{: .text-green-200} you create in your current session will be stored in a file with the extension **.Rdata**{: .text-green-200} that can be reloaded next time you want to work on the same project. This will include anything like variables, vectors, data frames, etc.
 
 
 [Command History](https://support.rstudio.com/hc/en-us/articles/200526217-Command-History-in-the-RStudio-IDE){: .btn .btn-green target="blank"}
@@ -43,11 +45,11 @@ Your commandline history is also saved as an **.Rhistory**{: .text-green-200} fi
 
 [R Projects](https://support.rstudio.com/hc/en-us/articles/200526207){: .btn .btn-green target="blank"}
 
-**R Projects** are an RStudio convenience that enables you to easily manage working directories, workspaces, and associated files for any R project.
+**R Projects**{: .text-green-200} are an RStudio convenience that enables you to easily manage working directories, workspaces, and associated files for any R project.
 
 Projects provide a super easy way to collect all of your files and data associated with a particular project in one place. You can use the Projects menu in the top right-hand corner of RStudio to create, save, and select R Projects.
 
-Whenever a Project is opened, the working directory is automatically set to the location of the project folder, the workspace is loaded, and any scripts or data files are available. You should see all of these in the Files menu, along with the **.Rproj** file. If you click on the .Rproj icon in the Files menu, a new window will pop up that displays all the configuration options for the project.
+Whenever a Project is opened, the working directory is automatically set to the location of the project folder, the workspace is loaded, and any scripts or data files are available. You should see all of these in the Files menu, along with the **.Rproj**{: .text-green-200} file. If you click on the .Rproj icon in the Files menu, a new window will pop up that displays all the configuration options for the project.
 
 **It is highly recommended to use R Projects for all of your work.**{: .text-green-200}
 
@@ -57,16 +59,16 @@ Whenever a Project is opened, the working directory is automatically set to the 
 
 RStudio's [**Script Editor**](https://support.rstudio.com/hc/en-us/articles/200484448){:target="_blank"} allows you to write a series of executable commands that can be saved for future use.
 
-To **create a new script**, select "New File" from the File menu. You will see many options for creating different types of files. Most commonly we will use the following two types of files:
+To **create a new script**{: .text-green-200}, select "New File" from the File menu. You will see many options for creating different types of files. Most commonly we will use the following two types of files:
 
-- Simple **R scripts** - these contain code and comments and are saved with the file extension **.R**. Any R script can also be executed from the commandline using the `source()` function. This essentially executes the commands in the R script line by line.
-- **R Markdown** and **R Notebook** files enable you to intersperse text and code for rendering as HTML, PDF, or other types of documents. These provide a great way to document your work and prepare publication-ready materials. You will become very familiar with these by the end of the course!
+- Simple **R scripts**{: .text-green-200} - these contain code and comments and are saved with the file extension **.R**{: .text-green-200}. Any R script can also be executed from the commandline using the `source()` function. This essentially executes the commands in the R script line by line.
+- **R Markdown**{: .text-green-200} and **R Notebook**{: .text-green-200} files enable you to intersperse text and code for rendering as HTML, PDF, or other types of documents. These provide a great way to document your work and prepare publication-ready materials. You will become very familiar with these by the end of the course!
 
 Once you have written some lines of code, you may run them one at a time, in chunks, or all at once using the "Run" button. You may also execute code using keyboard shortcuts (listed in the "Run" menu).
 
 *Note: It is not recommended to copy and paste from applications such as MS Word or even PDFs, since these can insert funny characters upon pasting the code into the console or the editor.*
 
-When you are done with a script, simply save and close it. RStudio will ask you if you want your files to be saved if you try to close them, to quit a Project, or to close RStudio without saving your work first. 
+When you are done with a script, simply save and close it. RStudio will ask you if you want your files to be saved if you try to close them, to quit a Project, or to close RStudio without saving your work first.
 
 ---
 
@@ -91,13 +93,11 @@ Instead of saving your current workspace with the default name .Rdata, you may s
 
 **If you are working in an RProject, a named .Rdata file will be created automatically when you set up the RProject and will be loaded each time you open the project.**{: .text-green-200}
 
-## Saving and Loading Workspaces
+## Loading and Saving Workspaces
 
 You may save and load workspaces manually, however if you are using an **RProject**{: .text-green-200} (see below) all of this will be handled magically for you.
 
-To manually load a previously saved .RData file, set your **current working directory** to the one where .RData is located, and then use the **load()** command or use the RStudio menus to load it. You can do this using the Session menu or by clicking on the filename in the Files pane.
-
-## Key Commands
+### Key Commands
 
 The key commands for managing workspaces are:
 
@@ -110,6 +110,9 @@ The key commands for managing workspaces are:
 **save.image()**{: .text-green-200} - save your current workspace
 
 **ls()**{: .text-green-200} - list the R data objects that belong to your current workspace
+
+To manually load a previously saved .RData file, set your **current working directory** to the one where .RData is located, and then use the **load()** command or use the RStudio menus to load it. You can do this using the Session menu or by clicking on the filename in the Files pane.
+
 
 ## Workspace Hygiene
 
