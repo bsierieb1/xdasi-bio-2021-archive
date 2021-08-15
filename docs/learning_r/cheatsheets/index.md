@@ -6,15 +6,17 @@ nav_order: 4
 has_children: false
 ---
 
-# Quick guides for commands, syntax, and more!
+# Cheatsheets for commands, syntax, and more!
 
-##
+# RStudio
 
-## RStudio
+**RStudio** maintains a whole fleet of cheat sheets on pretty much any R topic you can think of.
 
-RStudio maintains a whole fleet of cheat sheets on pretty much any R topic you can think of. You can find a gallery of them on their [**website**](https://www.rstudio.com/resources/cheatsheets/#ide).
+[**RStudio Cheetsheets Gallery**](https://cran.r-project.org/){: .btn .btn-green target="_blank"}
 
-* [**Base R Commands**](RStudio_r-cheat-sheet-3.pdf) This is the first place to start.
+A few very useful ones are highlighted below. If you find more that you really like, please let us know and we can add them to this list!
+
+* [**Base R Commands**](https://github.com/rstudio/cheatsheets/raw/master/base-r.pdf) This is the first place to start.
 
 * [**R Markdown** Cheatsheet](https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf)
 
@@ -22,10 +24,9 @@ RStudio maintains a whole fleet of cheat sheets on pretty much any R topic you c
 
 * [**ggplot2**](https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf)
 
-[**RStudio Cheetsheets Gallery**](https://cran.r-project.org/){: .btn .btn-green target="_blank"}
+---
 
-
-## LaTeX
+# LaTeX
 
 What is LaTeX? It is a typesetting system that uses plain text to encode mathematical symbols for rendering upon publication (such as turning your .Rmd file into a .pdf file). It allows the proper formatting of complex mathematical expressions, and all the special characters that are needed to write them.
 
