@@ -86,7 +86,9 @@ RStudio includes a console, syntax-highlighting editor that supports direct code
 [**Script Editor** _(top left)_](https://support.rstudio.com/hc/en-us/articles/200484448){: .btn .btn-green target="_blank"}
 
 
-<a href="images/Rmd_demo.mov" title="R Markdown demo"><img src="images/Rmd_demo.png" alt="R Markdown demo" style="width:100px;border:0"/></a>
+<a href="images/Rmd_demo.mov" title="R Markdown demo" target="blank">
+  <img src="images/Rmd_demo.png" alt="R Markdown demo" style="width:100px;border:0"/>
+</a>
 
 
   - This window will open when you create a new R script, R Markdown, or other kinds of files (all of these can be saved for future use)
@@ -97,9 +99,9 @@ RStudio includes a console, syntax-highlighting editor that supports direct code
   - Provides tools for [**debugging**](https://support.rstudio.com/hc/en-us/articles/205612627-Debugging-with-the-RStudio-IDE){: target="blank"}
 
 
-<!-- [**Console** _(bottom left)_](https://support.rstudio.com/hc/en-us/articles/200404846-Working-in-the-Console){: .btn .btn-green target="_blank"} -->
+[**Console** _(bottom left)_](https://support.rstudio.com/hc/en-us/articles/200404846-Working-in-the-Console){: .btn .btn-green target="_blank"}
 
-<iframe width="400" src="images/Rmd_demo.mov" title="Rmd demo" frameborder="0"></iframe>
+<!-- <iframe width="400" src="images/Rmd_demo.mov" title="Rmd demo" frameborder="0"></iframe> -->
 
   - Displays all R commands executed within scripts and code snippets in the Editor
   - Provides direct access to the commandline - particularly useful for testing out commands and inspecting data structures
@@ -113,9 +115,10 @@ RStudio includes a console, syntax-highlighting editor that supports direct code
   - Shows all previous commands that you have executed, either from the console or within a script (even incorrect commands containing errors are included here, so be careful!)
   - Provides integration for version control (git, svn) - connecting RStudio to a GitHub repository is a great way to back up and share your work!
 
+
 [**Files, Plots, Packages, and Help** _(bottom left)_](#files){: .btn .btn-green #files}
 
-<button type="button" name="files-plots-packages-help" class="btn">**Files, Plots, Packages, and Help** _(bottom left)_</button>{: .btn .btn-green }
+<!-- <button type="button" name="files-plots-packages-help" class="btn">**Files, Plots, Packages, and Help** _(bottom left)_</button>{: .btn .btn-green } -->
 
   - Easily peruse and navigate directories and files
   - Display plots as they are created

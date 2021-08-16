@@ -53,6 +53,8 @@ Whenever a Project is opened, the working directory is automatically set to the 
 
 **It is highly recommended to use R Projects for all of your work.**{: .text-green-200}
 
+[Back to top](#top)
+
 ---
 
 # R Editor and Scripts
@@ -69,6 +71,8 @@ Once you have written some lines of code, you may run them one at a time, in chu
 *Note: It is not recommended to copy and paste from applications such as MS Word or even PDFs, since these can insert funny characters upon pasting the code into the console or the editor.*
 
 When you are done with a script, simply save and close it. RStudio will ask you if you want your files to be saved if you try to close them, to quit a Project, or to close RStudio without saving your work first.
+
+[Back to top](#top)
 
 ---
 
