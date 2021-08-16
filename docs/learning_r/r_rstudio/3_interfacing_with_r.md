@@ -35,10 +35,10 @@ Type **R** and you should see something like what is shown below. Try out the ex
 
 Although the commandline is a very basic way of interacting with R, it is useful to familiarize yourself with this environment as you may need it in the future, for example when connecting to HPC (High Performance Computing) systems.
 
----
 
 [Back to top](#top)
 
+---
 
 # The RGui Window System
 
@@ -48,10 +48,10 @@ The image below demonstrates the RGui script editor, which allows you to write R
 
 ![](images/Rgui.png)
 
----
 
 [Back to top](#top)
 
+---
 
 # RStudio
 
@@ -85,9 +85,8 @@ RStudio includes a console, syntax-highlighting editor that supports direct code
 
 [**Script Editor** _(top left)_](https://support.rstudio.com/hc/en-us/articles/200484448){: .btn .btn-green target="_blank"}
 
-[ ![](images/Rmd_demo.png) ](images/Rmd_demo.mov "R Markdown demo")
 
-<a href="images/Rmd_demo.mov" title="R Markdown demo"><img src="images/Rmd_demo.png" alt="R Markdown demo" /></a>
+<a href="images/Rmd_demo.mov" title="R Markdown demo"><img src="images/Rmd_demo.png" alt="R Markdown demo" style="width:100px;border:0"/></a>
 
 
   - This window will open when you create a new R script, R Markdown, or other kinds of files (all of these can be saved for future use)

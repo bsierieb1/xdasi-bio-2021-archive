@@ -19,7 +19,9 @@ nav_order: 1
 
 # What is R?
 
-Where better to start than going straight to the source? The following short *Introduction to R* is adapted from the [*About R*](https://www.r-project.org/about.html){:target="_blank"} page on the [**R project**](https://www.r-project.org) website. There you may also find extensive documentation (e.g. [manuals](https://cran.r-project.org/manuals.html){:target="_blank"}, [FAQs](https://cran.r-project.org/faqs.html){:target="_blank"}, information about [how to get help in R](https://www.r-project.org/help.html){:target="_blank"}, [books](https://www.r-project.org/doc/bib/R-books.html){:target="_blank"}), and links to a variety of related resources.
+Where better to start than going straight to the source? The following short *Introduction to R* is adapted from the [*About R*](https://www.r-project.org/about.html){:target="_blank"} page on the [**R project**](https://www.r-project.org) website.
+
+There you may also find extensive documentation (e.g. [**manuals**](https://cran.r-project.org/manuals.html){:target="_blank"}, [FAQs](https://cran.r-project.org/faqs.html){:target="_blank"}, information about [**how to get help in R**](https://www.r-project.org/help.html){:target="_blank"}, [**books**](https://www.r-project.org/doc/bib/R-books.html){:target="_blank"}), and links to a variety of related resources.
 
 **A free language and environment for statistical computing and graphics**
 

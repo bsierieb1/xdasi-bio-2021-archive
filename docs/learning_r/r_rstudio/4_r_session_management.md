@@ -18,7 +18,7 @@ nav_order: 4
 
 # Key Concepts
 
-There are **four components** you need to keep in mind in order to work effectively in R/RStudio:
+To work effectively in R/RStudio, you need to keep in mind the following **four components**:
 
 [Working Directory](https://support.rstudio.com/hc/en-us/articles/200711843-Working-Directories-and-Workspaces){: .btn .btn-green target="blank"}
 
