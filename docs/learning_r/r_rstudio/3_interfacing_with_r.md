@@ -85,7 +85,10 @@ RStudio includes a console, syntax-highlighting editor that supports direct code
 
 [**Script Editor** _(top left)_](https://support.rstudio.com/hc/en-us/articles/200484448){: .btn .btn-green target="_blank"}
 
-<iframe width="400" src="images/Rmd_demo.mov" title="Rmd demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[ ![](images/Rmd_demo.png) ](images/Rmd_demo.mov "R Markdown demo")
+
+<a href="images/Rmd_demo.mov" title="R Markdown demo"><img src="images/Rmd_demo.png" alt="R Markdown demo" /></a>
+
 
   - This window will open when you create a new R script, R Markdown, or other kinds of files (all of these can be saved for future use)
   - Run scripts or code snippets within R documents
