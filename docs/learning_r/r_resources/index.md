@@ -6,7 +6,7 @@ nav_order: 3
 has_children: false
 ---
 
-# Resources for Learning R
+# Help with commands, syntax, and more!
 {: .no_toc }
 
 ## Table of contents
@@ -15,15 +15,19 @@ has_children: false
 - TOC
 {:toc}
 
-Over the last few years, there has been a huge explosion of online resources for learning R, including quick guides, interactive tutorials, online books, printed books (often available also in PDF), image galleries, and much more. The following is a list of convenient sites that contain useful information about different aspects of programming in R.
+**Can't remember a command or some basic syntax? You'll find everything you need below!**{: .text-green-200}
+
+Over the last few years, there has been a huge explosion of online resources for learning R, including quick guides, interactive tutorials, online books, printed books (often available also in PDF), image galleries, and much more. Here we have collected links to a bunch of useful sites covering different aspects of programming in R.
+
+If you find more that you really like, please let us know and we can add them to this list!
 
 ---
 
-# A note about Google and StackExchange
+# A Note about Google and StackExchange
 
-The first thing most people do when they want to get some quick information about R commands and syntax is to use the Google search engine. Google often directs you to something useful, and sometimes you get what you're looking for right away.
+We know that the first thing most of us do is to use the **Google** search engine to get quick answers to anything and everything in the world. Google is really powerful and sometimes you get what you're looking for right away.
 
-**HOWEVER, you can also easily get lost going down a rabbit hole at places like StackExchange.**: .text-green-200} If you find that you're spending more than a few minutes trying to find what you are looking for, please take a look at one of the following sites, which provide systematic, organized information on a variety of topics.
+**HOWEVER, you can also easily get lost going down a rabbit hole at places like StackExchange.**{: .text-red-200} If you find that you're spending more than a few minutes trying to find what you are looking for, please take a look at one of the following sites, which provide systematic, organized information on a variety of topics.
 
 I've found some **online books** to be really useful, either for a quick review of key concepts, or for an in-depth treatment of a specific topic.
 
@@ -33,7 +37,7 @@ Below are some lists of online resources for programming in R and related topics
 
 # R Programming
 
-## Online Books
+* [**Base R Commands** Cheetsheat _(PDF)_](https://github.com/rstudio/cheatsheets/raw/master/base-r.pdf) This is the first place to start.
 
 - [**YaRrr! The Pirate’s Guide to R**](https://bookdown.org/ndphillips/YaRrr/) - [PDF version](https://bookdown.org/ndphillips/YaRrr/YaRrr.pdf) - [Github repo](https://github.com/ndphillips/ThePiratesGuideToR) - [Donate](https://ndphillips.github.io/piratesguide.html)
 _Nathaniel D. Philips_ (2018-01-22)
@@ -49,20 +53,20 @@ _Nathaniel D. Philips_ (2018-01-22)
 - [**dd**]()
 
 
-## R Markdown
+# R Markdown
 
 We will make heavy use of Markdown documents in this class. The following references will help you with creating, formatting, executing, and rendering R Markdown documents.
 
-### Quick Guides
+## The Basics
 
-> * [**R Markdown Guide**](https://www.markdownguide.org/basic-syntax/)
-    Start here for a concise syntax reference, with online cheatsheet
+* [**R Markdown Guide**](https://www.markdownguide.org/basic-syntax/) - _Start here for a concise syntax reference, with online cheatsheet_
 
-> Cheatsheets
->   * [**R Markdown** Cheatsheet (PDF)](https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf)
->   * [**R Markdown** Reference Guide (PDF)](https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf)
+* **Cheatsheets**
+  * [**R Markdown** Cheatsheet (PDF)](https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf)
+  * [**R Markdown** Reference Guide (PDF)](https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf)
 
-### Advanced Topics
+
+## Advanced Topics
 
 * [**R Markdown: The Definitive Guide**](https://bookdown.org/yihui/rmarkdown/)
     _Yihui Xie, J. J. Allaire, Garrett Grolemund_ (2021-04-09)
@@ -71,7 +75,40 @@ We will make heavy use of Markdown documents in this class. The following refere
 * [**R Markdown Cookbook**](https://bookdown.org/yihui/rmarkdown-cookbook/)
     _Yihui Xie, Christophe Dervieux, Emily Riederer_ (2021-07-25)
 
-https://bookdown.org/yihui/rmarkdown-cookbook/
+[Back to top](#top)
+
+---
+
+# R Graphics
+
+## Base R Graphics
+
+# ggplot
+
+* [**ggplot2** Cheatsheet _(PDF)_](https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf)
+
+[Back to top](#top)
+
+---
+
+# LaTeX
+
+What is LaTeX? It is a typesetting system that uses plain text to encode mathematical symbols for rendering upon publication (such as turning your .Rmd file into a .pdf file). It allows the proper formatting of complex mathematical expressions, and all the special characters that are needed to write them.
+
+How do you pronounce it? The 'X' is often pronounced as 'k', after the Greek symbol Chi.
+
+There are a lot of LaTeX references online. Here are a few:
+
+* [**RStudio: LaTeX Cheatsheet**](https://wch.github.io/latexsheet/latexsheet.pdf)
+
+* [**LaTeX Math Symbols (quick guide)**](LATEX_Math_Symbols_short.pdf)
+A condensed list of the LaTeX notation you will need to write mathematical expressions using LaTeX.
+
+* [**LaTeX Math Symbols (comprehensive)**](LATEX_Math_Symbols_long.pdf)
+An expansive compendium of all the LaTeX notation you will ever need.
+
+* [**AoPS: LaTeX Symbols**](https://artofproblemsolving.com/wiki/index.php/LaTeX:Symbols)
+A short online list of LaTeX symbols from the Art of Problem Solving website, which also contains links to a lot of other resources for writing and drawing mathematical concepts.
 
 ---
 
