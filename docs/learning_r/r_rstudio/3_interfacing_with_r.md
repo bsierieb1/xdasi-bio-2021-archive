@@ -105,10 +105,11 @@ The working RStudio environment comprises **four windows** that display differen
 
 Click on the image below for a quick peek:
 
+<div text-align:center>
   <a href="images/Rmd_demo.mov" title="R Markdown demo">
-    <img src="images/Rmd_demo.png" alt="R Markdown demo" style="width:300px;border:0;text-align:center;"/>
+    <img src="images/Rmd_demo.png" alt="R Markdown demo" style="width:300px;border:0;"/>
   </a>
-
+</div>
 ---
 
 [**Console** _(bottom left)_](https://support.rstudio.com/hc/en-us/articles/200404846-Working-in-the-Console){: .btn .btn-green target="_blank"}
@@ -133,7 +134,7 @@ Click on the image below for a quick peek:
   - Shows all previous commands that you have executed, either from the console or within a script (even incorrect commands containing errors are included here, so be careful!)
   - Provides integration for version control (git, svn) - connecting RStudio to a GitHub repository is a great way to back up and share your work!
 
-![Environment](images/envirionment.png)![History](images/history.png)
+![Environment](images/environment.png)!{: width="300"} [History](images/history.png){: width="300"}
 
 ---
 
@@ -144,7 +145,7 @@ Click on the image below for a quick peek:
   - See which packages are installed
   - Display R documentation for command syntax
 
-  ![Files](images/files.png)![Plot](images/plot.png)![Help](images/help.png)
+  ![Files](images/files.png){: width="300"} ![Plot](images/plot.png)![Help](images/help.png){: width="300"}
 
 ---
 
