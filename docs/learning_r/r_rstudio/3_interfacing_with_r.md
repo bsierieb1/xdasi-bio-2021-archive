@@ -92,13 +92,9 @@ The working RStudio environment comprises **four windows** that display differen
 
 ![RStudio GUI](images/RStudio_windows_labeled.png)
 
+---
+
 [**Script Editor** _(top left)_](https://support.rstudio.com/hc/en-us/articles/200484448){: .btn .btn-green target="_blank"}
-
-
-<a href="images/Rmd_demo.mov" title="R Markdown demo">
-  <img src="images/Rmd_demo.png" alt="R Markdown demo" style="width:300px;border:0;text-align:center;"/>
-</a>
-
 
   - This window will open when you create a new R script, R Markdown, or other kinds of files (all of these can be saved for future use)
   - Run scripts or code snippets within R documents
@@ -107,6 +103,13 @@ The working RStudio environment comprises **four windows** that display differen
   - Provides many utilities for [**navigating code**](https://support.rstudio.com/hc/en-us/articles/200710523-Navigating-Code){: target="blank"}
   - Provides tools for [**debugging**](https://support.rstudio.com/hc/en-us/articles/205612627-Debugging-with-the-RStudio-IDE){: target="blank"}
 
+Click on the image below for a quick peek:
+
+  <a href="images/Rmd_demo.mov" title="R Markdown demo">
+    <img src="images/Rmd_demo.png" alt="R Markdown demo" style="width:300px;border:0;text-align:center;"/>
+  </a>
+
+---
 
 [**Console** _(bottom left)_](https://support.rstudio.com/hc/en-us/articles/200404846-Working-in-the-Console){: .btn .btn-green target="_blank"}
 
@@ -117,6 +120,12 @@ The working RStudio environment comprises **four windows** that display differen
   - Get help with R command syntax
   - Access built-in tutorials
 
+  <a href="images/console_demo.mov" title="R Markdown demo">
+    <img src="images/console_demo.png" alt="onsole demo" style="width:300px;border:0;text-align:center;"/>
+  </a>
+
+
+---
 
 [**History and Environment** _(top right)_](https://support.rstudio.com/hc/en-us/articles/200526217-Command-History-in-the-RStudio-IDE){: .btn .btn-green target="_blank"}
 
@@ -124,15 +133,18 @@ The working RStudio environment comprises **four windows** that display differen
   - Shows all previous commands that you have executed, either from the console or within a script (even incorrect commands containing errors are included here, so be careful!)
   - Provides integration for version control (git, svn) - connecting RStudio to a GitHub repository is a great way to back up and share your work!
 
+![Environment](images/envirionment.png)![History](images/history.png)
+
+---
 
 [**Files, Plots, Packages, and Help** _(bottom left)_](#files){: .btn .btn-green #files}
-
-<!-- <button type="button" name="files-plots-packages-help" class="btn">**Files, Plots, Packages, and Help** _(bottom left)_</button>{: .btn .btn-green } -->
 
   - Easily peruse and navigate directories and files
   - Display plots as they are created
   - See which packages are installed
   - Display R documentation for command syntax
+
+  ![Files](images/files.png)![Plot](images/plot.png)![Help](images/help.png)
 
 ---
 
