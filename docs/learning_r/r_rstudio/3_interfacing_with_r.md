@@ -78,16 +78,15 @@ RStudio includes a console, syntax-highlighting editor that supports direct code
 
 + **Command Palette**{: .text-green-200}: The RStudio 1.4 workbench introduces a new [**Command Palette**](https://blog.rstudio.com/2020/10/14/rstudio-v1-4-preview-command-palette/) feature, which gives instant, searchable access to all available commands in RStudio (Tools => Show Command Palette).
 
-+ The **graphical user interface (GUI)**{: .text-green-200} comprises **four windows** that display different kinds of information. In addition to the quick tour below, the [**Pirate's Guide to R** also has a nice introduction to [**the four RStudio Windows**](https://bookdown.org/ndphillips/YaRrr/the-four-rstudio-windows.html).
++ The **graphical user interface (GUI)**{: .text-green-200} comprises **four windows** that display different kinds of information. In addition to the quick tour below, the **Pirate's Guide to R** also has a nice introduction to [**the four RStudio Windows**](https://bookdown.org/ndphillips/YaRrr/the-four-rstudio-windows.html).
 
 
 ![RStudio GUI](images/RStudio_windows_labeled.png)
 
 [**Script Editor** _(top left)_](https://support.rstudio.com/hc/en-us/articles/200484448){: .btn .btn-green target="_blank"}
 
-
 <a href="images/Rmd_demo.mov" title="R Markdown demo" target="blank">
-  <img src="images/Rmd_demo.png" alt="R Markdown demo" style="width:100px;border:0"/>
+  <img src="images/Rmd_demo.png" alt="R Markdown demo" style="width:300px;border:0"/>
 </a>
 
 
