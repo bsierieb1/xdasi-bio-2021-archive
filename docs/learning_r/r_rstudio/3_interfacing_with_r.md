@@ -78,11 +78,14 @@ RStudio includes a console, syntax-highlighting editor that supports direct code
 
 + **Command Palette**{: .text-green-200}: The RStudio 1.4 workbench introduces a new [**Command Palette**](https://blog.rstudio.com/2020/10/14/rstudio-v1-4-preview-command-palette/) feature, which gives instant, searchable access to all available commands in RStudio (Tools => Show Command Palette).
 
-+ The **graphical user interface (GUI)**{: .text-green-200} comprises four windows that display different kinds of information:
++ The **graphical user interface (GUI)**{: .text-green-200} comprises **four windows** that display different kinds of information. In addition to the quick tour below, the [**Pirate's Guide to R** also has a nice introduction to [**the four RStudio Windows**](https://bookdown.org/ndphillips/YaRrr/the-four-rstudio-windows.html).
+
 
 ![RStudio GUI](images/RStudio_windows_labeled.png)
 
 [**Script Editor** _(top left)_](https://support.rstudio.com/hc/en-us/articles/200484448){: .btn .btn-green target="_blank"}
+
+<iframe width="400" src="images/Rmd_demo.mov" title="Rmd demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
   - This window will open when you create a new R script, R Markdown, or other kinds of files (all of these can be saved for future use)
   - Run scripts or code snippets within R documents
@@ -94,10 +97,13 @@ RStudio includes a console, syntax-highlighting editor that supports direct code
 
 [**Console** _(bottom left)_](https://support.rstudio.com/hc/en-us/articles/200404846-Working-in-the-Console){: .btn .btn-green target="_blank"}
 
+<iframe width="400" src="images/Rmd_demo.mov" title="Rmd demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
   - Displays all R commands executed within scripts and code snippets in the Editor
   - Provides direct access to the commandline - particularly useful for testing out commands and inspecting data structures
   - Get help with R command syntax
   - Access built-in tutorials
+
 
 [**History and Environment** _(top right)_](https://support.rstudio.com/hc/en-us/articles/200526217-Command-History-in-the-RStudio-IDE){: .btn .btn-green target="_blank"}
 
