@@ -31,7 +31,7 @@ Once you have installed R, you may start a `terminal` on a MAC or `cmd` on a PC 
 
 Type **R** and you should see something like what is shown below. Try out the examples shown to get a feel for the commandline. If you make a syntax error, you will get an error message and you can try again (for example, you could forget the quotes and see what happens.)
 
-![](images/R_commandline_example.png)
+![](images/R_commandline.png)
 
 Although the commandline is a very basic way of interacting with R, it is useful to familiarize yourself with this environment as you may need it in the future, for example when connecting to HPC (High Performance Computing) systems.
 
@@ -97,9 +97,9 @@ RStudio includes a console, syntax-highlighting editor that supports direct code
   - Provides tools for [**debugging**](https://support.rstudio.com/hc/en-us/articles/205612627-Debugging-with-the-RStudio-IDE){: target="blank"}
 
 
-[**Console** _(bottom left)_](https://support.rstudio.com/hc/en-us/articles/200404846-Working-in-the-Console){: .btn .btn-green target="_blank"}
+<!-- [**Console** _(bottom left)_](https://support.rstudio.com/hc/en-us/articles/200404846-Working-in-the-Console){: .btn .btn-green target="_blank"} -->
 
-<iframe width="400" src="images/Rmd_demo.mov" title="Rmd demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="400" src="images/Rmd_demo.mov" title="Rmd demo" frameborder="0"></iframe>
 
   - Displays all R commands executed within scripts and code snippets in the Editor
   - Provides direct access to the commandline - particularly useful for testing out commands and inspecting data structures
