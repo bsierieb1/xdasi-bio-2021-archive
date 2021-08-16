@@ -105,9 +105,9 @@ RStudio includes a console, syntax-highlighting editor that supports direct code
   - Shows all previous commands that you have executed, either from the console or within a script (even incorrect commands containing errors are included here, so be careful!)
   - Provides integration for version control (git, svn) - connecting RStudio to a GitHub repository is a great way to back up and share your work!
 
-{#files}
 [**Files, Plots, Packages, and Help** _(bottom left)_](#files){: .btn .btn-green}
-<button type="button" name="button" class="btn">Button element</button>{: .btn .btn-green }
+
+<button type="button" name="files-plots-packages-help" class="btn">**Files, Plots, Packages, and Help** _(bottom left)_</button>{: .btn .btn-green }
 
   - Easily peruse and navigate directories and files
   - Display plots as they are created

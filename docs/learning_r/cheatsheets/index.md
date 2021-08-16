@@ -47,6 +47,6 @@ A short online list of LaTeX symbols from the Art of Problem Solving website, wh
 
 ---
 
-[Back to top]{#top}
+[Back to top](#top)
 
 [comment]: # ( some text here )
