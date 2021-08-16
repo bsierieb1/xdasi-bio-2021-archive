@@ -38,7 +38,7 @@ Below are some lists of online resources for programming in R and related topics
 - [**YaRrr! The Pirate’s Guide to R**](https://bookdown.org/ndphillips/YaRrr/) - [PDF version](https://bookdown.org/ndphillips/YaRrr/YaRrr.pdf) - [Github repo](https://github.com/ndphillips/ThePiratesGuideToR) - [Donate](https://ndphillips.github.io/piratesguide.html)
 _Nathaniel D. Philips_ (2018-01-22)
 
-A concise introduction to R programming, data wrangling, and basic statistics.
+  A concise introduction to R programming, data wrangling, and basic statistics.
 
 - [**dd**]()
 
@@ -53,16 +53,25 @@ A concise introduction to R programming, data wrangling, and basic statistics.
 
 We will make heavy use of Markdown documents in this class. The following references will help you with creating, formatting, executing, and rendering R Markdown documents.
 
-### Cheatsheets
+### Quick Guides
 
-* [**R Markdown** Cheatsheet (PDF)](https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf)
-* [**R Markdown** Reference Guide (PDF)](https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf)
+> * [**R Markdown Guide**](https://www.markdownguide.org/basic-syntax/)
+    Start here for a concise syntax reference, with online cheatsheet
 
-## Online Books
+> Cheatsheets
+>   * [**R Markdown** Cheatsheet (PDF)](https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf)
+>   * [**R Markdown** Reference Guide (PDF)](https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf)
+
+### Advanced Topics
 
 * [**R Markdown: The Definitive Guide**](https://bookdown.org/yihui/rmarkdown/)
-_Yihui Xie, J. J. Allaire, Garrett Grolemund_ (2021-04-09)
+    _Yihui Xie, J. J. Allaire, Garrett Grolemund_ (2021-04-09)
+* [**bookdown: Authoring Books and Technical Documents with R Markdown**](https://bookdown.org/yihui/bookdown/)
+    _Yihui Xie_ (2021-08-06)
+* [**R Markdown Cookbook**](https://bookdown.org/yihui/rmarkdown-cookbook/)
+    _Yihui Xie, Christophe Dervieux, Emily Riederer_ (2021-07-25)
 
+https://bookdown.org/yihui/rmarkdown-cookbook/
 
 ---
 
