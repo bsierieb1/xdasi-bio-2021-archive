@@ -74,15 +74,17 @@ RStudio is available in open source and commercial editions and runs on the desk
 
 RStudio includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging, and workspace management.
 
-### **Top-level menus**{: .text-green-200}
+### Top-level menus
 
 The application menus (File, Edit, Code, etc.), which are outside of the windowing system, provide a lot of options for managing all the different features of RStudio, including very convenient **keyboard shortcuts**{: .text-green-200} (go to Tools => Keyboard Shortcuts Help). A list of keyboard shortcuts is also available online [**here**](https://support.rstudio.com/hc/en-us/articles/200711853-Keyboard-Shortcuts-in-the-RStudio-IDE){: .text-green-200}.
 
-### **Command Palette**{: .text-green-200}
+
+### Command Palette
 
 The RStudio 1.4 workbench introduces a new [**Command Palette**](https://blog.rstudio.com/2020/10/14/rstudio-v1-4-preview-command-palette/) feature, which gives instant, searchable access to all available commands in RStudio (Tools => Show Command Palette).
 
-### **Graphical user interface (GUI)**{: .text-green-200}
+
+### Graphical user interface (GUI)
 
 The working RStudio environment comprises **four windows** that display different kinds of information as described below.
 
@@ -105,11 +107,10 @@ The working RStudio environment comprises **four windows** that display differen
 
 Click on the image below for a quick peek:
 
-<div text-align:center>
-  <a href="images/Rmd_demo.mov" title="R Markdown demo">
-    <img src="images/Rmd_demo.png" alt="R Markdown demo" style="width:300px;border:0;"/>
-  </a>
-</div>
+<a href="images/Rmd_demo.mov" title="R Markdown demo">
+  <img src="images/Rmd_demo.png" alt="R Markdown demo" style="width:300px;border:0;"/>
+</a>
+
 ---
 
 [**Console** _(bottom left)_](https://support.rstudio.com/hc/en-us/articles/200404846-Working-in-the-Console){: .btn .btn-green target="_blank"}
@@ -121,10 +122,9 @@ Click on the image below for a quick peek:
   - Get help with R command syntax
   - Access built-in tutorials
 
-  <a href="images/console_demo.mov" title="R Markdown demo">
-    <img src="images/console_demo.png" alt="onsole demo" style="width:300px;border:0;text-align:center;"/>
-  </a>
-
+<a href="images/console_demo.mov" title="R Markdown demo">
+  <img src="images/console_demo.png" alt="onsole demo" style="width:300px;border:0"/>
+</a>
 
 ---
 
@@ -134,7 +134,7 @@ Click on the image below for a quick peek:
   - Shows all previous commands that you have executed, either from the console or within a script (even incorrect commands containing errors are included here, so be careful!)
   - Provides integration for version control (git, svn) - connecting RStudio to a GitHub repository is a great way to back up and share your work!
 
-![Environment](images/environment.png)!{: width="300"} [History](images/history.png){: width="300"}
+![Environment](images/environment.png){: width="300"} ![History](images/history.png){: width="300"}
 
 ---
 
@@ -145,7 +145,7 @@ Click on the image below for a quick peek:
   - See which packages are installed
   - Display R documentation for command syntax
 
-  ![Files](images/files.png){: width="300"} ![Plot](images/plot.png)![Help](images/help.png){: width="300"}
+  ![Files](images/files.png){: width="30%"} ![Plot](images/plot.png)!{: width="300"}  [Help](images/help.png){: width="300"}
 
 ---
 
