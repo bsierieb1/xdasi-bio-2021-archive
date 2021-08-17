@@ -76,7 +76,7 @@ RStudio includes a console, syntax-highlighting editor that supports direct code
 
 ### Top-level menus
 
-The application menus (File, Edit, Code, etc.), which are outside of the windowing system, provide a lot of options for managing all the different features of RStudio, including very convenient **keyboard shortcuts**{: .text-green-200} (go to Tools => Keyboard Shortcuts Help). A list of keyboard shortcuts is also available online [**here**](https://support.rstudio.com/hc/en-us/articles/200711853-Keyboard-Shortcuts-in-the-RStudio-IDE){: .text-green-200}.
+The **application menus**{: .text-green-200} (File, Edit, Code, etc.), which are outside of the windowing system, provide a lot of options for managing all the different features of RStudio, including very convenient **keyboard shortcuts**{: .text-green-200} (go to Tools => Keyboard Shortcuts Help). A list of keyboard shortcuts is also available online [**here**](https://support.rstudio.com/hc/en-us/articles/200711853-Keyboard-Shortcuts-in-the-RStudio-IDE){: .text-green-200}.
 
 
 ### Command Palette
@@ -134,7 +134,7 @@ Click on the image below for a quick peek:
   - Shows all previous commands that you have executed, either from the console or within a script (even incorrect commands containing errors are included here, so be careful!)
   - Provides integration for version control (git, svn) - connecting RStudio to a GitHub repository is a great way to back up and share your work!
 
-![Environment](images/environment.png){: width="300"} ![History](images/history.png){: width="300"}
+![Environment](images/environment.png){: width="30%"} ![History](images/history.png){: width="30%"}
 
 ---
 
@@ -145,7 +145,7 @@ Click on the image below for a quick peek:
   - See which packages are installed
   - Display R documentation for command syntax
 
-  ![Files](images/files.png){: width="30%"} ![Plot](images/plot.png){: width="300"} ![Help](images/help.png){: width="300"}
+  ![Files](images/files.png){: width="30%"} ![Plot](images/plot.png){: width="30%"} ![Help](images/help.png){: width="30%"}
 
 ---
 

@@ -1,9 +1,9 @@
 ---
-title: R Resources
+title: R Textbooks
 layout: default
 parent: R Resources
 grand_parent: Learning R
-nav_order: 4
+nav_order: 2
 has_children: false
 ---
 

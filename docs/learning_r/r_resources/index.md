@@ -3,7 +3,7 @@ title: R Resources
 layout: default
 parent: Learning R
 nav_order: 3
-has_children: false
+has_children: true
 ---
 
 # Help with commands, syntax, and more!
@@ -35,18 +35,25 @@ Below are some lists of online resources for programming in R and related topics
 
 ---
 
+# Cheatsheets
+
+You can find a few really helpful cheatsheets and other help topics in RStudio under **"Help=>Cheatsheets"**.
+
+The RStudio website also maintains an [extensive list](https://www.rstudio.com/resources/cheatsheets/) of cheatsheets on all kinds of topics (almost too many! and not that well organized ...)
+
+
 # RStudio
 
 * [**Keyboard Shortcuts**](https://support.rstudio.com/hc/en-us/articles/200711853-Keyboard-Shortcuts-in-the-RStudio-IDE){: .text-green-200}  _ork faster with these shortcuts! (Tools => Keyboard Shortcuts Help)_
 
-+ [**Command Palette**](https://blog.rstudio.com/2020/10/14/rstudio-v1-4-preview-command-palette/) _Instant, searchable access to all available commands in RStudio (Tools => Show Command Palette)_
+* [**Command Palette**](https://blog.rstudio.com/2020/10/14/rstudio-v1-4-preview-command-palette/) _Instant, searchable access to all available commands in RStudio (Tools => Show Command Palette)_
 
-+ [[**RStudio Windows _(from the Pirate's Guide to R)_**](https://bookdown.org/ndphillips/YaRrr/the-four-rstudio-windows.html)
+* [[**RStudio Windows _(from the Pirate's Guide to R)_**](https://bookdown.org/ndphillips/YaRrr/the-four-rstudio-windows.html)
 
 
 # R Programming
 
-## Quick References
+## Cheatsheets
 
 * [**Base R Commands** Cheetsheat _(PDF)_](https://github.com/rstudio/cheatsheets/raw/master/base-r.pdf)
 
@@ -68,6 +75,7 @@ _Nathaniel D. Philips_ (2018-01-22)
 # R Markdown
 
 **We will make heavy use of Markdown documents in this class.**{: .text-green-200} The following references will help you with creating, formatting, executing, and rendering R Markdown documents.
+
 
 ## The Basics
 
