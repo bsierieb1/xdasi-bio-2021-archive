@@ -86,9 +86,8 @@ The RStudio 1.4 workbench introduces a new [**Command Palette**](https://blog.rs
 
 ### Graphical user interface (GUI)
 
-The working RStudio environment comprises **four windows** that display different kinds of information as described below.
+The working RStudio environment comprises **four windows** that display different kinds of information. Each of these is described briefly below. You may click on the **Green buttons**{: .text-green-200} for **RStudio Support** articles that discuss each of these in more detail.
 
-+ Click on the **Green buttons**{: .text-green-200} for **RStudio Support** articles that discuss each of these in more detail.
 + The **Pirate's Guide to R** also has a nice introduction to [**the four RStudio Windows**](https://bookdown.org/ndphillips/YaRrr/the-four-rstudio-windows.html).
 
 

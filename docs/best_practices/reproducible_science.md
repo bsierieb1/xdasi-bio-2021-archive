@@ -1,6 +1,6 @@
 ---
 title: Reproducible Science
-parent: Other Resources
+parent: Best Practices
 nav_order: 1
 has_children: false
 ---
@@ -30,6 +30,7 @@ R Markdowns provide a great framework to ensure that your data analysis can be r
 # Additional Resources for Reproducible Science
 
 The following lists of resources below were compiled by Francisco Rodriguez-Sanches[^1]
+
 [^1]: https://github.com/ecoinfAEET/Reproducibilidad/blob/master/Recursos.md  
 
 
