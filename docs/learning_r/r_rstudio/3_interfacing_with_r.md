@@ -122,8 +122,8 @@ Click on the image below for a quick peek:
   - Get help with R command syntax
   - Access built-in tutorials
 
-<a href="images/console_demo.mov" title="R Markdown demo">
-  <img src="images/console_demo.png" alt="onsole demo" style="width:300px;border:0"/>
+<a href="images/console_demo.mov" title="Console demo">
+  <img src="images/console_demo.png" alt="Console demo" style="width:300px;border:0"/>
 </a>
 
 ---
