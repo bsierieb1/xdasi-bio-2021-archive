@@ -145,7 +145,7 @@ Click on the image below for a quick peek:
   - See which packages are installed
   - Display R documentation for command syntax
 
-  ![Files](images/files.png){: width="30%"} ![Plot](images/plot.png)!{: width="300"}  [Help](images/help.png){: width="300"}
+  ![Files](images/files.png){: width="30%"} ![Plot](images/plot.png){: width="300"} ![Help](images/help.png){: width="300"}
 
 ---
 
