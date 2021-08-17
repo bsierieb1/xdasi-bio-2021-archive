@@ -21,10 +21,8 @@ has_children: false
 
 # The Basics
 
-The tutorials below provide an introduction to the basic building blocks for programming in R. Each contains links to YouTube videos that walk you through different topics. Ideally you should watch the video first and then read and repeat the code at your own pace.
+The tutorials in this section provide an introduction to the basic building blocks for programming in R. Each contains links to YouTube videos by Prof. Manny Katari (NYU Biology), which you may want to watch first if you like videos. After reading through each topic, you should repeat the code at your own pace and try out applying them to new cases to make sure you have mastered each skill.
 
-* [**R Tutorial**](introduction_to_r/index.md)
-    + Contains instructions on installing and getting going with R and R Studio.
 
 * [**R Data  Structures**](RDataStructures.md)
     + The basic building blocks of working with data.
@@ -52,6 +50,7 @@ If you would rather watch all videos back to back first, feel free to watch the 
 
 * [**Syntax Equivalents: Base R vs. Tidyverse**](base-r_tidyverse_equivalents.html)
   + A comparison of basic syntax for working with data frames, by Hugo Tavares.
+
 * [**Introduction to functions for probability distributions (d, q, p, r)**](Intro_R_dqpr_functions.html)
   + Random sampling, PDF, CDF, and inverse CDF functions for standard probability distributions
 

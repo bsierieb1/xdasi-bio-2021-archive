@@ -35,27 +35,39 @@ Below are some lists of online resources for programming in R and related topics
 
 ---
 
+# RStudio
+
+* [**Keyboard Shortcuts**](https://support.rstudio.com/hc/en-us/articles/200711853-Keyboard-Shortcuts-in-the-RStudio-IDE){: .text-green-200}  _ork faster with these shortcuts! (Tools => Keyboard Shortcuts Help)_
+
++ [**Command Palette**](https://blog.rstudio.com/2020/10/14/rstudio-v1-4-preview-command-palette/) _Instant, searchable access to all available commands in RStudio (Tools => Show Command Palette)_
+
++ [[**RStudio Windows _(from the Pirate's Guide to R)_**](https://bookdown.org/ndphillips/YaRrr/the-four-rstudio-windows.html)
+
+
 # R Programming
 
-* [**Base R Commands** Cheetsheat _(PDF)_](https://github.com/rstudio/cheatsheets/raw/master/base-r.pdf) This is the first place to start.
+## Quick References
 
-- [**YaRrr! The Pirate’s Guide to R**](https://bookdown.org/ndphillips/YaRrr/) - [PDF version](https://bookdown.org/ndphillips/YaRrr/YaRrr.pdf) - [Github repo](https://github.com/ndphillips/ThePiratesGuideToR) - [Donate](https://ndphillips.github.io/piratesguide.html)
+* [**Base R Commands** Cheetsheat _(PDF)_](https://github.com/rstudio/cheatsheets/raw/master/base-r.pdf)
+
+* [**250+ Abbreviations of R commands explained**](r_abbreviations.md) - _If you find yourself wondering what different commands stand for, look here!_
+
+
+## Textbooks
+
+The following two books are highly recommended for a succinct introduction to basic R programming. There are many, many other books on R that are available either online or as printed books. A more comprehensive list of R books can be found in the [**Other Resources**]() section.
+
+**You should definitely get one or more R reference books, which will make it easier for you to review different aspects of R programming.**{: .text-green-200}
+
+- [**YaRrr! The Pirate’s Guide to R**](https://bookdown.org/ndphillips/YaRrr/) - [PDF version](https://bookdown.org/ndphillips/YaRrr/YaRrr.pdf) - [Github repo](https://github.com/ndphillips/ThePiratesGuideToR) - [Donate](https://ndphillips.github.io/piratesguide.html) - _An online book that provides a nice concise introduction to R programming, data wrangling, and basic statistics._
 _Nathaniel D. Philips_ (2018-01-22)
 
-  A concise introduction to R programming, data wrangling, and basic statistics.
-
-- [**dd**]()
-
-- [**dd**]()
-
-- [**dd**]()
-
-- [**dd**]()
+- **R for Everyone** _Jared Lander_ - Another concise and practical book on learning R that may be purchased in paperback or as a Kindle eTextbook - [purchase at Amazon](https://www.amazon.com/Everyone-Advanced-Analytics-Graphics-Addison-Wesley-ebook-dp-B071X9KT1D/dp/B071X9KT1D)
 
 
 # R Markdown
 
-We will make heavy use of Markdown documents in this class. The following references will help you with creating, formatting, executing, and rendering R Markdown documents.
+**We will make heavy use of Markdown documents in this class.**{: .text-green-200} The following references will help you with creating, formatting, executing, and rendering R Markdown documents.
 
 ## The Basics
 
@@ -83,7 +95,7 @@ We will make heavy use of Markdown documents in this class. The following refere
 
 ## Base R Graphics
 
-# ggplot
+## ggplot
 
 * [**ggplot2** Cheatsheet _(PDF)_](https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf)
 
