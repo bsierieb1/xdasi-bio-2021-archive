@@ -1,9 +1,22 @@
 ---
 title: R Packages
 parent: R Tutorial
-nav_order: 5
+grand_parent: Learning R
+nav_order: 10
+has_children: false
 ---
-R Packages
+
+# Working with R Packages -- NEEDS REVISION
+{: .no_toc }
+
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
+
+---
 
 YouTube Video: [R Packages](https://youtu.be/e7h9_Gq7qPU)
 

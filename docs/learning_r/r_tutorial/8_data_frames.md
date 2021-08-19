@@ -1,26 +1,22 @@
 ---
-title: R Data Structures
+title: Data Structures
 parent: R Tutorial
+grand_parent: Learning R
+nav_order: 5
+has_children: false
 ---
-- [R data types](#r-data-types)
-- [R Data Structures](#r-data-structures)
-  - [The class of an object](#the-class-of-an-object)
-- [Vectors](#vectors)
-  - [Character Vectors](#character-vectors)
-  - [Logical Vectors](#logical-vectors)
-    - [List of Logical operators](#list-of-logical-operators)
-  - [Factors](#factors)
-- [R objects: Arrays and Matrices](#r-objects-arrays-and-matrices)
-  - [Different ways to index](#different-ways-to-index)
-  - [R objects: Creating matrices using cbind() and rbind()](#r-objects-creating-matrices-using-cbind-and-rbind)
-- [R objects: Data Frames](#r-objects-data-frames)
-- [R objects: Lists](#r-objects-lists)
-- [Some other useful commands](#some-other-useful-commands)
-- [ImportExport](#importexport)
-- [Apply function family](#apply-function-family)
 
-R data types
-============
+# R Data Structures -- NEED TO REORG -- HERE INCLUDES DATA TYPES, VARIABLES, VECTORS, ARRAYS, ETC -- TOO MUCH HERE
+{: .no_toc }
+
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
+
+---
 
 YouTube Video - <https://youtu.be/i7zYGLgO9Kk>
 

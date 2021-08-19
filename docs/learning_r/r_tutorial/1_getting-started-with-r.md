@@ -1,8 +1,22 @@
 ---
-title: What is R?
-nav_exclude: true
+title: R Intro
+parent: R Tutorial
+grand_parent: Learning R
+nav_order: 1
+has_children: false
 ---
 
+# Introduction to R -- NEED TO REORGANIZE - TOO MUCH IN THIS PAGE
+{: .no_toc }
+
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
+
+---
 
 # R Console Prompt
 
@@ -196,41 +210,6 @@ x)
 ## [1] 1
 ```
 
-# Getting Help with functions and features
-
-```r
-#Different commands to get help for a command
-help(sum)
-?sum
-
-
-
-#In case you don’t know the full name of the command
-apropos("mean")
-```
-
-```
-##  [1] ".colMeans"     ".rowMeans"     "colMeans"      "kmeans"       
-##  [5] "mean"          "mean.Date"     "mean.default"  "mean.difftime"
-##  [9] "mean.POSIXct"  "mean.POSIXlt"  "meanabsdev"    "rowMeans"     
-## [13] "weighted.mean"
-```
-
-```r
-#To only get an example of how to use the command
-example("mean")
-```
-
-```
-##
-## mean> x <- c(0:10, 50)
-##
-## mean> xm <- mean(x)
-##
-## mean> c(xm, mean(x, trim = 0.10))
-## [1] 8.75 5.50
-```
-
 # R objects: Modes
 
 ### The **type** of the components.
@@ -380,41 +359,7 @@ v[v<4]
 ## [1]  2  3  2  2 NA
 ```
 
-## R objects: Factors
 
-A type of character vector that has its elements defined by groups Use factor\(\) on a character vector to create a factor
-
-```r
-x<-c("groupA", "groupB", "groupA", "groupC",
-"groupC", "groupB", "groupA", "groupA")
-
-x<-factor(x)
-
-x
-```
-
-```
-## [1] groupA groupB groupA groupC groupC groupB groupA groupA
-## Levels: groupA groupB groupC
-```
-
-```r
-levels(x)
-```
-
-```
-## [1] "groupA" "groupB" "groupC"
-```
-
-```r
-table(x)
-```
-
-```
-## x
-## groupA groupB groupC
-##      4      2      2
-```
 
 # R objects: Arrays and Matrices
 

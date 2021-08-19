@@ -1,11 +1,23 @@
 ---
 title: Factors
 parent: R Tutorial
-nav_order: 3
+grand_parent: Learning R
+nav_order: 1
+has_children: false
 ---
 
-Factors
--------
+# NEEDS TO BE REVISED - not that informative
+{: .no_toc }
+
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
+
+---
+
 
 YouTube Video - <https://youtu.be/VOcHEJvkJLw>
 
