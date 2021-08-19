@@ -1,8 +1,8 @@
 ---
-title: Useful Commands
+title: Useful Functions
 parent: R Tutorial
 grand_parent: Learning R
-nav_order: 5
+nav_order: 11
 has_children: false
 ---
 
@@ -31,8 +31,9 @@ YouTube Video - <https://youtu.be/v_184INizAs>
 -   `range()` – Returns minimum and maximum value of a vector
 -   `t()` – Transpose a matrix or dataframe
 
-``` r
-# notice the difference betwee sort and order
+
+```{r}
+# notice the difference between sort and order
 # one returns the value, the other returns the position
 sepal.width
 ```
@@ -51,7 +52,7 @@ order(sepal.width)
 
     ## [1] 6 2 3 4 5 1
 
-``` r
+```{r}
 #convert a vector to a matrix.
 as.matrix(sepal.width)
 ```
@@ -64,7 +65,7 @@ as.matrix(sepal.width)
     ## [5,]  3.3
     ## [6,]  2.7
 
-``` r
+```{r}
 #converts a vector to a data frame.
 as.data.frame(sepal.width)
 ```
@@ -85,14 +86,14 @@ rep(sepal.width, times=5)
     ##  [1] 3.5 3.0 3.2 3.2 3.3 2.7 3.5 3.0 3.2 3.2 3.3 2.7 3.5 3.0 3.2 3.2 3.3
     ## [18] 2.7 3.5 3.0 3.2 3.2 3.3 2.7 3.5 3.0 3.2 3.2 3.3 2.7
 
-``` r
+```{r}
 rep(sepal.width, each=5)
 ```
 
     ##  [1] 3.5 3.5 3.5 3.5 3.5 3.0 3.0 3.0 3.0 3.0 3.2 3.2 3.2 3.2 3.2 3.2 3.2
     ## [18] 3.2 3.2 3.2 3.3 3.3 3.3 3.3 3.3 2.7 2.7 2.7 2.7 2.7
 
-``` r
+```{r}
 #quick way to generate numbers
 1:30 #(shortcut for writing c(1,2,3 …. 28,29,30))
 ```
@@ -106,7 +107,7 @@ rep(sepal.width, each=5)
 
     ##  [1]  2  4  6  8 10 12 14 16 18 20 22 24 26 28 30
 
-``` r
+```{r}
 #seq(from, to, by, length)
 seq(-5, 5, by=.2) -> s3
 s3
@@ -117,7 +118,7 @@ s3
     ## [29]  0.6  0.8  1.0  1.2  1.4  1.6  1.8  2.0  2.2  2.4  2.6  2.8  3.0  3.2
     ## [43]  3.4  3.6  3.8  4.0  4.2  4.4  4.6  4.8  5.0
 
-``` r
+```{r}
 s4 <- seq(length=51, from=-5, by=.2)
 s4
 ```
@@ -126,6 +127,8 @@ s4
     ## [15] -2.2 -2.0 -1.8 -1.6 -1.4 -1.2 -1.0 -0.8 -0.6 -0.4 -0.2  0.0  0.2  0.4
     ## [29]  0.6  0.8  1.0  1.2  1.4  1.6  1.8  2.0  2.2  2.4  2.6  2.8  3.0  3.2
     ## [43]  3.4  3.6  3.8  4.0  4.2  4.4  4.6  4.8  5.0
+
+
 
 # Apply function family
 

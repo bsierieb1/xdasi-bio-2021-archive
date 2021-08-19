@@ -2,7 +2,7 @@
 title: Factors
 parent: R Tutorial
 grand_parent: Learning R
-nav_order: 1
+nav_order: 9
 has_children: false
 ---
 

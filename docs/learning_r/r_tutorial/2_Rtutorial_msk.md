@@ -1,27 +1,22 @@
 ---
-title: R Tutorial
-nav_exclude: true
+title: Manny's R Tutorial
+parent: R Tutorial
+grand_parent: Learning R
+nav_order: 3
+has_children: false
 ---
 
--   [What is R ?](#what-is-r)
--   [Main websites to learn more about R project](#main-websites-to-learn-more-about-r-project)
-    -   [R-project](#r-project)
-    -   [CRAN - Comprehensive R Archive Network](#cran---comprehensive-r-archive-network)
--   [Installing R](#installing-r)
--   [Interfacing with R](#interfacing-with-r)
-    -   [Using R on command line](#using-r-on-command-line)
-    -   [The Window System (Rgui)](#the-window-system-rgui)
-    -   [RStudio (www.rstudio.org)](#rstudio-www.rstudio.org)
-    -   [Data Management](#data-management)
--   [Executing R commands](#executing-r-commands)
-    -   [R Console Prompt](#r-console-prompt)
-    -   [R History](#r-history)
-    -   [R editor](#r-editor)
-    -   [R script](#r-script)
-    -   [R object](#r-object)
--   [R functions](#r-functions)
--   [Basic Syntax](#basic-syntax)
--   [Getting Help with functions and features](#getting-help-with-functions-and-features)
+# NEED TO REORGANIZE -- a lot of this is now redundant with other pages
+{: .no_toc }
+
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
+
+---
 
 ## What is R ?
 

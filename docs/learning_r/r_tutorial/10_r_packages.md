@@ -40,6 +40,7 @@ Several packages such as multcomp are available on CRAN. They contain specialize
 >`## [10] "package:base"`
 >
 >
+
 ### To install packages
 `>install.packages("multcomp",repos='http://cran.us.r-project.org')`
 >
@@ -52,6 +53,7 @@ Several packages such as multcomp are available on CRAN. They contain specialize
 RStudio allows you to install and load packages using the packages tab.
 
 ![](RStudio/Slide7_large.png)
+
 
 ## Bioconductor
 

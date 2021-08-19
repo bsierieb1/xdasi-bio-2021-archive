@@ -1,12 +1,12 @@
 ---
-title: Data Structures
+title: Import / Export
 parent: R Tutorial
 grand_parent: Learning R
-nav_order: 4
+nav_order: 12
 has_children: false
 ---
 
-# Import / Export
+# Reading, Importing, and Writing Data Files 
 {: .no_toc }
 
 

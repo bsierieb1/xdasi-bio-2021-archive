@@ -1,17 +1,22 @@
 ---
-title: "RDataStructures"
-author: "Manpreet S. Katari"
-date: "September 4, 2017"
-output:  
-  md_document:
-    toc: true
-    toc_depth: 2
-    variant: markdown_github
+title: Arrays / Matrices
+parent: R Tutorial
+grand_parent: Learning R
+nav_order: 8
+has_children: false
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+# R Objects: Arrays / Matrices
+{: .no_toc }
+
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
+
+---
 
 # R objects: Arrays and Matrices
 
