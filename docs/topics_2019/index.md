@@ -1,7 +1,6 @@
 ---
 title: Class Notes
-permalink: /topics/
-hide: true
+nav_exclude: true
 ---
 
 #### Class notes for each topic will be posted here on a weekly basis. For lab exercises, links to downloadable .Rmd files will be included here.
@@ -25,7 +24,7 @@ hide: true
   - [Week 13 - Bayes and Thanksgiving](#week-13-bayes-and-thanksgiving)
   - [Week 14 - Normalization, Clustering, and PCA](#week-14-normalization-clustering-and-pca)
   - [Week 15: Simple RNA-seq workflow](#week-15-simple-rna-seq-workflow)
-  
+
 
 ---
 
@@ -485,14 +484,14 @@ We will play a game using the distributions we have learned to ask different kin
 + _**Recitation: Principal Components Analysis**_
   + **Class Notes** - [RMD](week_14/PCA.Rmd) [HTML](week_14/PCA.html)
   + **Data** - [HW9_EXPRESSION_DATA.tsv](week_14/HW9_EXPRESSION_DATA.tsv) [HW9_SAMPLE_DATA.tsv](week_14/HW9_SAMPLE_DATA.tsv)
-  
+
 ---
 
 ## Week 15: Simple RNA-seq workflow
 
 + _**RNA-seq: Nitrate Response Arabidopsis**_
   + **The workflow** RNAseq2019 [HTML](week_15/RNAseq2019_subread.html) [RMD](week15/RNAseq2019_subread.Rmd)
-  + **Fasta File** 
+  + **Fasta File**
     + Arabidopsis.fa [HTML](https://drive.google.com/open?id=1_cww95x0irnj-IvPWb692aokR-isszCp)
   + **Gene annotations**
     + Arabidopsis.gtf [HTML](https://drive.google.com/open?id=1_mp0ZQuL58MByiOf7J1J_lCDdY4QSRUd)
@@ -502,4 +501,3 @@ We will play a game using the distributions we have learned to ask different kin
     + KCL_2.fastq [HTML](https://drive.google.com/open?id=1_QVhdK_akbcCxR8Oz9nRA5w5fF3rrKsp)
     + NO3_1.fastq [HTML](https://drive.google.com/open?id=1_WyQGRi0mjSjmIAx3LwymWgq2lj6Oqbi)
     + NO3_2.fastq [HTML](https://drive.google.com/open?id=1_a7DGxRT1bpjZuCPoM-txnzIYS6PTsUu)
-  
