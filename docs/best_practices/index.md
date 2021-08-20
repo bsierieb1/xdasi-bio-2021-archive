@@ -1,6 +1,6 @@
 ---
-title: Other Resources
-nav_order: 3
+title: Best Practices
+nav_order: 4
 has_children: true
 ---
 
