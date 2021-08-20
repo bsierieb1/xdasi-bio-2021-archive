@@ -1,6 +1,6 @@
 ---
 title: Syllabus
-nav_order: 6
+nav_order: 4
 has_children: true
 ---
 
@@ -17,13 +17,18 @@ has_children: true
 
 ---
 
+# Course Aims
+
+To provide introductory theory and hands-on training in exploratory data analysis and statistics for graduate students in biology who have no prior computational experience. Students will learn basic R programming as well as foundational concepts and practical tools that provide a starting point for further advanced study in genomics, bioinformatics and computational biology.
+
+# Logistics
 
 ## Classes
 + One 120-minute lecture/lab (Mondays 9:00am-11:00am)
 + One 75-minute recitation (Tuesdays 1:00pm-2:15pm)
 + One 120-minute lecture/lab (Thursdays 9:00am-11:00am)
 
-# Location
+## Location
 Room 805 CGSB (12 Waverly Place)
 
 ## Instructor
@@ -38,11 +43,6 @@ By appointment
 ## Course Website
 
 Reading, class notes, and in-class exercises will be posted here on a weekly basis. For students who cannot attend the "synchronous" portion of the course, recordings of each class will also be posted here.
-
-## Course Aims
-
-To provide introductory theory and hands-on training in exploratory data analysis and statistics for graduate students in biology who have no prior computational experience. Students will learn basic R programming as well as foundational concepts and practical tools that provide a starting point for further advanced study in genomics, bioinformatics and computational biology.
-
 
 ## Grading
 
@@ -71,16 +71,16 @@ ___Final Take-Home Exam / Project:  15%___
 *   An R coding project will be assigned that will challenge you to apply statistical techniques from throughout the semester to modern biological data. This will take the form either of an extended homework assignment or a final project of your choice. A final project will require prior approval from the instructor and the TA.
 
 
-## Textbook and Reference Materials
+# Textbook and Reference Materials
 
-### Statistics Texts
+## Statistics Texts
 
 *   The textbook we will use is called ***The Analysis of Biological Data*** by Whitlock and Schluter, 3rd edition. You may either purchase a hard copy or purchase / rent an e-copy from [Amazon](https://smile.amazon.com/dp/B081ZH5PL2).
 
 *   Additional assigned reading will draw from a variety of reference books and other informational resources. The course syllabus, reading assignments, lab exercises, tutorials, and links to useful resources will be posted on the **[course website](https://xdasi.bio.nyu.edu/)**.
 
 
-### R Coding
+## R Coding
 
 *   There are many online resources for learning R. Some of these are listed on this website under **R Resources**. Students will be pointed to relevant references throughout the semester.
 
@@ -89,7 +89,7 @@ ___Final Take-Home Exam / Project:  15%___
 *   All NYU students have free access to electronic versions of a large number of the ***technical programming manuals*** (R, Python, etc.) through NYU’s subscription to ProQuest. You can access it through the **[NYU Library](https://guides.nyu.edu/az.php?q=safari)** or through this **[persistent link](https://persistent.library.nyu.edu/arch/NYU01272)** (requires NYU two-factor authentication; you will be redirected automatically).
 
 
-## Course Description
+# Course Description
 
 The course will cover both classical and modern statistical methods, including frequentist, Bayesian, and resampling methods, as well as exploratory data analysis (descriptive statistics and dimensional reduction with clustering, PCA, t-SNE). Applications to the analysis of laboratory data will include problems commonly encountered in bioinformatics, genomics, molecular biology, and systems biology. In-class exercises and problem sets will draw from data generated in our own department, public-domain websites, and simulations. Data sets will be analyzed in the context of hypotheses underlying the experiments in which they were generated. The role of simulation techniques for testing statistical methods applied to real data will be emphasized throughout the course.
 
