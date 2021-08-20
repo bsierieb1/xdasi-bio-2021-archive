@@ -1,0 +1,81 @@
+---
+title: "One group T-test"
+author: "Manpreet S. Katari"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### Let's generate a sample dataset
+```{r}
+pop_size=10000
+randNormValues = rnorm(pop_size, mean=10, sd=1)
+hist(randNormValues, breaks=50)
+mean(randNormValues)
+```
+
+#### Let's say we have a sample of the population. How close are we to knowing the population values?
+```{r}
+sample_size=100
+sampleNormValues = randNormValues[sample(pop_size,sample_size)]
+
+mean(sampleNormValues)
+sd(sampleNormValues)
+
+```
+
+#### This is not exactly right but it's pretty close. If we were to do this again, how different would the results be?
+```{r}
+sampleMeans = numeric()
+for ( i in 1:100000) {
+  sampleNormValuesloop = randNormValues[sample(pop_size,sample_size)]
+  sampleMeans[i] = mean(sampleNormValuesloop)
+}
+mean(sampleMeans)
+sd(sampleMeans)
+
+hist(sampleMeans, breaks=50)
+```
+
+```{r}
+
+# 95 % of the time the mean will be between
+
+sort(sampleMeans)[.025*100000]
+sort(sampleMeans)[.975*100000]
+
+```
+
+#### What if we only have the sample values? We can calculate the standard error and determine 95% confidence of what the population mean really is.
+```{r}
+
+se_sample = sd(sampleNormValues)/sqrt(sample_size)
+print(se_sample)
+```
+
+```{r}
+lower_limit = mean(sampleNormValues) - 1.96*se_sample
+higher_limit = mean(sampleNormValues) + 1.96*se_sample
+
+print(lower_limit)
+print(higher_limit)
+
+```
+
+#### The t-statistic is the difference in the means divided by the standard error.
+
+```{r}
+(mean(sampleNormValues) - 10) / se_sample
+
+
+```
+
+#### We can confirm our answers above by using the t-test function
+
+```{r}
+t.test(sampleNormValues, mu=10)
+
+
+```

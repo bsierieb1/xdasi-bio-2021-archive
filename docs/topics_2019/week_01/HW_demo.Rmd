@@ -1,0 +1,58 @@
+---
+title: "HW Example"
+author: "Kris Gunsalus"
+date: "9/5/2018"
+output:
+  html_document: default
+  github_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. 
+
+For more details on using R Markdown see **<http://rmarkdown.rstudio.com>**.
+
+You can also refer to the R Markdown Cheatsheet, which may be found here: **<https://www.rstudio.com/resources/cheatsheets/>**
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. For example:
+
+```{r test}
+hiya <- paste("Hello","world!",sep = " ")
+hiya
+```
+
+## Embedding Graphics
+
+You can include plots by writing R code to generate them, for example:
+
+```{r normal_density, echo=TRUE, eval=TRUE }
+
+x<-seq(-4,4,0.1)
+y <- dnorm(x)
+plot(x,y,type="h", xlab="Z-score", ylab="Density")
+lines(x,y,col="purple", lwd=2)
+```
+
+## Controlling code output
+
+Note that the `echo = TRUE` and `eval = TRUE` parameters cause both the R code that generated the plot and the output to be displayed.
+
+* Setting `echo = FALSE` would hide the code block.
+* Setting  `eval = FALSE` would prevent the code block from being run.
+* The defaults are TRUE, so they are not needed (we show them here for illustrative purposes).
+
+## Writing equations
+
+The above is a *density plot* for the **Standard Normal Distribution**:
+
+$$f(x) = \frac{1}{\sqrt{2\pi}} e^{-\frac{x^2}{2}}$$
+
+We have posted an .Rmd version of this document on the course GitHub repository for reference.
+
+## Let's get started!

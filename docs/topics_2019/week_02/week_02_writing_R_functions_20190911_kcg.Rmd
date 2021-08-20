@@ -1,0 +1,384 @@
+---
+title: "Week 02 - Writing R Functions"
+author: "Manpreet S. Katari"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Why write your own function?
+
++ Allows you to access code that you or someone has already written
+  + Many functions are already written so it is possible that you may never have to but there are cases where small functions become helpful.
++ Can include complicated steps of an algorithm
+  + For example implementing a new method that you have created to calculate confidence in probe signals.
++ Can include simply steps of a workflow
+  + For example running all the steps to normalizing data.	
++ You can use the apply function to make your code more efficient.
+
+
+## Architecture of a function
+
++ A function is divided into 3 parts:
+  + Name – the name of the function that has to be used when calling the function
+  + Arguments – the required and optional objects and settings that the software can/will use
+  + Expression – the code that does the work
+  + It is a good idea to include a return command in the expression block
+
+
+```{r eval=FALSE}
+#this is a template of how you would write a function
+function_name<-function(argument1, argument2, ....) {
+  expression
+  ....
+  return(result)
+}
+
+#this is how you would run your function and save the result
+myresult = function_name("arg1","arg2")
+
+```
+
+Here's an example:
+
+```{r}
+squareme <- function(x) {
+  result = x**2
+  return(result)
+}
+
+squareme(3)
+```
+
+```{r eval=FALSE}
+squareme("hello") # this will give an error
+
+```
+
+```{r}
+squareme(c(3,4,5,6))
+
+```
+
+## Control Statements
+
+Now let's give our code some more structure and decision making power.
+
+### If-else statements
+
+**if-else** is a control statement that is used to evaluate a condition.
++ '`if-else` evaluates a logical test expression.
++ If the condition is **TRUE**, a given statement will be executed; if it is **FALSE**, then a different statement will be executed.
++ `if-else` statements can be laddered and nested as well.
+
+
+```{r eval=F}
+if ( condition ) {
+  then do this
+} else {
+  do something else
+}
+
+```
+
+#### Simple working example
+
+```{r}
+
+a<-20
+if(a>5) {
+  print(a) 
+} else {
+  print("a is less than 5")
+}
+```
+
+```{r}
+a<-2
+if(a>5) {
+  print(a) 
+} else {
+  print("a is less than 5")
+}
+```
+
+#### Nested if-else
+
+If we need to check for more than one condition, we can create a nested `if-else` statement. You can use as many nested layers as you like. Just be careful that all of your curly brackets are correctly matched!
+
+```{r}
+
+foo<-function(a) {
+	if(a<5) {
+		print("a is less than 5")
+	} else {
+	  if(a<10) {
+			print("a is less than 10 but greater than 5")
+	  } else {
+			print ("a is greater than or equal to 10")
+	  }
+	}
+}
+
+foo(2)
+foo(7)
+foo(20)
+```
+
+
+#### Laddered if-else
+
+The code above can be simplified into a single-layered expression by combining the second `if` statement with the `else` statement that comes right before it: 
+
+```{r}
+
+foo<-function(a) {
+	if(a<5) {
+		print("a is less than 5")
+	} else if(a<10) {
+			print("a is less than 10 but greater than 5")
+	} else {
+			print ("a is greater than or equal to 10")
+	}
+}
+
+foo(2)
+foo(7)
+foo(20)
+```
+
+
+#### ifelse command
+
+There is also an `ifelse` command that can be used to evaluate a vector rather than just one condition. 
++ The first argument is the test condition, a logical expression involving the vector.
++ The 2nd and 3rd arguments are assignment statements to be executed if the condition is **TRUE** or **FALSE**, respectively.
++ The test condition is evaluated for each element of the vector.
++  The `ifelse` statement returns a vector of the same length as the input vector, containing values assigned according to the result of each comparison.
++ The values of the original vector are not changed (unless you assign the result of the statement back to the same vector).
+
+In the example below, note that the result of the `ifelse` statement is a character vector rather than a numeric vector because a vector can contain only one data type. Since some of the elements are assigned a string, the numeric elements are coerced into strings as well.
+
+```{r}
+a<-c(1:8)
+b = ifelse(a <= 5, a, "greater than 5")
+a  # stays the same
+b  # a character vector of the same length as a
+```
+
+## Loops
+
+There are cases when you need to loop through each element of a data object. Loops run repeatedly through the code that is provided within curly brackets until some termination condition occurs, at which point the loop exits and flow control is returned.
+
++ `for` loops are a great option when you know the number of iterations.
++ `while` loops evaluate a condition and loop until it is no longer true.
++ `repeat` loops repeat a block of code until the `break` command is used to exit the loop.
+
+Let's create random matrix and look at all the ways we can calculate the mean of each row.
+
+```{r}
+# The statemwnt below uses the 'sample' function to 20 random values
+# ranging from 20 to 160, then divides them by 10.
+# Finally, it assigns these values to a matrix called 'sampleData',
+# which has 5 rows and 4 columns.
+
+sampleData<-matrix(sample(20:160, 20, replace=T)/10, ncol=4, nrow=5)
+sampleData # inspect the matrix
+
+# Your sampleData will be different because it is generated randomly!
+
+# Since we know that the number of rows is 4, we can use the 'for' loop.
+
+# 'i' is the iterator: on each cycle through the code, it will change in value. 
+# Here, the iterator ranges from 1 to the number of rows in the matrix, 
+# incrementing by 1 on each iteration through the loop.
+
+# Let's save the results in a vector called 'sampleMean'.
+# Initialize an empty vector (needs to be defined so you can assign to it)
+sampleMean=numeric()
+
+# store the row means of 'sampleData' in a vector called 'sampleMean'
+# The 'i'th row of sampleData is stored in the 'i'th element of 'sampleMean'. 
+for ( i in 1:nrow(sampleData) ) {
+    sampleMean[i] = mean(sampleData[i,]) # It is important to use i to 
+                                         # specify where the value should be
+                                         # retrieved and where it should be 
+                                         # saved.
+}
+sampleMean
+
+```
+
+
+```{r}
+# In cases when we want to use a 'while' loop, we need to use a counter that 
+# will keep track of which row we are analyzing on each iteration.
+# The counter needs to be updated explicitly, or else you may end up in an infinite loop.
+
+counter=1
+
+while( counter <= nrow(sampleData)) { # I want to loop while this cond is true
+    sampleMean[counter] = mean(sampleData[counter,]) # now instead of 'i' we use 
+                                                     # 'counter' to keep track
+    counter = counter + 1 # don't forget to add 1 to the counter so you move on 
+                          # to the next row; otherwise the loop will be stuck!
+  }
+
+counter
+sampleMean
+
+```
+
+
+## Apply functions
+
+Instead of looping through a matrix or vector of values to perform the same operation, R has commands that will allow you to apply a function to each row, column, every element of a list, or simply on a vector that is grouped using a factor.
+
++ `apply()` – first provide the array; then whether to apply the function by row (1), column (2), or both (c(1,2)); then the name of the function; and then optionally any options for the function that is being applied.
++ `tapply()` – similar to apply, but pass a factor vector instead of row or column.
++ `lapply()` – simply provide a list and the function to apply to each vector in the list. The result is also a list.
++ `sapply()` – same as lapply(), but returns the result in its original data structure if possible ("simplified" apply).
+
+For the example above, let's use the `apply` function to calculate the mean.
+
+```{r}
+apply(sampleData, 1, mean) # the "1" tells apply to take the mean of each row
+
+```
+
+Let's assume the data was actually two replicates of control in the first two columns and two replicates of treatment in the last two columns. Let's create a factor that defines the different groups.
+
+```{r}
+colnames(sampleData)<-c("ctr1l", "ctrl2", "trt1", "trt2")
+rownames(sampleData)<-c("gene1", "gene2", "gene3", "gene4", "gene5")
+
+expgroups = factor(c("ctrl", "ctrl", "trt", "trt"))
+
+# check it out
+sampleData
+str(sampleData) 
+```
+
+We can use `tapply()` to calculate the average among the `ctrl` and `trt` groups for a given gene:
+
+```{r}
+sampleData[1,]
+
+# mean of ctrl and trt groups for first row of sampleData (gene1)
+tapply(sampleData[1,], expgroups, mean)
+
+```
+
+We could do this manually for each row of the matrix:
+
+```{r}
+# apply 'mean()' to each row of SampleData, grouping data by expgroups:
+# This takes the row mean across both replicates for each factor ("ctrl" and "trt")
+tapply(sampleData[1,], expgroups, mean)
+tapply(sampleData[2,], expgroups, mean)
+tapply(sampleData[3,], expgroups, mean)
+tapply(sampleData[4,], expgroups, mean)
+
+```
+
+However, this is not so useful in practice, since you will usually be working with a lot more than four rows!
+
+We could automate this using a `for()` loop:
+
+```{r}
+sampleMeans = matrix(NA, ncol=2, nrow(sampleData)) # initialize a matrix
+
+for (i in 1:nrow(sampleData)) { # iterate over the rows
+    sampleMeans[i,] = tapply(sampleData[i,], expgroups, mean)
+}
+sampleMeans
+```
+
+But wait! We can make this a lot easier!
+
+We can do this a lot more efficiently using `apply()` to call the `tapply()` function above on each row of the matrix. We can do this in two different ways:
+1. Create a **function** that uses `tapply()` to take the mean of a single vector. Then, call this function with `apply()` to get the mean for each row.
+2. Use `apply()`  to pass the matrix data directly to `tapply()`, one row at a time. This is a one-liner! (much simpler :)
+
+Let's unpack Option 1 first:
+
+```{r}
+## Option 1: 
+
+# First, create a function that uses `tapply()' to compute the mean of the replicates
+# for the ctrl and trt groups (i.e. the mean for each factor).
+# Then, use it to get the means for all the rows using 'apply()'.
+
+# The function will take two arguments:
+# 1) the values that are needed to perform the calculation (a numerical vector)
+# 2) the grouping of the values (a factor)
+calcmean = function(genevalues, expgroup) {
+  result = tapply(genevalues, expgroup, mean)
+  return(result)
+}
+apply(sampleData, 1, calcmean, expgroups)
+
+## Note on 'apply()' syntax:
+# 1) 'sampleData' = the first argument that gets passed to 'calcmean()'
+# 2) 1 = apply 'calmean()' to each row of 'sampleData'
+# 3) 'calcmean' = the function to apply here
+# 4) 'expgroups' (the factor groupings) = the 2nd argument passed to 'calcmean()'
+
+```
+
+Above is a great example of how creating your own function can help speed up the analysis because you can simply apply it to each row.
+
+However, there is an even simpler way!
+
+**Option 2:** You can do the same thing as above in one line, using `apply()` to call `tapply()` directly. This works just as well, and is simpler syntactically. Now, you can get the row means for each factor across the entire matrix, all in one go.
+
+Remember the following when using `apply()`:
+- 1st argument: will be applied to the function call you are using
+- 2nd argument: specifies how to apply the function: 1=row-wise, 2=column-wise, c(1,2)=both.
+- 3rd argument: the name of the function you want to apply. Note that you do not include parentheses here.
+- 4th+ arguments: any additional arguments to be passed to the function
+
+```{r}
+# three arguments will be passed to 'tapply()':
+# sampleData, expgroups, mean
+apply(sampleData, 1, tapply, expgroups, mean) 
+
+# you can transpose the matrix to get the same format back
+t(apply(sampleData, 1, tapply, expgroups, mean))
+
+```
+
+A final note about functions and scoping:
+
+```{r}
+#####################################################################################
+## A note about functions:
+# A function's arguments are just *containers* for the data that gets passed to it --
+# These variables only exist within the function. This is called "lexical scoping".
+# If you want to change the contents of a variable by calling a function on it,
+# you will need to reassign the output of the function to that variable.
+# Otherwise, it will remain unchanged after the function call. Here is an example:
+x = 1
+y = 2
+test_fctn <- function(x, y) {
+  x = y + 1
+  y = y**2
+  return(c(x,y)) # R only lets you return one variable at a time! ;-(
+}
+# first call: only z gets changed
+z = test_fctn(x,y)
+x
+y
+z
+# second call: only x gets changed
+x = test_fctn(y,z)
+x
+y
+z
+#####################################################################################
+```

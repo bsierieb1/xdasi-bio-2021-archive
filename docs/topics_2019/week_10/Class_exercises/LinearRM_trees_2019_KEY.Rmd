@@ -1,0 +1,93 @@
+---
+title: "Linear regression exercise"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+A dataset called ``trees`` contains information about ``Girth`` ( diameter of the tree ), ``Height`` and ``Volume`` of 31 cherry trees. Let's determine which variable is a better predictor of Volume.
+
+- 1) create linear model volume ~ height
+
+```{r}
+# load dataset
+trees
+
+# create linear model -- the two expressions below are equivalent
+# tree_lm = lm(trees$Volume ~ trees$Height)
+tree_lm = lm(Volume ~ Height, data = trees)
+summary(tree_lm)
+```
+
+- 2) inspect plots and determine if lm is of good quality
+    - Is there a transformation that could help the model?
+    - Are there any outliers?
+    - Is the variance/residual equal around the model?
+
+```{r}
+# plot height by volume and the regression line
+plot(trees$Height, trees$Volume)
+lines(trees$Height, predict.lm(tree_lm))
+
+# look at various plots for the model
+plot(tree_lm)
+```
+
+
+- 3) Do the same for Girth. 
+    - Is there a transformation that could help the model?
+    - Are there any outliers?
+    - Is the variance/residual equal around the model?
+
+```{r}
+# create linear model -- the two expressions below are equivalent
+# tree_lm = lm(trees$Volume ~ trees$Height)
+tree_lm = lm(Volume ~ Girth, data = trees)
+summary(tree_lm)
+```
+
+```{r}
+# plot height by volume and the regression line
+plot(trees$Girth, trees$Volume)
+lines(trees$Girth, predict.lm(tree_lm))
+
+# look at various plots for the model
+plot(tree_lm)
+```
+
+
+```{r}
+## ============================================================= ##
+# try a log transformation of Height
+tree_lm_sqr = lm(sqrt(Volume) ~ Girth, data = trees)
+summary(tree_lm_sqr)
+plot(tree_lm_sqr)
+plot(trees$Girth, sqrt(trees$Volume))
+lines(trees$Girth, predict.lm(tree_lm_sqr))
+```
+
+- 4) Pick a range of values (0:25) and then use the best linear model for Girth to predict the Volume, and the lower and upper intervals.  
+
+```{r}
+range_predict = seq(from=0, to=25, by=1)
+
+tree_lm_sqr_predict = predict.lm(tree_lm_sqr, newdata = data.frame(Girth=range_predict), interval="confidence")
+
+```
+
+- 5) use ggplot2 to plot the predicted values and the lower and upper intervals for the values 0:25. 
+
+```{r}
+library(ggplot2)
+library(reshape2)
+
+tree_predict.melt = melt(tree_lm_sqr_predict)
+
+ggplot(data = tree_predict.melt, 
+       aes(x=Var1, y=value, group=Var2)) + geom_line(aes(color=Var2))
+
+```
+
+

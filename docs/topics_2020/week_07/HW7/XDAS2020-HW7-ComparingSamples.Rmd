@@ -1,0 +1,930 @@
+---
+title: "XDAS2020 HW7: Parametric and non-parametric tests for one-sample, paired, and two-sample tests"
+author: "Ronald Fisher [YOUR NAME HERE]"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    toc_depth: 4
+  pdf_document:
+    toc: yes
+    toc_depth: 4
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE, collapse=TRUE, error=TRUE)
+library(dplyr)
+library(ggplot2)
+```
+
+# Parametric tests
+
+## High-fat Diet Study
+
+In this homework we will revisit the high-fat mouse diet study that we looked at in HW3: Descriptive Statistics.
+
+To review, the **study[^1]** raised groups of mice on two different diets and then measured differences in weight gain, glucose intolerance, and insulin resistance. The scientific question was: ***Are the HF mice a good model for Type II diabetes?***
+
+Experimental groups:
+
++ Regular chow (11% fat)
++ High-fat chow (58% fat)
+
+---
+
+## Q0: Prepare the dataset
+
++ Load the data in `mice_pheno.csv`, take a look at it, and then clean it as you did before to remove any rows with missing data.
++ Select just the female mice and make a new data frame containing just the `Diet` and `Bodyweight` columns, and store it in a data frame called `fmw`.
+
+```{r}
+# load the dataset
+mice.pheno = 
+
+# take a look at its structure and contents
+
+
+# clean the data: filter to remove NA
+
+
+# select just the female mice
+fmw = 
+
+# check the data frame
+
+
+```
+
+---
+
+## Q1: Sample from the population
+
++ Take two samples of 12 mice each from the "chow" and "hf" groups. Call them `chow.sample` and `hf.sample`. Since you're already separating them by group, just keep the `Bodyweight` column.
+
+**Note:** *Depending on how you choose do to the sampling, if you use `dplyr()` you may want to `unlist` the sample data at the end so that it's just a vector, instead of a one-column data frame.*
+
+```{r}
+sample.size = 
+
+# take samples
+chow.sample = 
+hf.sample = 
+
+chow.sample
+hf.sample
+```
+
+
+### The t-distribution for sample means
+
+Assuming that we have **random samples**, the estimated distribution of the sample means will follow a **$t$-distribution**, which is similar to a standard normal distribution but with heavier tails. As the sample size increases, the tails of the $t$-distribution becomes smaller and it resembles closely the $Z$-distribution.
+
+The standard error of the mean for any particular sample is a very helpful quantity, because it gives us an idea of how close our data are to the true population mean. We can use the SE to help define **Confidence Intervals (CI)** for the the actual population means from which the samples were drawn.
+
+As we know, the Z-score for a 95% CI is around 2 (or 1.96 to be more precise). However, the critical t-score for a 95% confidence interval depends on the sample size, and for small samples it is quite a bit larger than 1.96. 
+
++ Try this out for yourself using the `qt()` ***quantile function*** function on different sample sizes:
+
+```{r}
+# Z-score for a two-tailed significance level of 0.05
+qnorm(0.975)
+
+# play around with samples of size 5 or larger:
+# make a vector of numbers from 5 to 250, in increments of 5
+d_f = 
+
+# t-score for a significance level of 0.05 and d_f degrees of freedom
+# (use qt with the vector you just made; it will run across all the d.f. values at once) 
+
+```
+
+$\Rightarrow$ ***How big does n have to get to get until it equals around 2.0 after rounding off to one decimal place?***
+
+<!-- Your answer here -->
+
+
+### Confidence Intervals for the Population Mean
+
++ Compute the mean and SE for the `chow.sample` and `hf.sample` samples.
++ Use the `qt()` function to identify the critical $t$-score for the the 95% CI with the appropriate *d.f.*
++ Use the estimated means, SEs, and $t_{crit}$ to get the 95% CI's for the two samples.
+
+```{r}
+## t_critical: t-score for 97.5% area
+t_0.975 = 
+paste0("t_crit = ",round(t_0.975,4))
+
+## chow sample
+chow.mean = 
+chow.se = 
+
+# 95% CI
+
+  
+## high-fat sample
+hf.mean = 
+hf.se = 
+
+# 95% CI
+
+```
+
+
+### Z-score or t-score?
+
+Last time we worked with this dataset, we didn't yet know about the t-distribution, so we used the Z-distribution to compare confidence intervals for a whole bunch of control samples. 
+
+The code we used last time is reproduced here, except now we are going to apply it to samples from the female mouse population. I've made a couple other modifications too:
+
++ Instead of a fixed Q, we use the **quantile functions** to compute the critical value for the the 95% CI.
++ We count up and display the total number of times that the 95% CI does NOT encompass the true sample mean.
+
+**If you run this code block a bunch of times, you will notice that the number of confidence intervals NOT encompassing the true population mean is usually more than 5%.**
+
++ Check that this statement is true:
+  + Fill in the appropriate command to get the quantile you need from the Z-distribution.
+  + Run the code block a bunch of times and inspect the output.
++ Then, change the value of Q so that it uses the t-distribution instead of the Z and repeat this exercise. (Remember to include the appropriate *d.f.*!)
+
+```{r fig.width=4, fig.height=6, collapse=TRUE}
+n.samples = 100   # number of random samples
+N = 12   # sample size
+
+##############################################################################
+# critical value for +/- 47.5% of a normal distribution (qnorm)
+Q = qnorm(0.975)  ## try this first, then comment out and replace with Q below
+
+# critical value for +/- 47.5% of a t distribution (qt, d.f.)
+#Q =  
+##############################################################################
+
+# set up a plot showing a vertical line with the true mean for each population
+chowPop = fmw[fmw$Diet == "chow", "Bodyweight"]
+hfPop = fmw[fmw$Diet == "hf", "Bodyweight"]
+plot(mean(chowPop)+c(-7,7),c(1,1),type="n",
+     xlab="weight",ylab="interval",ylim=c(1,n.samples))
+abline(v=mean(chowPop))
+abline(v=mean(hfPop), lty="dashed")
+
+# display the 95% CI for a bunch of random samples
+ci.outside = 0  # counter for number of CI outside of range
+for (i in 1:n.samples) {
+  chow.sample = sample(chowPop,N) # take a random sample
+  se = sd(chow.sample)/sqrt(N)           # compute SEM
+  interval = c(mean(chow.sample)-Q*se, mean(chow.sample)+Q*se) # compute 95% CI
+  
+  # draw the 95% CI -- color it green if it contains the true population mean, or red if not
+  covered = mean(chowPop) <= interval[2] & mean(chowPop) >= interval[1]
+  color = ifelse(covered,"forestgreen","red")
+  lines(interval, c(i,i), col=color)
+  ci.outside = ci.outside + !covered  # increment counter
+}
+ci.outside  # print counter
+```
+
+$\Rightarrow$ ***What do you notice about the variation in the results? How do you think these results will be affected by sample size?***
+
+<!-- Your answer here -->
+
+---
+
+## Q2: One-sample t-test
+
+A one-sample $t$-test compares a sample to an ***expected population mean***. Therefore, we need to have some data from a control population for comparison, so that we can test our samples against the true population mean. Here, we have enough mice in the original dataset to consider this as the "population".
+
+### Perform the one-sample test
+
++ Extract the `Bodyweight` column from `fmw` for just the "chow" subset and store it as `fmw.chow`. This will come in handy later.
++ Perform a **one-sample _t_-test** using the control and high-fat samples against the control ("chow") population of female mice.
+
+```{r}
+# store the bodyweights for the female "chow" mice as a vector
+fmw.chow = 
+
+# one-sample t-test for chow sample
+
+  
+# one-sample t-test for hf sample
+
+```
+
+$\Rightarrow$ ***Do your samples look like they came from the control population?***
+
+<!-- Your answer here -->
+
+
+### Confidence intervals
+
+We can check our answers by extracting the CI estimates from the `t.test()` function. You can inspect the `t.test` object using `str()`; it's a list containing a bunch of information about the results of the $t$-test. 
+
+The CI is stored as a pair of numbers in the variable `t.test(...)$conf.int[1:2]`, so you can extract the confidence intervals from the t.test output directly and plot them:
+
+```{r}
+# confidence interval for chow sample
+ci1 = 
+
+# confidence interval for chow sample
+ci2 = 
+
+c(ci1,ci2)
+```
+
+$\Rightarrow$ ***How do these compare to the confidence intervals you computed by hand?***
+
+<!-- Your answer here -->
+
+
+$\Rightarrow$ ***What would be wrong with stopping here and reporting your results based on these tests?***
+
+<!-- Your answer here -->
+
+
+### Comparing confidence intervals
+
+Let's compare the 95% CI's for these two samples visually.
+
+```{r}
+# visualize confidence intervals with a quick plot (ggplot2)
+data.df = data.frame(group = c("chow","hf"),
+                     mean = c(mean(chow.sample),mean(hf.sample)),
+                     ci_low = c(ci1[1],ci2[1]),
+                     ci_hi  = c(ci1[2],ci2[2]) )
+
+# plot groups in the desired order (default is alphabetical)
+# this is not needed here since "chow" will naturally be plotted before "hf"
+# but just so you know ...
+data.df$order = factor(data.df$group, as.character(data.df$group))
+qplot(x    = order,
+      y    = mean, ylab="95% CI",
+      data = data.df) +
+  geom_errorbar(aes(ymin  = ci_low,
+                    ymax  = ci_hi,
+                    width = 0.15))
+```
+
+$\Rightarrow$ ***Examining the data by eye, and using the rules of thumb discussed in the text, what criteria would you use to decide if your two samples look significantly different from each other?***
+
+<!-- Your answer here -->
+
+
+$\Rightarrow$ ***Try taking a few more pairs of samples (just re-knit the document a few times with the code you have up to this point). Do you draw the same conclusion from the graph each time for this sample size?***
+
+<!-- Your answer here -->
+
+
+
+### Simulating population data
+
+What if we didn't have the population data? We could actually reverse engineer a control sample population, using our best estimates of the population parameters using the control sample we do have.
+
+Recall from Chapter 11 that our best estimate for the true population mean $\mu$ is the sample mean $\bar{Y}$. We also learned how to calculate the standard error of the sampling distribution: $SEM = \frac{s}{\sqrt{n}}$. However this is not the same as our estimate for the true standard deviation in the population! 
+
+Our best estimate for the true population variance (Section 11.5) is:
+
+$$ \sigma^2 = \frac{(n-1)s^2}{\chi^2} $$
+
+That looks pretty simple, but what do we use for Chi-squared? Since we want a ***representative value*** from the sampling distribution of $\chi^2$, we can use the 50th quantile (the midway point in the density distribution). We can also compute a ***95% CI*** for the population SD using $\chi_{\alpha=0.025}$ and $\chi_{\alpha=0.975}$.
+
+Using this information, we can sample from a normal distribution with our estimated parameters and pretend that this is our control population data. It will probably be closer overall to the `chow.sample` sample than the original population, since we have to use the sample statistics to estimate the population parameters. Let's see what happens. The code below does the following:
+
++ Estimates the mean and SD for the population using the `chow.sample` sample.
++ Computes a confidence interval for the estimate of the population SD. 
++ Displays the estimated parameters along with the actual mean and SD from the actual control population.
+
+```{r}
+## population mean estimate from a single chow.sample
+chow.sample2 = fmw %>% filter(Diet == "chow") %>% select(Bodyweight) %>% sample_n(sample.size) %>% unlist
+pop.mean.est = mean(chow.sample2)
+
+## s.d. -- use the sample variance and the Chi-square distribution
+## sigma^2 = df * s^2 / chisq_est(0.5,9)
+
+# a) compute chi-squared estimate
+chisq.est = qchisq(0.5, length(chow.sample2)-1)
+paste("Chi-square estimate for ",length(chow.sample2)-1, " degrees of freedom = ",round(chisq.est,4))
+
+# b) compute pop sd estimate and CI
+pop.sd.est = sqrt( (length(chow.sample2)-1)*var(chow.sample2) / chisq.est )
+chisq.lower = qchisq(0.925, length(chow.sample2)-1)
+chisq.upper = qchisq(0.075, length(chow.sample2)-1)
+c(chisq.lower,chisq.upper)
+pop.sd.ci = c(sqrt( (length(chow.sample2)-1)*var(chow.sample2) / chisq.lower),
+              sqrt( (length(chow.sample2)-1)*var(chow.sample2) / chisq.upper) )
+
+## check the estimated parameters
+pop.params = cbind("Method" = c("ChisqEst", "TruePop"),
+                   "Mean" = c( round(pop.mean.est,3),round(mean(fmw.chow),3) ),
+                   "SD"   = c( round(pop.sd.est,4), round(sd(fmw.chow),3) ) )
+pop.params
+pop.sd.ci
+```
+
+$\Rightarrow$ ***How do the true and estimated parameters compare? How precise is the estimate of the population SD?***
+
+<!-- Your answer here -->
+
+
+---
+
+## Q3: Two-sample t-test
+
+We already know that the distribution of the sample mean is normally distributed, based on the CLT. It is also the case that ***the sum or difference of two normally distributed variables is also normally distributed.***
+
+Therefore, the **difference in sample means** must also be normally distributed, so we can use $t$-statistics to test whether the means are the same, and we can estimate (with 95% confidence) the true difference in the means of the two populations.
+
+#### 95% CI for the difference in sample means
+
+To calculate the 95% CI for $\bar{\mu}_{hf}-\bar{\mu}_{chow}$ using the $t$-distribution, we will need several things:
+
++ the observed mean difference
++ the SE of the difference
++ the degrees of freedom
++ the critical $t$-value
+
+In this example, the standard error is the same whether we use the **pooled variance** formula (for equal variances) or the simpler formula from **Welch's approximate** $t$-test (for unequal variances), which uses individual sample variances:
+
+$$SE_{\bar{Y}_{1}-\bar{Y}_{2}}={\sqrt{\frac{s_{1}^2}{n_1}+{\frac{s_{2}^2}{n_2}}}}$$
+
+If we treat these as **independent samples**, the degrees of freedom are: $df = n_1 + n_2 - 2$.
+
++ Compute the 95% CI by hand using the formula for independent samples.
+
+```{r}
+# mean difference
+mean_diff = 
+mean_diff
+
+# SE of the difference
+se_diff = 
+          
+se_diff
+
+# critical t-value
+t_crit = 
+t_crit
+
+# 95% CI
+
+```
+
+
+### Null hypothesis
+
+$\Rightarrow$ ***What is the null hypothesis for the two-sample t-test? Under what conditions should you reject the null hypothesis? Explain your reasoning.***
+
+<!-- Your answer here -->
+
+
+
+### $t$-statistic and $p$-value for the difference in means
+
+Since we expect that we have random samples drawn from a normal distribution, it is valid to use $t$-statistics to test our null hypothesis.  
+
+Recall that the ***$t$-score for the difference in the means*** is computed in the same way as the $z$-score for a normal distribution: it is simply the **difference**, **standardized** by the standard error. We already computed the mean and SE above, so this will be very easy!
+
++ First, calculate by hand the test statistic (the $t$-score for the observed difference) and use it to find the probability that our null hypothesis is true (the $p$-value for our test statistic).
+
+
+```{r}
+# compute the test statistic for the mean difference
+t_score = 
+t_score
+
+# degrees of freedom for 2-sample test
+df_2sample = 
+
+# compute a two-sided p-value using pt()
+
+```
+
+
+### Perform the two-sample test
+
++ Next, perform a two-sample test using the `t.test()`. **Try both the standard version and Welch's approximate $t$-test.**
+
+```{r}
+# perform two versions of a 2-sample test using R
+# standard test
+
+# Welch's approximation
+
+```
+
+$\Rightarrow$ ***How do the results of the manual calculation and the two $t$-tests compare?***
+
+<!-- Your answer here -->
+
+$\Rightarrow$ ***What is similar and what is different about these results in comparison with the one-sample tests above?***
+
+<!-- Your answer here -->
+
+---
+
+## Q4: Paired t-test
+
+What if the data are taken from the **same individuals**? For example, we could give a different diet to half of the mice and then weigh the same animals at the beginning and end of the experiment.
+
+In this kind of experimental design, we say that the data are **paired**. If there is no difference between the two measurements for each individual, then we would expect that our before and after values would be about the same on average. 
+
+The **paired $t$-test** is performed in the same way as the one-sample $t$-test, except we use the **mean difference between paired measurements** from the two samples, $\bar{X}_D$, to compute a test statistic. Our **null hypothesis** is usually that the mean difference, $D_o$, is zero (we could set it to something else if our null hypothesis is that the difference between them is something else ...).
+
+For paired data, we assume that the two sets of measurements are arranged in the same order as the corresponding individuals (because we have good record-keeping practices!) The test statistic is:
+
+$$ t^* = \frac{\bar{X}_{D} - D_o}{\frac{s_{D}}{\sqrt{n}}} = \frac{\bar{X}_{D} - D_o}{SE_{D}}  = \frac{\sqrt{n}}{s_D}(\bar{X}_{D} - D_o) $$
+
+where $\bar{X_D}$ is the mean of the pairwise differences, $s_D$ is the standard deviation of the pairwise differences, and $D_0$ is what we are testing (the expected difference under the null hypothesis, which in this case is $0$). 
+
+To compute this $t$-statistic, we can simply subtract one vector from the other to obtain **pair-wise differences** for each individual, take the mean, and divide by the standard error. We then find the $p$ value in the usual way.
+
+Study the above equation to convince yourself that the **form** of the $t$-statistic above is the same as that for a **one-sample** $t$-test -- we simply substitute $\bar{X}_D$ for $\bar{X}$, $D_o$ for $\mu_o$, and $s_D$ for $s$. 
+
+### Compute the test statistics
+
++ First get a $p$-value using a manual calculation:
+
+```{r}
+## manual p-value using the t-statistic
+
+# paired mean difference
+pair_diff = 
+
+# SE of the difference
+se_diff = 
+
+# observed t-statistic
+t_stat = 
+t_stat
+
+# two-tailed probability
+
+```
+
+
+### Perform a paired test with the sample difference
+
++ Now use the `t.test()` function to perform a one-sample test that compares the paired difference vector against the expected mean difference.
+
+```{r}
+# R command for one-sample t-test of the difference in means
+
+```
+
+### Perform a paired $t$-test with the original samples
+
+Above you just performed a **one-sample** $t$-test using the **paired differences** between the two samples.
+
+It is important to understand that this gives the same result as a **two-sample** $t$-test with the **paired** option! So you don't actually need to take the paired differences to do this test -- you can just plug in the two samples and choose the paired option! Yay!
+
++ Using the syntax for a **two-sample paired test** to verify that the two methods are equivalent, compare the results using `var.equal = T` and `var.equal = F`.
+
+```{r}
+# t.test(treatment, control, ...)
+
+
+```
+
+$\Rightarrow$ ***Does specifying equal or unequal variances make any difference for a paired test***?
+
+<!-- Your answer here -->
+
+
+_**Note**_: when performing any $t$-test with two samples, you must specify the **test set first**, and the **control set second** -- otherwise you get a $t$-score that is on the opposite side of the distribution. This will not change your $p$-value, however your **confidence interval** will have the wrong sign!!!
+
+---
+
+# Permutation ("shuffle") test
+
+Instead of trying to compute statistics using a parametric model of the data, we could just rearrange the group labels and compute the number of times we see a difference in means at least as great as the one we have observed.
+
+## Q5: Permutation test with mouse data
+
++ Use a permutation test to compute an empirical p-value for your "chow" and "hf" mouse samples. 
++ Draw a histogram and show where the true value lies vs. the critical value for the test. 
+
+```{r}
+
+```
+
+$\Rightarrow$ ***How does your empirical p-value compare with the one you got from the two-sample tests above?***
+
+<!-- Your answer here -->
+
+
+---
+
+# What if the data are not normally distributed?
+
+Sometimes our data don't look that normal, so it's not clear whether a t-test is appropriate to compare them. Here we will investigate a dataset on plasma triglyceride levels before and after diet and exercise changes:
+
+```{r, collapse=TRUE}
+###############################################################################
+# plasma triglyceride levels in the population (mg/ml)
+# borderline high = 2-4 vs. normal < 2
+# testing before and after diet and exercise changes (expect a decrease)
+pre = c(2.55,3.38,2.37,4.11,3.27,2.58,4.20,3.22,5.10,2.62,3.06,1.23,2.27,2.24,
+        1.39,2.63,2.61,4.30,1.46,3.35,2.79,2.42,4.63,1.57)
+post = c(1.59,3.51,1.44,2.32,1.75,1.67,1.90,1.37,2.72,1.80,2.40,2.01,2.41,1.38,
+         1.18,4.31,2.09,2.32,2.63,2.25,1.71,2.01,1.95,3.46)
+###############################################################################
+```
+
+## Exploratory data analysis
+
+It's always a good idea to plot data to take an initial feel for it. Histograms and normal-QQ plots can both be very helpful for this purpose. We can also use the ***Shapiro-Wilk*** test to see whether the data follow a normal distribution.
+
+```{r, collapse=TRUE}
+################################################################
+## histograms (breaks = 10)
+par(mfrow=c(2,2))
+
+# raw data
+hist(pre,breaks=10)
+hist(post,breaks=10)
+
+################################################################
+## QQ-plots: use `qqnorm(data, ylab="data"; qqline(data)`
+
+# QQ-plot - raw data for pre and post
+qqnorm(pre,ylab="pre"); qqline(pre)
+qqnorm(post,ylab="post"); qqline(post)
+
+################################################################
+## Shapiro-Wilk tests - `shapiro.test(your_data_here)`
+shapiro.test(pre)   # pre-treatment
+shapiro.test(post)  # post-treatment
+
+```
+
+
+$\Rightarrow$ ***What do you think about whether these data look close enough to normal to perform a t-test?***
+
+<!-- Your answer here -->
+
+
+## Q6: Transformation
+
+When the data do not look to be sufficiently normal, we can try performing tests on data that have been **transformed** using functions such as the `log()`, `sqrt()`, or `arcsin()`. This can make data look more normal, so that parametric tests may be performed on them.
+
+### Log transform
+
+Many types of data follow a log-normal distribution, such as exponential growth (cell count doubles with each division), systolic blood presssure, and the latency period for infectious diseases. Taking the log of distributions with a long right-skewed tail stretches out the small values and compresses the larger ones, which can render the data more normal-looking. Let's see if this helps our dataset.
+
+*Note:* By default, the `log()` function uses the **natural log**. You can specify other bases with the `base` parameter; convenience functions such as `log10()` and `log2()` are also available.
+
++ Do the same checks as above, except use the log of the distributions instead.
+
+```{r, collapse=TRUE}
+
+# check distributions after log-transformation
+par(mfrow=c(2,2))
+
+# histograms
+
+
+
+# QQ plots
+
+
+
+## Shapiro-Wilk tests
+
+
+```
+
+
+$\Rightarrow$ ***Did the log transform make the data more normal?***
+
+<!-- Your answer here -->
+
+
+### Perform paired $t$-tests on the original and log-transformed data
+
+```{r, collapse=TRUE}
+
+# paired t-tests using raw and transformed data
+
+
+```
+
+$\Rightarrow$ ***How do these $t$-test compare? Which $t$-test is more appropriate, and why?***
+
+<!-- Your answer here -->
+
+---
+
+# Non-parametric (rank-based) tests
+
+When the sample data do not follow a normal distribution, we can alternatively use tests that make fewer assumptions about the data. A common set of sets looks at the data in terms of their ranks (or ranked differences) instead of their magnitudes. 
+
+## Q7: Tests for paired data: Sign and Wilcoxon signed-rank tests
+
+For paired data, our null hypothesis is that the paired differences between the groups should end up with about the same number being positive or negative. This works well when the two differences have a similar skew and variance.
+
+---
+
+### Sign test
+
+The sign test can be used instead of a one-sample or paired t-test. Instead of comparing **means** or mean differences, the **sign test** compares the **median** of a sample to a hypothesized value. For paired data, under the null hypothesis we would expect the medians of two samples to be the same.
+
+$\Rightarrow$ ***What are the null and alternative hypotheses for the sign test for the plasmid triglyceride dataset?***
+
+<!-- Your answer here -->
+
+
+The sign test simply takes the signs of the paired differences and counts up the number of negative and positive deviations from zero. The $p$-value is then equivalent to the binomial probability for the observed number of negative deviations when the expected probability is 0.5.
+
+The steps are:
+
++ Calculate the pairwise differences between the samples.
++ Count the number of nonzero differences $n$.
++ The test statistic, let's call it $k$, is the smaller number of the positive and negative differences.
++ Use the binomial distribution to compute probability of observing $k$ out of $n$ differences given an expected probability of $\pi = 0.5$.
+
+Since the sign test is just a binomial exact test using the positive and negative counts, the probability can be computed either using `pbinom()` or using the binomial proportions test, `binom.test()`.
+
++ Below, compute the binomial probability for the "pre" and "post" triglyceride samples.
+
+```{r}
+# sign test for the triglyceride data
+
+########################################
+# manual calculation of  test statistic
+
+# difference in the two samples
+tri_diff = 
+
+# count of negative differences
+neg_count = 
+neg_count
+
+# count of positive differences
+pos_count = 
+pos_count
+
+# test statistic
+test_stat = 
+
+########################################
+# two-tailed binomial probability of seeing neg_count or more
+
+
+########################################
+# binomial proportions test for counts
+
+```
+
+
+---
+
+### Wilcoxon signed-rank test
+
+The **Wilcoxon signed-rank test** is similar to the sign test except that it takes the sum of all the signed ranks (see below), and it can easily be performed directly in R. 
+
+One **caveat** of this test is that it **assumes a symmetric distribution**, which limits its applicability. The test is often used when this assumption is violated, so keep this in mind and try not to make the same mistake.
+
+Here we will run the test on the log-transformed data, which is more symmetrical than the original data.
+
+#### Procedure
+
+The steps are:
+
++ Calculate the $N$ differences between the pairs.
++ Rank the *absolute* values of the $n$ non-zero differences. Assign the average if there is a tie.
++ Also record the sign of the differences, $sgn(x_{2i} - x_{1i})$ for $i \in \{1..N\}$.
++ Compute the test statistic $W$, defined as:
+
+$$ W = \sum_{i=1}^Nsgn[sgn(x_{2i} - x_{1i}) * R_i] $$
+
+```{r}
+# compute paired log differences
+log_tri_diff = log(post) - log(pre)
+rank_diff = rank(abs(log_tri_diff))
+
+# Calculate the Wilcoxon W statistic
+w_stat = sum(sign(log_tri_diff) * rank_diff)
+w_stat
+```
+
+
+#### Normal approximation
+
+$W$ has a specific expected distribution under the null. The population mean and variance are:
+
+$$ \mu_{W} = 0 ;\ \sigma_{W}^2 = \frac{n(n+1)(2n+1)}{6} $$
+
+When the number of items sampled is more than ~20, we can use a normal approximation to compute a $z$-score, $z = W / \sigma_W$, from which we can obtain a $p$-value.
+
+Below we use the normal approximation to compute a $p$-value for the log-transformed data.
+
+```{r}
+# normal approximation
+n = length(log_tri_diff)
+sigma_w = n*(n+1)*(2*n+1) / 6  # sd
+z_w = w_stat / sqrt(sigma_w)   # z-score
+2*pnorm(z_w)                   # two-tailed p-value
+```
+
+
+#### W and V statistics
+
+Below, we will use the Wilcoxon signed-rank test using both the original and the log-transformed triglyceride data. Don't forget that we are doing **paired** tests here.
+
+***Note:*** The R implementation of the Wilcoxon signed-rank test uses something called a $V$-statistic, which is a little different than the $W$-statistic: it is the **sum of the ranks** assigned to the differences with a **positive** sign.  The test gives the same result when samples are entered in either order.
+
+The normal approximation for the $V$-statistic has parameters:
+$$ \mu = n(n+1)/4\ ;\ \sigma = n(n+1)(2n+1)/24$$
+
+The $p$-values from both the $W$ and the $V$ are the same.
+
+```{r}
+# computing the V statistic
+diff_neg = rank_diff[log_tri_diff < 0]
+diff_neg
+t_neg = sum(diff_neg)
+t_neg
+diff_pos = rank_diff[log_tri_diff > 0]
+diff_pos
+t_pos = sum(diff_pos)
+t_pos
+
+v_stat = min(t_neg,t_pos)
+v_stat
+
+#######################################
+# normal approximation and p-value
+mean_v = n*(n+1)/4
+sigma_v = n*(n+1)*(2*n+1) / 24
+z_v = (v_stat - mean_v) / sqrt(sigma_v)
+2*pnorm(z_v)
+```
+
+
+### Wilcoxon signed-rank test in R
+
++ Use the `wilcox.test()` function to perform the tests in R, using both the raw and the log-transformed data. Don't forget to run these as paired tests!
+
+```{r}
+# test raw data
+
+# test log data
+
+```
+
+$\Rightarrow$ ***How do the manual calculations compare to the results of the R tests? Why might these differ?***
+
+<!-- Your answer here -->
+
+
+$\Rightarrow$ ***What is different about the results for the raw and transformed data? Would you choose to use either one of these for your analysis? Why or why not?***
+
+<!-- Your answer here -->
+
+
+---
+
+## Q8: Unpaired data: Mann-Whitney U test and Wilcoxon rank-sum test
+
+If our data are **not normal** and also **not paired**, we can use a **Mann-Whitney U-test** or the equivalent **Wilcoxon rank-sum** test. Some people therefore like to refer to this test as a **Mann-Whitney-Wilcoxon** test. The test is implemented in R as `wilcox.test()`, with the (default) unpaired option.
+
+This test is simlar to the paired signed-rank test, but instead of measuring paired differences and counting positive and negative differences, we compute the sum of ranks for each group in the combined data. This makes intuitive sense because if the data are drawn from a homogeneous population, we would expect the values of the measurements from two random samples to be relatively well interleaved (as if we had shuffled a deck of cards). So, we would expect that the overall sum of ranks should be about the same. 
+
+Below we will perform the Mann-Whitney-Wilcoxon test on the triglyceride data, **pretending that they are not actually paired.**
+
+
+#### Procedure
+
+The hypotheses to be tested are:
+
+$H_o$: The sample distributions are the same.
+
+$H_A$: The sample distributions are NOT the same.
+
+The steps are:
+
++ Assign ranks to the combined data, from lowest to highest.
++ Assign ties the midrank between them (the average of the ranks).
++ Compute the sum of ranks $R_1$ for Sample 1.
++ Compute the $U$-statistic for Samples 1 and 2.
++ The $U$-value that is **higher** in magnitude is the test statistic, and it needs to be tested against an upper-tail critical value.
++ Compute the $p$-value using the quantile function for the $U$-distribution.
+
+**Note**: The sum of ranks for a sequential set of numbers starting with 1 is $N(N+1)/2$. Check this out for yourself on some small sets of numbers (e.g. 1,2,3...). Intuitively, then, if all the measurements from Sample 1 are much smaller than those from Sample 2, then the minimum sum of ranks for Sample 1 would be $R_1 = n_1(n_1+1)/2$. 
+
+
+#### The U-statistic
+
+The $U$_statistic measures the difference between the observed and minimum ranks. Note that the sum of the $U$-values equals the product of the length of the two samples: $U_1 + U_2 = n_1n_2$.
+
+We can use a simplified method to compute the $U$-statistics:
+
+$$ U_1 = R_1 - \frac{n_1(n_1+1)}{2} = R_1 - minR_1$$
+$$U_2 = R_2 - \frac{n_2(n_2+1)}{2} = n_1n_2 - R_1$$
+where $n_{1}$ and $n_{2}$ are the size of the two groups.
+
+The population mean and variance (again, ignoring the term for ties for now) are:
+
+$$ \mu_U = \frac{n_1n_2}{2}\ ; \ \sigma_{U}^2 = \frac{n_{1}n_{2}}{12} (n_1 + n_2 + 1)  $$
+
+
+##### Manual computation
+
+First, let's compute compute the statistics for the triglyceride data by hand.
+
+```{r}
+n = length(pre)  # n is the same for both sets
+r_min = n*(n+1)/2 # minimum rank
+
+# ranks
+Data = c(log(pre),log(post))
+DataRank = rank(abs(Data))
+DataRank
+
+# rank sums for each sample
+DataRankSums = tapply(DataRank,rep(c("pre","post"),each=n),sum)
+DataRankSums
+```
+
+**Note**: Using the **lower** $U$ value as the test statistic and comparing to a **lower-tail** critical value is equivalent to using the **higher** $U$ value and comparing against an **upper-tail** critical value.
+
+R uses the lower $U$ value and calls it $W$. We do this below for easier comparison to the results of the `wilcox.test()` function below.
+
+```{r}
+t_pre  = DataRankSums["pre"]
+t_post  = DataRankSums["post"]
+
+# test statistic
+w_pre = t_pre - r_min
+w_pre
+w_post = t_post - r_min
+w_post
+
+# use the minimum U-stat (called W here) as the test statistic
+w_stat = min(w_pre,w_post)
+w_stat
+```
+
+
+##### Normal approximation
+
+Again, when the number of samples is ~20 or more, we can use the normal approximation for the expected distribution under the null. We have $n_1 = n_2 = 24$, so let's just calculate a $z$-score to get our $p$-value.
+
++ Use the formula above to estimate the mean and SD for $W$ the normal approximation. 
++ Then use the z-score to compute a two-tailed probability for the observed data.
+
+```{r}
+#######################################
+# parameters for normal approximation
+mu_w = 
+mu_w
+
+sigma_w = 
+sd_w = 
+sd_w
+
+# z-score
+z_w = 
+z_w
+
+# two-tailed p-value
+
+```
+
+
+#### Wilcoxon rank-sum tests in R
+
+Check the above calculations using the `wilcox.test()` function. 
+
++ Run the test on both the raw and the log-transformed data. The syntax is the same as before, except now we are using **independent** instead of paired samples.
+
+```{r}
+# raw data
+
+
+# log-transformed data
+
+```
+
+$\Rightarrow$ ***How do the manual results compare with the results from the R functions? Why are they not identical?***
+
+<!-- Your answer here -->
+
+
+$\Rightarrow$ ***How do the results from the raw and transformed data compare, and why?***
+
+<!-- Your answer here -->
+
+
+---
+
+## Q9: Conclusions
+
++ Finally, please reflect on the results from the different tests we have performed here. Summarize in a short paragraph below what you have learned from the analysis of the triglyceride dataset.
+
+<!-- Your answer here -->
+
+
+<!-- footnote ---------------------------------------------------------------->
+
+[^1]: The high-fat diet-fed mouse: a model for studying mechanisms and treatment of impaired glucose tolerance and Type II diabetes.
+MS Winzell and B Ahren, _Diabetes_ 2004; 53:S215-219

@@ -1,0 +1,206 @@
+---
+title: "RNA-seq Normalization"
+author: "Manpreet S. Katari"
+date: "12/1/2019"
+output:
+  md_document:
+    toc: true
+    toc_depth: 3
+    variant: markdown_github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## RNA-seq
+
+RNA-seq is one of the most popular application to study RNA expression. The goal for majority of the projects is to quantify the abundance of all RNA transcripts and determine is there is any patter or any change in the expression due to a certain factor.
+
+For this exercise we will download a publicly available dataset from NCBI and load the results that were provided by the author. The experiment was performed in Gloria Coruzzi's lab and project was to look at the response of Nitrogen in Arabidopsis at several time points.
+
+The description of the project can be found [here](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE97500)
+
+And we can download the dataset [here](https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE97500&format=file)
+
+The NCBI GEO is a great place to find published datasets. You can browse the different species that are represented and also search project based on the platform that was used to perform the quantification.
+
+### GEOquery & Bioconductor
+
+[Bioconductor](http://bioconductor.org) is an excellent place to find R packages designed for analyzing genomic data. It is a curated set of packages and there are great tutorials and common workflows. In this case we will simply use a function in the package that will allow us to uncompress the files that we need.
+
+```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("GEOquery")
+library(GEOquery)
+```
+
+### Loading the data
+
+Once you have the file downloaded, put it in your working directory ( where ever you have created your project). If you have a mac or linux machine, you should be able to simply ``untar`` the file by double clicking on it. This may work on windows machines, but if it does not, R has an ``untar()`` function.
+
+As long as you see the ``GSE97500_RAW.tar`` file simply type:
+
+```{r}
+download.file("https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE97500&format=file", destfile = "GSE97500_RAW.tar", mode = "wb" )
+
+untar("GSE97500_RAW.tar")
+```
+
+Now we will use the ``dir()`` function to get a full listing of our files in the directory and then use one of the ``apply`` functions to gunzip them all.
+
+```{r}
+#install.packages("R.utils")
+library(R.utils)
+allfiles = dir(pattern = "txt.gz")
+
+sapply(allfiles, gunzip)
+```
+
+Now we can get a full list of all the new files and use another ``apply`` function to load all the files in a list. Luckily all the elements in the list are the same size so I can easily convert it into a dataframe.
+
+```{r}
+allfiles2 = dir(pattern = "counts.txt")
+lapply(allfiles2, read.table, row.names=1) -> allreads
+
+allreads.df = as.data.frame(allreads)
+colnames(allreads.df) = allfiles2
+```
+
+### Distribution of the size of libraries
+
+Let's create a simple data frame so we can use the ``ggplot`` function to view the distribution of the library sizes.
+
+```{r}
+library(tidyverse)
+library(reshape2)
+
+totalReads = data.frame(sample=c("sample"),
+                        numReads=colSums(allreads.df))
+ggplot(totalReads) + geom_violin(mapping = aes(y=numReads,x=sample))
+```
+
+Anything strange?
+
+Let's look closely at a subset of the data to see the difference in total reads and the range of values. Because we have lots of samples, let's pick the values from column 99:115.
+
+```{r}
+allreads.df$GeneName = rownames(allreads.df)
+allreads.df.melt = melt(allreads.df[,99:115])
+ggplot(allreads.df.melt) +
+  geom_violin(mapping = aes(y=log2(value),
+                            x=variable))
+```
+
+
+## Normalization
+
+### Calculating gene size
+
+A GFF file is a common format in which gene annotations are provided. It contains information about the coordinates of all features such as exons, genes, 5'UTR, etc. For the purpose of this exercise, we will consider the size of the gene as if it was the size of the locus. Normally you should calculate the size of each exon in the gene locus and add them up because what you really need is the size of the transcript not the locus.
+
+Download the GFF file [here](Athaliana.sorted.gff)
+
+```{r}
+# We will use the Genomic Features package to load the GFF annotation
+# package in R and use it to retrieve the gene size from the
+# GFF file
+
+#BiocManager::install("GenomicFeatures")
+library(GenomicFeatures)
+
+genes = makeTxDbFromGFF("Athaliana.sorted.gff")
+
+genesize = transcriptLengths(genes)
+head(genesize)
+```
+
+Notice that for some genes thare is more than one transcipt isoform. This is because of the alternate splicing. This is always a challenge when you don't know which transcript you would like to use since the data that was provided to us is related to the locus and not the transcript.
+
+One solution is to take the .1 version of each gene.
+
+```{r}
+mainTranscriptindex = grep(".1$", genesize$tx_name)
+
+genesizetranscript = genesize[mainTranscriptindex,]
+
+rownames(genesizetranscript) = genesizetranscript$gene_id
+head(genesizetranscript)
+```
+
+Add the genesize to the dataframe and then melt again.
+
+```{r}
+allreads.df$GeneSize = genesizetranscript[rownames(allreads.df),"tx_len"]
+allreads.df.melt = melt(allreads.df[,99:116],
+                        id.vars=c("GeneName","GeneSize"))
+
+head(allreads.df.melt)
+```
+
+Now add the total reads as another column.
+
+```{r}
+allreads.df.melt$LibSize = totalReads[allreads.df.melt$variable,2]
+
+```
+
+### FPKM
+
+Now that we have all the calculations we need, we can add another column to the dataframe using ``mutate()``, a function from tidyverse. It simply adds columns.
+
+```{r}
+# FPKM = fragments per kb per million reads
+#      = num_gene_reads / ( (GeneSize / 1000) * (LibSize / 1000000) )
+#      = num_gene_reads / ((GeneSize * Libsize)) * 1,000,000,000
+allreads.fpkm = mutate(allreads.df.melt,
+       fpkm = (value/(GeneSize*LibSize))*1000000000
+)
+head(allreads.fpkm)
+```
+
+```{r}
+ggplot(allreads.fpkm) + geom_violin(mapping = aes(y=log2(fpkm),x=variable))
+```
+
+### TPM
+
+First we need to divide the number of reads by the size of transcript. We then divide by the sum of all the RPT for each sample and then multiply by 1000000.
+
+```{r}
+allreads.fpkm.rpt = mutate(allreads.fpkm,
+                           rpt=value/GeneSize)
+
+```
+
+Tidyverse contains a function which works similar to the ``apply`` function. The ``group_by`` function allows you to specify how group your data. One nice feature is that it can group by multiple columns. Then you can use the ``summarize`` function to perform the mathematics.
+
+```{r}
+# group RPT by sample
+group_by_variable = group_by(allreads.fpkm.rpt, variable)
+
+# sum up the RPT per sample (remove NAs) and assign to a new column
+summarize(group_by_variable,
+          rpt_sum=sum(rpt, na.rm=T)) -> sum_rpt
+
+allreads.fpkm.rpt$sum_rpt = sum_rpt$rpt_sum[allreads.fpkm.rpt$variable]
+allreads.fpkm.rpt = mutate(allreads.fpkm.rpt, tpm = (rpt/sum_rpt)*1000000)
+```
+
+
+
+```{r}
+ggplot(allreads.fpkm.rpt) +
+  geom_violin(mapping = aes(y=log2(tpm),x=variable))
+```
+
+Let's check what the totals are for each column. Note that below I'm using tidyverse's method of ``pipeing` one command to the other.
+
+```{r}
+group_by(allreads.fpkm.rpt, variable) %>% summarize(sum(fpkm, na.rm = T)  )
+
+group_by(allreads.fpkm.rpt, variable) %>% summarize(sum(tpm, na.rm = T)  )
+
+```

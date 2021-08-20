@@ -1,0 +1,74 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Scenario
+
+You want to clone a gene and you have some reporter for success of transformation in *E. coli*. Positive colonies are blue because they express $\beta$-galactosidase when plated on medium with IPTG. The probability of a successful transformation is $0 \le P(success) \le 1$. For the following exercise, you may consider one plate, many plates, or a truly gargantuan number of plates.
+
+## Exercise
+
+The class will split into 8 groups and each one will take one of the following distributions:
+
+- Bernoulli
+- Binomial
+- Geometric
+- Hypergeometric
+- Negative binomial
+- Poisson
+- Normal
+- Exponential
+
+For your assigned distribution, answer the following questions. At the end of the class, each group will present their distribution and how it applies to the scenario above to the rest of the class.
+
+#### a. What is your function? Describe it in terms of the kind of problem that it applies to. Is it discrete or continuous?
+
+<!-- We have the binomial distribution, which is the binom function in R. This  is a statistical method for describing the probability of successes and failures. It is asking a yes/no question. It is a discreet probability -->
+
+
+#### b. Describe a question that you can ask with your distribution as applied to the transformation scenario given above.
+
+<!-- Out of 10 experiments (n or number of experiments), how many positively transformed (via blue color) colonies are observed on a given plate(x or number of successes)? -->
+
+
+#### c. Describe the parameterization of the equation. What parameters does it take, and what do they mean?
+
+<!-- X ~ BIN(n,pi). It uses n for the number of trials and x for the overall number of successes -->
+
+
+#### d. Pick some appropriate parameters for your distribution as applied to the transformation scenario and graph the PDF and CDF.
+
+```{r}
+dbinom(1,10, (1/3))
+
+
+# What is the probability of 1 success out of 10 trials given the probability of success is 1/3 in a single trial
+
+
+dbinom(0:10, 10, (1/3))
+
+
+ 
+
+
+#Then we wanted to know what the discrete probabilities would be for 0-10 trials given the observed probability of 1/3. 
+```
+
+
+#### e. Compute a cumulative probability for some appropriate value and describe in words what it means. Be prepared to explain your answer to the class.
+
+```{r}
+pbinom(0:10, 10, (1/3))
+
+
+par(mfrow = c(1,2))
+plot(dbinom(0:10,10, (1/3)))
+plot(pbinom(0:10,10, (1/3)))
+```
+
+<!-- Here we have computed the cumultive probability or CDF of getting 0-10 successes out of 10 trials (adding the individual probabilities for each of the 10 trials). -->
+
+
+#### f. Identify at least one other distribution that yours relates to and be prepared to discuss the relationship between them. This could be a special case, a limiting case, an approximation, or an inverse CDF (survival) relationship.
+
+<!-- We could use a negative binomial distribution in order to check the faliure rate and see if it matches up  -->

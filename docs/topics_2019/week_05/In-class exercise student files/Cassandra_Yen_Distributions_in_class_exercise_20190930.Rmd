@@ -1,0 +1,91 @@
+---
+title: "Distribution Exercise: Bernoulli"
+author: "Cassandra Buzby and Yen-Chung Chen"
+date: "9/30/2019"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Scenario
+
+You want to clone a gene and you have some reporter for success of transformation in *E. coli*. Positive colonies are blue because they express $\beta$-galactosidase when plated on medium with IPTG. The probability of a successful transformation is $0 \le P(success) \le 1$. For the following exercise, you may consider one plate, many plates, or a truly gargantuan number of plates.
+
+## Exercise
+
+The class will split into 8 groups and each one will take one of the following distributions:
+
+- Bernoulli
+- Binomial
+- Geometric
+- Hypergeometric
+- Negative binomial
+- Poisson
+- Normal
+- Exponential
+
+For your assigned distribution, answer the following questions. At the end of the class, each group will present their distribution and how it applies to the scenario above to the rest of the class.
+
+#### a. What is your function? Describe it in terms of the kind of problem that it applies to. Is it discrete or continuous?
+
+<!-- Insert your answer below. -->
+
+The function we choose is Bernoulli experiment. It's a special case of binomial distribution where n = 1. It's describing a single trial of a binary random variable. It applies to many of the experiments that we want to conceptualize the success rate (like cloning, transfection, gene editting, and etc.). It's the basis of how we can estimate the probability of having a specific number of success (binomial), how many experiments we need before getting a or x success (negative binomial / geometric).
+
+Bernoulli distribution is discrete.
+
+
+#### b. Describe a question that you can ask with your distribution as applied to the transformation scenario given above.
+
+<!-- Insert your answer below. -->
+
+With preliminary experiments to estimate the success rate $p$, in the transformation with reporterexperiment, we can use Bernoulli experiment to ask **how likely each bacterium will take in the plasmid and be transformed**, thus expressing the reporter gene LacZ or GFP.
+
+
+#### c. Describe the parameterization of the equation. What parameters does it take, and what do they mean?
+
+<!-- Insert your answer below. -->
+
+The PDF and CDF of Bernoulli distribution only takes $p$ (the success rate) and $x$ (the number of success cases, in which can only be 0 or 1), where the PDF is:
+
+
+$$P(x) = \begin{cases} p \quad{} if\quad{}x = 1\\\\1-p \quad{} if\quad{}x = 0 \end{cases}$$ 
+
+and the CDF is:
+
+$$F(x) = \begin{cases} 1 \quad{} if\quad{}x = 1\\\\1-p \quad{} if\quad{}x = 0 \end{cases}$$ 
+
+#### d. Pick some appropriate parameters for your distribution as applied to the transformation scenario and graph the PDF and CDF.
+
+The transformation rate is ~23% ($p=\frac{4}{17}$).
+
+```{r}
+set.seed(20190930)
+par(mfrow = c(1,2))
+plot(x= c(0, 1), y = dbinom(c(0, 1), 1, 4/17), type = "l", 
+     main = "PDF", xlab = "x", ylab = "", ylim = c(0, 1), xaxt='n')
+axis(side = 1, at = c(0, 1))
+plot(x= c(0, 1), y = pbinom(c(0, 1), 1, 4/17), type = "l", 
+     main = "CDF", xlab = "x", ylab = "", ylim = c(0, 1), xaxt='n')
+axis(side = 1, at = c(0, 1))
+
+```
+
+
+#### e. Compute a cumulative probability for some appropriate value and describe in words what it means. Be prepared to explain your answer to the class.
+
+<!-- Insert your answer below. -->
+
+By definition, Bernoulli distribution only exist for $x\in{}\{0, 1\}$, so and it has a CDF:
+
+$$F(x) = \begin{cases} 1 \quad{} if\quad{}x = 1\\\\1-p \quad{} if\quad{}x = 0 \end{cases}$$ 
+
+It means that the cumulative chance to getting no success ($x = 0$) is $1-p$, while the chance of getting equal or less than 1 success is the sum of every possible case, thus $P(x = 1) = 1$.
+
+
+#### f. Identify at least one other distribution that yours relates to and be prepared to discuss the relationship between them. This could be a special case, a limiting case, an approximation, or an inverse CDF (survival) relationship.
+
+<!-- Insert your answer below. -->
+
+Binomial distribution can be seen as repeating Bernoulli trial for n times.

@@ -1,0 +1,70 @@
+---
+title: "Experimental Design"
+author: "Manpreet S. Katari"
+date: "11/11/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Experimental Design
+
+When designing an experiment we are always trying to reduce the chance of having extraneous factors influence our results. We are also trying to improve our precision, close estimate to the expectation value.
+
+To do this there are a few concepts that we should keep in mind:
+
+1. Replication
+2. Randomization
+3. Blocking
+
+## Replication
+
+Performing the same experiment, or simply collecting data several times, improves our chances that the our estimate is closer to the expected value. In a normal distribution we see this in the calculation of standard error where  
+
+$$ se = \frac{sd}{\sqrt{n}} $$
+
+As n, the number of samples, increases, the standard error will decrease.
+
+Special care must be taken so that we don't confuse *replicates* With *pseudoreplicates*. Pseudo replicates are when we taken samples or measurements that are essentially the same sample. For example sequencing the same library twice. This is called *technical replicate* because it is really testing the variability of the sequencing run and not the biological samples. Similarly picking plants from a plot in the same area may result in conditions that are too similar. Even though this will give us less variability, it is not a true representation of the biology. 
+
+### Can you thin of other methods of sampling that could results in pseudoreplicates?
+
+## Randomisation
+
+Randomisation is closely related to the problem of not selecting pseudoreplicates. We want to pick samples that are truely random to reduce the amount of bias. 
+
+Suppose we are collecting plants from a plot and we have four different treatments and they are collected in the fashion described below.
+
+```{r echo=FALSE, results='asis'}
+library(knitr)
+kable(matrix(c("A","A","C","C","A","A","C","C",
+               "B","B","D","D","B","B","D","D"),
+             nrow=4,ncol=4))
+
+```
+
+Even though we have collected 4 sample of each, the layout isn't random. There maybe some bias in the way plots are layed out.
+
+This also applies to petridishes, If you are picking colonies, always picking the top right for a given sample, may have some biases. Another example is selecting the first 10 larvae for a treatment, maybe the first 10 that you see are easier to see, in which case there is some *unconscious* bias.
+
+## Blocking
+
+Sometimes we can not avoid the external factors so we should include them in our model. This will allow us to account for the influence of the factors in the variation of the data. 
+
+One of the best ways to design an experiment is using *Latin Square Design*. In this case all the different blocks are represented equally for all treatments. For the example above, it would look somthing like this:
+
+```{r echo=FALSE, results='asis'}
+kable(matrix(c("A","D","C","B",
+             "B","A","D","C",
+             "D","C","B","A",
+             "C","B","A","D"),
+      nrow=4,ncol=4))
+
+```
+
+Here our samples would be collected randomly and the factors, whether it gradient, or water availability, or even sunlight, that spans across rows or columns, will be taken into account.
+
+Remember in the ANOVA model, you simply provide the Blocking variable in the formula so you can calculate the amount of variance that can be explained by this factor and it will be deducted from the variation explained from your treatment. This will provide you with a proper calculation of how of the variation in your data is due to the treatment.
+

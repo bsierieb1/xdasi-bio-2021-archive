@@ -1,0 +1,74 @@
+---
+title: "Regression"
+author: "Raza"
+date: "11/16/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The dataset contains the movement speed and weight of an insect species. We want to make a model that can predict movement speed based on weight. (This data is not normal but for the purpose of the exercise we will assume it meets all requirements for linear regression)
+
+```{r}
+#import data and load libraries
+library(ggplot2)
+
+
+```
+
+Use ggplot to make a scatterplot showing the relationship between speed (dependent variable) and weight (independent variable)
+```{r}
+
+
+```
+
+Fit a simple linear model to the data and look at the results. What is the R^2?
+```{r}
+
+
+```
+
+Add a fitted line to the scatterplot
+```{r}
+#extract the fitted values from the model and add as a column to the original insect dataframe
+
+
+#add a line to the scatterplot using the new column
+
+
+#instead of using the fitted values from the model, directly add a fitted line using the ggplot function stat_smooth
+
+
+```
+
+Plot the residuals on the y axis and fitted values on the x-axis. If the model fits well, the residuals will have a relatively similar distribution above and below zero
+```{r}
+
+
+
+```
+
+The data seems to have some outliers? Fit the model after excluding the outliers and check if it improves the results  
+```{r}
+
+
+
+```
+
+Maybe the relationship is non-linear. Fit a quadratic model to the data (excluding outliers) and make a plot with the fitted line.
+```{r}
+
+
+
+```
+
+Predict the value of speed when weight is 20 or 60 using 1)the linear model 2)the quadratic model. Which predictions seem reasonable?
+```{r}
+#note:the predict function expects a dataframe containing the weight value as input
+
+
+
+```
+

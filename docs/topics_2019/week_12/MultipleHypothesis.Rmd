@@ -1,0 +1,173 @@
+---
+title: "Multiple Hypothesis Testing"
+author: "Chris"
+date: "11/22/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(ggplot2)
+ggplot2::theme_set(theme_classic())
+```
+
+## Multiple Hypothesis Testing
+
+Lets load that giant data set from HW9
+
+```{r}
+
+data.file.name <- "HW9_EXPRESSION_DATA.tsv.gz"
+data.file.object <- gzfile(data.file.name)
+expression.data <- read.delim(data.file.object)
+
+meta.data.file.name <- "HW9_SAMPLE_DATA.tsv"
+meta.data <- read.delim(meta.data.file.name)
+
+```
+
+## Let's do differential gene expression between YPDXX and RAPAXX biological samples
+
+I'm going to break this into two data sets for convenience
+
+```{r}
+
+# Filter out anything that's all 0s
+
+expression.data <- expression.data[rowSums(expression.data) > 0,]
+
+ypd.expression <- as.data.frame(t(expression.data[, 1:70]))
+rapa.expression <- as.data.frame(t(expression.data[, 71:140]))
+
+```
+
+Now I'm going to t-test every single gene. All of them.
+
+```{r}
+
+# Step 1: pick one gene to test
+
+test.gene <- "YKR039W"
+
+sample_1_gene <- ypd.expression[, test.gene]
+sample_2_gene <- rapa.expression[, test.gene]
+tt <- t.test(sample_1_gene, sample_2_gene)
+
+print(c(tt$statistic, tt$p.value, mean(sample_1_gene), mean(sample_2_gene)))
+
+```
+
+
+```{r}
+
+# Step 2: make that thing I just wrote into a function
+gene.diff.test <- function(test.gene, sample_1, sample_2) {
+  sample_1_gene <- sample_1[, test.gene]
+  sample_2_gene <- sample_2[, test.gene]
+  tt <- t.test(sample_1_gene, sample_2_gene)
+  return(c(tt$statistic, tt$p.value, mean(sample_1_gene), mean(sample_2_gene)))
+} 
+
+```
+
+```{r}
+
+# Step 3: Does my function work?
+print(gene.diff.test("YKR039W", ypd.expression, rapa.expression))
+
+```
+
+```{r}
+
+# Step 4: Run the code that I KNOW WORKS in an iterative loop
+
+test.values <- mapply(gene.diff.test, test.gene=colnames(ypd.expression), MoreArgs = list(sample_1=ypd.expression, sample_2=rapa.expression))
+
+test.values <- as.data.frame(t(test.values))
+colnames(test.values) <- c("t", "pval", "YPD.mean", "RAPA.mean")
+
+# And make sure it matches what I got before:
+print(test.values["YKR039W",])
+
+```
+
+How many genes have p-values less than 0.05?
+
+```{r}
+
+qplot(test.values$pval, geom="histogram", binwidth=0.005) + labs(x="p-value")
+
+sig.genes <- sum(test.values$pval < 0.05)
+print(paste("Significant genes (p < 0.05) :", sig.genes))
+```
+
+How many genes do we expect are Type I errors (false positives)?
+
+```{r}
+print(paste("Type I errors (p < 0.05) :", ncol(ypd.expression) * 0.05))
+```
+
+What is the expected FALSE DISCOVERY RATE?
+
+```{r}
+print(paste("Expected FALSE DISCOVERY RATE :", ncol(ypd.expression) * 0.05 / sig.genes))
+```
+
+Well that's not... terrible I guess. I'd like to control my false discovery rate to 0.01 though. What p-value threshold gives me a false discovery rate of 0.01?
+
+```{r}
+for (i in 1:10) {
+  pv <- 0.05 / i
+  print(paste("Expected FALSE DISCOVERY RATE (p <", 
+              round(pv, digits=3), "):", 
+              round(ncol(ypd.expression) * pv /sum(test.values$pval < pv), digits = 4)))
+}
+```
+
+As the p-value goes down, so does the false discovery rate - it looks like p < 0.008 is a good cutoff for significance to control my false discovery rate to 0.01.
+
+```{r}
+sig.genes <- sum(test.values$pval < 0.008)
+print(paste("Significant genes (p < 0.008) :", sig.genes))
+print(paste("Type I errors (p < 0.008) :", ncol(ypd.expression) * 0.008))
+print(paste("Expected FALSE DISCOVERY RATE :", ncol(ypd.expression) * 0.008 / sig.genes))
+```
+
+That's still a lot of differences. Is there a function that does this for us though?
+
+Of course there is. This is R.
+
+```{r}
+test.values$p.adj <- p.adjust(test.values$pval, method = "fdr")
+sig.genes <- sum(test.values$p.adj < 0.01)
+print(paste("Significant genes (q < 0.01) :", sig.genes))
+```
+
+## I am interested in the differential expression between rapamycin-treated samples. Specifically I am interested in comparing the wild-type (`TF == "WT"`) biological samples to the other biological samples
+
+```{r}
+
+# I'm going to select the data that I want
+wt.rapa <- meta.data$Experiment == "RAPA" & meta.data$TF == "WT"
+wt.rapa.data <- as.data.frame(t(expression.data[, wt.rapa]))
+
+gcn4.rapa <- meta.data$Experiment == "RAPA" & meta.data$TF == "gcn4"
+gcn4.rapa.data <- as.data.frame(t(expression.data[, gcn4.rapa]))
+
+# Run my test function again with mapply
+gcn4.test.values <- mapply(gene.diff.test, test.gene=colnames(wt.rapa.data), MoreArgs = list(sample_1=wt.rapa.data, sample_2=gcn4.rapa.data))
+
+gcn4.test.values <- as.data.frame(t(gcn4.test.values))
+colnames(gcn4.test.values) <- c("t", "pval", "WT.mean", "GCN4.mean")
+
+# And I'm going to get rid of all the columns where WT.mean and GCN4.mean are both 0
+gcn4.test.values <- gcn4.test.values[gcn4.test.values$WT.mean != 0 & gcn4.test.values$GCN4.mean != 0,]
+
+# Now I'll add a column for the fdr-corrected p.adj values
+gcn4.test.values$p.adj <- p.adjust(gcn4.test.values$pval, method = "fdr")
+
+qplot(gcn4.test.values$pval, geom="histogram", binwidth=0.005) + labs(x="p-value")
+
+print(paste("Significant genes (p < 0.05) :", sum(gcn4.test.values$pval < 0.05)))
+print(paste("Significant genes (q < 0.01) :", sum(gcn4.test.values$p.adj < 0.01)))
+```

@@ -1,0 +1,266 @@
+---
+title: "RNA-seq : Identifying Differentially Expressed Genes"
+author: "Manpreet S. Katari"
+output: html_document 
+---
+
+#The Dataset
+Our goal for this experiment is to determine which *Arabidopsis thaliana* genes respond to nitrate. The dataset is a simple experiment where RNA is extracted from roots of independent plants and then sequenced. Two plants were treated with the control (KCl) and two samples were treated with Nitrate (KNO3).
+
+Here we will attempt to perform the entire RNA-seq analysis (including alignment) using R packages.
+
+We have been provided the following files:
+
+1. 4 Fastq files - Original sequence files, one for each sample
+2. Arabidopsis.gtf file - which contains information about the genes in Arabidopsis and where they are located in the genome.
+3. Arabidopsis.fa file - the Arabidopsis genome sequence to which we will align the reads.
+
+###Note: If one of the R packages is not loaded, you have to install it from Bioconductor
+
+```{r, eval=FALSE}
+install.packages("BiocManager")
+BiocManager::install("Rsubread")
+BiocManager::install("DESeq2")
+BiocManager::install("GOstats")
+BiocManager::install("GO.db")
+BiocManager::install("Category")
+BiocManager::install("org.At.tair.db")
+```
+
+
+
+
+# The RNA-seq workflow
+
+
+
+## The Fastq files
+
+Sequences generated from the sequencing machine are called *reads* and they are provided in a format called **fastq**. The file contains four lines per read. The first and third line contain the unique identifier for the read (most new version of fastq don't repeat the name) preceeded by an `@` and a `+` respectively. The second line contains the sequence and the fourth line contains the base quality score in ASCII format.
+
+```{r}
+# a quick look at the first 8 lines of the file
+scan("KCL_1.fastq", what = character(), nlines=8)
+
+```
+
+Generally it is a good idea to assess the quality of the sequences and trim if necessary but newer algorithms are able to incorporate sequence and mapping quality scores to determine which are worth reporting.
+
+## FastA file
+
+In order to find out where in the genome the reads originate from, we have to first align them to the reference genome. The reference genome sequence is often provided in a **FastA** format. The first line of a FastA file is the name and description of the sequence preceded with a `>`. The sequence starts on the second line and is normally 60 characters per line till the end of the sequence. The format supports multiple sequences in one file where the `>` at the start of a line defines the begining of a new sequence.
+
+We will be using the R package **Rsubread** to align the reads to the reference sequence. In order to prepare the reference sequence so we can align the reads against it, we have to first index it. We will use the **buildindex** and provide options for `basename` and `reference`. The basename will be used as the prefix to the index files the reference is the genome sequence in FastA format.
+
+```{r}
+
+library(Rsubread)
+
+buildindex(basename="Ath_index", 
+           reference = "Arabidopsis.fa")
+
+```
+
+You should now have new Ath.index.???  files in your workspace.
+
+## The Annotation File
+GTF file is very similar to a GFF file. Their purpose is to store the location of genome features, such as genes, exons, and CDS. It is a tab delimited flat file which looks something like this.
+
+
+```{r, echo=FALSE}
+agtf=read.table("Arabidopsis.gtf", sep="\t")
+colnames(agtf)=c("reference","source","feature","start","stop","score","strand","phase","annotation")
+
+head(agtf)
+```
+
+
+## Aligning the reads
+
+The **align()** function in Rsubread has lots of options. It is best to review the help section of the command if you have a special case for your analysis. 
+
++ The first argument is the name of the index that was used when we built the index file in the previous step. 
++ The second argument is a list of the fastq files.
++ We are also telling the aligner that this is RNA-seq which would make it *splice aware*. We are also going to provide an annotation in *GTF* format. 
+
+
+
+```{r}
+align("ath_index", 
+      c("KCL_1.fastq","KCL_2.fastq","NO3_1.fastq","NO3_2.fastq"),
+      type="rna", input_format = "FASTQ",
+      useAnnotation = T, annot.ext = "Arabidopsis.gtf", 
+      isGTF = T, phredOffset = 64)
+
+
+```
+
+## The Alignment Files
+
+The alignment files are in **bam** format. This files will not be loaded into R, but rather simply pointed to by a reference/variable. The alignment files provided are about 15x smaller compared to an average RNA-seq sample run today. Also there will be triplicates of 3 or more different conditions resulting in much more than 4 sample. So you can imagine the amount of space and memory R would need if all that data was stored in the workspace.
+
+The **featureCounts** function will take all alignments and find out which gene is located in the region of the genome where the reads are mapping. To do this we need the BAM files and the GTF file.
+
+```{r}
+readcounts = featureCounts(dir(pattern = ".BAM$"), 
+                            annot.ext="Arabidopsis.gtf", 
+                            isGTFAnnotationFile=T,
+                           countMultiMappingReads = F)
+
+
+names(readcounts)
+head(readcounts$stat)
+
+head(readcounts$counts)
+
+head(readcounts$annotation)
+
+head(readcounts$targets)
+
+```
+
+
+## The Experimental Design
+
+We will create a factor to define which columns have which sample.
+```{r}
+expdesign = factor(c("KCL","KCL","NO3","NO3"))
+
+```
+
+## Counting the Reads
+
+The actual gene counts are saved in the `counts` element in `readcounts`
+```{r}
+counts = readcounts$counts
+
+```
+
+## Filtering the Counts
+
+Now, if you remember from the lecture, genes that are expressed at a very low level are extremely unreliable. We will remove all genes if neither of the groups ( KCL or KNO3 ) have a median count of 10 and call the new dataframe **counts_filtered**. 
+
+
+
+```{r}
+medianCountByGroup = t(apply(counts, 1, tapply,
+                             expdesign, median))
+
+maxMedian=apply(medianCountByGroup, 1, max)
+
+counts_filtered = counts[maxMedian>=10,]
+```
+
+## Differentially Expressed Genes
+Now that we have the counts table filtered, we can start to determine if any of the genes are significantly differentially expressed using *DESeq2*. 
+
+Create an object that DESeq needs using the function **newCountDataSet**. In order to create this dataset, we need the filtered data frame of read counts and the factor that will help group the data based on the condition.
+
+```{r}
+library(DESeq2)
+
+cds = DESeqDataSetFromMatrix(countData=counts_filtered,
+                             colData=data.frame(condition=expdesign),
+                             design= ~ condition)
+
+
+```
+
+Before the actual test, DESeq has to consider the difference in total reads from the different samples. This is done by using *estimateSizeFactors* function. 
+
+```{r}
+cds = estimateSizeFactors(cds)
+```
+
+Next DESeq will estimate the dispersion ( or variation ) of the data. If there are no replicates, DESeq can manage to create a theoretical dispersion but this is not ideal.
+
+```{r}
+cds = estimateDispersions( cds )
+plotDispEsts( cds )
+```
+
+The plot shows us that as the gene's read count increases, dispersion decreases, which is what we expect. Now we will tell DESeq what we would like to compare. Then we will use the adjusted p-value ( p-value corrected for multiple hypothesis testing ) for our cutoff.
+
+```{r}
+cds <- DESeq(cds)
+res <- results(cds)
+head(res)
+sum(res$padj < 0.05, na.rm=T)
+```
+
+The sum command is normally used to add numberic values. However in logic vectors, TRUE=1 and FALSE=0, so we can use the sum function to count the number of "TRUE" in the vector. In the example we counted the number of genes that have a an adjusted p-value less than 0.05.
+
+## MA Plot
+Here's an MA plot that shows as the average count of a gene increases, a smaller fold change is needed for something to be significant. For this reason, it is often helpful to require that the log2foldchange also be greater than or less than negative of some cutoff. 
+
+```{r}
+plotMA(res, ylim=c(-5,5))
+```
+
+
+## Significant genes
+Let's use the same values for our cutoff to determine which genes we want to consider as significantly differentially expressed. The resSigind variable will contain genes that are induced and resSigrep will contain genes that are repressed when the plants are treated with Nitrate. To create one dataframe of differentially expressed genes, let's combine the two dataframe. We can use the rbind command because the columns are the same in both sets. To show the name of the genes, simply look in the **id** column of the dataframe.
+
+
+```{r}
+resSigind = res[ which(res$padj < 0.05 & res$log2FoldChange > 0), ]
+resSigrep = res[ which(res$padj < 0.05 & res$log2FoldChange < 0), ]
+resSig = rbind(resSigind, resSigrep)
+
+rownames(resSigind)
+rownames(resSigrep)
+```
+
+## Gene Annotations
+
+Great ! We have genes that are differentially expressed, what do we know about these genes ? The gene identifier we obtained from the GTF file is referred to as TAIR identifiers (a consortium that used to release Arabidopsis genome annotations) I managed to download the gene description for all the genes. Let's load them into the workspace and find out what are the names of the genes.Since the set of repressed genes is smaller, let's see what we can find out about them.
+
+Before we do this, note that the identified in the gene_description file is slightly different ( the file contains the transcript identifier that ends with "." and a number), Let's replace every occurrence of . and a number with nothing. Then we will be able to use **match** to find where our gene is in the description file so we can only print out that row.
+
+```{r}
+gene_description <- read.delim("gene_description_20131231.txt",
+                               header=FALSE, quote="")
+genenames = gsub("[.][1234567890]", "", 
+                 gene_description[,1])
+
+gene_description[,1]=genenames
+
+gene_match_rows=match(rownames(resSig), gene_description[,1])
+gene_description[gene_match_rows,c(1,3)]
+```
+## GO-term enrichment analysis
+
+Getting the gene names are informative but it is hard to determine whether a speicifc category of terms are over-represented in this analysis. So we will perform a GO-term enrichment analysis of all differentially expressed genes using a Hypergeometric test to determine if there is any GO-term that is enriched in this list.
+
+To run the test using the GOstats package, we must first create a GOHyperGParams object as shown below. Here we will provided the genes in the list, the universe of all genes, which GOterm gene space we are interested in, a p-value cutoff, and if we want an additional conditional test. The conditional test looks at parent and child relationship of the GO-terms. If the parent term and the child term are over-represented, the parent-term has to be significantly more over-represented to show up in the list of over-represented GO-terms. This avoids the problem where many over-represented GO-terms are parent or child of another and the terms appear to be very redundant.
+
+```{r}
+library(GOstats)
+library(GO.db)
+library(Category)
+library(org.At.tair.db)
+params=new("GOHyperGParams", 
+  geneIds=rownames(resSig), 
+  universeGeneIds=rownames(counts_filtered), 
+  annotation="org.At.tair", 
+  ontology="BP", 
+  pvalueCutoff=0.001, 
+  conditional=TRUE, 
+  testDirection="over")
+```
+
+To get actually perform the test we use the hyperGTest function and to see the results simply use the summary function.
+
+```{r}
+(overRepresented=hyperGTest(params))
+
+summary(overRepresented)[,c(1,2,5,6,7)]
+```
+
+## Do the results make sense?
+
+The experiment that was performed was to see how plants respond to the presence of extra nitrogen provided in the soil. Two groups of plants were analyzed, KCL (control potassium chloride) and NO3 (the treatment Nitrate). We sequenced the RNA of two groups of plants and mapped them back the region where the sequences were coming from.
+
+We then identified genes that are differentially expressed and performed a GO-term analysis to see which biological process are over-represented. It makes sense that some over-representd categories in the list of genes is "response to nitrate" and "nitrate transport"
+
+

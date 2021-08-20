@@ -1,0 +1,85 @@
+---
+title: "Regression"
+author: "Raza"
+date: "11/16/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The dataset contains the movement speed and weight of an insect species. We want to make a model that can predict movement speed based on weight. (This data is not normal but for the purpose of the exercise we will assume it meets all requirements for linear regression)
+
+```{r}
+#import data and load libraries
+library(ggplot2)
+insect=read.csv("insectdata.csv")
+
+```
+
+Use ggplot to make a scatterplot showing the relationship between speed (dependent variable) and weight (independent variable)
+```{r}
+ggplot(data = insect, aes(y=speed,x=weight)) +geom_point()
+
+```
+
+Fit a simple linear model to the data and look at the results. What is the R^2?
+```{r}
+fit1=lm(data = insect, speed ~ weight)
+summary(fit1)
+#Adjusted R-squared:  ~0.36
+```
+
+Add the fitted line to the plot
+```{r}
+#extract the fitted values from the model and add as a column to the original insect dataframe
+insect$fit1=fit1$fitted.values 
+
+#add a line to the scatterplot using the fittedvalues from the model
+ggplot(data = insect, aes(y=speed,x=weight)) +geom_point()+
+  geom_line(aes(x=weight,y=fit1))
+
+#instead of using the fitted values from the model, directly add a fitted line using the ggplot function stat_smooth
+ggplot(data = insect, aes(y=speed,x=weight)) +geom_point()+stat_smooth(method="lm")
+
+```
+
+Plot the residuals on the y axis and fitted values on the x-axis. If the model fits well, the residuals will have a relatively similar distribution above and below zero
+```{r}
+insect$res1=fit1$residuals
+ggplot(data = insect, aes(y=res1,x=fit1))+ geom_point()
+
+
+```
+
+The data seems to have some outliers. Fit the model after excluding the outliers and check if it improves the results  
+```{r}
+insect_no_ouliers=insect[insect$speed<75,]
+fit_no_outliers=lm(data = insect_no_ouliers, speed ~ weight)
+summary(fit_no_outliers)
+
+```
+
+Maybe the relationship is non-linear. Fit a quadratic model to the data (excluding outliers) and make a plot with the fitted line.
+```{r}
+fit2=lm(data = insect_no_ouliers, speed ~ poly(weight,2))
+insect_no_ouliers$fit2=fit2$fitted.values
+ggplot(data = insect_no_ouliers, aes(y=speed,x=weight)) +geom_point()+
+  geom_line(aes(x=weight,y=fit2))
+
+
+```
+
+Predict the value of speed when weight is 20 or 60 using 1)the linear model 2)the quadratic model. Which predictions seem reasonable?
+```{r}
+predict(fit_no_outliers,data.frame(weight=c(20,60)))
+
+
+predict(fit2,data.frame(weight=c(20,60)))
+
+
+
+#Prediction when weight is 20 seems reasonable for both models. Prediction when weight is 60 does not work well because  60 is well beyond the range of weight values on which the model was generated. The quadratic and linear models also give opposite predictions when weight is 60.  
+
+```

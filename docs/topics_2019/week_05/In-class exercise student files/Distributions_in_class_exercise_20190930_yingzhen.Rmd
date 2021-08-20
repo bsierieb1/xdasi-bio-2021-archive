@@ -1,0 +1,77 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Scenario
+
+You want to clone a gene and you have some reporter for success of transformation in *E. coli*. Positive colonies are blue because they express $\beta$-galactosidase when plated on medium with IPTG. The probability of a successful transformation is $0 \le P(success) \le 1$. For the following exercise, you may consider one plate, many plates, or a truly gargantuan number of plates.
+
+## Exercise
+
+The class will split into 8 groups and each one will take one of the following distributions:
+
+- Bernoulli
+- Binomial
+- Geometric
+- Hypergeometric
+- Negative binomial
+- Poisson
+- Normal
+- Exponential
+
+For your assigned distribution, answer the following questions. At the end of the class, each group will present their distribution and how it applies to the scenario above to the rest of the class.
+
+#### a. What is your function? Describe it in terms of the kind of problem that it applies to. Is it discrete or continuous?
+
+<!-- Insert your answer below. -->
+PDF of the exponential distribution is:
+$$ f(x)=λe ^ {-λx} $$
+Problem: time or space interval between two poisson events. Given λ the probability and x the time.
+It is continuous.
+
+#### b. Describe a question that you can ask with your distribution as applied to the transformation scenario given above.
+
+<!-- Insert your answer below. -->
+Distance or of closest pair of clones.
+
+#### c. Describe the parameterization of the equation. What parameters does it take, and what do they mean?
+
+<!-- Insert your answer below. -->
+λ is the rate of finding another transformed clone within an area of one square centermeter of one clone. For example, λ = 0.1 means you can find 0.1 transformed clones within one square centimeter from any clone on average.
+x the area you need to find another clone.
+
+#### d. Pick some appropriate parameters for your distribution as applied to the transformation scenario and graph the PDF and CDF.
+
+```{r}
+# given a circular dish, with the total number of clones we can know the distribution of transformed clone. Say that we have 100 clones in the dish:
+area = 80
+rate = 0.1  # rate is λ
+area_clone = dexp(c(0:area), rate)
+dist_clone = (area_clone / 3.14) ** 0.5
+
+par(mfrow = c(1,2))
+plot(c(0:area), area_clone, type = "l")
+plot(c(0:area), dist_clone, type = "l")
+
+
+```
+
+
+#### e. Compute a cumulative probability for some appropriate value and describe in words what it means. Be prepared to explain your answer to the class.
+
+```{r}
+par(mfrow = c(1,2))
+cdf_area = pexp(c(0:area), rate)
+cdf_dist = (cdf_area / 3.14) ** 0.5
+plot(c(0:area), cdf_area, type = "l")
+plot(c(0:area), cdf_dist, type = "l")
+```
+
+<!-- Insert your answer below. -->
+Within certain area or distance, the chance to find next transformed clone. This is depend mainly on the total number of clones per dish, or concentration.
+
+
+#### f. Identify at least one other distribution that yours relates to and be prepared to discuss the relationship between them. This could be a special case, a limiting case, an approximation, or an inverse CDF (survival) relationship.
+
+<!-- Insert your answer below. -->
+Poisson distribution. Poisson describes the number of clones per unit area, while exponential describes the area to find next clone.

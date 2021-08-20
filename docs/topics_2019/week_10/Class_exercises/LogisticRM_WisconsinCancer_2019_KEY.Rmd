@@ -1,0 +1,198 @@
+---
+title: "WisconsinBreastCancer"
+author: "Manpreet S. Katari"
+output: html_document
+---
+
+#Wisconsin Breast Cancer Dataset
+
+The following data was obtained from a study where 3D images were taken of a breast mass. The features are measurements of the mass. We will try to create a logistic regression model to predict the diagnosis (m=malignant and b=benign). For a more detail understanding of the values see the link below:
+
+https://www.kaggle.com/uciml/breast-cancer-wisconsin-data
+
+##Visualize the data
+
+The file is provided in as a csv file called *data.csv*. Read it in and call it **cancer_data**.
+
+```{r, echo=T}
+
+cancer_data = read.csv("data.csv")
+```
+
+The four features we are interested in are *radius_mean*, *texture_mean*, *smoothness_mean*, *compactness_mean*. Create a plot for each variable to visualize the distribution of the values between *malignant* and *benign* samples. Which of the four variables will be most accurate in predicting by itself ? Explain why. (Hint - try creating boxplots)
+
+```{r, echo=T, eval=T}
+par(mfrow=c(2,2))
+boxplot(cancer_data$radius_mean ~ diagnosis, data=cancer_data, main="Radius")
+boxplot(cancer_data$texture_mean ~ diagnosis, data=cancer_data, main="Texture")
+boxplot(cancer_data$smoothness_mean ~ diagnosis, data=cancer_data, main="Smoothness")
+boxplot(cancer_data$compactness_mean ~ diagnosis, data=cancer_data, main="Compactness")
+```
+
+#Predict Using logistics regression
+
+Using the glm() function we are going to create a model for each variable. Logistic regression works on binary predictor so we have to do first convert the all Benign to 0 and Malignant to 1.
+
+1) Split the dataframe into two dataframes, one with all Benign (call it *allBen*) and other with Malignant (*allMal*)
+
+```{r, echo=T, eval=T}
+allMal = subset(cancer_data, diagnosis == "M")
+allBen = subset(cancer_data, diagnosis == "B")
+```
+
+
+2) Set the diagnosis in Benign dataframe to 0 and diagnosis in Malignant to 1. 
+
+```{r,echo=T, eval=T}
+allMal$diagnosis = 1
+allBen$diagnosis= 0
+```
+
+
+3) Before we create our models, let's first remove a fraction of our data for testing purpose.
+
+Randomly select 70 of the Benign samples and 40 of the Malignant samples and save them in another data frame called *cancer_test*.
+
+The remaining 499 samples should now be in a difference data frame called *cancer_training*.  to both *cancer_training* and *cancer_test*: 
+
+
+```{r, echo=T, eval=T}
+
+randomMal = sample(1:nrow(allMal),40)
+randomBen = sample(1:nrow(allBen),70)
+
+cancer_training = rbind(allMal[-randomMal,],
+                        allBen[-randomBen,])
+
+cancer_test = rbind(allMal[randomMal,],
+                        allBen[randomBen,])
+
+```
+
+4) make sure the new diagnosis variable is a factor.
+
+
+```{r, echo=T, eval=T}
+cancer_test$diagnosis = as.factor(cancer_test$diagnosis)
+cancer_training$diagnosis = as.factor(cancer_training$diagnosis)
+
+```
+
+Now build the model for each variable using cancer_training and test it using cancer_test.
+Calculate accuracy, recall, and true negative rate to determing which of the four variables is the most helpful predictor.
+
+```{r, echo=T, eval=T}
+cancer_glm_radius = glm(diagnosis ~ radius_mean, family="binomial", data=cancer_training)
+cancer_glm_texture = glm(diagnosis ~ texture_mean, family="binomial", data=cancer_training)
+cancer_glm_smoothness = glm(diagnosis ~ smoothness_mean, family="binomial", data=cancer_training)
+cancer_glm_compactness = glm(diagnosis ~ compactness_mean, family="binomial", data=cancer_training)
+
+```
+
+In order to assess the performance of our model, we will calculate the AUC ( Area under the curve. ) The Curve is created by plotting **sensivity** vs **1-specificity**. Generally a line is plotted from 0,0 to 1,1. A straight line with a slope of 1 represents events that would happen just by chance, which would have an AUC of 0.5. We are interested in curves that are much larger than this line.  
+
+To do this we will use a package called **AUC**. If you haven't already installed it, please use the following command.
+```{r eval=F}
+install.packages("AUC")
+```
+
+Once it has been installed, then you simply load it using the **library** command.
+
+```{r}
+library("AUC")
+```
+
+Now let's test the radius model. First we will perform our predictions using the **predict** function ( just like in regression ) and provide the **cancer_test** dataset.
+
+```{r, echo=T, eval=T}
+############# Radius
+
+cancer_predict = predict(cancer_glm_radius, 
+                         type="response", 
+                         newdata = cancer_test)
+```
+
+```{r}
+cancer_predict_05_logic = cancer_predict >= 0.5
+
+cancer_predict_05 = as.numeric(cancer_predict_05_logic)
+table(cancer_predict_05)
+
+table(cancer_predict_05, cancer_test$diagnosis)
+```
+
+```{r}
+cancer_predict_08_logic = cancer_predict >= 0.8
+
+cancer_predict_08 = as.numeric(cancer_predict_08_logic)
+table(cancer_predict_08)
+
+table(cancer_predict_08, cancer_test$diagnosis)
+```
+
+```{r}
+cancer_predict_02_logic = cancer_predict >= 0.2
+
+cancer_predict_02 = as.numeric(cancer_predict_02_logic)
+table(cancer_predict_02)
+
+table(cancer_predict_02, cancer_test$diagnosis)
+```
+
+Now we use the **roc** command with the **Predicted** values and also the **True** values. Once the ROC object is returned, we can get lots of different types of statistics, including **auc** by using the **auc** function. Other functions that can be used on the object include : specificity, sensitivity, accuracy, roc, auc, and also plot.
+
+```{r}
+roc_result = roc(cancer_predict,cancer_test$diagnosis)
+
+plot(roc_result, main=paste("AUC = ", auc(roc_result), sep=" "))
+```
+
+We can repeat the steps for the other variables to see how they perform.
+
+
+```{r, echo=T, eval=T}
+############# Texture
+cancer_predict = predict(cancer_glm_texture, type="response", newdata = cancer_test)
+
+roc_result = roc(cancer_predict,cancer_test$diagnosis)
+
+plot(roc_result, main=paste("AUC = ", auc(roc_result), sep=" "))
+
+```
+
+
+
+```{r, echo=T, eval=T}
+############# Smoothness
+cancer_predict = predict(cancer_glm_smoothness, type="response", newdata = cancer_test)
+
+roc_result = roc(cancer_predict,cancer_test$diagnosis)
+
+plot(roc_result, main=paste("AUC = ", auc(roc_result), sep=" "))
+
+```
+
+
+```{r, echo=T, eval=T}
+############# Compactness
+cancer_predict = predict(cancer_glm_compactness, type="response", newdata = cancer_test)
+
+roc_result = roc(cancer_predict,cancer_test$diagnosis)
+
+plot(roc_result, main=paste("AUC = ", auc(roc_result), sep=" "))
+
+```
+
+Finally, let's create a model with all the variables. Do you think the performance will be better or worse ?
+
+```{r}
+cancer_glm_all = glm(diagnosis ~ radius_mean + compactness_mean + smoothness_mean + texture_mean, family="binomial", data=cancer_training)
+
+cancer_predict = predict(cancer_glm_all, type="response", newdata = cancer_test)
+
+roc_result = roc(cancer_predict,cancer_test$diagnosis)
+
+plot(roc_result, main=paste("AUC = ", auc(roc_result), sep=" "))
+
+
+```

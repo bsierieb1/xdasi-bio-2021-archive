@@ -1,0 +1,267 @@
+---
+title: "T-test"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Simple case
+Here will discuss a simple case study where the a drug has been provided to 10 random patients (or test subjects) and, as a control, a placebo pill was given to 10 other random patients. Each condition collected measurements and the question is:
+
+## Is there a significant difference between the subjects who were given the placebo and the those who were given the drug?
+
+### The Population
+
+Let's first look at all values as a population. We will combine the values and draw a simple histogram.
+
+```{r}
+
+Placebo = c(54,51,58,44,55,52,42,47,58,46)
+Drug = c(54,73,53,70,73,68,52,65,65,60)
+
+Data = c(Placebo, Drug)
+Data_sd = sd(Data)
+hist(Data)
+```
+
+To test if the Data is normally distributed.
+```{r}
+shapiro.test(Data)
+```
+
+
+
+Compare our values based on assumptions that the data is perfectly normal.
+
+```{r}
+t.test(Data, mu=mean(Data))
+
+```
+
+$$SE_{\bar{x}} = {\frac{\sigma}{\sqrt{n}}}$$
+
+
+
+### Confidence Interval
+
+The standard error is very helpful because it gives us an idea of how close we are to the actual mean. We can use the SE to help define Confidence Intervals (CI) of what the the actual population mean is.
+
+Let's take our Placebo sample and try to calculate our 95% confidence interval for the mean of the population. In this case, let's pretend we don't know the population and Placebo is just a sample from some unknown population. Since we don't have the $\sigma$ we will estimate it by calculating the $sd$ of the sample. Note that this only works if the population is truly normally distributed. This estimated distribution will give us a t-distribution. It is similar to a standard normal distribution but with heavier tails. 
+
+We can use the qt() function to identify the t-score where df is one less than the number of samples and the area under the curve is 97.5%.
+
+We can add and subtract this amount from the mean to get our 95% CI.
+
+```{r}
+Dse=sd(Data)/sqrt(length(Data))
+Dse  # 1.8 -- this is one SD from the sample mean
+
+t_0.975 = qt(p = .975, df = length(Data)-1)
+t_0.975  # 2.26 = z-score for 97.5% area
+
+# now we can compute
+# point on x-axis in original distribution that corresponds to z = 2.26
+Dse * t_0.975
+# now can calculate 95% CI
+Dmean = mean(Data)
+Dmean - Dse * t_0.975
+Dmean + Dse * t_0.975
+
+# use sample SD to approximate population SD
+# now can get an estimate how how likely it is that we have captured the true pop mean
+```
+
+We can check our answer by using the t.test() function where we can provide the $\bar{x}$ since we don't know the $\mu$ ( population average )
+
+```{r}
+t.test(Data, mu=mean(Data))
+```
+
+### Bootstrapping
+
+Alternatively we can calculate our confidence intervals using Bootstrapping. Bootstrapping is when we sample our dataset with replacement. The idea is that we use the same data values to approximate what the population may look like. Let's simulate randomly obtaining 10 measurements from the sample. If we do this 10,000 times, we will see that the distribution of the means of the sample from the population gives a normal distribution. In fact, the standard deviation of this distribution is called the Standard Error (SE). We can also use the Standard error to estimate our confidence intervals.
+
+```{r}
+D_sample=numeric()
+n=10
+for (i in 1:10000) {
+  D_sample[i] = mean(Data[sample(1:length(Data), n, replace=T)])
+}
+
+hist(D_sample)
+sd(D_sample)
+
+sort(D_sample)[250]
+sort(D_sample)[9750]
+```
+
+
+### Known $\mu$ - One group t-test
+
+$$ t = \frac{m - \mu}{\frac{s}{\sqrt{n}}} $$
+
+If we do know $\mu$, then we test to see how likely our sample is from this population. We first calculte the t-stat by seeing how many SE the Placebo mean is from the population mean. Then we can look to see the area of under the curve for that stat. Since we are considering both extremes, we should multiply the p-value by 2.
+
+```{r}
+Pse = sd(Placebo)/sqrt(length(Placebo))
+Pmean = mean(Placebo)
+ptstat = (Pmean - Dmean)/Pse
+
+# Because we want to look at both extreme values (lower 2.5% and higher 2.5%),
+# and we know the distribution is summterical, simply multiply p-value by 2.
+pt(ptstat, df = length(Placebo)-1)*2
+
+```
+
+Our null hypothesis in this case is that there is a difference between Placebo mean and Population mean. If this was true, our T-statistics would be low. But our T-statistic was high giving us a p-value of less than 0.05 ( the standard cutoff for considering something significant ) therefore we consider the alternate hypothesis which, in this case, is the difference between the Placebo and the Population is significantly higher or lower.
+
+```{r}
+t.test(Placebo, mu=Dmean)
+
+```
+
+### Bootstrapping for one group test
+
+Alternative we can determine the p-value by simply adding the number of times the absolute value of the difference between the bootstrap and the more than or equal to observed.
+
+```{r}
+obs_diff = Pmean - Dmean
+obs_diff
+```
+
+```{r}
+sum(abs(D_sample - Dmean) >= abs(obs_diff))/10000
+
+```
+
+
+### Difference of means is also normally distributed
+
+$$ t = \frac{\bar{x_1} - \bar{x_2}}{\sqrt{(s^2({\frac{1}{n_1}+\frac{1}{n_2}}))}} $$
+
+Now let's start to consider that Placebo and Drug are two separate populations. If we randomly sampled from the two different populations, we can determine ( with 95% confidence ) what is the actual difference in the means of the populations.
+
+
+Turns out the SE of the difference is the square root of the sum of the SE of each sample:
+
+$$\sigma_{\mu_{1}-\mu_{2}}={\sqrt{\frac{\sigma_{1}^2}{n_1}+{\frac{\sigma_{2}^2}{n_2}}}}$$
+
+```{r}
+se_diff = ( sqrt (
+  ((sd(Placebo)**2)/length(Placebo)) + 
+    ((sd(Drug)**2)/length(Drug))))
+
+se_diff
+
+```
+
+We can caculate the 95% confidence interval by using the t-distribution only the degree of freedom in this case is the sum of the total values minus the number of samples ( 20 - 2 ).
+
+```{r}
+
+Diff_mean = mean(Placebo) - mean(Drug)  # -12.6
+Diff_mean
+
+qt(p=0.975, df=18)*se_diff
+
+Diff_mean + qt(p=0.025, df=18)*se_diff
+Diff_mean - qt(p=0.025, df=18)*se_diff
+```
+
+Notice that the confidence interval does not span 0, which means it is extremely unlikely that the true difference between the Drug and Placebo populations is 0.
+
+Let's check is this is true.
+
+We can look at the T-statistics ( which is the equivalent to the Z-score if it was normally distributed ) we simply divide the difference of the sample by the size of SE.
+
+```{r}
+
+tstat = Diff_mean / se_diff
+tstat
+```
+
+Now we can calculate the p-value that our null hypothesis is true. The null hypothesis is that the difference between the two populations is 0. We know this because if we were to plot a distribution from random variables with the same mean, we would expect to get a difference of 0.
+
+```{r}
+#using our calculations done by hand
+2*pt(q = tstat, 
+     df = (length(Placebo)+length(Drug)-2), 
+     lower.tail = T)
+
+#confirmation using the t.test() function.
+t.test(Placebo, Drug, var.equal = T)
+```
+
+### Shuffle test
+
+```{r}
+expgroup = factor(rep(c("P","D"), each=10))
+
+sample_diff = diff(tapply(Data, expgroup, mean))
+sample_diff
+```
+
+```{r}
+shufflediff = numeric()
+for ( i in 1:10000) {
+  shufflediff[i]=diff(tapply(sample(Data, length(Data), replace = F),
+                             expgroup, mean))
+}
+
+hist(shufflediff)
+
+shufflepvalue = sum(shufflediff >= abs(sample_diff))/10000
+print(shufflepvalue)
+```
+
+
+### Paired T-test
+
+What if the data is taken from the same individuals? Data is then paired.
+
+Paired t-test is essentially the one-group t-test using the difference between the values.
+
+Assuming the data from the two vectors are in the same order as the corresponding individuals, we can simply subtract them. Our null hypothesis would again be that the difference of the two groups is zero.
+
+```{r}
+DrugDiff = Placebo-Drug
+```
+
+
+Let's calculate the ``t-statistic`` can be described as
+
+$$ t* = \frac{\bar{X}_{D} - D_0}{\frac{S_{D}}{\sqrt{n}}} $$
+
+where $\bar{X_D}$ is the mean of the differences and $D_0$ is what we are testing, which in this case is $0$ and $S_D$ is the standard deviation of all differences.
+
+```{r}
+t_stat = mean(DrugDiff)/(sd(DrugDiff)/sqrt(length(DrugDiff)))
+
+2*pt(t_stat, df=9, lower.tail = T)
+```
+
+```{r}
+t.test(DrugDiff, mu=0)
+```
+
+We can also confirm that one group t-test is same as t-test with the paired option
+
+```{r}
+t.test(Placebo, Drug, paired = T, var.equal = T)
+
+```
+
+### In class Exercise
+
+Using the shuffle test or bootstrapping on the ranked data determine:
+- expected rank value.
+- standard error of rank
+- pvalue based on rank.
+
+Compare and discuss the results to earlier part of this lecture.
+
+
+
+

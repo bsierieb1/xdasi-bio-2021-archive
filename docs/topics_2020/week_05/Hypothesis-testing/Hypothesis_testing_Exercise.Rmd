@@ -1,0 +1,66 @@
+---
+title: "Exercise: Hypothesis Testing"
+author: "Manpreet S. Katari"
+date: "9/30/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Hypothesis Testing
+
+## In class exercise
+
+Can parents distinguish their own children by smell alone? To investigate, Porter and Moore (1981) gave new T-shirts to children of nine mothers. Each child wore his or her shirt to bed for three consecutive nights. During the day, from waking until bedtime, the shirts were kept in individually sealed plastic bags. No scented soaps or perfumes were used during the study. Each mother was then given the shirt of her child and that of another, randomly chosen child and asked to identify her own by smell. Eight of nine mothers identified their children correctly. 
+
+Use this study to answer the following questions, using a two-sided test and a significance level of α = 0.05. 
+
+To carry out a statistical test based on these data, what is the appropriate null hypothesis?
+
+```{r}
+
+```
+What is the alternative hypothesis? 
+
+```{r}
+
+```
+
+What test statistic should you use? 
+
+```{r}
+
+```
+
+If the null hypothesis were true, what is the probability of exactly eight correct identifications?
+
+```{r}
+
+```
+
+
+If the null hypothesis were true, what is the probability of obtaining eight or more correct identifications? 
+
+```{r}
+
+```
+
+What is the P-value for the test? 
+
+```{r}
+
+```
+
+What is the appropriate conclusion?
+```{r}
+
+```
+
+As part of the analysis of these data, why would it be a good idea to calculate a 95% confidence interval for the true proportion of correct identifications?
+
+```{r}
+
+```
+

@@ -1,0 +1,108 @@
+---
+title: "Conditional Probability and Bayes' Theorem"
+author: "Manpreet S. Katari"
+date: "9/30/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## In class exercise: Q36, 37
+
+Some people are hypersensitive to the smell of asparagus, and can even detect a strong odor in the urine of a person who has recently eaten asparagus. This trait turns out to have a simple genetic basis. An individual with one or two copies of the $A$ allele at the gene ($AA$ or $Aa$ genotypes) can smell asparagus in urine, whereas a person with two copies of the alternative $a$ allele ($aa$ genotypes) cannot (Online Mendelian Inheritance in Man 2019). Assume that men and women in the population have the same allele frequencies at the asparagus-smelling gene and that marriage and child production are independent of the genotype at the gene. In the human population, 5% of alleles are $A$ and 95% are $a$. 
+
+- (a) What is the probability that a randomly sampled individual from the population has two copies of the $a$ allele (that is, that it has an $aa$ genotype)? 
+
+```{r}
+Pr=list()
+Pr$a=0.95
+Pr$A=0.05
+
+Pr$aa=Pr$a*Pr$a
+Pr$aa
+```
+
+- (b) What is the probability that both members of a randomly sampled married couple (man and woman) are $aa$ at the asparagus-smelling gene? 
+
+```{r}
+Pr$aa_aa = Pr$aa * Pr$aa
+Pr$aa_aa
+
+```
+
+- (c) What is the probability that both members of a randomly sampled married couple (man and woman) are heterozygotes at this locus (meaning that each person has one allele A and one allele a)? 
+
+```{r}
+# first calculate probability of Heterozygous
+# Aa and aA are the same, so multiply by 2.
+Pr$Aa = Pr$A * Pr$a + Pr$a * Pr$A
+
+Pr$Aa_Aa = Pr$Aa * Pr$Aa
+Pr$Aa_Aa        
+```
+
+- (d) Consider the type of couple described in (c). What is the probability that the first child of such a couple also has one A allele and one a allele (is a heterozygote)? Remember that the child must receive exactly one allele from each parent. 
+
+```{r}
+# if both parents are Aa, than we can draw a table
+knitr::kable(data.frame(A=c("AA","aA"),
+                 a=c("Aa","aa"),
+                 row.names = c("A","a")))
+```
+
+```{r}
+# out of 4 different outcomes, 2 are heterozygous so 
+
+```
+
+$$Pr[C_{Aa} | (M_{Aa})*(F_{Aa})] = 0.5$$
+
+- (e) If a randomly sampled child has the aa genotype, what is the probability that both its parents were also aa?
+
+$$ A = Pr[(F_{aa})*(M_{aa})]$$
+$$ B = Pr[C_{aa}]$$
+
+$$Pr[(F_{aa}) * (M_{aa}) | C_{aa}] = \frac{Pr[C_{aa}]|Pr(F_{aa})*(M_{aa})] * Pr[(F_{aa})*(M_{aa})]}{Pr[C_{aa}]}$$
+To calculate $Pr[C_{aa}]$ we need to consider all possible combinations of parents
+
+$$Pr[C_{aa}] = $$
+$$Pr[C_{aa}]|(F_{aa})*(M_{aa})] * Pr[(F_{aa})*(M_{aa})] + $$
+$$Pr[C_{aa}]|(F_{Aa})*(M_{aa})] * Pr[(F_{Aa})*(M_{aa})] + $$
+$$Pr[C_{aa}]|(F_{AA})*(M_{aa})] * Pr[(F_{AA})*(M_{aa})] + $$
+$$Pr[C_{aa}]|(F_{aa})*(M_{Aa})] * Pr[(F_{aa})*(M_{Aa})] + $$
+$$Pr[C_{aa}]|(F_{Aa})*(M_{Aa})] * Pr[(F_{Aa})*(M_{Aa})] + $$
+$$Pr[C_{aa}]|(F_{AA})*(M_{Aa})] * Pr[(F_{AA})*(M_{Aa})] + $$
+$$Pr[C_{aa}]|(F_{aa})*(M_{AA})] * Pr[(F_{aa})*(M_{AA})] + $$
+$$Pr[C_{aa}]|(F_{Aa})*(M_{AA})] * Pr[(F_{Aa})*(M_{AA})] + $$
+$$Pr[C_{aa}]|(F_{AA})*(M_{AA})] * Pr[(F_{AA})*(M_{AA})] $$
+```{r}
+
+# For all conditional probability where both parent do not have an _a_ allele can be removed because it will be 0.
+```
+$$Pr[C_{aa}] = $$
+$$Pr[C_{aa}]|(F_{aa})*(M_{aa})] * Pr[(F_{aa})*(M_{aa})] + $$
+$$Pr[C_{aa}]|(F_{Aa})*(M_{aa})] * Pr[(F_{Aa})*(M_{aa})] + $$
+$$Pr[C_{aa}]|(F_{aa})*(M_{Aa})] * Pr[(F_{aa})*(M_{Aa})] + $$
+$$Pr[C_{aa}]|(F_{Aa})*(M_{Aa})] * Pr[(F_{Aa})*(M_{Aa})]$$
+
+```{r}
+Pr$Caa_Maa_Faa = 1 #* Pr$aa_aa # prob that child is aa if parents are aa is 1
+Pr$Caa_Maa_FAa = 0.5 #* Pr$aa * Pr$Aa # think punnett square like we did above
+Pr$Caa_MAa_Faa = 0.5 #* Pr$Aa * Pr$aa
+Pr$Caa_MAa_FAa = 0.25 #* Pr$Aa * Pr$Aa
+
+Pr$Caa = Pr$Caa_Maa_Faa * Pr$aa * Pr$aa +
+         Pr$Caa_Maa_FAa * Pr$aa * Pr$Aa + 
+         Pr$Caa_MAa_Faa * Pr$Aa * Pr$aa +
+         Pr$Caa_MAa_FAa * Pr$Aa * Pr$Aa
+```
+
+Plugging this into the original equation
+$$Pr[(F_{aa}) * (M_{aa}) | C_{aa}] = \frac{Pr[C_{aa}]|Pr(F_{aa})*(M_{aa})] * Pr[(F_{aa})*(M_{aa})]}{Pr[C_{aa}]}$$
+```{r}
+Pr$Caa_Maa_Faa * Pr$aa_aa / Pr$Caa
+
+```

@@ -1,0 +1,60 @@
+---
+title: "Linear regression exercise"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+A dataset called ``trees`` contains information about ``Girth`` ( diameter of the tree ), ``Height`` and ``Volume`` of 31 cherry trees. Let's determine which variable is a better predictor of Volume.
+
+- 1) create linear model volume ~ height
+
+```{r}
+
+
+```
+
+- 2) inspect plots and determine if lm is of good quality
+    - Is there a transformation that could help the model?
+    - Are there any outliers?
+    - Is the variance/residual equal around the model?
+
+```{r}
+
+```
+
+
+- 3) Do the same for Girth. 
+    - Is there a transformation that could help the model?
+    - Are there any outliers?
+    - Is the variance/residual equal around the model?
+
+```{r}
+
+```
+
+```{r}
+
+
+```
+
+
+```{r}
+
+```
+
+- 4) Pick a range of values (0:25) and then use the best linear model for Girth to predict the Volume, and the lower and upper intervals.  
+
+```{r}
+
+```
+
+- 5) use ggplot2 to plot the predicted values and the lower and upper intervals for the values 0:25. 
+
+```{r}
+
+```
+
+

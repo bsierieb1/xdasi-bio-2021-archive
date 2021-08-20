@@ -1,0 +1,177 @@
+---
+title: "MultipleHypothesisTesting"
+author: "Manpreet S. Katari"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Muliple hypothesis testing
+
+We will confirm that we are likely to get more false postivies than expected if we repeat the the test many times.
+
+## 1) Create random values for a gene
+
+Our gene here has 5 control values and 5 treatment values. The values will be obtained from the same distribution so technically there should be a very small chance of getting genes with a low p-value.
+
+```{r}
+expgroup = rep(c("c","t"), each=5)
+
+gene_exp = rnorm(10)
+
+temp_ttest = t.test(gene_exp ~ expgroup, var.equal=T)
+temp_ttest[["p.value"]]
+temp_ttest$p.value
+```
+Let's generate the same values 20,000 times representing 20,000 genes.
+
+```{r}
+expvalues = matrix(NA, nrow=20000, ncol=10)
+
+for ( i in 1:20000) {
+  gene_exp = rnorm(10)
+  expvalues[i,] = gene_exp
+}
+
+
+```
+
+For each gene, do a t-test for each row
+
+```{r}
+exp_pvalues = numeric()
+for ( i in 1:20000) {
+  temp_ttest = t.test(expvalues[i,] ~ expgroup, var.equal=T)
+  exp_pvalues[i] = temp_ttest[["p.value"]]  # result of the t-test
+  #exp_pvalues[i] = temp_ttest$p.value  # result of the t-test
+
+}
+
+```
+
+
+The p-value of random data has a uniform distribution. Which means the number of genes with p-value between 0 and 0.05 is the same as 0.95 and 1.
+
+```{r}
+hist(exp_pvalues)
+
+#
+```
+
+How many genes have a p-values less than 0.05?
+
+```{r}
+
+sum(exp_pvalues < 0.05)
+#length(which(expvalues < 0.05))
+
+```
+Since .05 * 20,000 = 1,000, we expect the number here to be around 1000. Which means, if your data is random, you should exect 1000 genes to show differential expression just by chance !!!
+
+## Let's pretend 3000 genes have a difference in expression.
+
+Create new matrix where we change the mean of second group. Let's make one group mean of 2 and the other mean of 8.
+
+```{r}
+newexpvalues = matrix(NA, nrow=20000, ncol=10)
+
+for ( i in 1:3000) {
+  gene_exp = rnorm(5, mean = 2)
+  newgene_exp = rnorm(5, mean = 8)
+  newexpvalues[i,] = c(gene_exp, newgene_exp)
+}
+
+for ( i in 3001:20000) {
+  gene_exp = rnorm(5, mean=2)
+  newgene_exp = rnorm(5, mean=2)
+  newexpvalues[i,] = c(gene_exp, newgene_exp)
+}
+
+```
+
+
+
+```{r}
+newexp_pvalues = numeric()
+for ( i in 1:20000) {
+  temp_ttest = t.test(newexpvalues[i,] ~ expgroup, var.equal=T)
+  newexp_pvalues[i] = temp_ttest[["p.value"]]  # result of the t-test
+  #exp_pvalues[i] = temp_ttest$p.value  # result of the t-test
+
+}
+
+```
+
+
+```{r}
+hist(newexp_pvalues)
+
+#
+```
+P-value here is more skewed toward 0, so we expect more genes to be truly different.
+```{r}
+
+sum(newexp_pvalues < 0.05)
+#length(which(expvalues < 0.05))
+
+```
+
+Our false positive rate is the amount of our result we expect to be false.
+
+```{r}
+sum(exp_pvalues < 0.05)/sum(newexp_pvalues < 0.05)
+
+```
+
+
+Adjust the p-values which corrects for false positive rate.
+Now the genes that pass this cutoff will have a 5% false positive rate.
+
+```{r}
+
+adjpvalue = p.adjust(newexp_pvalues, method="fdr")
+
+sum(adjpvalue < 0.05)
+
+```
+
+# Benjamini Hochberg by hand
+
+## First put all the p-values sorted.
+
+```{r}
+sorted_pvalues = sort(newexp_pvalues, decreasing = F)
+head(sorted_pvalues)
+tail(sorted_pvalues)
+```
+
+## i is their rank
+
+```{r}
+i = rank(sorted_pvalues)
+
+```
+
+## Compare p-value to the BH critical value
+
+Compare the p-value to the critical value. When p-value becomes greater than the critical value, stop. All p-values less than the critical value is significant.
+
+$i$ is the rank, $m$ is the total number of p-values and $Q$ is the fdr you want to use as your cutoff.
+
+$$ q = \frac{i}{m}Q $$
+
+```{r}
+sigvalues=numeric()
+for ( j in i) {
+  q = 0.05*j/length(i)
+  if (sorted_pvalues[j] < q) {
+    sigvalues[j]=sorted_pvalues[j]
+  } else {
+    break
+  }
+}
+
+length(sigvalues)
+```

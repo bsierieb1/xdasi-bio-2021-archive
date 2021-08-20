@@ -1,0 +1,54 @@
+---
+title: "Week02_ex"
+author: "Manpreet S. Katari"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Enter the R code for each question in the code chunk.
+
+1) Download the file [expvalues.txt](expvalues.txt) and load it into your workspace. 
+Make sure to check if it has loaded correctly.
+
+```{r}
+
+```
+
+2) Use the summary() function to learn more about the dataset.
+
+```{r}
+
+
+```
+
+3) A quick way to determine if the data is normalized 
+and ready for analysis is to create a boxplot. 
+Create a boxplot of the dataframe.
+
+```{r}
+
+```
+
+3) Does the data look like it's normalized?
+
+```{r}
+
+```
+
+4) Use a built-in function in R to find the lowest value in your dataframe. 
+Save the lowest value in the dataframe and call lowValue 
+
+```{r}
+
+```
+
+
+5) What is the difference between the highest value in the dataframe and the lowest value (lowValue)?
+
+```{r}
+
+```
+

@@ -1,0 +1,105 @@
+---
+title: "Anova"
+author: "Raza"
+date: "11/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+This exercise is based on the mousegenes dataset which contained the gc_content of all mouse genes. For this exercise I have retained just 3 chromosomes and simulated the values so the data is not real.
+
+The data shows gc-content of randomly selected regions from chr 10,11 and 12. We will use anova to check if there is a significant difference in the gc-content of different chromosomes. 
+
+1. Import the data
+```{r}
+
+
+```
+
+2. Make a boxplot of gc content by chromosome to check if the gc-content looks different among chromosomes 
+```{r}
+
+
+```
+
+3. Is there a significant difference between the gc_content of chr11 and chr12 as compared to chr10 (do planned anova)
+```{r}
+
+```
+
+4. Repeat this analysis using chr12 as the reference 
+```{r}
+
+```
+
+5. Compare the GC_content among all 3 chromosomes using unplanned anova
+```{r}
+
+
+```
+
+6. Use the TukeyHSD test to find which chromosomes have different GC_content and compare the results with those obtained with the planned anova
+```{r}
+
+```
+
+7. Manually compute the SSE and SSB (should match the results from the aov function)
+```{r}
+# make 3 vectors containing gc percentage for chr 10, 11, and 12
+chr10=
+chr11=
+chr12=
+
+#calculate the mean of each chromosome and the grand mean
+gr.mean=
+chr10.mean=
+chr11.mean=
+chr12.mean=
+
+#use the means and the vectors to find ssb and sse
+ssb= 
+sse=
+  
+```
+
+8. Calculate dof for ssb and sse
+```{r}
+
+df_ssb=    #no of groups -1
+df_sse=    #sum of (n-1) of all groups  
+  
+```
+
+9. Calculate the mean square values for ssb and sse
+```{r}
+ssb_mean=
+sse_mean=
+```
+
+10. Calculate the f statistic
+```{r}
+f=
+  
+```
+
+11. Calculate the p.value  
+```{r}
+
+
+```
+
+12. Conserved coding regions may have higher gc-content than noncoding regions. Add an interaction term to the aov function to check if being a coding/noncoding region contributes to the difference in GC_content among chromosomes 
+```{r}
+
+```
+
+13. Does this interaction exist on all chromosomes or on a specific chromosome? Check with anova and with a boxplot
+```{r}
+
+
+```
+
+
+

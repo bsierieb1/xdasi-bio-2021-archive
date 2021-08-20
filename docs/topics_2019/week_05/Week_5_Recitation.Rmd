@@ -1,0 +1,123 @@
+---
+title: "Week 5 Recitation"
+author: "Chris"
+date: "9/25/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# Do not change any options in this setup block
+
+knitr::opts_chunk$set(echo = TRUE, error=TRUE)
+
+# Import libraries
+require(MASS)
+require(ggplot2)
+```
+
+# Sampling
+
+Lets load a data set. This is the expression of three genes from a group of cells in a single-cell experiment.
+
+```{r}
+example.expression.data <- read.delim("Week_4_Example.tsv")
+```
+
+Lets do some basic analysis of this data
+
+```{r}
+# The ecdf() function calculates an EMPIRICAL CDF
+# It returns an ECDF object
+# All you need to know about that object is that plot() knows what it is and will handle it fine
+ylr044c.data <- example.expression.data$YLR044C
+ylr044c.ecdf <- ecdf(ylr044c.data)
+
+# Lets plot the histogram against the ECDF
+par(mfrow=c(1,2))
+hist(ylr044c.data, main="YLR044C Histogram", breaks = 100, xlab="Expression (Count)")
+plot(ylr044c.ecdf, main = "YLR044C ECDF", xlab="Expression (Count)", ylab="Probability")
+```
+
+Yep, that's data. Just like it was last week. This week we're going to fit the negative binomial to this distribution.
+
+```{r}
+nbinom.fit <- MASS::fitdistr(example.expression.data$YLR044C, densfun = "negative binomial")
+nbinom.fit
+```
+
+What is mu? It's just size & probability combined into a new parameter. I hate it. Lets recalculate `prob` from mu. We can put it in the same data structure that holds everything else
+
+```{r}
+calc.prob <- function(fitdistr.result) {fitdistr.result$estimate['size']/(fitdistr.result$estimate['size']+fitdistr.result$estimate['mu'])}
+nbinom.fit$estimate['prob'] <- calc.prob(nbinom.fit)
+```
+
+How stable is this estimate for probability? Lets figure it out with SAMPLING.
+
+```{r}
+
+p.samples <- list()
+num.resampling <- 10
+sample.size <- 500
+
+for (i in 1:num.resampling) {
+  loop.sample <- example.expression.data$YLR044C[sample(nrow(example.expression.data), replace=T)]
+  loop.fit <- MASS::fitdistr(loop.sample, densfun = "negative binomial")
+  p.samples <- c(p.samples, calc.prob(loop.fit))
+}
+
+```
+
+Neat. Lets plot this as a histogram.
+
+```{r}
+
+hist(unlist(p.samples))
+
+```
+
+Well this plot is just garbage. Lets just use `ggplot`
+
+```{r}
+
+p.samples <- data.frame(prob = unlist(p.samples))
+
+ggplot(p.samples, aes(x=prob)) +
+  geom_histogram(binwidth = 0.001) +
+  theme_classic()
+
+```
+
+That is instantly less bad as a plot. Still though this looks pretty bad - lets try adding more samples
+
+```{r}
+p.samples <- list()
+num.resampling <- 100
+sample.size <- 500
+
+for (i in 1:num.resampling) {
+  loop.sample <- example.expression.data$YLR044C[sample(nrow(example.expression.data), replace=T)]
+  loop.fit <- MASS::fitdistr(loop.sample, densfun = "negative binomial")
+  p.samples <- c(p.samples, calc.prob(loop.fit))
+}
+
+
+```
+
+And the plot:
+
+```{r}
+
+p.samples <- data.frame(prob = unlist(p.samples))
+
+ggplot(p.samples, aes(x=prob)) +
+  geom_histogram(binwidth = 0.001) +
+  theme_classic()
+
+```
+
+Break into 3 groups and use the data provided to:
+
+1. Load and look breifly at the structure of your data
+2. Fit the negative binomial to each of 3 genes
+3. Resample and plot the estimates of size and probability

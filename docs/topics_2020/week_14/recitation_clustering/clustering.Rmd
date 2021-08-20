@@ -1,0 +1,126 @@
+---
+title: "PCA/Clustering"
+author: "Raza"
+date: "12/1/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This dataset contains raw RNA-Seq counts from an experiment where cells were treated with 4 different drugs for either 1hr or 4hrs followed by RNA-Sequencing. Negative control cells (NC) were not treated with any drug. We will use clustering to analyse how the transcriptional landscape changes at different timepoints in response to different drugs. 
+
+0. Load required libraries
+```{r}
+library(edgeR)
+library(ComplexHeatmap)
+library(ggplot2)
+library(ggfortify)
+```
+
+1. Import csv file containing raw counts, remove rows with all zeros and convert to a matrix
+```{r}
+
+
+```
+
+2. Apply cpm normalization (we are using cpm normalization just for practice, other normalizations such as rlog from deseq2 maybe preferable)
+```{r}
+
+
+```
+
+3. Make pca plot (use autoplot function from ggfortify)
+```{r}
+
+
+```
+
+4. Color plot by sample group
+```{r}
+#make a dataframe containing sample names
+
+
+#use the dataframe with the autoplot function
+
+```
+
+5. Make a plot showing percentage of variance explained by each PC (a scree plot)
+```{r}
+
+#extract the s.d from the pca object and calculate variance 
+
+#plot proportion of total variance against pc value
+
+```
+
+6. Shortlist variable genes for clustering
+```{r}
+#calculate avg expression for each gene and store in a variable
+
+#retain genes with avg expression of >10 cpm
+
+#calculate variance of each gene and store in a variable
+
+#retain top 500 genes with the highest variance
+
+```
+
+7. Apply zscore scaling 
+```{r}
+
+
+
+```
+
+8. Make a correlation matrix
+```{r}
+
+
+```
+
+9. Convert to a distance matrix
+```{r}
+
+
+```
+
+10. Hierarchically cluster genes and make 4 clusters
+```{r}
+
+
+```
+
+11. Cluster by kmeans and make 4 clusters 
+```{r}
+
+
+```
+
+
+12. Make a heatmap of top500 variable genes clustered hierarchically using pearson correlation with the package "complexheatmaps"
+```{r}
+
+
+```
+
+13. Make the same heatmap again without clustering columns
+```{r}
+
+
+```
+
+14. Make the same heatmap again but divide the genes into 4 cluster by kmeans
+```{r}
+
+
+```
+
+15. Extract the genes lists from the different clusters
+```{r}
+
+
+```
+
+

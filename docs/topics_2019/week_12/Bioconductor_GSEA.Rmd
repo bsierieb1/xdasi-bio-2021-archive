@@ -1,0 +1,331 @@
+---
+title: "XDAS_Bioconductor_GOstats_GSEA"
+author: "Manpreet S. Katari"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Bioconductor
+
+[Bioconductor](http://bioconductor.org) is a great resource for R packages that can help researchers analyze high throughput genomic data. I specially find the [Common Work flows](http://bioconductor.org/packages/release/BiocViews.html#___Workflow) very helpful.
+
+
+To begin using Bioconductor, you must first install **BiocManager** 
+
+```{r echo=TRUE, eval=FALSE}
+
+install.packages("BiocManager")
+
+```
+
+Once the BiocManager is installed, you install specific packages using the **BiocManager::install()** function that same way you use **install.packages()** in the past. Note that packages in Bioconductor must be installed using BiocManager.
+
+For today's exercise we are going to use **GOstats** and to perform GSEA we will use functions in the **limma** package.
+
+```{r echo=TRUE, eval=FALSE}
+BiocManager::install("GOstats")
+
+```
+
+
+The GOstats package using Hypergeometric test to determine if a GO-term is statistically significant. Fortunately it uses an R package to look up the different GO-terms and also the different annotations for each gene. In this example we will use a gene list from an experiment which involved Arabidopsis so we will load the Arabidopsis genome data
+
+```{r echo=TRUE, eval=FALSE}
+BiocManager::install("org.At.tair.db")
+
+```
+
+Let's load the list of genes that we have identified to be differentially expressed using an RNA-seq workflow.
+
+```{r}
+
+data = read.table("RNAseq2019_deseq_results.txt",
+                  header=T, row.names = 1)
+
+head(data)
+dim(data)
+# A common way to filter the data is to look for 
+# genes that have a significnat adjusted p-value
+# and a fold change greater than 1.5
+
+sig_genes = subset(data, padj < 0.05 & abs(log2FoldChange) > 1.5)
+
+dim(sig_genes)
+```
+
+# Annotations
+
+The species databases are very useful in retrieving different types of data about your gene(s) of interested. Since identifiers are often not very helpful, it is nice to be able to retrieve the symbol or a short description of the genes using the database.
+
+Here are some commands that allow you to make the most of the AnnotationDBI package. Once you have installed the species database of choice from Bioconductor, you need to load it first using the library command.
+
+
+```{r}
+library(org.At.tair.db)
+```
+
+In the package we will be able to _select_ specific _columns_ using _keys_, which refers to the column you can use to query the database.
+
+To see what columns are available, you can use the **columns()** function.
+
+```{r}
+columns(org.At.tair.db)
+```
+
+To see what keys are available to query, you can use the **keytypes()** function.
+
+
+```{r}
+keytypes(org.At.tair.db)
+
+```
+
+The annotation package ( which loaded automatically when you loaded the Arabidopsis annotations) allows you to select information about specific genes and also retrieve specific information. It's like using filter and select in dplyr. **keys** is a vector of values you want to query, **keytype** is what type of values you are querying, **columns** is a character vector of all columns you want back.
+
+```{r}
+# If you want all results
+genedesc = select(org.At.tair.db, 
+                  keys = rownames(sig_genes),
+                  columns = c("SYMBOL","GENENAME"),
+                  keytype = "TAIR")
+
+head(genedesc)
+```
+
+In the example above, you get multiple entries for cases where there is more than one result. For example NRT2.1 has many different symbols for it is repeated several time. You can ask for it to presented in just one row but you have to then restrict the number of results you want. A better way to do this is use the **mapIds()** function and specify how to report the multiple results using **multiVals**.
+
+```{r}
+# if you want only one result back
+
+genesymbols=mapIds(org.At.tair.db, 
+                   keys = rownames(sig_genes),
+                   column = c("SYMBOL"),
+                   keytype = "TAIR", 
+                   multiVals="CharacterList")
+
+head(genesymbols)
+```
+
+```{r}
+golist=mapIds(org.At.tair.db, 
+                   keys = keys(org.At.tair.db,"GO"),
+                   column = c("TAIR"),
+                   keytype = "GO", 
+                   multiVals="CharacterList")
+
+```
+
+# GOStats
+
+Now let's use GOstats to perform a hypergeometric test to see if any of the go-terms that are associated with Arabidopsis genes are significantly over-represnted in the list. Before we do this we must first decide on what we consider to be our background list.
+
+It is good practice to use not just all genes in the genome as your background, since we know that not all genes are actually expressed at the specific condition or stage. For this reason you should use a list of all genes that are expressed at the time. In this case I have only provided the expressed genes in the matrix.
+
+One of the features I like about GOstat is its ability to deal with inheritance. The option *conditional* allows you to ask for the algorithm to compare a child term to its parent to see if the two significant terms are significantly different from each other. 
+
+```{r}
+library(GOstats)
+
+params=new("GOHyperGParams",
+          geneIds = rownames(sig_genes),
+          universeGeneIds=rownames(data),
+          annotation="org.At.tair.db",
+          ontology="BP",
+          pvalueCutoff=0.001,
+          conditional=F,
+          testDirection="over")
+
+overRepresented=hyperGTest(params)
+
+head(summary(overRepresented))
+```
+
+Compare the results from the above command and the below. You will see much fewer GO-terms without losing the important results.
+
+```{r}
+params=new("GOHyperGParams",
+          geneIds = rownames(sig_genes),
+          universeGeneIds=rownames(data),
+          annotation="org.At.tair.db",
+          ontology="BP",
+          pvalueCutoff=0.001,
+          conditional=T,
+          testDirection="over")
+
+overRepresented=hyperGTest(params)
+
+dim(summary(overRepresented))
+
+```
+# GSEA
+
+The goal for *GSEA* analysis is to identify gene sets that are enriched based on the rankings of the genes rather than only looking at differentially expressed genes. This allows for all genes in the geneset to contribute to the significance of the ranking of the members of the geneset. The rankings can be based on any statistics of your choice, such as log fold change.   
+
+
+# msigdb
+
+In order to perform a gene enrichment analysis, it is best to have not just GO-terms, but also other interesting sets of genes. Ideally you want to use a dataset that has many lists already provided to you like [MSigDB](http://software.broadinstitute.org/gsea/msigdb/index.jsp). Although MSigDB does not have datasets for plants, another research group put together such a database [PlantGSEA](http://structuralbiology.cau.edu.cn/PlantGSEA/download.php)
+
+For the Arabidopsis example we will first use the dataset provided by PlantGSEA and then later see how we can use MSigDB to perform a GSEA for human data.
+
+I have downloaded the "All gene sets" for Arabidopsis in GMT formatted file called Ara.DetailInfo.
+
+```{r}
+library(fgsea)
+arapathways = read.delim("Ara.DetailInfo", 
+                         header = F)
+aralists = strsplit(as.character(arapathways$V11),
+                    ",")
+names(aralists) = arapathways$V1
+```
+
+Now we will get our genes from the DESeq2 results and order them based on logfoldchange.
+
+```{r}
+datalfc = data$log2FoldChange
+names(datalfc)= rownames(data)
+```
+
+Now we simply run the analysis telling the algorithm to ignore genessets of a certain size. We can also set the number of permutations it should perform to calculate the p-values.
+
+```{r}
+aragsearesults = fgsea(aralists, 
+                       datalfc,
+                       minSize=15, 
+                       maxSize=500,
+                       nperm=10000)
+
+head(aragsearesults, 20)
+```
+
+Top 20 terms
+
+```{r}
+head(aragsearesults[order(aragsearesults$padj),],20)
+
+```
+
+Lost of new lists. Let's make sure my Nitrate terms are still significant.
+
+```{r}
+sigaragsearesults = subset(aragsearesults, padj < 0.05)
+sigaragsearesults[grep("NITR",sigaragsearesults$pathway),]
+```
+
+Graph below shows how the enrichment changes across the rank for genes that are in the **RESPONSE_TO_NITRATE** term.
+
+```{r}
+plotEnrichment(aralists[["RESPONSE_TO_NITRATE"]], 
+               datalfc)
+
+```
+
+# Example with Human data.
+
+Going back to the CF example, we can take the original DESeq2 results and perform a GSEA analysis.
+
+```{r}
+human_data = read.table("CF_DESeq2_results.txt")
+head(human_data)
+dim(human_data)
+```
+
+We will use the msigdb to test many new gene sets that we have not previously tried.
+
+```{r eval=F}
+install.packages("msigdbr")
+
+```
+
+```{r}
+library(msigdbr)
+msigdbr_show_species()
+
+```
+
+The following step will allow us to load genesets for the human genome.
+
+```{r}
+m_df = msigdbr(species = "Homo sapiens")
+
+m_df$entrez_gene = as.character(m_df$entrez_gene)
+
+# create a list of gene sets.
+human_pathways = split(m_df$entrez_gene, as.factor(m_df$gs_name))
+```
+
+Now let's perform the analysis.
+
+```{r}
+library(fgsea)
+
+expratio = human_data$log2FoldChange
+names(expratio)=rownames(human_data)
+
+humangsearesults = fgsea(human_pathways, 
+                       expratio,
+                       minSize=10, 
+                       maxSize=500,
+                       nperm=1000)
+
+head(humangsearesults, 20)
+
+sig_humangsearesults = subset(humangsearesults, padj < 0.1)
+
+head(sig_humangsearesults[order(sig_humangsearesults$padj),])
+```
+
+If you would rather download only a subset of the database you can use the same technique as for Arabidopsis above.
+
+First download a gmt file that has annotations you are interested. [Download](http://software.broadinstitute.org/gsea/msigdb/collections.jsp). For the example below I downloaded the go-term sets with entrez gene ids.
+
+```{r}
+human_go = gmtPathways("c5.all.v7.0.entrez.gmt")
+
+humangogsearesults = fgsea(human_go, 
+                       expratio,
+                       minSize=10, 
+                       maxSize=500,
+                       nperm=1000)
+
+head(humangogsearesults, 20)
+
+sig_humangogsearesults = subset(humangogsearesults, padj < 0.1)
+
+head(sig_humangogsearesults[order(sig_humangogsearesults$padj),])
+
+```
+
+
+# GOstats on human genome
+
+```{r}
+human_deg  = subset(human_data, padj < 0.05 & 
+                      abs(log2FoldChange) > 1)
+dim(human_deg)
+```
+
+```{r}
+params=new("GOHyperGParams",
+          geneIds = rownames(human_deg),
+          universeGeneIds=rownames(human_data),
+          annotation="org.Hs.eg",
+          ontology="BP",
+          pvalueCutoff=0.001,
+          conditional=T,
+          testDirection="over")
+
+
+overRepresented=hyperGTest(params)
+
+head(summary(overRepresented))
+
+
+```
+
+
+
+

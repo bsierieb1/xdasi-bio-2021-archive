@@ -1,0 +1,164 @@
+---
+title: "PCA"
+author: "Chris"
+date: "12/06/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(ggplot2)
+require(RColorBrewer)
+require(cowplot)
+require(scatterplot3d)
+require(MASS)
+ggplot2::theme_set(theme_classic())
+```
+
+#### Load Data
+
+```{r}
+data <- read.delim("HW9_EXPRESSION_DATA.tsv", check.names = F)
+meta <- read.delim("HW9_SAMPLE_DATA.tsv")
+```
+
+#### Remove zeros
+
+```{r}
+data <- data[rowSums(data) != 0, ]
+```
+
+#### PCA
+
+Let's create a toy example
+
+```{r}
+straight.line.data <- data.frame(x = 1:10, y=1:10)
+qplot(x, y, data=straight.line.data, geom="point")
+```
+
+Can we do PCA on this example?
+
+```{r}
+straight.line.pca <- prcomp(straight.line.data, center=T, scale=T)
+summary(straight.line.pca)
+```
+
+What does this mean? Can we plot the resulting projection?require(cowplot
+
+```{r}
+qplot(PC1, PC2, data=as.data.frame(straight.line.pca$x), geom="point") + scale_y_continuous(limit=c(-1,1))
+```
+
+Let's add a third dimension
+
+```{r}
+threed.data <- cbind(straight.line.data, data.frame(z=10:1))
+plot_grid(qplot(x, y, data=threed.data, geom="point"),
+          qplot(x, z, data=threed.data, geom="point"),
+          qplot(y, z, data=threed.data, geom="point"), 
+          ncol=2)
+
+scatterplot3d(threed.data, color="navyblue", pch=16)
+```
+
+Aight, now how does the PCA look?
+
+```{r}
+threed.pca <- prcomp(threed.data, center=T, scale=T)
+summary(threed.pca)
+
+qplot(PC1, PC2, data=as.data.frame(threed.pca$x), geom="point") + scale_y_continuous(limit=c(-1,1))
+```
+
+#### PCA on Noisy Data
+
+```{r}
+noisy.data <- data.frame(x=rnorm(10000, mean=0, sd=1),
+                         y=rnorm(10000, mean=0, sd=10),
+                         z=rnorm(10000, mean=0, sd=100))
+scatterplot3d(noisy.data, color="navyblue", pch=16)
+```
+
+```{r}
+noisy.data.pca <- prcomp(noisy.data, center=T, scale=F)
+summary(noisy.data.pca)
+qplot(PC1, PC2, data=as.data.frame(noisy.data.pca$x), geom="point") + labs(x="PC1 (99%)", y="PC2 (1%)")
+```
+
+How does this affect distance between the points?
+
+```{r}
+dist.data <- dist(noisy.data)
+dist.pca.data <- dist(noisy.data.pca$x)
+sum(dist.data)
+sum(dist.pca.data)
+sum(dist.data - dist.pca.data)
+```
+
+Can I rotate this back?
+
+```{r}
+# Original transformation
+noisy.rotated <- as.matrix(scale(noisy.data, scale=F)) %*% noisy.data.pca$rotation
+sum(noisy.rotated - noisy.data.pca$x)
+
+# Rotate backwards
+noisy.rotated.back <- noisy.data.pca$x %*% MASS::ginv(noisy.data.pca$rotation)
+sum(noisy.rotated.back - scale(noisy.data, scale=F))
+```
+
+How about scaling?
+
+```{r}
+noisy.data.pca.scaled <- prcomp(noisy.data, center=T, scale=T)
+summary(noisy.data.pca.scaled)
+qplot(PC1, PC2, data=as.data.frame(noisy.data.pca.scaled$x), geom="point") + labs(x="PC1 (33%)", y="PC2 (33%)")
+```
+
+#### PCA on Real Data
+
+```{r}
+data.pca <- prcomp(data, center=T, scale=T)
+summary(data.pca)
+qplot(PC1, PC2, data=as.data.frame(data.pca$x), geom="point")
+```
+
+```{r}
+data.pca.t <- prcomp(t(data), center=T, scale=T)
+summary(data.pca.t)
+qplot(PC1, PC2, data=as.data.frame(data.pca.t$x), geom="point")
+```
+
+#### Attach metadata
+
+```{r}
+data.pca.t.df <- cbind(as.data.frame(data.pca.t$x), meta)
+sum(rownames(data.pca.t.df) == data.pca.t.df$Sample_ID)
+```
+
+#### Plot with metadata
+
+```{r}
+ggplot(data.pca.t.df, aes(x=PC1, y=PC2, shape=Experiment, color=TF)) +
+  geom_point() +
+  scale_color_brewer(palette = "Set3") +
+  labs(x="PC1 (43.7%)", y="PC2 (16.1%)")
+```
+
+#### How much does each gene contribute to PC1
+
+```{r}
+# What does PC1 mean for expression data
+# Do a matrix inverse on PC1
+rotation.inverse <- MASS::ginv(data.pca.t$rotation[, "PC1", drop=F])
+colnames(rotation.inverse) <- row.names(data.pca.t$rotation)
+
+# Calculate the expression values from the PC1 loading and the PC1 matrix inverse
+data.pc1 <- as.matrix(data.pca.t.df[, "PC1", drop=F]) %*% rotation.inverse
+
+# Unscale
+data.pc1 <- sweep(data.pc1, 2, data.pca.t$scale, FUN = "*")
+# Uncenter
+data.pc1 <- sweep(data.pc1, 2, data.pca.t$center, FUN = "+")
+```

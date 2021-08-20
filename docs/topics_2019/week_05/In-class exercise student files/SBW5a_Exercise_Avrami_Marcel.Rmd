@@ -1,0 +1,61 @@
+---
+title: "Distributions_exercise"
+author: "Abraham Aharonoff"
+date: "10/1/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r Marcel and Avrami}
+### Marcel and Avrami
+
+## Poisson is a discrete distribution, and our events are discrete, either blue or white (0 or 1)
+
+## Question we want to answer: Knowing the average number of blue cells per plate, what is the PMF of blue cells per plate given the range of 0:100. Cells that are blue have been succesfully transformed.
+
+## We need the following parameters: lamba, which is a rate of events/time or events/space. We chose events/space because blue white screening works better with space, meaning you either have blue or white cells on the plate. 
+
+## We chose our rate to be 40 blue cells/plate because based on our lab experience, that is usually how many blue cells we've gotten.
+
+## f. One other distribution that relates for Poisson is exponential, as it can also account for series of events that account for space & time. Exponential can be used for approximations or survival relationships.
+
+## We didn't do ggplot because we're not publishing this, and it doesn't need to be pretty, but we still tried to make it look nice with the plot function
+
+# lamba
+blue.cells.per.plate <- 40
+range.vector <- 0:100
+
+par(mfrow = c(1,3))
+
+PDF.Poisson <- dpois(range.vector, lambda = blue.cells.per.plate)
+plot(PDF.Poisson, type = "l", main = "Marcel's Swag", xlab = "# Blue cells/plate", ylab = "PDF")
+
+CDF.Poisson <- ppois(range.vector, lambda = blue.cells.per.plate)
+plot(CDF.Poisson, type = "l", main = "Avrami's Swag", xlab = "# Blue cells/plate", ylab = "CDF")
+
+PDF.Exp <- dexp(range.vector, rate = blue.cells.per.plate)
+plot(PDF.Exp, type = "l")
+```

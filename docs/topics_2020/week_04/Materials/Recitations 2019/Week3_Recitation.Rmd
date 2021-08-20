@@ -1,0 +1,228 @@
+---
+title: "Week 3 Recitation"
+author: "Chris"
+date: "9/16/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# Do not change any options in this setup block
+
+knitr::opts_chunk$set(echo = TRUE, error=TRUE)
+
+# Import libraries
+require(ggplot2)
+require(gganimate)
+require(reshape2)
+```
+
+# Reshaping data
+
+Reformatting data is an essential data science skill
+
+Let's generate a data set.
+
+```{r}
+expr.data <- matrix(sample(1:10, 20000, replace=TRUE), nrow = 5000, ncol = 4)
+rownames(expr.data) <- vapply(1:5000, function(x) {paste0("GENE", x, collapse = '')}, "")
+colnames(expr.data) <- vapply(1:4, function(x) {paste0("SAMPLE", x, collapse = '')}, "")
+head(expr.data)
+```
+
+This data is GENES (in rows) by SAMPLES (in columns). 
+
+The machine learning community has a general convention: SAMPLES go in rows and FEATURES go in columns.
+
+## Transposing
+
+Switching rows and columns is easy, the [transpose](https://en.wikipedia.org/wiki/Transpose) function does this: `t()`
+
+```{r}
+expr.data.transpose <- t(expr.data)
+head(expr.data.transpose[,1:10])
+```
+
+This has created data that is **wide** format. Each row is a SAMPLE that contains every FEATURE measurement.
+
+## Melting and Pivoting
+
+The alternative is **long** format. In long format, each row is a measurement of **one** feature for **one** sample. This is not the same as the transposition; the transpose has rows which are **one** feature for **all** samples.
+
+We can convert wide data to long data with the **melt** function from the **reshape2** package. Melt converts the **rownames** and **colnames** so that each row has the format **SAMPLE**|**FEATURE**|**MEASUREMENT**.
+
+```{r}
+# Melt knows to melt on row and column names for a MATRIX
+# Melt is not smart enough to figure out what it should do on a DATA.FRAME
+# Additional options (like `id.vars`) must be set if you melt a DATA.FRAME
+
+expr.data.melted <- reshape2::melt(expr.data.transpose)
+head(expr.data.melted)
+
+colnames(expr.data.melted) <- c("Sample", "Gene", "Expression")
+head(expr.data.melted)
+
+# A melted MATRIX will always become a DATA.FRAME
+```
+
+Sometimes you will have **long** format data which needs to be made **wide**. This is often called **pivoting** the data, and is a job for the **acast** function in the **reshape2** package. 
+
+```{r}
+# You always have to tell acast exactly what to do
+# It needs to know which column in your long data should be expanded into multiple columns in your wide data
+# And which column in your long data has rownames
+# You can tell it with ROWNAMES ~ COLUMNNAMES as the second argument
+
+expr.data.pivoted <- reshape2::acast(expr.data.melted, Sample ~ Gene, value.var = "Expression")
+head(expr.data.pivoted[, 1:10])
+
+# acast produces a MATRIX
+# dcast is the same type of function; dcast produces a DATA.FRAME
+```
+
+# Probability functions
+
+#### Probability Mass Function (D function)
+
+R has functions that calculate probabilities. You don't need to work through the binomial theorem by hand.
+
+$$ p(x) = \binom{n}{x} (p)^{n}(1-p)^{(x-n)} $$
+
+This is the binomial theorem. The probability mass function is calculated with the `pbinom` function.
+
+```{r}
+
+# The probability of EVENT is p. By default, the probability of NOT EVENT is (1-p).
+p <- 0.8
+
+# The number of times EVENT occurs
+x <- 2
+
+# The number of trials
+n <- 3
+
+# Solve the binomial theorem with these numbers
+dbinom(x, n, p)
+```
+
+That's the probability the EVENT will happen 2 times out of 3 possible trials.
+
+What about 50 trials? What are the chances for each possible outcome?
+
+```{r}
+
+trial.data <- NULL
+for (i in 0:100) {
+  p <- i / 100
+  trial.data <- rbind(trial.data, data.frame(Trial=0:50, P=round(p, 4), Px=dbinom(0:50, 50, p)))
+}
+
+ggplot(trial.data, aes(x=Trial, y=Px)) +
+  geom_line() +
+  theme_classic() +
+  scale_x_discrete(limits=0:50) +
+  coord_cartesian(ylim=c(0, 0.25)) +
+  labs(title = 'Binomial Probability Mass Function [p = {frame_time}]', x = 'EVENT Occurs per 50 Trials', y = 'Probability') +
+  theme(axis.text.x = element_text(angle=90, hjust=0.5, vjust=1), title = element_text(face='bold', size = 14)) +
+  transition_time(P)
+```
+
+#### Cumulative Distribution Function (P function)
+
+For 50 trials, what are the chances that at most 10 EVENTS will occur? That's the job for a Cumulative Distribution Function (CDF).
+
+R has a function for that too. 
+
+```{r}
+
+# The probability of EVENT is p. By default, the probability of NOT EVENT is (1-p).
+p <- 0.8
+
+# The number of times EVENT occurs
+x <- 10
+
+# The number of trials
+n <- 50
+
+pbinom(x, n, p)
+```
+
+What about for every possible outcome?
+
+```{r}
+cdf.trial.data <- NULL
+for (i in 0:100) {
+  p <- i / 100
+  cdf.trial.data <- rbind(cdf.trial.data, data.frame(Trial=0:50, P=round(p, 4), Px=pbinom(0:50, 50, p)))
+}
+
+ggplot(cdf.trial.data, aes(x=Trial, y=Px)) +
+  geom_line() +
+  theme_classic() +
+  scale_x_discrete(limits=0:50) +
+  coord_cartesian(ylim=c(0, 1)) +
+  labs(title = 'Binomial Cumulative Distribution Function [p = {frame_time}]', x = 'EVENT occurs no more then X times in 50 trials', y = 'Probability') +
+  theme(axis.text.x = element_text(angle=90, hjust=0.5, vjust=1), title = element_text(face='bold', size = 14)) +
+  transition_time(P)
+```
+
+#### Quantile Function (Q function)
+
+For 50 trials, 80% of the trials are expected to have more than some number of EVENTs. What's that expected number?
+
+R has a function for that too. 
+
+```{r}
+
+# The probability of EVENT is p. By default, the probability of NOT EVENT is (1-p).
+p <- 0.8
+
+# The probability of having fewer than X number of events (0.2 means 80% will have more than this many events)
+q <- 0.2
+
+# The number of trials
+n <- 50
+
+qbinom(q, n, p)
+```
+
+```{r}
+q.trial.data <- NULL
+for (i in 0:100) {
+  p <- i / 100
+  iqr <- qbinom(0.75, 50, p)- qbinom(0.25, 50, p)
+  q.trial.data <- rbind(q.trial.data, data.frame(P=round(p, 4), 
+                                                 Pq25=qbinom(0.25, 50, p), 
+                                                 Pq5=qbinom(0.5, 50, p),
+                                                 Pq75=qbinom(0.75, 50, p),
+                                                 Ymin=max(0, qbinom(0.25, 50, p) - (1.5 * iqr)),
+                                                 Ymax=min(50, qbinom(0.75, 50, p) + (1.5 * iqr))))
+}
+
+ggplot(q.trial.data) +
+  geom_boxplot(aes(x=1, lower=Pq25, middle=Pq5, upper=Pq75, ymin=Ymin, ymax=Ymax, group=P), stat="identity") +
+  theme_classic() +
+  coord_cartesian(xlim=c(0,2), ylim=c(0,51)) +
+  labs(title = 'Binomial Cumulative Distribution Function [p = {frame_time}]', x = '', y = 'Successes') +
+  theme(axis.text.x = element_blank(), title = element_text(face='bold', size = 14)) +
+  transition_time(P)
+```
+
+#### Random Outcome Function (R function)
+
+Sometimes you just want to sample from a distribution. Give some parameters and get a random result out.
+
+R has a function for that too.
+
+```{r}
+
+# The probability of EVENT is p. By default, the probability of NOT EVENT is (1-p).
+p <- 0.8
+
+# The number of times to run N trials and give the number of EVENTs that occur
+x <- 10
+
+# The number of trials
+n <- 50
+
+rbinom(x, n, p)
+```

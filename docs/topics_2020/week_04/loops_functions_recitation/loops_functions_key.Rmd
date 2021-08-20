@@ -1,0 +1,152 @@
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Loops and functions
+
+Load libraries
+```{r}
+library(tidyverse)
+```
+
+create a vector called 'chromosomes' that contains numbers from 1:20 
+```{r}
+chromosomes=seq(1:20)
+```
+
+Lets assume we want to add the prefix prefix "chr" before each number to signify that it is a chromosome. 
+We will write a simple loop to do this (this can be easily done without a loop but we are using this example for practice).
+
+```{r}
+temp=as.numeric()
+for (i in seq(1:length(chromosomes))){
+  temp[i]=paste("chr",chromosomes[i],sep = "")
+    }
+temp
+```
+
+Instead of a vector, lets assume the numbers 1-20 are present in a dataframe column called "chromosomes". 
+Create the dataframe and modify the loop so it works with the dataframe
+```{r}
+d=data.frame(chromosomes=seq(1:20))
+
+temp=as.numeric()
+for (i in seq(1:length(d$chromosomes))){
+  temp[i]=paste("chr",d[i,"chromosomes"],sep = "")
+}
+temp
+```
+
+Write a function called 'add_prefix' that takes as input a vector and adds the prefix "chr" to each value of the vector 
+```{r}
+add_prefix=function(inputdata){
+  temp=as.numeric()
+  for (i in seq(1:length(inputdata))){
+    temp[i]=paste("chr",inputdata[i],sep = "")
+  }
+temp
+}
+
+add_prefix(inputdata = chromosomes)
+
+```
+
+Modify the function 'add_prefix' so that it takes two inputs; a vector and a custom prefix text (instead of "chr") that it adds to each value of the input vector 
+```{r}
+add_prefix=function(inputdata,customtext){
+  temp=as.numeric()
+  for (i in seq(1:length(inputdata))){
+    temp[i]=paste(customtext,inputdata[i],sep = "")
+  }
+  temp
+}
+
+add_prefix(inputdata = chromosomes,customtext = "abcd")
+```
+
+Recreate the R function 'mean()'. The function takes a vector as input and outputs its mean. We can call it mean_xdas
+```{r}
+mean_xdas=function(inputdata){
+  sum(inputdata)/length(inputdata)
+}
+
+mean(chromosomes)
+mean_xdas(chromosomes)
+```
+
+# dpqr Functions
+
+We can use the rnorm() function to simulate a sample taken from a normally distributed population:
+```{r}
+d=rnorm(100)
+hist(d)
+
+d=rnorm(100,10,2)
+hist(d)
+```
+
+The dnorm() function gives the height of the probability density function at a given point (this is more useful for discrete rather than continuous distributions)
+```{r}
+dnorm(2,mean = 0,sd=1)
+```
+
+We can also use the dnorm() function to calculate the probability density function (pdf) of the whole population.
+Lets make a pdf for a standard normal curve
+```{r}
+y=dnorm(seq(-3,3,0.1),mean=0,sd=1)
+x=seq(-3,3,0.1)
+pdf=data.frame(zscores=x,probability=y)
+pdf_plot=ggplot(pdf,aes(x=zscores,y=probability))+geom_line()
+pdf_plot
+```
+
+We can use the pnorm function to calculate the area under the curve below a specific zscore
+```{r}
+pnorm(2,mean = 0,sd=1)
+```
+
+We can use the qnorm function find the zscore below which a certain percentage of the pdf area lies (qnorm is the inverse of pnorm)
+```{r}
+qnorm(0.02275,mean = 0,sd=1)
+```
+
+
+# More practice questions
+
+For a standard normal distribution >99% of the values lie between -3 and +3 standard deviations (or z-scores). 
+Create a dataframe with a column called 'zscores' containing values from -3 to +3 in intervals of 0.1 (use seq function)
+```{r}
+d=data.frame(zscores=seq(-3,3,0.1))
+```
+
+Use a for loop to  apply the dnorm function on each row of the dataframe and store the results in a new column called 'probability'
+```{r}
+for (i in seq(1:length(d$zscores))){
+  d[i,"probability"]=dnorm(d[i,1])
+  } 
+```
+
+Plot the zscore on the x-axis and probabilities on the y-axis using ggplot to recreate the standard normal cure (use geom_line)
+```{r}
+ggplot(d,aes(x=zscores,y=probability))+geom_line()
+```
+
+Use the same strategy to recreate a normal curve with a mean of 10 and sd of 3 
+(hint: you will first need to find the zscores enclosing 99% of the values using qnorm)
+```{r}
+qnorm(0.995,10,3)
+qnorm(0.005,10,3)
+d=data.frame(zscores=seq(2,18))
+
+for (i in seq(1:length(d$zscores))){
+  d[i,"probability"]=dnorm(d[i,1],10,3)
+} 
+
+ggplot(d,aes(x=zscores,y=probability))+geom_line()
+```
+
+Inspect the plot to find height of the curve at its highest point. Now calculate this exact height using the dnorm function 
+```{r}
+dnorm(10,10,3)
+```

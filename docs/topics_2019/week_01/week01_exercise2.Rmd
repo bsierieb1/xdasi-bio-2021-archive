@@ -1,0 +1,52 @@
+---
+title: "Homework1 Worksheet"
+author: "Manpreet S. Katari"
+date: "September 5, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+### Q1: Create a matrix (call it transcriptome) with the values below. The experiments are column names and genes are the row names.
+_Note: use a matrix object for now, don't worry about trying to create a data frame with factors. We will go over this again next week._
+
+GeneName | Control | Nitrogen | Phosphate | Potassium
+---------|---------|----------|-----------|-----------
+GeneA    |   89    |    78    |     77    |    56
+GeneB    |   90    |    99    |     85    |    97
+GeneC    |   78    |    94    |     99    |    87
+GeneD    |   81    |    83    |     80    |    79
+
+```{r}
+
+# Enter you answer here.
+# Don't forget to add comments to explain your code.
+
+
+```
+
+
+### Q2: Use an R function to calculate the average expression for all genes and save it in a vector called ``expression_average``.
+_Hint: Remember that you can always get help with commands by typing `?commandname`, `apropos("commandname")`, and `example("commandname")`._
+
+```{r}
+
+# Enter you answer here.
+# Don't forget to add comments to explain your code.
+
+
+```
+
+### Q3: Sort the matrix such that the gene with the highest average gene expression is on top.
+_Hint: the **sort()** function sorts the data and the **order()** function provides how to order the data to be sorted.
+
+```{r}
+
+# Enter you answer here.
+# Don't forget to add comments to explain your code.
+
+
+```

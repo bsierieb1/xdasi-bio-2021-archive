@@ -1,0 +1,81 @@
+##Zarina Akbary and Conor Gilligan
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Scenario
+
+You want to clone a gene and you have some reporter for success of transformation in *E. coli*. Positive colonies are blue because they express $\beta$-galactosidase when plated on medium with IPTG. The probability of a successful transformation is $0 \le P(success) \le 1$. For the following exercise, you may consider one plate, many plates, or a truly gargantuan number of plates.
+
+## Exercise
+
+The class will split into 8 groups and each one will take one of the following distributions:
+
+- Bernoulli
+- Binomial
+- Geometric
+- Hypergeometric
+- Negative binomial
+- Poisson
+- Normal
+- Exponential
+
+For your assigned distribution, answer the following questions. At the end of the class, each group will present their distribution and how it applies to the scenario above to the rest of the class.
+
+#### a. What is your function? Describe it in terms of the kind of problem that it applies to. Is it discrete or continuous?
+
+It is the noral distribution, which applies to continuous data. It can describe and model distributions of quantitative traits, such as height and weight. 
+
+
+#### b. Describe a question that you can ask with your distribution as applied to the transformation scenario given above.
+
+Depending on the parameters of the normal distribution, you can figure out the likelest number of successes (number of cells transformed if the transformation had a 25% success rate). 
+
+
+#### c. Describe the parameterization of the equation. What parameters does it take, and what do they mean?
+
+x is the number of outcomes (which are continuous, independent, and real). 
+$/mu$ the population average
+sigma is the standard deviation, which is the square root of the variance. 
+
+
+#### d. Pick some appropriate parameters for your distribution as applied to the transformation scenario and graph the PDF and CDF.
+
+```{r}
+pdf_transformation <- dnorm(x = 0:100, mean = 50, sd = 6)
+head(pdf_transformation)
+
+hist(pdf_transformation)
+
+pdf_df <- data.frame(normal = pdf_transformation,
+                             X = 0:100)
+
+ggplot(pdf_df,
+         aes_string(x= 0:100, y="normal")) + 
+    theme_classic() +
+    geom_line()
+```
+
+
+#### e. Compute a cumulative probability for some appropriate value and describe in words what it means. Be prepared to explain your answer to the class.
+
+```{r}
+cdf_transformation <- pnorm(q = 0:100, mean = 50, sd = 6)
+
+cdf_df <- data.frame(normal = cdf_transformation,
+                             X = 0:100)
+
+ggplot(cdf_df,
+         aes_string(x= 0:100, y="normal")) + 
+    theme_classic() +
+    geom_line()
+```
+
+The x axis represents the number of cells successfully transformed, and the y axis is the cumulative probability. For instance, if you are looking for the x number of successfully transformed cells,
+the cumulative probability is the probability the 0 to x cells are transformed.If you look at x= 50, 
+there is a 50% chance that 50 or fewer cells were transformed. 
+
+
+#### f. Identify at least one other distribution that yours relates to and be prepared to discuss the relationship between them. This could be a special case, a limiting case, an approximation, or an inverse CDF (survival) relationship.
+
+Although binomial distribution is discrete, given a large enough n, the distribution of data approximates a normal distribution. 

@@ -1,0 +1,163 @@
+---
+title: "XDAS Week 7 Recitation"
+author: "Chris Jackson"
+date: "10/17/2019"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+# Do not change any options in this setup block
+
+knitr::opts_chunk$set(echo = TRUE, error=TRUE)
+
+# Import libraries
+require(MASS)
+require(ggplot2)
+
+ggplot2::theme_set(theme_classic())
+calc.prob <- function(fitdistr.result) {fitdistr.result$estimate['size']/(fitdistr.result$estimate['size']+fitdistr.result$estimate['mu'])}
+
+```
+
+# Hypothesis Testing with random sampling
+
+---
+
+Let's go ahead and simulate two data sets using `rnbinom`.
+
+```{r}
+
+data.set.1 <- rnbinom(1000, prob = 0.8, size = 5)
+data.set.2 <- rnbinom(1000, prob = 0.85, size = 5)
+
+```
+
+What does a negative binomial distribution look like again?
+
+```{r}
+qplot(data.set.1, geom="histogram", binwidth=1) 
+qplot(data.set.2, geom="histogram", binwidth=1) 
+```
+
+Are the means of these data sets different by t-test? 
+
+```{r}
+t.test(data.set.1, data.set.2)
+```
+
+Awesome - the thing we defined as being different is in fact, different. But wait - what does this actually mean? 
+
+Even though it's technically $significant$, is this test interpretable?
+
+Well that sucks. What can we do that IS interpretable?
+
+We know that this is negative binomial data, what about fitting the distribution to the data?
+
+```{r}
+fitter.function <- function(data.set, dist.name = "negative binomial", add.prob=T) {
+  fit.params <- MASS::fitdistr(data.set, dist.name)
+  if (add.prob) {fit.params$estimate['p'] <- calc.prob(fit.params)}
+  return(fit.params)
+}
+
+nbinom.fit <- list()
+nbinom.fit$data.1 <- fitter.function(data.set.1)
+nbinom.fit$data.2 <- fitter.function(data.set.2)
+print(nbinom.fit$data.1)
+print(nbinom.fit$data.2)
+```
+
+Well that's certainly different values for p, but how do we test it?
+
+We've (I've) managed to screw up propagating the estimate of standard error, so that doesn't help very much - we need to actually do something ourselves.
+
+Lets try something a little different this time - the T-test requires certain conditions to be met. What conditions do we need to meet for a nonparametric test (lets try Mann-Whitney-Wilcoxon!)
+
+
+```{r}
+test.vals <- wilcox.test(data.set.1, data.set.2)
+test.vals
+```
+
+That's pretty good - how well does this hold up with small n though?
+
+```{r}
+data.set.1 <- rnbinom(10, prob = 0.8, size = 5)
+data.set.2 <- rnbinom(10, prob = 0.85, size = 5)
+```
+
+```{r}
+test.vals <- wilcox.test(data.set.1, data.set.2)
+test.vals
+```
+
+Well that's not nearly as awesome. Even though we KNOW that the means of these two populations is different (we defined it that way!), the test has failed to demonstrate a statistically significant difference (in fact, it's been pretty awful). How often does that occur?
+
+```{r}
+
+# Make a function that tests normal data num.t times
+# The number of observations per sampling is num.0
+# The means of these normal distributions are different
+# The standard deviation is the same though
+
+run.wilcox.function <- function(num.t, num.o, prob.1=0.8, prob.2=0.85, size=10) {
+  print(paste0("Probability 1: ", prob.1, "; Probability 2: ", prob.2))
+  
+  test.vals <- NULL
+  for (i in 1:num.t) {
+    loop.set.1 <- rnbinom(num.o, size=size, prob = prob.1)
+    loop.set.2 <- rnbinom(num.o, size=size, prob = prob.2)
+    loop.vals <- suppressWarnings(wilcox.test(loop.set.1, loop.set.2))
+    test.vals <- rbind(test.vals,
+                       data.frame(pvalue=loop.vals$p.value, 
+                                  diff=0.5, n=10))
+  }
+  return(test.vals)
+}
+
+n.tests <- 1000
+n.observations <- 10
+prob.diff <- 0.05
+
+n10.diff0.5 <- run.wilcox.function(n.tests, n.observations, prob.1 = 0.8, prob.2 = 0.85)
+
+plot.title <- paste0("P-values (", toString(n.observations),
+                     " Observations, ", toString(prob.diff),
+                     " Probability Difference)")
+sig.by.test <- sum(n10.diff0.5$pvalue < 0.05)
+
+ggplot(n10.diff0.5, aes(x=pvalue)) +
+  theme_classic() + 
+  labs(title=plot.title) +
+  theme(plot.title = element_text(hjust=0.5, size=14, face="bold")) +
+  geom_histogram(binwidth = 0.01, color="grey", fill="white") +
+  geom_vline(xintercept = 0.05, color = "red", linetype = 'dashed', size=1) +
+  annotate("text", label=paste("p < 0.05:", toString(sig.by.test), "/",
+                               toString(n.tests)), x=0.7, y=sqrt(n.tests))
+```
+
+Interesting. About 15% of the time we decide on statistical significance for when n=10 observations, r = 10, and p is either 0.8 or 0.85. How does this change with increasing the number of observations?
+
+```{r}
+
+n.observations <- 20
+n20.diff0.5 <- run.wilcox.function(n.tests, n.observations,  prob.1 = 0.8, prob.2 = 0.85)
+
+plot.title <- paste0("P-values (", toString(n.observations),
+                     " Observations, ", toString(prob.diff),
+                     " StDev Difference In Means)")
+sig.by.test <- sum(n20.diff0.5$pvalue < 0.05)
+
+ggplot(n20.diff0.5, aes(x=pvalue)) +
+  theme_classic() + 
+  labs(title=plot.title) +
+  theme(plot.title = element_text(hjust=0.5, size=14, face="bold")) +
+  geom_histogram(binwidth = 0.01, color="grey", fill="white") +
+  geom_vline(xintercept = 0.05, color = "red", linetype = 'dashed', size=1) +
+  annotate("text", label=paste("p < 0.05:", toString(sig.by.test), "/",
+                               toString(n.tests)), x=0.7, y=sqrt(n.tests))
+```
+
+Doubling the number of observations brings us from 15% to 25% the number of 'successful' tests. How well does that hold up?

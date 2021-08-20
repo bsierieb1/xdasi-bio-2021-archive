@@ -1,0 +1,72 @@
+---
+title: "CO2_anova_ques"
+output:
+  pdf_document: 
+    fig_caption: true
+    keep_tex: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# CO2 anova
+
+In R, a dataset called CO2 is available. You can access it by simply typing its name. You can also learn more about the dataset by typing help(CO2). 
+
+The object contains information such as Plant ID, Origin, whether they were chilled, and how much CO2 was taken up when exposed to a specific concentration of CO2. 
+
+#### 1.  Generally at concentration level 1000, the plant has taken up as much as it can so for this part we will only be interested in the amount of uptake at concentration level 1000. Create a new dataframe called CO2_1000 containing only the rows where concentration equals to 1000.
+
+```{r}
+
+
+```
+
+#### 2.	Assuming that the data is from a normal distribution, perform ANOVA using both, `lm()` and `aov()` functions to determine whether treatment (chilled or non-chilled) has an effect on the amount of CO2 uptake by the plant. 
+
+
+```{r}
+
+
+```
+
+#### 3.	Now perform ANOVA using both, `lm()` and `aov()` functions to determine whether origin (the column Type), treatment (chilled or non-chilled), or their interaction are associated with the amount of CO2 uptake by the plant. 
+
+Compare the results of both the lm and aov results.
+
+Also compare the difference in p-value of the treatment from the previous question where origin was not a factor.
+
+```{r}
+
+
+```
+
+#### 4. Create a plot to show the relationship between the variables *type* and *treatment*
+
+```{r}
+
+```
+
+
+So why does the lm() function not give us a significant difference? 
+
+#### 5. Rebase the *type* variable such that Mississippi is the base.
+
+```{r}
+                
+                 
+```
+
+
+#### 6.	TukeyHSD
+
+Can the results from TukeyHSD tell us about the change in slope of the interaction?
+
+```{r}
+
+
+```
+
+
+The slope is simply the difference. So the difference in the slopes is the difference of the difference. 

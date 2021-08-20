@@ -1,0 +1,113 @@
+---
+title: "Anova"
+author: "Raza"
+date: "11/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+This exercise is based on the mousegenes dataset which contained the gc_content of all mouse genes. For this exercise I have retained just 3 chromosomes and simulated the values so the data is not real.
+
+The data shows gc-content of randomly selected regions from chr 10,11 and 12. We will use anova to check if there is a significant difference in the gc-content of different chromosomes. 
+
+1. Import the data
+```{r}
+genes=read.csv("gc.csv")
+
+```
+
+2. Make a boxplot of gc content by chromosome to check if the gc-content looks different among chromosomes 
+```{r}
+boxplot(data=genes,GC_Percent~Chr)
+
+#chr 12 looks different
+```
+
+3. Is there a significant difference between the gc_content of chr11 and chr12 as compared to chr10 (do planned anova)
+```{r}
+summary(lm(data=genes,GC_Percent~Chr))
+
+#chr 11 and 12 have significant difference, chr10 and 12 dont
+```
+
+4. Repeat this analysis using chr12 as the reference 
+```{r}
+fac=factor(genes$Chr,levels = c("chr12","chr10","chr11"))
+summary(lm(data=genes,GC_Percent~fac))
+
+```
+
+5. Compare the GC_content among all 3 chromosomes using unplanned anova
+```{r}
+summary(aov(data=genes,GC_Percent~Chr))
+
+```
+
+6. Use the TukeyHSD test to find which chromosomes have different GC_content and compare the results with those obtained with the planned anova
+```{r}
+TukeyHSD(aov(data=genes,GC_Percent~Chr))
+
+#chr12 is different from others. ch10 and chr 11 are not different. Results match with previous answer
+```
+
+7. Manually compute the SSE and SSB (should match the results from the aov function)
+```{r}
+# make 3 vectors containing gc percentage for chr 10, 11, and 12
+chr10=(genes[genes$Chr=="chr10","GC_Percent"])
+chr11=(genes[genes$Chr=="chr11","GC_Percent"])
+chr12=(genes[genes$Chr=="chr12","GC_Percent"])
+
+#calculate the mean of each chromosome and the grand mean
+gr.mean=mean(c(chr10,chr11,chr12))
+chr10.mean=mean(chr10)
+chr11.mean=mean(chr11)
+chr12.mean=mean(chr12)
+
+#use the means and the vectors to find ssb and sse
+ssb= sum(length(chr10)*(chr10.mean-gr.mean)^2)+sum(length(chr11)*(chr11.mean-gr.mean)^2)+sum(length(chr12)*(chr12.mean-gr.mean)^2)
+sse=sum((chr10-chr10.mean)^2)  + sum((chr11-chr11.mean)^2)  + sum((chr12-chr12.mean)^2) 
+```
+
+8. Calculate dof for ssb and sse
+```{r}
+df_ssb=3-1
+df_sse=(length(chr10)-1)+(length(chr11)-1)+(length(chr12)-1)
+```
+
+9. Calculate the mean square values for ssb and sse
+```{r}
+ssb_mean=ssb/df_ssb
+sse_mean=sse/df_sse
+```
+
+10. Calculate the f statistic
+```{r}
+f=ssb_mean/sse_mean
+```
+
+11. Calculate the p.value  
+```{r}
+pf(f,df1 = df_ssb,df2 = df_sse,lower.tail = F)
+
+```
+
+12. Conserved coding regions may have higher gc-content than noncoding regions. Add an interaction term to the aov function to check if being a coding/noncoding region contributes to the difference in GC_content among chromosomes 
+```{r}
+summary(aov(data=genes,GC_Percent~Chr*Coding))
+
+#interaction is significant
+```
+
+13. Does this interaction exist on all chromosomes or on a specific chromosome? Check with anova and with a boxplot
+```{r}
+TukeyHSD(aov(data=genes,GC_Percent~Chr*Coding))
+boxplot(data=genes,GC_Percent~ Chr+Coding)
+
+#interaction is only significant in pairwise comparisons involving chr12. boxplot also confirms interaction exists only on chr12
+
+```
+
+
+

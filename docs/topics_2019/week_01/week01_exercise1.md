@@ -1,0 +1,52 @@
+---
+title: Week 01, Exercise 1
+subtitle: R Basics
+---
+
+#Answer the following questions
+
+01) How do you start a new R script in RStudio?
+
+02) Why is it not a good idea to use MS Word to save your commands?
+
+03) Where does R save the history of your commands?
+
+04) How do you know when R is ready for your command?
+
+05) How do you comment your code?
+
+06) What does it mean then R prompts you with a  "+" in the beginning of the line?
+
+07) What is an R workspace? How do you save it and how do you load it?
+
+08) What is a working directory? How do you set it and how do you determine which directory is the working directory?
+
+09) How is an RStudio project related to the R workspace and Working directory?
+
+10) What is the command to install a package from CRAN?
+
+11) What is the command to retrieve documentation related to a function and its usage?
+
+12) Create two integer vectors, one called GeneA with the values 3,4,5,7 and the other GeneB with the values 4,6,8,5
+
+13) Create a character vector with the words, "control", "nitrogen","potassium", and "phosphate" and call it Experiments.
+
+14) Add vectors GeneA and GeneB and save it as GeneAB
+
+15) Add vectors GeneAB with Experiments. Do you get an error? Why or Why not?
+
+16) Add 1 to vector GeneAB and call it GeneABplusOne. Which value has changed and by how much?
+
+17) Create a matrix called expvalues where GeneA is the first row and GeneB is the second row.
+
+18) Assign the Experiments as the column names of the matrix expvalues.
+
+19) Subset the matrix to retrieve the control and nitrogen values for GeneA.
+
+20) In what situation would you prefer a dataframe over a matrix?
+
+21) In what situation would you prefer a list over a dataframe?
+
+22) Convert the expvalues matrix into a dataframe and call it expvaluesdf
+
+23) Give three different ways to retrieve the “potassium” column from expvaluesdf

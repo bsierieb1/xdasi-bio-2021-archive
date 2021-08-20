@@ -1,0 +1,254 @@
+---
+title: "Week 02 - Writing R Functions"
+author: "Manpreet S. Katari"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Why write your own function?
+
++ Allows you to access code that you or someone has already written
+  + Many functions are already written so it is possible that you may never have to but there are cases where small functions become helpful.
++ Can include complicated steps of an algorithm
+  + For example implementing a new method that you have created to calculate confidence in probe signals.
++ Can include simply steps of a workflow
+  + For example running all the steps to normalizing data.	
++ You can use the apply function to make your code more efficient.
+
+
+## Architecture of a function
+
++ A function is divided into 3 parts:
+  + Name – the name of the function that has to be used when calling the function
+  + Arguments – the required and optional objects and settings that the software can/will use
+  + Expression – the code that does the work
+  + It is a good idea to include a return command in the expression block
+
+
+```{r eval=FALSE}
+#this is a template of how you would write a function
+function_name<-function(argument1, argument2, ....) {
+  expression
+  ....
+  return(result)
+}
+
+#this is how you would run your function and save the result
+myresult = function_name("arg1","arg2")
+
+```
+
+Here's an example
+
+```{r}
+squareme <- function(x) {
+  result = x**2
+  return(result)
+}
+
+squareme(3)
+```
+
+```{r eval=FALSE}
+squareme("hello") # this will give an error
+
+```
+
+```{r}
+squareme(c(3,4,5,6))
+
+```
+
+## Control Statements
+
+Now let's give our code some more structure and decision making power.
+
+**if-else** is a control statement that is used to evaluate a condition.
+If the condition is **TRUE** a given statement will be executed and if it is **FALSE** then a different statement will be executed.
+
+```{r eval=F}
+if ( condition ) {
+  then do this
+} else {
+  do something else
+}
+
+```
+
+If-else can be nested
+If-else evaluates a vector of length 1
+
+Here is a working example.
+
+```{r}
+
+a<-20
+if(a>5) {
+  print(a) 
+} else {
+  print("a is less than 5")
+}
+```
+
+```{r}
+a<-2
+if(a>5) {
+  print(a) 
+} else {
+  print("a is less than 5")
+}
+
+```
+
+To avoid having to repeat the if else statement every time we need to check, we can simply create a function to do the test. Let's make this function a bit more complex so that we can demonstrate that **if-else** can support more than two options.
+
+```{r}
+
+foo<-function(a) {
+	if(a<5) {
+		print("a is less than 5")
+	} else if(a<10) {
+			print("a is less than 10 but greater than 5")
+	} else {
+			print ("a is greater than or equal to 10")
+	}
+}
+
+foo(2)
+foo(7)
+foo(20)
+```
+
+There is also an **ifelse** command that can be used to evaluate a vector rather than just one condition. First argument is the condition, Second is statements to execute if **TRUE**, and third is statement to execute if **FALSE**
+
+```{r}
+a<-c(1:8)
+ifelse(a <= 5, a, "greater than 5")
+
+```
+
+## Loops
+
+There are cases where you need to loop trough each element of a data object. Loops through the code that is provide within curly brackets.
+
++ **for** loops are a great option when you know the number of iterations.
++ **while** loops evaluates a condition and loops until it is no longer true.
++ **repeat** loops repeat a block of code until the **break** command is used to exit the loop.
+
+Let's create random matrix and look at all the ways we can calculate the mean of each row.
+
+```{r}
+#The sample function is asked to give 20 values between 
+# 20 and 160 and divide them by 10. 
+#The ncol and nrow are options for the matrix function.
+
+sampleData<-matrix(sample(20:160, 20, replace=T)/10, ncol=4, nrow=5)
+
+#your sampleData will be different because it is generated randomly
+
+# since we know that the number of rows is 4, we can use the for loop.
+# i is the iterator, everytime the loop occurs, the i will change in value
+# starting at 1 and then ending at the last value of the vector 1:nrow(sampleData).
+# Let's save the results in a vector called sampleMean
+
+sampleMean=numeric()
+
+for ( i in 1:nrow(sampleData)) {
+    sampleMean[i] = mean(sampleData[i,]) # It is important to use i to 
+                                         # specify where the value should be
+                                         # retrieved and where it should be 
+                                         # saved.
+}
+sampleMean
+
+```
+
+
+```{r}
+# In the case you want to use while loop, we need to use a counter which 
+# will keep track of which row we are analyzing at a time.
+
+counter=1
+
+while( counter <= nrow(sampleData)) { # I want to loop while this cond is true
+    sampleMean[counter] = mean(sampleData[counter,]) # now instead of i should use 
+                                                    # counter to keep track
+    counter = counter + 1 # don't forget to add 1 to the counter so you move on 
+                          # to the next row otherwise the loop will be stuck
+  }
+
+counter
+sampleMean
+
+```
+
+## Apply functions
+
+Instead of looping through a matrix or vector of values to perform the same operation, R has commands that will allow you to apply a function to each row, column, every element of a list, or simply on a vector that is grouped using a factor.
+
++ **apply()** – first provide the array then whether to apply the function by row (1), column(2) or both (c(1,2), the function, and then optionally any options for the function that is being applied.
++ **tapply()** – similar to apply but pass a factor vector instead of row or column
++ **lapply()** – simply provide a list and the function to apply to each vector in the list. Result is a list.
++ **sapply()** – same as lapply() but returns result in original data structure
+
+For the example above, let's use the **apply** function to calculate the mean.
+
+```{r}
+apply(sampleData, 1, mean) # the 1 mean apply it to each row
+
+```
+
+Let's assume the data was actually two replicates of control in the first two columns and two replicates of treatment in the last two columns. Let's create a factor that defines the different groups.
+
+```{r}
+colnames(sampleData)<-c("ctr1l", "ctrl2", "trt1", "trt2")
+rownames(sampleData)<-c("gene1", "gene2", "gene3", "gene4", "gene5")
+
+expgroups = factor(c("ctrl", "ctrl", "trt", "trt"))
+
+```
+
+We can use **tapply** to calculate the average ctrl and trt groups for a given gene.
+
+```{r}
+tapply(sampleData[1,], expgroups, mean)
+
+```
+
+Now we can apply this to each row in two different ways
++ create a function that performs this operation and apply it to each row
++ apply the tapply function to each row.
+
+Let's start with the first option
+
+```{r}
+# this function is going to need two arguments
+# 1) the values that I need to perform the calculation on
+# 2) the grouping of the values.
+
+# Since the values will be provided by the apply function you have
+# to keep is as your first argument
+
+calcmean = function(genevalues, expgroup) {
+  result = tapply(genevalues, expgroup, mean)
+  return(result) # 
+}
+
+apply(sampleData, 1, calcmean, expgroups)
+
+```
+
+Above is a great example of how creating your own function can help speed up the analysis because you can simply apply it to each row.
+
+The following also works. Remember after the name of the function being applied you can provide it with other options.
+
+```{r}
+# since the first argument is being provided by the apply, we just need to
+# provide the second argument of tapply 
+
+apply(sampleData, 1, tapply, expgroups, mean) 
+
+```

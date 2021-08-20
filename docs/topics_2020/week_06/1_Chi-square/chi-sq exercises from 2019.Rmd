@@ -1,0 +1,198 @@
+
+## Example: Two-way comparison
+
+An international study was done to test the hypothesis that women who postpone childbirth until later in life have a higher risk of breast cancer, which they examined by asking whether there is an association between the incidence of breast cancer and the age at which women first gave birth (Rosner, Example 10.4). 
+
+The study found that 683 out of 3,220 women WITH breast cancer first gave birth above the age of 30 (21.2%), whereas 1,498 out of 10,245 women WITHOUT breast cancer first gave birth at an age above 30 (14.6%):
+  
+```{r}
+
+# knitr is a library for dynamic report generation that makes pretty tables
+library(knitr)
+
+Case    = c(683,2537)   # total =  3220
+Control = c(1498,8747)  # total = 10245
+data_matrix = rbind(Case, Control)
+colnames(data_matrix) = c("Above30","Below30")
+
+# kable is a table generator from the knitr package
+kable(data_matrix)
+```
+
+Is this difference significant? If there is no association, then the probabilities of these two factors should be independent, and the expected proportion of individuals with both characteristics would just equal the product of the independent proportions. For example:
+  
+  $$ \hat{p}_{(Cancer\ \cap Above30)} = \hat{p}_{Cancer} * \hat{p}_{Above30} $$
+  
+  This is our **null hypothesis**. Below we will consider three different approaches to determine the significance of the differences.
+
+
+## Contigency tables
+
+Tabular data are typically organized into a 2x2 **contigency table** to represent data for two variables with two possible outcomes each. Larger tables can be used for multinomial vs. binary outcomes.
+
+**Note:** _**By convention**_, the two samples to be compared are presented in the ROWs (e.g. Case, Control), and the different groups within each sample are presented in the COLUMNs (e.g. Above30, Below30). However, _**table orientation is arbritrary for the purpose of the statistical tests**_, which will give the same result either way.
+
+Let's make a contingency table with two rows and two columns to represent our cancer data. 
+
++ **Row 1:** women WITH cancer ("Case")
++ **Row 2:** women WITHOUT cancer ("Control")
++ **Col 1:** women first giving birth above 30 ("Above30")
++ **Col 2:** women first giving birth below 30 ("Below30")
+
+A common practice is to designate rows with the subscript $i$ and columns with the subscript $j$, so the counts in each cell will have an index $x_{ij}$.
+
+Since this can get confusing, we can alternatively refer to the quadrants as $a$ (top left), $b$ (top right), $c$ (bottom left), and $d$ (bottom right).
+
++ $a = x_{11}$ = # of women with cancer & first birth ABOVE 30
++ $b = x_{12}$ = # of women with cancer & first birth BELOW 30
++ $c = x_{21}$ = # of women without cancer & first birth ABOVE 30
++ $d = x_{22}$ = # of women without cancer & first birth BELOW 30
+
+Individual row and column totals are called _**marginal**_ totals (since the sum of the cells is written in the margins). The row margins will be $m_1 = (a+b)$ and $m_2 = (c+d)$, and the column margins $n_1 = (a+c)$ and $n_2 = (b+d)$:
+
++ **Row 1 margin:** $m_1 = x_{1+} = x_{11} + x_{12}$ = all women with cancer
++ **Row 2 margin:** $m_2 = x_{2+} = x_{21} + x_{22}$ = all women without cancer
++ **Col 1 margin:** $n_1 = x_{+1} = x_{11} + x_{21}$ = # of women who first gave birth over 30
++ **Col 2 margin:** $n_2 = x_{+2} = x_{12} + x_{22}$ = # of women who first gave birth under 30
+
+Finally, the _**grand total**_ is:
+
++ **Grand total:** $N = (a+b+c+d) = x_{11} + x_{12} + x_{21} + x_{22} = x_{1+} + x_{2+} = x_{+1} + x_{+2}$ 
+
+Now let's generate the contingency table:
+  
+```{r}
+# from above
+Case   = c(683,2537)   # total =  3220
+Control= c(1498,8747)  # total = 10245
+
+# contingency table with row and col margins, plus grand total
+CaseT     = c(Case,    sum(Case))     # = c( 683, 2537,  3220)
+ControlT  = c(Control, sum(Control))  # = c(1498, 8747, 10245) 
+Totals    = CaseT + ControlT
+
+data_table = rbind(CaseT, ControlT, Totals)
+colnames(data_table) = c("Above30", "Below30", "Total")
+rownames(data_table) = c("Case", "Control", "Total")
+kable(data_table)
+```
+
+
+## Exercise
+
+22,071 physicians served as subjects to study effect of aspirin on incidence of heart attacks. There are two groups: those who took aspirin regularly for 5 years and others (11,043 of the 22,071) received placebo instead of aspirin. 189 of the group that took placebo suffered a heart attack and 104 of those who took aspirin suffered a heart attack. Does aspirin have a significant association with physicians suffering from a heart attack?
+  
+  In last week's class you used a Chi-square test to answer this question. Here let's use Fisher's exact test instead.
+
+1. Create a contingency table for these data.
+
+```{r}
+# aspirin 
+# heart attach
+N = 22071
+a = 189 # took placebo and had heart attack
+b = 104 # took aspirin and had heart attach
+c =
+d = 
+
+placebo_total = 11043
+placebo_heart = 189
+placebo_healthy = placebo_total - placebo_heart
+
+aspirin_total = N - placebo_total
+aspirin_heart = 104
+aspirin_healthy = aspirin_total - aspirin_heart
+
+
+aspirindata = rbind(c(placebo_heart,aspirin_heart),
+                    c(placebo_healthy, aspirin_healthy)
+                    )
+aspirindata
+
+heart_total = placebo_heart + aspirin_heart
+healthy_total = placebo_healthy + aspirin_healthy
+```
+
+2. Calculate the expected values.
+
+```{r}
+placebo_heart_expected = (placebo_total/N) * (heart_total/N) * N
+placebo_heart_expected
+
+placebo_healthy_expected = (placebo_total/N) * (healthy_total/N) * N
+placebo_healthy_expected
+
+aspirin_healthy_expected = (aspirin_total/N) * (healthy_total/N) * N
+aspirin_healthy_expected
+
+aspirin_heart_expected = (aspirin_total/N) * (heart_total/N) * N
+aspirin_heart_expected
+
+
+```
+
+
+3. Calculate the $X^2$ value using your observed and expected counts.
+
+```{r}
+
+chisqvalue = sum( ((placebo_healthy - placebo_healthy_expected)^2)/placebo_healthy_expected +
+                  ((placebo_heart - placebo_heart_expected)^2)/placebo_heart_expected +
+                  ((aspirin_healthy - aspirin_healthy_expected)^2)/aspirin_healthy_expected +
+                  ((aspirin_heart - aspirin_heart_expected)^2)/aspirin_heart_expected
+                  )
+
+chisqvalue
+
+```
+
+
+4. What is the $p$-value of the test statistic?
+
+```{r}
+
+pchisq(chisqvalue, df = 1, lower.tail = F)
+chisq.test(aspirindata)
+```
+
+
+5. Calculate the $p$-value using Fisher's exact test.
+
+```{r}
+fisher.test(aspirindata)
+
+```
+
+6. Calculate the $p$-value using the `phyper` function.
+
+```{r}
+# phyper(q, m, n, k, lower.tail = TRUE, log.p = FALSE)
+# 
+# 
+# x = , q	
+# vector of quantiles representing the number of white balls drawn without replacement from an urn which contains both black and white balls.
+# 
+# m	
+# the number of white balls in the urn.
+# 
+# n	
+# the number of black balls in the urn.
+# 
+# k	
+# the number of balls drawn from the urn.
+# 
+# p	
+# probability, it must be between 0 and 1.
+# 
+# ```{r}
+# x = aspirin_heart
+# m = aspirin_total
+# n = placebo_total
+# k = heart_total
+# 
+# phyper(x,m,n,k,lower.tail = T )
+
+```
+
+---
+

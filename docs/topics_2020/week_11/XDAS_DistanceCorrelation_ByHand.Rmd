@@ -1,0 +1,281 @@
+---
+title: "Distance and Correlation By Hand"
+author: "Manpreet S. Katari"
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.align="center")
+```
+
+The goal of this exercise to learn about clustering data and also practice R.
+Instead of our standard dataset where we have tens of thousands of genes across dozens to hundreds of samples, we will work with a simulated dataset made up of 4 genes and 4 samples.
+
+Gene | Sample1 | Sample2 | Sample3 | Sample4
+-----|---------|---------|---------|----------
+  A  |    5    |    10   |   5     |    10
+  B  |   50    |   100   |  50     |   100
+  C  |   10    |    05   |  10     |     5
+  D  |   25    |   125   |  75     |   125
+
+
+# Calculating Euclidean distance
+
+Euclidean distance is simply the geometric distance between the two points. Recall the basic Pythagorean formula:
+$$a^2 + b^2 = c^2$$
+where $a$ and $b$ are sides of a right triangle and $c$ is the hypotenuse. Specifically, $a^2$ is the difference between the two points in the first dimension squared, and $b^2$ is the difference in the second dimension squared. To get the Euclidian distance $c$ we take the $\sqrt{c^2}$, or simply $\sqrt{a^2 + b^2}$.
+
+To express Euclidian distance in multiple dimensions, we can use the same formula, but we keep adding dimensions. e.g. $a^2 + b^2 + c^2 = d^2$. It now becomes more convenient to change our notation a bit. Let's say we have $n$ dimensions, and let's call them $D_1, D_2, ... D_n$. Now for any two points $\mathbf{x} = (x_1, ... , x_n)$ and $\mathbf{y} = (y_1, ... , y_n)$ in $n$-dimensional space, we can write the Euclidian distance as:
+
+$$ d_{xy} = \sqrt{\sum\limits_{i=1}^{n}{(y_i - x_i)} ^2} $$
+Most of the time we will omit writing out the limits of the summation explicitly, and instead just write $\sum$.
+
+** *Please review the class notes on "Distance and Clustering" for a more in-depth discussion of distance measures.* **
+
+## Pairwise distances between genes
+
+To find the Euclidean distance between GeneA and GeneB, let's refer to the value of GeneA in Sample1 as $A_1$ and the value of GeneA in Sample2 as $A_2$; let's call the value of GeneB in Sample1 $B_1$ and in Sample2 $B_2$; and so on. 
+
+The Euclidean distance between GeneA and GeneB can now be calcuated using the following formula:
+
+$$ d_{AB} = \sqrt{ \left( B_1-A_1 \right) ^2+ \left( B_2-A_2 \right) ^2 + \left( B_3-A_3 \right)^2 + \left( B_4-A_4 \right) ^2} = \sqrt{ \sum{_{i=1}^4} {(B_i - A_i) ^2 }} $$
+It's easy to see that since we have 4 samples, now we have four dimensions instead of two ($n=4$).
+
+## Exercise
+
+Just for fun, you will calculate all the pairwise Euclidean distances by hand! You may use R or a calulator to do this, but you must calculate it using the equation provided above.
+
+
+```{r}
+A=c(5, 10, 5, 10)
+B=c(50,100,50,100)
+C=c(10,5,10,5)
+D=c(25,125,75,125)
+
+D_AB = sqrt( (A[1]-B[1])^2  + (A[2]-B[2])^2  + (A[3]-B[3])^2  + (A[4]-B[4])^2 )
+D_AB 
+
+D_AC = sqrt( (A[1]-C[1])^2  + (A[2]-C[2])^2  + (A[3]-C[3])^2  + (A[4]-C[4])^2 )
+D_AC 
+
+D_AD = sqrt( (A[1]-D[1])^2  + (A[2]-D[2])^2  + (A[3]-D[3])^2  + (A[4]-D[4])^2 )
+D_AD 
+
+D_CB = sqrt( (C[1]-B[1])^2  + (C[2]-B[2])^2  + (C[3]-B[3])^2  + (C[4]-B[4])^2 )
+D_CB 
+
+D_DB = sqrt( (D[1]-B[1])^2  + (D[2]-B[2])^2  + (D[3]-B[3])^2  + (D[4]-B[4])^2 )
+D_DB 
+
+D_CD = sqrt( (C[1]-D[1])^2  + (C[2]-D[2])^2  + (C[3]-D[3])^2  + (C[4]-D[4])^2 )
+D_CD 
+
+
+
+```
+
+Check your answers by using the ``dist`` function in R. The input is simply the matrix with the values as presented above.
+
+```{r}
+ABCD=rbind(A,B,C,D)
+ABCD.euc.dist = dist(ABCD)
+ABCD.euc.dist
+```
+
+Based on the Euclidean distance, which two genes are the closest (most similar)?
+
+Let's look at a line plot of these values to see if that makes sense.
+
+```{r}
+library(ggplot2)
+library(reshape2)
+ABCDdf = as.data.frame(ABCD)
+ABCDdf$Gene=c("A","B","C","D")
+colnames(ABCDdf)=c("S1","S2","S3","S4","Gene")
+
+ABCD.melt =melt(ABCDdf, id=c("Gene"))
+
+ggplot(data =ABCD.melt, aes(x=variable, y=value, group=Gene)) + geom_line(aes(color=Gene))
+
+
+```
+
+
+# Covariance calculation
+
+In some cases we don't want to calculate the distance between points, but rather compare how the points are changing relative to their means. For instance we may want to know which two genes are always high in Sample1 and Sample3 but low in Sample2 and Sample4. To determine such a relationship we can calculate the *covariance*.
+
+Recall that *variance* is simply the variation of each point from its mean. We square the difference because the variance -- just like distance -- must be positive (or more precisely, greater than or equal to zero):
+
+$$s^{2} = \frac{\sum_{i=1}^{n} (x_{i} - \bar{x}) ^2} {n-1}
+        = \frac{\sum (x_{i} - \bar{x})(x_{i} - \bar{x})} {n-1}$$
+  
+We divide by $n-1$ because we have $n-1$ degrees of freedom. For covariance, instead of squaring the deviation of a single variable from its mean, we multiply the deviation of two variables from their respective means:
+
+ $$cov_{x,y} = \frac{\sum\limits_{i=1}^{n}{(x_i-\overline{x})(y_i-\overline{y})} }{n-1}$$
+
+We then get the *Pearson correlation* by dividing the covariance by the standard deviation of both the genes being compared:
+
+$$r = \frac{\sum\limits_{i=1}^{n}{(x_i-\overline{x}) (y_i-\overline{y})}}
+{\sqrt{\sum\limits_{i=1}^{n} (x_{i} - \bar{x}) ^{2}}
+ \sqrt{\sum\limits_{i=1}^{n} (y_{i} - \bar{y}) ^{2}}} $$
+
+The correlation coefficient is a value between -1 and 1 and can be used to describe the relationship between the genes as *positive* or *negative*. It allows us to compare changes in the expression of A and B relative to each other, independent of their absolute magnitudes, because we have *standardized* their changes in expression relative to their mean and variance.
+
+Let's calculate the covariance of the GeneA and GeneB.
+
+```{r}
+A_bar = mean(A)
+B_bar = mean(B)
+C_bar = mean(C)
+D_bar = mean(D)
+
+covAB = ( ( ( A[1] - A_bar ) * ( B[1] - B_bar ) ) + 
+          ( ( A[2] - A_bar ) * ( B[2] - B_bar ) ) + 
+          ( ( A[3] - A_bar ) * ( B[3] - B_bar ) ) + 
+          ( ( A[4] - A_bar ) * ( B[4] - B_bar ) ) 
+        )/ 3
+
+covAC = ( ( ( A[1] - A_bar ) * ( C[1] - C_bar ) ) + 
+          ( ( A[2] - A_bar ) * ( C[2] - C_bar ) ) + 
+          ( ( A[3] - A_bar ) * ( C[3] - C_bar ) ) + 
+          ( ( A[4] - A_bar ) * ( C[4] - C_bar ) ) 
+        )/ 3
+
+covAD = ( ( ( A[1] - A_bar ) * ( D[1] - D_bar ) ) + 
+          ( ( A[2] - A_bar ) * ( D[2] - D_bar ) ) + 
+          ( ( A[3] - A_bar ) * ( D[3] - D_bar ) ) + 
+          ( ( A[4] - A_bar ) * ( D[4] - D_bar ) ) 
+        )/ 3
+
+covCB = ( ( ( C[1] - C_bar ) * ( B[1] - B_bar ) ) + 
+          ( ( C[2] - C_bar ) * ( B[2] - B_bar ) ) + 
+          ( ( C[3] - C_bar ) * ( B[3] - B_bar ) ) + 
+          ( ( C[4] - C_bar ) * ( B[4] - B_bar ) ) 
+        )/ 3
+
+covDB = ( ( ( D[1] - D_bar ) * ( B[1] - B_bar ) ) + 
+          ( ( D[2] - D_bar ) * ( B[2] - B_bar ) ) + 
+          ( ( D[3] - D_bar ) * ( B[3] - B_bar ) ) + 
+          ( ( D[4] - D_bar ) * ( B[4] - B_bar ) ) 
+        )/ 3
+covDC = ( ( ( D[1] - D_bar ) * ( C[1] - C_bar ) ) + 
+          ( ( D[2] - D_bar ) * ( C[2] - C_bar ) ) + 
+          ( ( D[3] - D_bar ) * ( C[3] - C_bar ) ) + 
+          ( ( D[4] - D_bar ) * ( C[4] - C_bar ) ) 
+        )/ 3
+
+
+```
+
+Now calculate the standard deviation of each gene.
+
+```{r}
+
+sdA = sqrt( ( (A[1] - A_bar )^2 + 
+        (A[2] - A_bar )^2 + 
+        (A[3] - A_bar )^2 + 
+        (A[4] - A_bar )^2  
+        )/ 3)
+sdA
+
+sdB = sqrt( ( (B[1] - B_bar )^2 + 
+        (B[2] - B_bar )^2 + 
+        (B[3] - B_bar )^2 + 
+        (B[4] - B_bar )^2  
+        )/ 3)
+sdB
+
+sdC = sqrt( ( (C[1] - C_bar )^2 + 
+        (C[2] - C_bar )^2 + 
+        (C[3] - C_bar )^2 + 
+        (C[4] - C_bar )^2  
+        )/ 3)
+sdC
+sdD = sqrt( ( (D[1] - D_bar )^2 + 
+        (D[2] - D_bar )^2 + 
+        (D[3] - D_bar )^2 + 
+        (D[4] - D_bar )^2  
+        )/ 3)
+sdD
+
+```
+
+Finally, calculate the Pearson correlation by dividing the covariance by the product of the *sd* of both genes.
+
+```{r}
+covAB/(sdA*sdB)
+covAC/(sdA*sdC)
+covAD/(sdA*sdD)
+covCB/(sdC*sdB)
+covDB/(sdD*sdB)
+covDC/(sdD*sdC)
+
+```
+
+Check your answer by using the `cor` function. You will have to transpose the matrix before performing this function.
+
+```{r}
+1-cor(t(ABCD))
+
+```
+
+Do your calculations match?
+
+
+# Scaling for Euclidean
+
+If we scale our data, where the mean of each gene is set to 0 by subtracting the mean and then scaling standard deviation of each so it is set to 1, we can use euclidean distance to get similar results as we did using pearson correlation method. Let's try
+
+```{r}
+ABCD_scaled = t(scale(t(ABCD)))
+ABCD_scaled
+```
+
+Let's look at the line plots of the genes to see what they look like
+
+```{r}
+
+ABCDscaleddf = as.data.frame(ABCD_scaled)
+ABCDscaleddf$Gene=c("A","B","C","D")
+colnames(ABCDscaleddf)=c("S1","S2","S3","S4","Gene")
+
+ABCDscaled.melt =melt(ABCDscaleddf, id=c("Gene"))
+
+ggplot(data =ABCDscaled.melt, aes(x=variable, y=value, group=Gene)) + geom_line(aes(color=Gene))
+
+
+```
+
+Finally let's look at the euclidean distance results
+
+```{r}
+dist(ABCD_scaled)
+
+```
+
+```{r}
+install.packages("GGally")
+library(GGally)
+
+
+```
+
+```{r}
+#ggpairs(exp.reps,  # log-transformed counts + 1
+#        upper = list(continuous = wrap("cor",size = 3)), # upper triangle: correlations
+#        lower = list(continuous = wrap("points",         # lower triangle: scatterplot of data points
+#                                       alpha=0.5,
+#                                       size = 0.3,
+#                                       color = "cyan4")))
+
+
+ggpairs(as.data.frame(t(ABCD)), upper = list(continuous = wrap("cor", size=3)),
+        lower = list(continuous = wrap("points",
+                                       alpha=0.5,
+                                       size=1,
+                                       color="cyan4"))
+        )
+
+```

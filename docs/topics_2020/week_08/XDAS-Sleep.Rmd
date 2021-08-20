@@ -1,0 +1,91 @@
+---
+title: "Paired Test example"
+author: "Manpreet S. Katari"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Sleep dataset.
+
+Simply type the name of the dataset, **sleep**, and you will be able to access it in our R workspace.
+
+```{r}
+data = sleep
+```
+
+Two drugs were studied to see their effects on sleep. The column *extra* contains the number of hours of sleep that were different from when the patient was not given a drug. The column *group* defines the different medications. The column *ID* defines the individuals. The two different drugs were tested on same patients at different times.
+
+### 1)Determine whether the *extra* hours of sleep from group1 is normally distributed. Do the same for the *extra* sleep for group2.
+
+```{r}
+group1 = subset(data, group==1)
+group2 = subset(data, group==2)
+shapiro.test(group1$extra)
+shapiro.test(group2$extra)
+
+
+```
+
+
+### 2)Determine whether the variance of the *extra* hours of sleep from the two different groups is equal. Check out documentation for **var.test()**. Explain what the results of the command means.
+
+```{r}
+var.test(group1$extra, group2$extra)
+
+```
+
+### 3)Is the dataset paired ? Explain.
+
+```{r}
+# yes
+```
+
+### 4)Based on your answers for 1-3, use the appropriate statistical test to determine if the two drugs have the same effect on amount of sleep the patients get. What is your conclusion ? Explain your answer.
+
+```{r}
+
+t.test(group1$extra, group2$extra, paired=T, var.equal = T)
+
+t.test(data$extra ~ data$group, paired=T, var.equal=T)
+
+```
+
+
+### 5)Draw a plot that demonstrates your conclusions are correct. *EXPLAIN* your results.
+
+```{r}
+# if the command has a data option, it usually means you can refer to the
+# column by its name
+boxplot(extra ~ group, data=sleep)
+
+histgroup1 = hist(group1$extra, col="lightgreen", xlim=c(-7,7))
+histgroup2 = hist(group2$extra, col="lightblue", add=T, alpha=.5)
+
+```
+here
+### 6)Since the extra defines the change in sleep, we can assume that normally (without any medication) the patients get an average of 0 extra hours of sleep. So if we assume that **population** average is 0, use a statistical test to show which of the two drugs is effective in changing the number of hours of sleep.
+
+```{r}
+t.test(group1$extra, mu=0)
+t.test(group2$extra, mu=0)
+```
+
+### 7)For the group that is statistically different from the population mean, calculate the mean and stand error.
+
+```{r}
+sd(group2$extra)/sqrt(length(group2$extra))
+mean(group2$extra)
+  
+```
+
+### 8)If you divide the mean by the standard error, what statistic have you calculated? **Hint, check the results from q 6.**
+
+```{r}
+mean(group2$extra) / (sd(group2$extra)/sqrt(length(group2$extra)))
+
+```
+

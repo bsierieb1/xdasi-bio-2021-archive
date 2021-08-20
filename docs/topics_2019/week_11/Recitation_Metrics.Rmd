@@ -1,0 +1,102 @@
+---
+title: "XDAS19_Week11_Metrics"
+author: "Chris"
+date: "11/13/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(ggplot2)
+require(AUC)
+require(Metrics)
+```
+
+## Metrics
+
+#### Lets make a model that predicts if a patient has aggressive prostate cancer using the predictors PSA and patient age.
+
+```{r}
+# Load the data
+cancer.training.data <- read.delim("METRIC_DATA.tsv")
+
+# Fit the logistic model
+glm.cancer.model <- glm(CANCER~PSA+AGE, data=cancer.training.data, family="binomial", na.action = na.exclude)
+summary(glm.cancer.model)
+
+# Calculate the probabilities from the logistic model
+cancer.probs <- predict(glm.cancer.model, type="response")
+
+# Plot a histogram
+qplot(cancer.probs, geom="histogram")
+
+# Set a threshold
+cancer.cutoff <- 0.5
+
+# Make predictions
+cancer.predictions <- cancer.probs >= cancer.cutoff
+```
+
+```{r}
+# Calculate accuracy 
+Metrics::accuracy(cancer.training.data$CANCER, cancer.predictions)
+
+# Calculate PRECISION (aka positive predictive value)
+# True positives / (All predicted as positive; True positives + False positives)
+Metrics::precision(cancer.training.data$CANCER, cancer.predictions)
+
+# Calculate RECALL (aka sensitivity)
+# True positives / (All positives; True positives + False negatives)
+Metrics::recall(cancer.training.data$CANCER, cancer.predictions)
+AUC::sensitivity(factor(cancer.predictions), factor(cancer.training.data$CANCER))$measure[2]
+
+# Calculate specificity
+AUC::specificity(factor(cancer.predictions), factor(cancer.training.data$CANCER))$measure[2]
+
+# Calculate AUROC
+cancer.roc <- AUC::roc(cancer.probs, factor(cancer.training.data$CANCER))
+qplot(cancer.roc$fpr, cancer.roc$tpr, geom="line") + 
+  geom_line(aes(x=0:1, y=0:1), linetype="dashed") +
+  labs(title=paste0("AUC: ", AUC::auc(cancer.roc)), x="FPR", y="TPR") +
+  theme(plot.title = element_text(size=14, hjust=0.5))
+```
+
+#### Load test data
+
+```{r}
+cancer.test.data <- read.delim("METRIC_TEST.tsv")
+
+# Predict from test data
+test.prediction.probs <- predict(glm.cancer.model, newdata=cancer.test.data, type="response")
+
+qplot(test.prediction.probs, geom="histogram")
+```
+
+```{r}
+
+test.threshold <- 0.5
+test.predictions <- test.prediction.probs >= test.threshold
+
+# Calculate accuracy 
+Metrics::accuracy(cancer.test.data$CANCER, test.predictions)
+
+# Calculate PRECISION (aka positive predictive value)
+# True positives / (All predicted as positive; True positives + False positives)
+Metrics::precision(cancer.test.data$CANCER, test.predictions)
+
+# Calculate RECALL (aka sensitivity)
+# True positives / (All positives; True positives + False negatives)
+Metrics::recall(cancer.test.data$CANCER, test.predictions)
+AUC::sensitivity(factor(test.predictions), factor(cancer.test.data$CANCER))$measure[2]
+
+# Calculate specificity
+AUC::specificity(factor(test.predictions), factor(cancer.test.data$CANCER))$measure[2]
+
+# Calculate AUROC
+cancer.roc <- AUC::roc(test.prediction.probs, factor(cancer.test.data$CANCER))
+qplot(cancer.roc$fpr, cancer.roc$tpr, geom="line") + 
+  geom_line(aes(x=0:1, y=0:1), linetype="dashed") +
+  labs(title=paste0("AUC: ", AUC::auc(cancer.roc)), x="FPR", y="TPR") +
+  theme(plot.title = element_text(size=14, hjust=0.5))
+```
+

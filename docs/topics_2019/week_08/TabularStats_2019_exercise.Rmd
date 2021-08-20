@@ -1,0 +1,117 @@
+---
+title: "Tabular Statistics"
+author: "Manpreet S. Katari / Kris Gunsalus"
+date: "October 23, 2019"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
+  html_document:
+    toc: yes
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Tabular Statistics in-class Exercise (excerpted from TabularStats_2019.Rmd)
+
+22,071 physicians served as subjects to study effect of aspirin on incidence of heart attacks. There are two groups: those who took aspirin regularly for 5 years, and others (11,043 of the 22,071) who received placebo instead of aspirin. 189 of the group that took placebo suffered a heart attack and 104 of those who took aspirin suffered a heart attack. Does aspirin have a significant association with physicians suffering from a heart attack ? 
+
+1. Create a contingency table for these data.
+
+```{r}
+# data (quadrants a-d)
+a = 189    # took placebo and heart attack
+b = 104    # took aspirin and heart attack
+c = 10854  # took placebo and healthy
+d = 10924  # took aspirin and healthy
+
+N = 22071  # total
+
+placebo_total = 11043  # col1 margin
+placebo_heart = 189
+placebo_healthy = placebo_total - placebo_heart
+
+aspirin_total = N - placebo_total
+aspirin_heart = 104
+aspirin_healthy = aspirin_total - aspirin_heart
+
+heart_total = placebo_heart + aspirin_heart
+healthy_total = placebo_healthy + aspirin_healthy
+
+aspirindata = rbind(c(placebo_heart, aspirin_heart),
+                    c(placebo_healthy, aspirin_healthy))
+aspirindata
+```
+
+2. Calculate the expected values.
+```{r}
+
+placebo_heart_expected = (placebo_total/N) * (heart_total/N) * N
+placebo_heart_expected
+
+aspirin_heart_expected = (aspirin_total/N) * (heart_total/N) * N
+aspirin_heart_expected
+
+placebo_healthy_expected = (placebo_total/N) * (healthy_total/N) * N
+placebo_healthy_expected
+
+aspirin_healthy_expected = (aspirin_total/N) * (healthy_total/N) * N
+aspirin_healthy_expected
+```
+
+3. Calculate the $X^2$ value using your observed and expected counts.
+```{r}
+chisq = sum(
+  (placebo_healthy - placebo_healthy_expected)**2 / placebo_healthy_expected + 
+  (placebo_heart   - placebo_heart_expected)**2   / placebo_heart_expected +
+
+  (aspirin_healthy - aspirin_healthy_expected)**2 / aspirin_healthy_expected +
+  (aspirin_heart   - aspirin_heart_expected)**2   / aspirin_heart_expected
+)
+```
+
+
+4. What is the $p$-value of the test statistic?
+```{r}
+pchisq(chisqvalue, df = 1, lower.tail = F)
+chisq.test(aspirindata)
+```
+
+5. Calculate the $p$-value using Fisher's exact test.
+```{r}
+fisher.test(aspirindata)
+```
+
+6. Calculate the $p$-value using the `phyper` function.
+```{r}
+
+# this is in a wrong orientation
+# relative to how Manny defined the data
+# but it doesn't matter -- you just have to choose the correct tail later
+
+# same as 'data_matrix' used above
+x = aspirin_heart  # 104
+m = aspirin_total  # 293    # = row 1 margin
+n = placebo_total  # 10245  #  = row 2 margin = c+d
+k = heart_total    # 2181   # = col 1 margin = a+c
+N = 22071
+
+# (although table orientation doesn't matter for the Fisher exact test)
+aspirindata = matrix(c(x,   m-x,      # a, b
+                       k-x, n-(k-x)), # c, d
+                     2,2,
+                     byrow = TRUE) # matrices fill by columns by default
+
+# Fisher test, alternative = 'less'
+fisher.test(aspirindata, alternative='less')$p.value
+
+# Hypergeometric
+q = x
+phyper(q, m, n, k, lower.tail = T)
+```
+
+

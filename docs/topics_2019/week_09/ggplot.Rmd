@@ -1,0 +1,271 @@
+---
+title: "ggplot2"
+author: "Chris"
+date: "10/30/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(ggplot2)
+require(reshape2)
+require(scales)
+```
+
+## ggplot2
+
++ [Documentation](https://www.rdocumentation.org/packages/ggplot2/versions/3.2.1)
++ [Cheat sheet](https://rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
+
+## Formatting Data
+
+Lets read in some expression data. This is genome-wide expression data (in transcript counts) of 6 samples in normal media (YPD) and 6 samples in normal media plus treatment with rapamycin (RAPA) for 30 minutes.
+
+```{r}
+plt.data <- read.delim("ggplot_gene_expression.tsv")
+print("Structure:")
+str(plt.data)
+
+print("Summary:")
+summary(plt.data)
+
+print("Rownames:")
+head(rownames(plt.data))
+```
+
+First thing's first; is this data normalized already?
+
+```{r}
+print("Counts per experiment:")
+print(colSums(plt.data))
+```
+
+Doesn't look like it. Let's convert from total transcript counts to TPM (Transcripts Per Million Transcripts). Right now, each gene is a row and each column is a gene. This is a wide format. It's usually easier (but not always) to normalize data when it's in a wide format.
+
+```{r}
+# This 'sweeps' the column totals out (converting each gene measurement to a proportion of total counts for that experiment)
+# Then it multiplies by 1 million. The resulting data frame is normalized for count depth (and has the units TPM)
+plt.data.normalized <- sweep(plt.data, 2, colSums(plt.data), FUN = "/") * 1e6
+colSums(plt.data.normalized)
+```
+
+Excellent; now each experiment has the same depth. However, ggplot works better with long format data.
+
+```{r}
+ypd.replicates <- c("YPD1", "YPD2", "YPD3", "YPD4", "YPD5", "YPD6")
+rapa.replicates <- c("RAPA1", "RAPA2", "RAPA3", "RAPA4", "RAPA5", "RAPA6")
+
+melt.expression.data <- function(expr.df) {
+  # We need to make the rownames into a column:
+  expr.df$Gene <- rownames(expr.df)
+  
+  melted <- reshape2::melt(expr.df, id.vars="Gene", variable.name="Replicate", value.name="Expression")
+  
+  # Lets go ahead and add an "Experiment" column which has the experimental group YPD or RAPA
+  melted$Experiment <- NA
+  melted[melted$Replicate %in% ypd.replicates, "Experiment"] <- "YPD"
+  melted[melted$Replicate %in% rapa.replicates, "Experiment"] <- "RAPA"
+  
+  # And I'm going to make sure that this is a factor (instead of a character column)
+  melted$Experiment <- as.factor(melted$Experiment)
+  
+  return(melted)
+}
+
+plt.data.melt <- melt.expression.data(plt.data.normalized)
+
+head(plt.data.melt)
+```
+
+Much better. Now lets do some plotting.
+
+## Plotting expression of one gene
+
+I like the ggplot `theme_classic`, so I'm going to set that as a default theme. I could add it to every plot, but this is easier.
+
+```{r}
+ggplot2::theme_set(theme_classic())
+```
+
+I am interested in the expression of GAP1. In this data set, it is listed under the systematic name "YKR039W"
+
+```{r}
+gap1 <- "YKR039W"
+gap1.data <- plt.data.melt[plt.data.melt$Gene == gap1,]
+print(gap1.data)
+```
+
+Now I can plot the expression:
+
+```{r}
+gap1.plt <- ggplot(gap1.data, aes(x=Experiment, y=Expression)) +
+  geom_point(size=4, alpha=0.5) +
+  labs(y="Expression (TPM)")
+
+print(gap1.plt)
+```
+
+A good start. Lets add a boxplot to this though.
+
+```{r}
+gap1.plt <- gap1.plt + 
+  geom_boxplot(position = position_nudge(x=0.2), width=0.1)
+
+print(gap1.plt)
+```
+
+OK, looks good - I prefer the control (YPD) to be in the left spot on my plot though.
+
+```{r}
+
+# 
+gap1.plt <- gap1.plt + 
+  scale_x_discrete(limits = c("YPD", "RAPA"))
+
+print(gap1.plt)
+```
+
+Perfect. 
+
+## Asthetics
+
+Aesthetics are created with `aes()` and define connections between a variable in the data and an axis or a parameter of the plot
+
+```{r}
+
+# Compare an asthetic that maps "Experiment" to X
+ggplot() +
+  geom_point(data=gap1.data, mapping = aes(x=Experiment, y=Expression), size=4, alpha=0.5)
+
+# Against creating two geometry layers and selecting the Experiment levels by hand
+ggplot() +
+  geom_point(data=gap1.data[gap1.data$Experiment == "YPD", "Expression", drop=F], mapping = aes(x="YPD", y=Expression), size=4, alpha=0.5) +
+  geom_point(data=gap1.data[gap1.data$Experiment == "RAPA", "Expression", drop=F], mapping = aes(x="RAPA", y=Expression), size=4, alpha=0.5)
+```
+
+Asthetics can be used to connect variables in the data to almost any plot parameter. Lets look at RPL12A too (in this data, it's gene YEL054C)
+
+```{r}
+rpl12a <- "YEL054C"
+rpl12a.data <- plt.data.melt[plt.data.melt$Gene %in% c(rpl12a, gap1), ]
+
+rpl12a.plt <- ggplot(rpl12a.data, aes(x=Gene, y=Expression, color=Experiment)) +
+  geom_point(size=4, alpha=0.5) +
+  scale_x_discrete(limits=c(gap1, rpl12a), labels=c("GAP1", "RPL12A")) +
+  labs(y="Expression (TPM)")
+
+print(rpl12a.plt)
+```
+
+This is a kinda weird plot though, and I miss my boxplots. Let's try using `facet_grid()` instead.
+
+```{r}
+faceted.plt <- ggplot(rpl12a.data, aes(x=Experiment, y=Expression, color=Experiment)) +
+  geom_point(size=4, alpha=0.5) +
+  geom_boxplot(position = position_nudge(x=0.5), width=0.25) +
+  labs(y="Expression (TPM)") + 
+  scale_x_discrete(limits = c("YPD", "RAPA")) +
+  facet_grid(~Gene) +
+  theme(legend.position = "none")
+
+print(faceted.plt)
+```
+
+## Geometries (What kind of plot)
+
+Geometries define which kind of plot we want to draw. Some of them are more commonly used than others.
+
+`geom_point`
+`geom_line`
+`geom_boxplot`
+`geom_histogram`
+`geom_tile`
+
+Lets visualize all of this data in one giant heatmap using `geom_tile`.
+
+First thing's first; I want to convert each gene from TPM to log2(fold change) over the YPD mean.
+
+```{r}
+
+# First I want to only use genes with non-zero values
+plt.data.foldchange <- plt.data.normalized[rowSums(plt.data.normalized == 0) == 0, c(ypd.replicates, rapa.replicates)]
+
+# Then I want to normalize to the mean expression in YPD
+plt.data.foldchange <- sweep(plt.data.foldchange, 1, rowMeans(plt.data.foldchange[, ypd.replicates]), FUN = "/")
+
+# Now I want to take the log2
+plt.data.foldchange <- log2(plt.data.foldchange)
+
+# I'm going to cluster the data using hclust. We'll come back to clustering later in the course.
+foldchange.hclust <- hclust(d=dist(plt.data.foldchange))
+
+# And melt it for plotting
+plt.data.foldchange <- melt.expression.data(plt.data.foldchange)
+head(plt.data.foldchange)
+```
+
+Excellent - now I have the expression matrix in log2(fold change).
+
+```{r}
+
+# Create the plot
+heatmap.plt <- ggplot(plt.data.foldchange, aes(x=Replicate, y=Gene, fill=Expression)) +
+  geom_tile() +
+  scale_fill_gradient2(low='slateblue2', mid='black', high='yellow', limits=c(-3, 3), oob=squish, na.value="white")
+
+print(heatmap.plt)
+```
+
+## Theme
+
+Well, that's quite the mess. Let's try to clean this up. Each element of the plot can be adjusted separately using the theme function.
+
+```{r}
+
+# With element_text() we can change the text size, font, and positioning.
+# With element_blank() we can make labels go away entirely
+heatmap.plt <- heatmap.plt +
+  theme(axis.text.y = element_blank(),
+        axis.text.x = element_text(angle=90, hjust=0.5, vjust=0.5))
+print(heatmap.plt)
+```
+
+Cleaner, but still hard to see any patterns. Let's add that clustering order to the y-axis
+
+```{r}
+# We'll come back to clustering methods later in the course
+heatmap.plt <- heatmap.plt +
+  scale_y_discrete(limits=foldchange.hclust$labels[foldchange.hclust$order])
+print(heatmap.plt)
+```
+
+Now it's starting to look lke a heatmap.
+
+## Final layout
+
+Lets use `cowplot` to lay out a full, multi-panel figure
+
+```{r}
+
+require(cowplot)
+
+final.figure <- cowplot::plot_grid(faceted.plt, heatmap.plt, ncol=2, labels = c("A)", "B)"), align = "hv", axis="tblr")
+print(final.figure)
+
+```
+
+```{r}
+# Now we can save the figure as a PDF and put it into the paper
+ggsave("expression_and_heatmap.pdf", plot=final.figure, device=cairo_pdf, height=4, width=6, units='in', dpi=300)
+```
+
+## Lets explore some groups of genes
+
+```{r}
+group1 <- c("YHR174W", "YLR044C", "YGL253W", "YJR009C", "YGR192C")
+group2 <- c("YPL265W", "YOR348C", "YNL142W", "YKR039W", "YMR088C")
+group3 <- c("YEL054C", "YNL302C", "YLR061W", "YGL123W", "YOR063W")
+group4 <- c("YGR282C", "YOR383C", "YLR390W.A", "YOL030W", "YLR110C")
+group5 <- c("YDL014W", "YHR089C", "YHR072W.A", "YDL208W", "YLR197W")
+```
+

@@ -1,0 +1,130 @@
+---
+title: "Two group T-test"
+author: "Manpreet S. Katari"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### Let's create two random values from populations that we know have different means
+
+```{r}
+sample_size=10
+sampleNormValues1 = rnorm(sample_size, mean=10, sd=1)
+sampleNormValues2 = rnorm(sample_size, mean=11, sd=1)
+
+hist1=hist(sampleNormValues1, plot = F)
+hist2=hist(sampleNormValues2, plot = F)
+
+# the fourth value of the color parameter is the opacity (here 0.25)
+plot(hist1, xlim=c(5,20), col=rgb(0,0,1,.25))
+plot(hist2, xlim=c(5,20), col=rgb(1,0,0,.25), add=T)
+
+```
+
+What's the difference in sample means for these two samples?
+```{r}
+sample_diff=mean(sampleNormValues1) - mean(sampleNormValues2)
+sample_diff
+```
+
+
+#### We can use the mean and sd of our random values to generate more random values to determine the distribution of difference of the means we can obtain.
+
+```{r}
+sampleMeansDiff = numeric()  # initialize an empty loop
+for ( i in 1:10000) {
+  # take a new sample from each of the two normal distributions above
+  sampleNormValues1loop = rnorm(10, 
+                                mean=mean(sampleNormValues1),
+                                sd=sd(sampleNormValues1))  
+  sampleNormValues2loop = rnorm(10, 
+                                mean=mean(sampleNormValues2),
+                                sd=sd(sampleNormValues2))
+  
+  sampleMeansDiff[i]=mean(sampleNormValues1loop)-mean(sampleNormValues2loop)
+}
+
+# What's the mean of the samples? 
+mean(sampleMeansDiff)
+
+# let's look at the data.
+hist(sampleMeansDiff, breaks=50)
+abline(v=mean(sampleMeansDiff), col="red", lwd=2)
+```
+
+```{r}
+# 95% of the time the difference in the means will be between
+
+sort(sampleMeansDiff)[.025*100000]
+sort(sampleMeansDiff)[.975*100000]
+
+```
+
+#### The standard deviation gives us the standard error
+
+```{r}
+
+mean(sampleMeansDiff)
+sd(sampleMeansDiff)
+
+```
+
+#### Instead of calculating it empirically, we can use one of the formulas.
+```{r}
+
+# sd of the difference between the means
+
+var_normval1 = var(sampleNormValues1)
+var_normval2 = var(sampleNormValues2)
+normval1size = length(sampleNormValues1)
+normval2size = length(sampleNormValues2)
+
+
+se_diff = sqrt((var_normval1/normval1size) + (var_normval2/normval2size))
+
+print(se_diff)
+```
+
+#### Theoretical limits
+
+```{r}
+lower_limit = sample_diff - 1.96*se_diff
+higher_limit = sample_diff + 1.96*se_diff
+
+print(lower_limit)
+print(higher_limit)
+
+```
+
+#### T-test is the difference of the means over the standard error
+```{r}
+(sample_diff) / ( se_diff )
+
+```
+
+```{r}
+t.test(sampleNormValues1, sampleNormValues2, var.equal = F)
+```
+
+#### shuffle test
+
+```{r}
+data = c(sampleNormValues1, sampleNormValues2)
+expgroup = factor(rep(c("A","B"), each=sample_size))
+
+diff(tapply(data, expgroup, mean))
+
+shufflediff = numeric()
+for ( i in 1:10000) {
+  shufflediff[i]=diff(tapply(sample(data, length(data), replace = F),
+                             expgroup, mean))
+}
+
+hist(shufflediff, breaks = 50)
+
+shufflepvalue = sum(shufflediff >= abs(sample_diff))/10000
+print(shufflepvalue)
+```

@@ -1,0 +1,388 @@
+---
+title: "Maize Clustering and PCA"
+author: "Manpreet S. Katari"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Introduction
+
+Clustering is a useful method for grouping together genes and samples based on the the differences in the values and expression patterns. PCA is useful for identifying where the most variation lies. Both methods can provide insight into which samples are behaving in a similar manner.
+
+Distance, or the differences between points, can be calculated in many ways and the method of choice
+reflects the question one wants to ask. In the case of gene
+expression, one often looks for genes that are covariant across the
+experiments observed. A popular method of calculating covariance is
+``pearson`` method. In some cases we will be looking at the actualy geometric difference. When we center (subract from the mean) and scale ( divide by standard deviation ) we are essentially making pearson correlation equivalent to ``euclidean`` ( geometric ) distance.
+
+## Maize nitrogen response dataset
+
+In this example, we will look at a publicly available Maize microarray
+dataset. [Link](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE32361)
+
+Yang XS, Wu J, Ziegler TE, Yang X et al. Gene expression biomarkers provide sensitive indicators of in planta nitrogen status in maize. Plant Physiol 2011 Dec;157(4):1841-52.
+
+The object of this project is to identify biomarkers that can
+be used to determine whether a plant is using **nitrogen**
+efficiently. Also it is known that plants are more efficient in
+nutrient uptake at different times of the day, so the scientists have designed an
+experiment where the samples were treated at different **times**. Finally
+another factor in the experimental design is **genotype**. The scientist
+decided to look at the different genotypes to see if one was better at
+nitrogen use efficiency.
+
+In total there are 90 samples:
+
++ Genotype: 4 different lines labaled 1-4
++ Nitrogen: 3 different treatments : 2mM, 20mM, and grown 2mM and then treated with 20mM
++ Time: Day1-10am, Day1-11pm, and Day2-10am.
++ Each combination has 3 biological replicates
+
+
+# Analysis
+
+## Data processing
+
+GEOquery package is great for retrieving microarray datasets that are
+available on GEO. This is true specially for the less studies
+platforms, because it allows you to download the already normalized
+experiment instead of struggling with the CDF files which are
+necessary for different datasets.
+
+```{r}
+library(GEOquery)
+gse<-getGEO('GSE32361')
+names(gse)
+gse[[1]]
+expvalues = exprs(gse[[1]])
+expvalues[1:6,1:6]
+```
+
+Notice that gse is an ExpressionSet object which allows us to retrieve
+the experimental values using exprs(). Once we have the dataframe of
+values, we can get information about each sample/column to help us
+create the factor objects for further analysis.
+
+The expression set object also contains meta data for the different samples.
+
+
+```{r}
+head(gse$GSE32361_series_matrix.txt.gz$title)
+head(gse$GSE32361_series_matrix.txt.gz$`sampletime:ch1`)
+head(gse$GSE32361_series_matrix.txt.gz$`nitrogen condition:ch1`)
+head(gse$GSE32361_series_matrix.txt.gz$`genotype:ch1`)
+
+```
+
+Note that in the header slot of gsm object, there are two fields that
+contain information we can use : title and description. We will save
+the description in a vector for further analysis.
+
+For the purpose of this exercise, I have created a separate file, ``samplegroups.txt`` that contains the meta information. It will make some of the future steps easier to visualize.
+
+```{r}
+samplegroups = read.table("samplegroups.txt", header=T, row.names = 1)
+
+```
+
+Let's make sure the data is balanced for all factors
+
+```{r}
+table(samplegroups[,c(1,2,3)])
+
+```
+
+It appears as though the data collected on second day is only available for Line4. To balance the dataset we would need to either remove all the other lines or removes the 2nd day morning collection. Let's do the latter so we can test the different lines.
+
+```{r}
+samplegroups = subset(samplegroups, daytime!="D2_10am")
+expvalues = expvalues[,rownames(samplegroups)]
+
+```
+
+## PCA
+
+To run the principal component analysis we will first transpose the data so that genes are the columns and the experiments are the rows. We will also center and scale the data before performing the analysis.
+
+
+```{r}
+
+data.prcomp = prcomp(t(expvalues), scale=TRUE, center=TRUE)
+
+# your eigenvector is
+head(data.prcomp$sdev)
+
+# your rotation is how your values were modified in the different grid
+data.prcomp$rotation[1:6,1:6]
+
+# your new values is in
+data.prcomp$x[1:6.1:6]
+
+#barchart of variance
+plot(data.prcomp)
+
+#table of variance - shows proportion of variance
+summary(data.prcomp)
+
+```
+
+
+
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+coords2draw = as.data.frame(data.prcomp$x)
+coords2draw = cbind(coords2draw, samplegroups)
+
+ggplot(coords2draw) +
+  geom_point(mapping=aes(x = PC1, y= PC2, 
+                         col=nitrogen, shape=daytime))
+
+```
+
+## Clustering samples
+
+### Hierarchical Clustering
+
+In addition to identifying genes that have similar expression
+profiles, clustering can also be used to determine similarity between
+the different sample. This can be useful as a quality control step to
+ensure that the replicates are have a higher similarity to each other
+then the different sample. Additionally, to help label the different
+sample with the different levels of a factor, we can simply replace
+the colnames of the dataframe. Below is a hierarchical clustering of
+the samples with different labels.
+
+
+```{r}
+expvalues.cor = cor(expvalues, method="pearson")
+expvalues.dist = as.dist(1-expvalues.cor)
+expvalues.clust = hclust(expvalues.dist, method="ave")
+plot(expvalues.clust, cex=0.5)
+```
+
+```{r}
+expvalues.clust$labels = samplegroups$genotype
+plot(expvalues.clust, cex=0.5)
+
+
+expvalues.clust$labels = samplegroups$nitrogen
+plot(expvalues.clust, cex=0.5)
+
+
+expvalues.clust$labels = samplegroups$daytime
+plot(expvalues.clust, cex=0.5)
+
+```
+
+
+Notice that the genotype does not seem to be driving the expression
+values for the different genes. The Nitrogen treatments appear to be
+clustering together. Even more interesting is that a subset of the
+nitrogen appear to be similar because of the time of collection. It
+appears as though our dataset has time and nitrogen interaction but
+not as much genotype interaction.
+
+
+## Identifying differentially expressed genes
+
+Now we can go back and cluster the genes. Performing a pairwise correlation on over 84,000 genes requires a lot of memory and time. We want to focus on genes that show differential expression. We can simply create an **ANOVA** model and identify genes that have signigicant models. First we will create a function that takes the expression values of a gene and also the different factors.
+
+```{r}
+#############################################
+anova3way.mk <- function(expvector, vector1, vector2, vector3) 
+#############################################
+#
+# INPUT 1: expvector = numerical vector
+#  vector1 is a vector defining the first parameter. 
+#  vector2 are same  as vector1 but for a different parameter.
+#  vector3 are same  as vector1 but for a different parameter.
+# OUTPUT: a dataframe of all p-values from all the data. The p-values are not fdr corrected.
+#
+
+{
+# function is not assuming factors were provided so we just make sure here
+  v1 = factor(vector1)
+  v2 = factor(vector2)
+  v3 = factor(vector3)
+  temp.stats = numeric()
+  
+  # the model below is equivalent to v1*v2*v3 , however here we are explicit
+  temp.lm=lm(expvector ~ v1* v2 * v3)
+  
+  #probability of the model can be calculated by retrieving the values for 
+  # performing fstatistics
+  temp.fstat=summary(temp.lm)$fstatistic
+  temp.model.value = pf( temp.fstat[1] , temp.fstat[2] , temp.fstat[3] , lower.tail=F )
+  
+  return(temp.model.value)
+}
+
+
+maizeanovapvalues = apply(expvalues, 1, anova3way.mk, samplegroups$genotype, samplegroups$nitrogen, samplegroups$daytime)
+
+
+maizeanovapvalues_fdr = p.adjust(maizeanovapvalues, method="fdr")
+
+siggenes = expvalues[(maizeanovapvalues_fdr<0.05),]
+
+dim(siggenes)
+```
+
+As we can see, there is still quite a bit of genes that are significant based on our analysis. Thus instead of looking at a cutoff, let's take 3,000 most significant genes.
+
+```{r}
+sorted_pvalues = sort(maizeanovapvalues, decreasing = F)
+siggenes=expvalues[names(sorted_pvalues)[1:3000],]
+dim(siggenes)
+```
+
+
+## Clustering differentially expressed genes
+
+```{r}
+siggenes.cor = cor(t(siggenes), method="pearson")
+siggenes.dist = as.dist(1-siggenes.cor)
+siggenes.clust = hclust(siggenes.dist, method="ave")
+```
+
+
+### Silhouette width
+
+In order to determine the best number of groups to form from the
+clustering, we will calculate the average silhouette width for each
+clustering imprementation. What we are looking to do is maximize the
+silhouette width for the least number of groups. In this case 9 seems
+to be a good number.
+
+```{r}
+library(cluster)
+avg.sil.values=numeric()
+avg.sil.values[1]=0
+for (i in 2:20) {
+  temp.clusters = cutree(siggenes.clust, k=i) 
+  silhouette(temp.clusters, dist=siggenes.dist)-> temp.cluster.sil
+  avg.sil.values[i]=mean(temp.cluster.sil[,"sil_width"])
+}
+
+plot(avg.sil.values)
+```
+
+7 looks like a good number because of the small jump at the position
+
+```{r}
+siggroups = cutree(siggenes.clust, k=7)
+table(siggroups)
+
+```
+
+We normally concern ourselves with the larger clusters. Let's look at the heatmaps of a couple of cluster to see if we can understand the pattern of these genes.
+
+### Heatmaps
+
+```{r}
+library(pheatmap)
+
+cluster2draw = siggenes[siggroups == 6,]
+cluster2draw_scale = t(apply(cluster2draw,1,scale))
+colnames(cluster2draw_scale) = colnames(cluster2draw)
+pheatmap(cluster2draw_scale, annotation_col = samplegroups)
+
+```
+
+```{r}
+cluster2draw = siggenes[siggroups == 1,]
+cluster2draw_scale = t(apply(cluster2draw,1,scale))
+colnames(cluster2draw_scale) = colnames(cluster2draw)
+pheatmap(cluster2draw_scale, annotation_col = samplegroups)
+```
+
+## K-means clustering
+
+K-means clustering does not require a distance object, instead it takes the original values and calculates euclidean distance between the points. For this reason it is important to first **scale** your data. 
+
+```{r}
+siggenes_scale = t(apply(siggenes,1,scale))
+siggenes_kmeans = kmeans(siggenes_scale, 7)
+
+```
+
+K-means results provide us with similar measurements as we calculated for hierarchical clustering calculated above and also the centers of the clusters. 
+
+```{r}
+names(siggenes_kmeans)
+
+table(siggenes_kmeans$cluster)
+```
+
+```{r}
+library(pheatmap)
+cluster2draw = siggenes[siggenes_kmeans$cluster == 1,]
+cluster2draw_scale = t(apply(cluster2draw,1,scale))
+colnames(cluster2draw_scale) = colnames(cluster2draw)
+pheatmap(cluster2draw_scale, annotation_col = samplegroups)
+```
+
+
+
+## PCA of differentially expressed genes
+
+To run the principal component analysis we will first transpose the data so that genes are the columns and the experiments are the rows. We will also center and scale the data before performing the analysis.
+
+
+```{r}
+
+data.prcomp = prcomp(t(siggenes), scale=TRUE, center=TRUE)
+
+# your eigenvector is
+head(data.prcomp$sdev)
+
+# your rotation is how your values were modified in the different grid
+data.prcomp$rotation[1:6,1:6]
+
+# your new values is in
+data.prcomp$x[1:6.1:6]
+
+#barchart of variance
+plot(data.prcomp)
+
+#table of variance - shows proportion of variance
+summary(data.prcomp)
+
+#plotting the coordinates of first and second principal component
+plot(data.prcomp$x[,1],data.prcomp$x[,2])
+```
+
+
+
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+coords2draw = as.data.frame(data.prcomp$x)
+coords2draw = cbind(coords2draw, samplegroups)
+
+ggplot(coords2draw) +
+  geom_point(mapping=aes(x = PC1, y= PC2, 
+                         col=nitrogen, shape=daytime))
+
+```
+
+# Conclusion
+
+In summary, the steps to cluster any experimental data involves:
+
++ Identify Differentially Expressed Genes
++ Calculate distance (1-similarity)
++ Perform Clustering
++ Use silhouette width values to guide the determination of number of cluster groups
++ visualize the clusters as heatmaps or boxplots.
++ Perform PCA analysis
+

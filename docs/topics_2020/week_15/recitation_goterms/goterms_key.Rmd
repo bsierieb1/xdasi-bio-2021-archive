@@ -1,0 +1,124 @@
+---
+title: "go term analysis"
+author: "Raza"
+date: "12/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This RNA-Seq dataset is based on differential expression analysis performed between  Wildtype mouse embryonic fibroblasts and mouse embryonic fibroblasts in which the b-actin gene had been knocked out. We will perform go-term enrichment analysis on genes showing most significant changes between these two conditions.
+
+Import the rnaseq results and go term annotations
+```{r}
+res=read.csv("rnaseq.csv")
+go=read.csv("go_annotation.csv")
+
+```
+
+Filter differentially expressed genes with an adj.pvalue of <0.05 and absolute logfc >5 and store their ids in a variable. We will use these for go term enrichment analysis
+```{r}
+filtered=res[res$pvalue<0.05 & abs(res$log2FoldChange)>5,"ENSEMBL"]
+
+```
+
+Store the ids of all genes in the dataset in a variable. These will form the background list for the go term analysis 
+```{r}
+all=res$ENSEMBL
+```
+
+Export these lists as txt files. The go term annotation for this exercise was downloaded from  DAVID (http://david.ncifcrf.gov/) so we will use the DAVID website to perform enrichment (other websites/tools might use different annotations so the results maybe slightly different). We will then manually confirm the results in r.  
+```{r}
+write.table(filtered,"filtered.txt",row.names = F,col.names = F,quote = F)
+write.table(all,"background.txt",row.names = F,col.names = F,quote = F)
+
+```
+
+We will check if the go-term GO:0030154 (cell differentiation) is enriched in the differentially expressed genes and compare the result with DAVID. 
+
+Filter all genes associated with this go term and store in a variable
+```{r}
+go_selected=go[go$DESCRIPTION=="cell differentiation","ENSEMBL_ID"]
+
+```
+
+Add a column called "DEG" to the rnaseq results. This column should indicate if a gene is differentially expressed or not (TRUE or FALSE) 
+```{r}
+res$DEG=res$pvalue<0.05 & abs(res$log2FoldChange)>5
+  
+```
+
+Add a column called "CELL_DIFF" to the rnaseq results. This column should indicate whether a gene is associated with the go-term cell differentiation or not (TRUE or FALSE)
+```{r}
+res$CELL_DIFF=res$ENSEMBL %in% go_selected
+
+```
+
+Make a contingency table from the two new columns
+```{r}
+cont=table(res$DEG,res$CELL_DIFF,dnn=c("deg","cell_diff"))
+cont
+
+
+```
+
+Perform a fishers exact test on the contingency table to test if the degs are enriched for 'cell differentiation' genes
+```{r}
+fisher.test(cont,alternative = "g")
+fisher.test(cont,alternative = "g")$p.value
+
+```
+
+We will also confirm our results using the hypergeometric test. Setup the variables for the hypergeometric test
+```{r}
+
+#total no of degs in our rnaseq data
+k=sum(res$DEG==TRUE)
+
+#total no of deg associated with 'cell differentiation' in our rna seq data
+x=sum(res$DEG==TRUE & res$CELL_DIFF==TRUE)
+
+#total no of genes in our rna seq data associated with the go term 'cell differentiation' 
+m=sum(res$CELL_DIFF==TRUE)
+
+#total no of genes in our rna seq data not associated with 'cell differentiation'
+n=sum(res$CELL_DIFF==FALSE)
+
+
+```
+
+Perform the hypergeometric test. The p.value should match the Fishers Exact test we performed
+```{r}
+phyper(q=x-1, m=m, n=n, k=k, lower.tail=FALSE)
+
+
+```
+
+(Optional) Write a loop that tests all go terms associated with degs and compare results with the DAVID output
+```{r}
+#store all go terms associated with degs in a variable
+deg_goterms=unique(go[go$ENSEMBL_ID %in% filtered,"GO"]) 
+
+#perform fisher exact test for each term in a loop
+hits=as.numeric()
+pvalue=as.numeric()
+fc=as.numeric()
+
+for (i in 1:length(deg_goterms)){
+  go_selected=go[go$GO==deg_goterms[i],"ENSEMBL_ID"]
+  res$CELL_DIFF=res$ENSEMBL %in% go_selected
+  cont=table(res$DEG,res$CELL_DIFF,dnn=c("deg","cell_diff"))
+  pvalue[i]=fisher.test(cont,alternative = "g")$p.value
+  fc[i]=fisher.test(cont,alternative = "g")$estimate
+  hits[i]=sum(res$DEG==TRUE & res$CELL_DIFF==TRUE)
+}
+
+#store results in a dataframe, filter by pvalue and sort
+fisher_results=data.frame(hits,deg_goterms,fc,pvalue)
+fisher_results=fisher_results[fisher_results$pvalue<0.05,]
+fisher_results=fisher_results[order(fisher_results$hits,decreasing = T),]
+
+```
+

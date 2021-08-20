@@ -1,0 +1,128 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This dataset contains the details of the covid cases reported during the first two months of the pandemic.
+
+
+Import the data and remove any rows containing 'NA'
+```{r}
+covid=read.csv("covid.csv")
+covid=na.omit(covid)
+
+
+```
+
+We suspect that most people who dont survive a covid infection are over the age of 60. Test the hypothesis that the mean age of covid patients who die is greater than 60.
+```{r}
+#What type of t.test is appropriate to test this hypothesis?
+#one-sample, one-tailed
+
+
+#Write the null and alternative hypothesis:
+#Null: u<=60
+#Alternative: u>60
+
+
+#Calculate the mean age of the people who dont survive:
+avg_death=mean(covid[covid$Survived=="No","Age"])
+
+
+#Calculate the sem for people who dont survive:
+sem=sd(covid[covid$Survived=="No","Age"])/sqrt(length(covid[covid$Survived=="No","Age"]))
+
+
+#Calculate the t-statistic for the hypothesized mean age of 60:
+t=(avg_death-60)/sem
+
+
+#Calculate the p.value  and 95% confidence interval
+pt(t,df=57,lower.tail = F)
+
+t_crit=qt(p = 0.05,df=57,lower.tail = F)
+avg_death-(t_crit*sem)
+
+
+#Does the confidence interval contain the target value of 60 years and what does that tell us?
+#No.It tells us that the result is significant
+
+
+#Perform the test with the t.test function to confirm previous answers
+t.test(covid[covid$Survived=="No","Age"],mu=60,alternative = "greater")
+
+
+#Use bootstrapping with 10000 trials to find the previously calculated p.value and 95% C.I 
+bs=as.numeric()
+for (i in 1:10000){
+  bs[i]=mean(sample(covid[covid$Survived=="No","Age"],58,replace = T))
+  }
+
+hist(bs)
+sum(bs<60)/10000
+(sort(bs))[500]
+
+
+
+
+```
+
+Test the hypothesis that the mean age of patients who survive the infection is different from those who do not survive
+```{r}
+
+#Calculate the mean, variance and no of observations in the surviving and non-surviving groups
+mean_dead=mean(covid[covid$Survived=="No","Age"])
+mean_alive=mean(covid[covid$Survived=="Yes","Age"])
+
+n_dead=length(covid[covid$Survived=="No","Age"])
+n_alive=length(covid[covid$Survived=="Yes","Age"])
+
+var_dead=var(covid[covid$Survived=="No","Age"])
+var_alive=var(covid[covid$Survived=="Yes","Age"])
+
+var.test(covid[covid$Survived=="No","Age"],covid[covid$Survived=="Yes","Age"])
+
+
+#Which type of t.test should be used to test this hypothesis?
+#Two sample test with Welch df as variance is not equal
+
+
+#Calculate the standard error 
+se_welch=sqrt((var_dead/n_dead)+(var_alive/n_alive))
+
+
+#Calculate the t.statistic 
+t=(mean_dead-mean_alive)/se_welch
+
+
+#Calculate the p.value (Use 72.076 as degrees of freedom)
+(1-pt(q=10.674,df=72.076))*2
+
+pt(q=t,df=72.076,lower.tail = F)*2 #doesn't match with t.test results possibly due to rounding error
+
+#Calculate the 95% confidence interval (Use 72.076 as degrees of freedom)
+t_crit=qt(0.025,df=72.076)
+(mean_dead-mean_alive)+(t_crit*se_welch)
+(mean_dead-mean_alive)-(t_crit*se_welch)
+
+#Confirm your answers using the t.test function
+t.test(x=covid[covid$Survived=="No","Age"],y=covid[covid$Survived=="Yes","Age"],mu=0,alternative = "t",paired = F,var.equal = F)
+
+
+```
+
+Does the *gender* of a patient affect their chances of *survival*? Use any appropriate test to test this hypothesis.
+```{r}
+tab=table(covid$Survived,covid$Gender)
+chisq.test(tab)
+fisher.test(tab)
+
+
+
+```
+
+Is one gender more likely to be *infected* by covid than the other? Use any appropriate test to test this hypothesis.
+```{r}
+binom.test(sum(covid$Gender=="male"),length(covid$Gender),p=0.5,alternative = "t")
+
+```
+

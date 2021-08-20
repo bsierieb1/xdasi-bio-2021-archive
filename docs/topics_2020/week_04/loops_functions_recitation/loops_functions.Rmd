@@ -1,0 +1,118 @@
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Loops and functions
+
+Load libraries
+```{r}
+library(tidyverse)
+```
+
+create a vector called 'chromosomes' that contains numbers from 1:20 
+```{r}
+
+
+```
+
+Lets assume we want to add the prefix prefix "chr" before each number to signify that it is a chromosome. 
+We will write a simple loop to do this (this can be easily done without a loop but we are using this example for practice).
+
+```{r}
+
+
+```
+
+Instead of a vector, lets assume the numbers 1-20 are present in a dataframe column called "chromosomes". 
+Create the dataframe and modify the loop so it works with the dataframe
+```{r}
+
+
+```
+
+Write a function called 'add_prefix' that takes as input a vector and adds the prefix "chr" to each value of the vector 
+```{r}
+
+
+```
+
+Modify the function 'add_prefix' so that it takes two inputs; a vector and a custom prefix text (instead of "chr") that it adds to each value of the input vector 
+```{r}
+
+
+```
+
+Recreate the R function 'mean()'. The function takes a vector as input and outputs its mean. We can call it mean_xdas
+```{r}
+
+
+```
+
+# dpqr Functions
+
+We can use the rnorm() function to simulate a sample taken from a normally distributed population:
+```{r}
+
+
+```
+
+The dnorm() function gives the height of the probability density function at a given point (this is more useful for discrete rather than continuous distributions)
+```{r}
+
+
+```
+
+We can also use the dnorm() function to calculate the probability density function (pdf) of the whole population.
+Lets make a pdf for a standard normal curve by applying the dnorm function to a range of zscores
+```{r}
+
+
+```
+
+We can use the pnorm function to calculate the area under the curve below a specific zscore
+```{r}
+
+
+```
+
+We can use the qnorm function find the zscore below which a certain percentage of the pdf area lies (qnorm is the inverse of pnorm)
+```{r}
+
+
+```
+
+
+# More practice questions
+
+For a standard normal distribution >99% of the values lie between -3 and +3 standard deviations (or z-scores). 
+Create a dataframe with a column called 'zscores' containing values from -3 to +3 in intervals of 0.1 (use seq function)
+```{r}
+
+
+```
+
+Use a for loop to  apply the dnorm function on each row of the dataframe and store the results in a new column called 'probability'
+```{r}
+
+
+```
+
+Plot the zscore on the x-axis and probabilities on the y-axis using ggplot to recreate the standard normal cure (use geom_line)
+```{r}
+
+
+```
+
+Use the same strategy to recreate a normal curve with a mean of 10 and sd of 3 
+(hint: you will first need to find the zscores enclosing 99% of the values using qnorm)
+```{r}
+
+
+```
+
+Inspect the plot to find height of the curve at its highest point. Now calculate this exact height using the dnorm function 
+```{r}
+
+
+```

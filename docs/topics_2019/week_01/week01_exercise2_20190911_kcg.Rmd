@@ -1,0 +1,160 @@
+---
+title: "Biostats Week1 In-class Exercise"
+date: "September 3, 2019"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## In-class exercise 
+
+
+### Q1: Create a matrix (call it transcriptome) with the values below. The experiments are column names and genes are the row names.
+_Note: use a matrix object for now, don't worry about trying to create a data frame with factors. We will go over this again next week._
+
+GeneName | Control | Nitrogen | Phosphate | Potassium
+---------|---------|----------|-----------|-----------
+GeneA    |   89    |    78    |     77    |    56
+GeneB    |   90    |    99    |     85    |    97
+GeneC    |   78    |    94    |     99    |    87
+GeneD    |   81    |    83    |     80    |    79
+
+```{r}
+
+# Enter you answer here.
+# Don't forget to add comments to explain your code.
+
+# Option 1: by row (rows get named automatically; need to name columns separately)
+GeneA = c(89,78,77,56)
+GeneB = c(90,99,85,97)
+GeneC = c(78,94,99,87)
+GeneD = c(81,83,80,79)
+transcriptome = rbind(GeneA,GeneB,GeneC,GeneD)
+colnames(transcriptome) = c("Control","Nitrogen","Phosphate","Potassium")
+transcriptome
+
+# Option 2: by column
+
+# since a matrix can only contain one type of data, including names as a column data
+# coerces everything into characters, so can't do this
+#GeneName = c("GeneA","GeneB","GeneC","GeneD")
+
+# 2a (creates named columns; need to name the rows separately)
+Control = c(89,90,78,81)
+Nitrogen = c(78,99,94,83)
+Phosphate = c(77,85,99,80)
+Potassium = c(56,97,87,79)
+transcriptome = cbind(Control, Nitrogen, Phosphate, Potassium)
+rownames(transcriptome) = c("GeneA","GeneB","GeneC","GeneD")
+transcriptome
+
+# 2b (need to name rows and columns separately)
+transcriptome = matrix(c("Control" = c(89,90,78,81),   # quotes optional
+                         Nitrogen = c(78,99,94,83), 
+                         Phosphate = c(77,85,99,80),
+                         Potassium = c(56,97,87,79)),
+                         nrow = 4, ncol = 4, byrow = FALSE )
+colnames(transcriptome) = c("Control","Nitrogen","Phosphate","Potassium")
+rownames(transcriptome) = c("GeneA","GeneB","GeneC","GeneD")
+transcriptome
+
+```
+
+
+### Q2: Use an R function to calculate the average expression for all genes and save it in a vector called ``expression_average``.
+_Hint: Remember that you can always get help with commands by typing `?commandname`, `apropos("commandname")`, and `example("commandname")`._
+
+```{r}
+
+# Enter you answer here.
+# Don't forget to add comments to explain your code.
+
+## find all the commands containing the word "mean"
+?apropos("mean")
+
+########################################################
+## Option 1 (not so efficient): assign manually by row
+# Note: you need to initialize the data structure before you assign to it
+expression_average = numeric()
+
+expression_average[1] = mean(transcriptome[1,])
+expression_average[2] = mean(transcriptome[2,])
+expression_average[3] = mean(transcriptome[3,])
+expression_average[4] = mean(transcriptome[4,])
+
+# name the indexes in the vector
+names(expression_average) = row.names(transcriptome)
+
+# now you can call the elements by index or by name
+expression_average[1]
+expression_average["GeneA"]
+
+# Note: the dollar sign notation doesn't work for a vector!
+# this is true even if the vector elements are named
+expression_average$GeneA  # Error: $ operator is invalid for atomic vectors
+
+# you can remove a data structure after you are done playing with it
+rm(expression_average)     # now it's gone
+print(expression_average)  # Error: object not found
+
+########################################################
+## Option 2: rowMeans -- operate on the rows of a 2D object
+# A nice thing about this is that it makes a **named** vector right off the bat! ;-)
+expression_average = rowMeans(transcriptome)
+expression_average # check it
+
+########################################################
+## Option 3: use a loop
+for (i in 1:nrow(transcriptome) ) {
+  expression_average[i] = mean(transcriptome[i,])
+}
+expression_average # check it
+
+########################################################
+## Option 4: apply
+expression_average = apply(transcriptome, 1, mean)
+expression_average # check it
+
+# what kind of data structure is it?
+str(expression_average)
+```
+
+
+### Q3: Sort the matrix such that the gene with the highest average gene expression is on top.
+
+_Hint: the **sort()** function sorts the data and the **order()** function provides how to order the data to be sorted._
+
+```{r}
+
+# Enter you answer here.
+# Don't forget to add comments to explain your code.
+
+########################################################
+## Option 1:  sort()
+transcriptome[names(sort(expression_average, decreasing = TRUE)),]
+
+## Explanation:
+
+# make a **named** vector of **average expression values**, sorted from high to low
+# names = GeneX ; values = avg gene xpr
+sorted_avg_hi_to_low = sort(expression_average, decreasing = TRUE)
+sorted_avg_hi_to_low # check it
+
+# access the original data using the sorted row names
+transcriptome[names(sorted_avg_hi_to_low),] # uses names of the sorted expr avg vector
+
+########################################################
+## Option 2: order()
+transcriptome[order(expression_average, decreasing=T),]
+
+## Explanation:
+
+# generates an **unnamed** vector of **row indexes** of the genes in the df, ordered by their avg gene xpr from high to low
+ordered_avg_hi_to_low = order(expression_average, decreasing=T)
+ordered_avg_hi_to_low
+
+# access the original data using the ordered index numbers
+transcriptome[ordered_avg_hi_to_low,]
+
+```

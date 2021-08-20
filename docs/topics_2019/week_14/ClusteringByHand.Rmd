@@ -1,0 +1,480 @@
+---
+title: "Clustering By Hand"
+author: "Manpreet S. Katari"
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.align="center")
+```
+
+The goal of this exercise to learn about clustering data and also practice R.
+Instead of our standard dataset where we have tens of thousands of genes across dozens to hundreds of samples, we will work with a simulated dataset made up of 4 genes and 4 samples.
+
+Gene | Sample1 | Sample2 | Sample3 | Sample4
+-----|---------|---------|---------|----------
+  A  |    5    |    10   |   5     |    10
+  B  |   50    |   100   |  50     |   100
+  C  |   10    |    05   |  10     |     5
+  D  |   25    |   125   |  75     |   125
+
+
+# Calculating Euclidean distance
+
+Euclidean distance is simply the geometric distance between the two points. Recall the basic Pythagorean formula:
+$$a^2 + b^2 = c^2$$
+where $a$ and $b$ are sides of a right triangle and $c$ is the hypotenuse. Specifically, $a^2$ is the difference between the two points in the first dimension squared, and $b^2$ is the difference in the second dimension squared. To get the Euclidian distance $c$ we take the $\sqrt{c^2}$, or simply $\sqrt{a^2 + b^2}$.
+
+To express Euclidian distance in multiple dimensions, we can use the same formula, but we keep adding dimensions. e.g. $a^2 + b^2 + c^2 = d^2$. It now becomes more convenient to change our notation a bit. Let's say we have $n$ dimensions, and let's call them $D_1, D_2, ... D_n$. Now for any two points $\mathbf{x} = (x_1, ... , x_n)$ and $\mathbf{y} = (y_1, ... , y_n)$ in $n$-dimensional space, we can write the Euclidian distance as:
+
+$$ d_{xy} = \sqrt{\sum\limits_{i=1}^{n}{(y_i - x_i)} ^2} $$
+Most of the time we will omit writing out the limits of the summation explicitly, and instead just write $\sum$.
+
+** *Please review the class notes on "Distance and Clustering" for a more in-depth discussion of distance measures.* **
+
+## Pairwise distances between genes
+
+To find the Euclidean distance between GeneA and GeneB, let's refer to the value of GeneA in Sample1 as $A_1$ and the value of GeneA in Sample2 as $A_2$; let's call the value of GeneB in Sample1 $B_1$ and in Sample2 $B_2$; and so on. 
+
+The Euclidean distance between GeneA and GeneB can now be calcuated using the following formula:
+
+$$ d_{AB} = \sqrt{ \left( B_1-A_1 \right) ^2+ \left( B_2-A_2 \right) ^2 + \left( B_3-A_3 \right)^2 + \left( B_4-A_4 \right) ^2} = \sqrt{ \sum{_{i=1}^4} {(B_i - A_i) ^2 }} $$
+It's easy to see that since we have 4 samples, now we have four dimensions instead of two ($n=4$).
+
+## Exercise
+
+Just for fun, you will calculate all the pairwise Euclidean distances by hand! You may use R or a calulator to do this, but you must calculate it using the equation provided above.
+
+
+```{r}
+A=c(5, 10, 5, 10)
+B=c(50,100,50,100)
+C=c(10,5,10,5)
+D=c(25,125,75,125)
+
+D_AB = sqrt( (A[1]-B[1])^2  + (A[2]-B[2])^2  + (A[3]-B[3])^2  + (A[4]-B[4])^2 )
+print("A and B ")
+D_AB 
+
+D_AC = sqrt( (A[1]-C[1])^2  + (A[2]-C[2])^2  + (A[3]-C[3])^2  + (A[4]-C[4])^2 )
+print("A and C ")
+D_AC 
+
+D_AD = sqrt( (A[1]-D[1])^2  + (A[2]-D[2])^2  + (A[3]-D[3])^2  + (A[4]-D[4])^2 )
+print("A and D ")
+D_AD 
+
+D_CB = sqrt( (C[1]-B[1])^2  + (C[2]-B[2])^2  + (C[3]-B[3])^2  + (C[4]-B[4])^2 )
+print("C and B ")
+D_CB 
+
+D_DB = sqrt( (D[1]-B[1])^2  + (D[2]-B[2])^2  + (D[3]-B[3])^2  + (D[4]-B[4])^2 )
+print("D and B ")
+D_DB 
+
+D_CD = sqrt( (C[1]-D[1])^2  + (C[2]-D[2])^2  + (C[3]-D[3])^2  + (C[4]-D[4])^2 )
+print("C and D ")
+D_CD 
+
+
+
+```
+
+Check your answers by using the ``dist`` function in R. The input is simply the matrix with the values as presented above.
+
+```{r}
+ABCD=rbind(A,B,C,D)
+ABCD.euc.dist = dist(ABCD)
+ABCD.euc.dist
+```
+
+Based on the Euclidean distance, which two genes are the closest (most similar)?
+
+Let's look at a line plot of these values to see if that makes sense.
+
+```{r}
+library(ggplot2)
+library(reshape2)
+ABCDdf = as.data.frame(ABCD)
+ABCDdf$Gene=c("A","B","C","D")
+colnames(ABCDdf)=c("S1","S2","S3","S4","Gene")
+
+ABCD.melt =melt(ABCDdf, id=c("Gene"))
+
+ggplot(data =ABCD.melt, aes(x=variable, y=value, group=Gene)) + geom_line(aes(color=Gene))
+
+
+```
+
+
+# Covariance calculation
+
+In some cases we don't want to calculate the distance between points, but rather compare how the points are changing relative to their means. For instance we may want to know which two genes are always high in Sample1 and Sample3 but low in Sample2 and Sample4. To determine such a relationship we can calculate the *covariance*.
+
+Recall that *variance* is simply the variation of each point from its mean. We square the difference because the variance -- just like distance -- must be positive (or more precisely, greater than or equal to zero):
+
+$$s^{2} = \frac{\sum_{i=1}^{n} (x_{i} - \bar{x}) ^2} {n-1}
+        = \frac{\sum (x_{i} - \bar{x})(x_{i} - \bar{x})} {n-1}$$
+  
+We divide by $n-1$ because we have $n-1$ degrees of freedom. For covariance, instead of squaring the deviation of a single variable from its mean, we multiply the deviation of two variables from their respective means:
+
+ $$cov_{x,y} = \frac{\sum\limits_{i=1}^{n}{(x_i-\overline{x})(y_i-\overline{y})} }{n-1}$$
+
+We then get the *Pearson correlation* by dividing the covariance by the standard deviation of both the genes being compared:
+
+$$r = \frac{\sum\limits_{i=1}^{n}{(x_i-\overline{x}) (y_i-\overline{y})}}
+{\sqrt{\sum\limits_{i=1}^{n} (x_{i} - \bar{x}) ^{2}}
+ \sqrt{\sum\limits_{i=1}^{n} (y_{i} - \bar{y}) ^{2}}} $$
+
+The correlation coefficient is a value between -1 and 1 and can be used to describe the relationship between the genes as *positive* or *negative*. It allows us to compare changes in the expression of A and B relative to each other, independent of their absolute magnitudes, because we have *standardized* their changes in expression relative to their mean and variance.
+
+Let's calculate the covariance of the GeneA and GeneB.
+
+```{r}
+A_bar = mean(A)
+B_bar = mean(B)
+C_bar = mean(C)
+D_bar = mean(D)
+
+covAB = ( ( ( A[1] - A_bar ) * ( B[1] - B_bar ) ) + 
+          ( ( A[2] - A_bar ) * ( B[2] - B_bar ) ) + 
+          ( ( A[3] - A_bar ) * ( B[3] - B_bar ) ) + 
+          ( ( A[4] - A_bar ) * ( B[4] - B_bar ) ) 
+        )/ 3
+
+covAC = ( ( ( A[1] - A_bar ) * ( C[1] - C_bar ) ) + 
+          ( ( A[2] - A_bar ) * ( C[2] - C_bar ) ) + 
+          ( ( A[3] - A_bar ) * ( C[3] - C_bar ) ) + 
+          ( ( A[4] - A_bar ) * ( C[4] - C_bar ) ) 
+        )/ 3
+
+covAD = ( ( ( A[1] - A_bar ) * ( D[1] - D_bar ) ) + 
+          ( ( A[2] - A_bar ) * ( D[2] - D_bar ) ) + 
+          ( ( A[3] - A_bar ) * ( D[3] - D_bar ) ) + 
+          ( ( A[4] - A_bar ) * ( D[4] - D_bar ) ) 
+        )/ 3
+
+covCB = ( ( ( C[1] - C_bar ) * ( B[1] - B_bar ) ) + 
+          ( ( C[2] - C_bar ) * ( B[2] - B_bar ) ) + 
+          ( ( C[3] - C_bar ) * ( B[3] - B_bar ) ) + 
+          ( ( C[4] - C_bar ) * ( B[4] - B_bar ) ) 
+        )/ 3
+
+covDB = ( ( ( D[1] - D_bar ) * ( B[1] - B_bar ) ) + 
+          ( ( D[2] - D_bar ) * ( B[2] - B_bar ) ) + 
+          ( ( D[3] - D_bar ) * ( B[3] - B_bar ) ) + 
+          ( ( D[4] - D_bar ) * ( B[4] - B_bar ) ) 
+        )/ 3
+covDC = ( ( ( D[1] - D_bar ) * ( C[1] - C_bar ) ) + 
+          ( ( D[2] - D_bar ) * ( C[2] - C_bar ) ) + 
+          ( ( D[3] - D_bar ) * ( C[3] - C_bar ) ) + 
+          ( ( D[4] - D_bar ) * ( C[4] - C_bar ) ) 
+        )/ 3
+
+
+```
+
+Now calculate the standard deviation of each gene.
+
+```{r}
+
+sdA = sqrt( ( (A[1] - A_bar )^2 + 
+        (A[2] - A_bar )^2 + 
+        (A[3] - A_bar )^2 + 
+        (A[4] - A_bar )^2  
+        )/ 3)
+sdA
+
+sdB = sqrt( ( (B[1] - B_bar )^2 + 
+        (B[2] - B_bar )^2 + 
+        (B[3] - B_bar )^2 + 
+        (B[4] - B_bar )^2  
+        )/ 3)
+sdB
+
+sdC = sqrt( ( (C[1] - C_bar )^2 + 
+        (C[2] - C_bar )^2 + 
+        (C[3] - C_bar )^2 + 
+        (C[4] - C_bar )^2  
+        )/ 3)
+sdC
+sdD = sqrt( ( (D[1] - D_bar )^2 + 
+        (D[2] - D_bar )^2 + 
+        (D[3] - D_bar )^2 + 
+        (D[4] - D_bar )^2  
+        )/ 3)
+sdD
+
+```
+
+Finally, calculate the Pearson correlation by dividing the covariance by the product of the *sd* of both genes.
+
+```{r}
+print("A and B ")
+covAB/(sdA*sdB)
+print("A and C ")
+covAC/(sdA*sdC)
+print("A and D ")
+covAD/(sdA*sdD)
+print("C and B ")
+
+covCB/(sdC*sdB)
+print("D and B ")
+covDB/(sdD*sdB)
+print("D and C ")
+covDC/(sdD*sdC)
+
+```
+
+Check your answer by using the `cor` function. You will have to transpose the matrix before performing this function.
+
+```{r}
+cor(t(ABCD))
+
+```
+
+Do your calculations match?
+
+Since correlation is a measurement of similarity, we need to convert it into a distance. Things that are very similar to each other are very close to each other and things that are very different should be further away. We can do this conversion with this simple arithmetic: $1-r$. So if the correlation is 1, then $1-1$ will be 0 and if correlation is -1 then $1-(-1)$ will be 2. So no our distance measurement ranges from 0-2. Also note that we only need one traingle worth of correlation values, since the values are repeated. To convert the matrix to a distance object, we can use `as.dist`.
+
+```{r}
+ABCD.cor.dist = as.dist(1-cor(t(ABCD)))
+ABCD.cor.dist
+```
+
+# Clustering
+
+Now that we have calculated the distance between the genes, we can group the genes that are close together. There are two main clustering methods: Hierarchical & K-means. Hierarchical is a bottom-up approach where we first group together genes that are most similar and work our way up. K-means clustering is a when you know how many clusters you need and then you try their centers.
+
+## Hierarchical
+
+Hierarchical clustering can be constructed in many ways, but the simplest is the UPGMA (Unweighted Pair Group Method with Arithmetic Mean) method, which is also used for constructing phylogenetic trees. Steps are:
+
+- Select the two genes that have the shortest distance. Height of the branch is the distance.
+- Group them as an entity and recalculate its distance to other genes. This is called the linkage method. We will use the **average** method, which means we will use the average distance between the two elements being merged to the other element (see example for details).
+- Repeat until all genes are grouped.
+
+Let's perform a hierarchical clustering using the Euclidean distance we calculated above.
+
+
+  0  |    A     |    B     |    C    
+-----|----------|----------|---------
+  B  | 142.3025 |    -     |    -     
+  C  |   10     | 145.7738 |    -     
+  D  | 178.1853 |   50     | 182.3458 
+
+
+The shortest distance is 10, which is between A and C. Let's combine A and C and call it AC and then recalculate our distance from AC to B and D. The distance between B and D stay the same.
+
+```{r}
+D_ACD = (D_AD + D_CD) / 2 
+D_ACD
+```
+
+```{r}
+D_ACB = (D_AB + D_CB) / 2 
+D_ACB
+```
+
+  0  |    AC    |    B    
+-----|----------|---------
+  B  | 144.0381 |    -     
+  D  | 180.2656 |   50    
+
+
+Now the shortest distance is 50, between B and D. So we have to combine the two and call it BD and then calculate its distance to AC.
+
+```{r}
+D_BD_AC = ( D_ACB + D_ACD ) /2
+D_BD_AC
+```
+
+The heights of the nodes are the short distances that were determined.
+You can check your results by running the `hclust` function and checking its `height` variable. Make sure you use the *average* method. You can plot the hclust obect for a quick look at the tree.
+
+```{r}
+ABCD.euc.dist.hclust = hclust(ABCD.euc.dist, method="average")
+ABCD.euc.dist.hclust$height
+
+```
+
+```{r}
+plot(ABCD.euc.dist.hclust)
+cutree(ABCD.euc.dist.hclust, k=2)
+```
+
+Do the same for distance object that was created using the correlation values.
+```{r}
+ABCD.cor.hclust = hclust(ABCD.cor.dist, method="average")
+ABCD.cor.hclust$height
+
+plot(ABCD.cor.hclust)
+```
+
+We see here that Genes A, B, and D are closes, which makes sense of the *trend* that we observe. The three genes are low in the first sample, high in the second, low in the third and finally high on the fourth.
+
+## K-means clustering
+
+For K-means clustering you must first decide on a $k$. In this case let's pick 2. This means 2 centers, representing two differnet groups, will be randomly placed in our dataset, and then points will be assigned to the group whose center they are closest to.
+
+First let's select a random number between the lowest and largest values of the ABCD matrix for each of the four coordinates for the 2 centers.
+```{r}
+#center1=sample(min(ABCD):max(ABCD), 4)
+#center2=sample(min(ABCD):max(ABCD), 4)
+
+center1=c(95,77,32,97)
+center2=c(106,123,39,99)
+
+
+```
+
+Now for each genes, let's see which is the closest center.
+```{r}
+A1=dist(rbind(A,center1))
+A2=dist(rbind(A,center2))
+Agroup = which.min(c(A1,A2))
+
+B1=dist(rbind(B,center1))
+B2=dist(rbind(B,center2))
+Bgroup = which.min(c(B1,B2))
+
+C1=dist(rbind(C,center1))
+C2=dist(rbind(C,center2))
+Cgroup = which.min(c(C1,C2))
+
+D1=dist(rbind(D,center1))
+D2=dist(rbind(D,center2))
+Dgroup = which.min(c(D1,D2))
+
+print(c(Agroup, Bgroup, Cgroup, Dgroup))
+```
+
+Now we need to recenter the group centers based on the members of the group.
+
+```{r}
+center1 = apply(cbind(A,B,C), 1, mean)
+center1
+
+center2 = apply(cbind(D), 1, mean)
+center2
+```
+
+Now that the groups are recentered, let's see if any genes changed group membership.
+
+```{r}
+A1=dist(rbind(A,center1))
+A2=dist(rbind(A,center2))
+Agroup = which.min(c(A1,A2))
+
+B1=dist(rbind(B,center1))
+B2=dist(rbind(B,center2))
+Bgroup = which.min(c(B1,B2))
+
+C1=dist(rbind(C,center1))
+C2=dist(rbind(C,center2))
+Cgroup = which.min(c(C1,C2))
+
+D1=dist(rbind(D,center1))
+D2=dist(rbind(D,center2))
+Dgroup = which.min(c(D1,D2))
+
+print(c(Agroup, Bgroup, Cgroup, Dgroup))
+
+```
+
+Gene B has changed membership. If you repeat the steps you will see that the membership will no longer change. Now we have results that look very similar to Hierarchical clustering where A and C belong together and B and D belong together - based on Euclidean distance.
+
+
+```{r}
+kmeans(ABCD,2)
+
+```
+
+# Scaling for Euclidean
+
+If we scale our data, where the mean of each gene is set to 0 by subtracting the mean and then scaling standard deviation of each so it is set to 1, we can use euclidean distance to get similar results as we did using correlation method. Let's try
+
+```{r}
+ABCD_scaled = t(scale(t(ABCD)))
+ABCD_scaled.euc.dist = dist(ABCD_scaled)
+ABCD_scaled.euc.dist.hclust = hclust(ABCD_scaled.euc.dist, method="average")
+plot(ABCD_scaled.euc.dist.hclust)
+
+
+```
+
+Let's look at the line plots of the genes to see what they look like
+
+```{r}
+
+ABCDscaleddf = as.data.frame(ABCD_scaled)
+ABCDscaleddf$Gene=c("A","B","C","D")
+colnames(ABCDscaleddf)=c("S1","S2","S3","S4","Gene")
+
+ABCDscaled.melt =melt(ABCDscaleddf, id=c("Gene"))
+
+ggplot(data =ABCDscaled.melt, aes(x=variable, y=value, group=Gene)) + geom_line(aes(color=Gene))
+
+
+```
+
+You don't see GeneA because it is covered by Gene B.
+
+Try K-means clustering after scaling the values. 
+
+```{r}
+kmeans(ABCD_scaled, 2)
+
+
+```
+
+
+#Silhouette plots
+
+The Silhouette width is a helpful measure to determine whether a gene in a certain group is closer to members of its own group members of other groups. We can calculate this using the equation :
+
+$${\frac{b-a}{max(b,a)}}$$
+In this equation $b$ is the distance of a gene from genes in other groups and $a$ is the distance of a gene from genes in it's own group. As $b$ increases, the value will approach ${\frac{b}{b}}$ or 1. If $a$ is large then value approaches ${\frac{-a}{a}}$ or -1. 
+
+Using the results from our original UPGMA clustering of raw data where A and C are in group and B and D in the other,  let's use the ``cutree`` function to create two groups.
+
+```{r}
+
+ABCDgroups = cutree(ABCD.euc.dist.hclust, k=2)
+ABCDgroups
+```
+
+
+Now since we have the distance values and also the groupings of the genes, let's calculate the silhouette width of all the genes. 
+
+```{r}
+
+# The silhouette width for Gene A is 
+
+SilA =  ( (D_AB + D_AD)/2 - D_AC ) / max((D_AB + D_AD)/2,D_AC)
+SilB =  ( (D_AB + D_CB)/2 - D_DB ) / max((D_AB + D_CB)/2,D_DB)
+SilC =  ( (D_CB + D_CD)/2 - D_AC ) / max((D_CB + D_CD)/2,D_AC)
+SilD =  ( (D_AD + D_CD)/2 - D_DB ) / max((D_AD + D_CD)/2,D_DB)
+
+print(c(SilA, SilB, SilC, SilD))
+```
+
+Check our results using ``silhouette`` function in the ``cluster`` package. The inputs needed for silhouette is the output of ``cutree`` and then the output of ``dist`` function.
+
+```{r}
+library(cluster)
+silhouette(ABCDgroups, ABCD.euc.dist)
+```
+
+It is easy to create a plot. Save the output of silhouette as **ABCD_sil** and use that as the argument for the plot `function`.
+
+```{r}
+
+ABCD_sil = silhouette(ABCDgroups, ABCD.euc.dist)
+plot(ABCD_sil, main="Silhouette Plot")
+
+```
+
+The average silhouette shown at the bottom of the figure is simply the average of all silhouette widths. If we wanted to , we could simply change the $k$ in the ``cutree`` function incrementally and for each $k$ we could calculate the average silhouette width. We can plot to identify a $k$ where we maximize the average silhouette width and also have a reasonable number of clusters.
+

@@ -1,0 +1,85 @@
+---
+title: "Koalas"
+author: "Manpreet S. Katari"
+date: "10/15/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Whitlock Ch 11. Q 18
+
+Male koalas bellow during the breeding season, but do females pay attention? Charlton et al. (2012) measured responses of estrous female koalas to playbacks of bellows that had been modified on the computer to simulate male callers of different body size. Females were placed one at a time into an enclosure while loudspeakers played bellows simulating a larger male on one side (randomly chosen) and a smaller male on the other side. Male bellows were played repeatedly, alternating between sides, over 10 minutes. Females often turned to look in the direction of a loudspeaker (invisible to her) during a trial. The following data measure the preference of each of 15 females for the simulated sound of the “larger” male. Preference was calculated as the number of looks toward the larger-male side minus the number of looks to the smaller-male side. Preference is positive if a female looked most often toward the larger male, and it is negative if she looked most often in the direction of the smaller male. 
+
+```{r}
+koala_size = c(-2, 2, 6, 9, 13, 2, 5, 7, 2, -6, 
+               4, 3, 2, 6, -6)
+
+```
+
+Draw a graph to visualize the frequency distribution. 
+
+```{r}
+#
+```
+
+What is the trend in female preference? 
+
+```{r}
+#
+```
+
+Do females pay attention to body size cues in simulated male sounds? Let's carry out a test, making all necessary assumptions.
+
+- Calculate the average value.
+
+```{r}
+#
+```
+
+- Calculate the standard error.
+
+```{r}
+#
+```
+
+
+- Calculate t-statistic
+
+```{r}
+#
+```
+
+- What is the critical t-statistic in order for the p-value to be < 0.05?
+
+```{r}
+
+#
+```
+- calculate the 95% confidence interval
+
+```{r}
+
+#
+
+```
+- calculat the p-value using the `pt()` functin
+
+```{r}
+#
+```
+
+- Is the result significant? Why?
+
+```{r}
+#
+```
+
+- Confirm your answer using `t.test()`
+
+```{r}
+
+#
+```

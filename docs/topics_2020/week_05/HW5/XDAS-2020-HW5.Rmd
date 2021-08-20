@@ -1,0 +1,329 @@
+---
+title: "XDAS 2020 Homework 5"
+author: "Margaret Dayhoff [Your name here]"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 4
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
+subtitle: Binomial Proportions and Conditional probability
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error = TRUE)
+# remove "error = TRUE" to make knitr halt on errors
+# (do this when you are ready to check if your code will knit without errors)
+```
+
+## Q1. Binomial distribution
+
+**NOTE: This question was carried over from last week's homework and has been updated for this homework. It is adapted from a problem in Whitlock, Chapter 5. You will want to consult the examples in the class notes that were distributed on Monday if you need help answering Parts e-f of this question.**
+
+The *Drosophila* eye contains two kinds of ommatidia called "pale" ("P") and "yellow" ("Y") that are randomly distributed across the retina in a 35:65 ratio, a phenomenon that has been studied in the Desplan lab at NYU. Ommatidia are arranged in neat rows.
+
+Note that for the purpose of this question, we are interested in different **combinations** of Y and P cells. Therefore, we do not treat $Y_1, Y_2, Y_3,$ and $Y_4$, or $P_1$ and $P_2$, as different individuals, we just lump all of the Ys or Ps together as a group. For example, we consider the following outcomes to be the same, since they all contain 4 Y's followed by 2 P's:
+
+$Y_1Y_2Y_3Y_4P_1P_2$
+
+$Y_1Y_2Y_3Y_4P_2P_1$
+
+$Y_4Y_3Y_2Y_1P_1P_2$
+
+$Y_1Y_3Y_2Y_4P_2P_1$
+
+etc...
+
+
+#### a. If you were to scan across one of these rows and sample 6 ommatidia, what would be the probability of sampling pale ("P") or yellow ("Y") cells in the following arrangments?
+
+```{r}
+P =  # Pr[P]
+Y =  # Pr[Y]
+  
+# PPYYYY
+
+# PYYYPY
+
+```
+
+#### b. What is the probability of finding at least one P cell? Of at least one Y cell?
+```{r}
+# P[At least one P cell]
+
+# P[At least one Y cell]
+
+```
+
+#### c. How many ways are there to observe 4 Y cells out of 6? (This is the same as the number of ways there are to observe 2 P cells out of 6.) 
+
+  i. First, articulate the problem as a sentence in English:
+
+<!-- Your answer below -->
+
+
+  ii. Now, write out all the possible outcomes for observing 4 Y and 2 P cells.
+
+<!-- Your answer below -->
+
+
+  iii. Write out the number of ways to get these outcomes using one of the mathematical equations we learned in class. Enter the formula as a comment, and then compute the answer.
+
+```{r}
+# Equation: 
+
+```
+
+  iv. Use a single R function for this expression to do the same thing (note that the binomial is symmetric, so there are two equivalent ways to do this).
+  
+```{r}
+
+```
+
+#### d. What is the **probability** of finding ***exactly two P cells*** out of 6? (Hint: you need to multiple the number of ways this can happen by the probability of this outcome.) Compute this first using the binomial formula, and then using a built-in R function to do the same thing.
+  
+```{r}
+## Binomial formula:
+
+
+## R function for the PDF:
+
+
+```
+
+#### e. What is the probability of finding ***no more than two P*** cells out of 6 (i.e. 0, 1, or 2)? 
+
+  i. First, compute this long-hand using the binomial equation and the probabilities for each different outcome (i.e. 0P,6W ; 1P,5W ; 2P,4W).
+  
+```{r}
+## Using the binomial equation:
+choose(6,2) *P^2 * Y^4 + 
+choose(6,1) *P^1 * Y^5 +
+choose(6,0) *P^0 * Y^6
+
+```
+
+  ii. Use the built-in R function for the PDF to do this across the range of values 0:2. (Hint: you will need to sum up the results.)
+  
+```{r}
+## R function for the PDF
+
+```
+  
+  iii. Use the built-in R function for the CDF to compute the total probability for this scenario.
+  
+```{r}
+## R CDF function
+
+```
+
+#### f. What is the probability of getting ***4 or more W*** cells?
+
+**Hint**: The function for the binomial CDF is inclusive for the lower tail, but it is exclusive for the upper-tail, so you need to be careful about how you compute this.
+
+```{r}
+# P[4 or more W cells]
+
+```
+
+
+## Q2. Cystic fibrosis diagnosis and Bayes rule
+
+Cystic fibrosis, a deadly lung disorder, is one of the most common autosomal recessive diseases. This is true in part because there are more than 1500 mutational forms of the cystic fibrosis transmembrane regulatory (CFTR) gene (Ratbi et al. 2007).
+
+Diagnostic tests have been developed to detect CF, whose efficacy has been measured by comparison with deep sequencing across the CFTR gene. This gives us known rates of detection for people who are confirmed to either carry or not carry mutations in the CFTR gene.
+
+
+### Likelihoods: Rates of detection for CF+ and CF- patients
+
+The chance that we do (or do not) return a correct (or incorrect) test result *given that someone is either $CF^+$ or $CF^-$* represents a **conditional probability** or **likelihood**.
+
+With current diagnostic methods, the *true-positive rate* (i.e., **sensitivity**) for detecting CFTR mutations is approximately 0.99; thus the *false-negative rate* is 0.01. The *true-negative rate* (i.e., **specificity**) of this test is generally assumed to be 100%, but it ignores human error. As a result, we will let this probability be 0.998, and let the false-positive probability be 0.002. These data are summarized below:
+
+True-positive rate = $P(POS|CF^+)$ = 0.99
+
+False-negative rate = $P(NEG|CF^+)$ = 0.01 
+
+True-negative rate = $P(NEG|CF^-)$ = 0.998
+
+False-positive rate = $P(POS|CF^-)$ = 0.002
+
+These four rates quantify all possible ways to obtain a correct or incorrect diagnosis, given that someone either does or does not have CF. The combined TP+FN rates encompass all possible diagnoses *given that someone is $CF^+$*, while the combined FP+TN rates encompass all possible diagnoses *given that someone is $CF^-$*. Thus, the TP and FN rates must add to 1, as do the FP and TN rates.  (Note that we ignore the possibility of inconclusive test results.)
+
+
+### Priors: Rates of CFTR mutations in the population
+
+The presence or absence of CFTR mutations represent the two possible *"states of nature"*, $CF+$ and $CF-$. Each will have some prevalence in the population at large. These rates will be our **prior probabilities**, which we can refer to simply as **priors**: $P(CF^+)$ and $P(CF^-)$. These probabilities will in turn depend on ethnicity as shown below:
+
+| Ethnicity              | Carrier Probability |
+|------------------------|---------------------|
+| Non-Hispanic Caucasian | 0.040               |
+| Hispanic American      | 0.017               |
+| African American       | 0.016               |
+| Ashkenazi Jewish       | 0.042               |
+| Asian American         | 0.011               |
+
+### What is the probability of being a carrier, given a particular test result?
+
+A question of great interest is, "What is the probability that a person **is a carrier** of some mutational variety of CFTR **but will not know it** because their test was negative?” That is, “What is the conditional probability $P(CF^+|NEG)$?" We do not know this, although we do have an estimate for the conditional probability, $P(NEG|CF^+)$ = 0.01.
+
+
+### Turning the question around using Bayes Theorem
+
+We can answer this question by setting we set up our particular problem as follows: 
+
+$$
+\begin{align}
+P(CF^+|NEG) &= \frac{P(NEG|CF^+)P(CF^+)}{\sum_{k=1}^2{P(NEG|CF_k)P(CF_k)}} \\ 
+            &= \frac{P(NEG|CF^+)P(CF^+)}{P(NEG|CF^+)P(CF^+) + P(NEG|CF^-)P(CF^-)}
+\end{align}
+$$
+
+
+### Computing conditional probabilities with Bayes Rule
+
+With the above equation, we can now ask: "How likely is it that someone who **IS** a carrier of a mutation in the CFTR gene will obtain a positive (negative) test result?", and conversely, "How likely is it that someone who is **NOT** a carrier will obtain a positive (negative) test result?"
+
+To do this, we **weight** our observed data with **prior information**, allowing more concise inferential statements about cystic fibrosis based on existing statistical data for different groups.
+
+### Questions
+
+#### a. Set up variables for the different pieces of information you will need to solve the problems below.
+
+```{r}
+# Test results (likelihoods)
+TP = 
+FP = 
+FN = 
+TN = 
+
+# CFTR rates by ethnicity (priors)
+p.nhc = 
+p.his = 
+p.afr = 
+p.ash = 
+p.asi = 
+```
+
+#### b. Compute $P(CF^+|NEG)$ for the different groups using the formula above.
+
+```{r}
+# General formula for P(carrier | NEG) =
+
+# Non-Hispanic Caucasian
+
+# Hispanic
+
+# African Americans
+
+# Ahskenazi Jews
+
+# Asian Americans
+
+```
+
+$\Rightarrow$ According to your calculations, about **what percent** of people that **carry** some variety of mutation in the CFTR gene would **not know it** because they would be misdiagnosed?
+
+<!-- Your answer below (please fill in the percentage) -->
+
+***Estimated percentages of people carrying mutation in the CFTR gene who would be misdiagnosed on the basis of this test:***
+
+**XXX%** Non-Hispanic Caucasian
+**XXX%** Hispanic American
+**XXX%** African American
+**XXX%** Ashkenazi Jewish
+**XXX%** Asian American
+
+$\Rightarrow$ How does this result seem to you?
+
+<!-- Your answer below -->
+
+
+#### c. Compute $P(CF^-|POS)$ for different groups 
+
+$\Rightarrow$ Note that this is the opposite question: "How likely is it that Americans from each group that do NOT carry a mutation in the CFTR gene will be misdiagnosed as carriers?"
+
+$$
+\begin{align}
+P(CF^-|POS) &= \frac{P(POS|CF^-)P(CF^-)}{\sum_{k=1}^2{P(POS|CF_k)P(CF_k)}} \\ 
+            &= \frac{P(POS|CF^-)P(CF^-)}{P(POS|CF^+)P(CF^+) + P(POS|CF^-)P(CF^-)}
+\end{align}
+$$
+
+```{r}
+# P (not carrier | POS) = 
+
+# Non-Hispanic Caucasian
+
+# Hispanic
+
+# African Americans
+
+# Ahskenazi Jews
+
+# Asian Americans
+
+```
+
+<!-- Your answer below (please fill in the Estimated percentages) -->
+
+***Estimated percentages of people NOT carrying CFTR mutations who would be misdiagnosed as carriers:***
+
+**XXX%** Non-Hispanic Caucasian
+**XXX%** Hispanic American
+**XXX%** African American
+**XXX%** Ashkenazi Jewish
+**XXX%** Asian American
+
+$\Rightarrow$ How does this result seem to you?
+
+<!-- Your answer below -->
+
+
+#### d. Write a **function** to compute posterior probabilities
+
+To make your calculations easier, write a function that takes **likelihoods** and **priors** as input, and computes the various **posterior** probabilities for any particular group in the population. 
+
+Then, call the function to compute $P(CF^+|NEG)$ for each group. You may implement this any way you like.
+
+```{r}
+# Function
+
+
+# Results
+
+
+
+```
+
+Did you get the same results as in part b?
+
+
+#### e. Extra credit
+
+Modify your function so that it takes as input two data frames that contain the data in the tables above, and returns the probabilities of the four different outcomes for each of the groups, i.e.:
+
+$P(CF^+|POS)$, $P(CF^-|POS)$, $P(CF^+|NEG)$, $P(CF^-|NEG)$
+
+To do this, your function should just add four new columns to the data frame containing the different populations, and should return the contents of the modified data frame. Make sure that your column names are human-readable so that they can be interpreted.
+
+Then, call the function you just made, assign the return value to a new variable, and then print out the results.
+
+```{r}
+# Data frame for likelihoods (false/true negative/positive rates from the experimental trial)
+
+# Data frame for priors
+
+# Function to compute posterior probabilities
+
+# Call the function
+
+# Print the results
+
+```
+
+---
+
+This exercise was adapted from Example 2.11 from Ken Aho's book, _Foundational and Applied Statistics for Biologists using R_.

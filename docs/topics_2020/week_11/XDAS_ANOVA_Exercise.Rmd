@@ -1,0 +1,63 @@
+---
+title: "XDAS ANOVA Exercise"
+author: "Manpreet S. Katari"
+date: "11/9/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## NPK
+
+For this exercise, we will be using the `npk` dataset that is provided in R. The experiment looked at the growth of peas and how nitrogen(N), phosphate(P), and potassium(K) had an effect.
+
+The experiment was performed on 6 blocks, however only three blocks contains the full 3-way interaction combinations.
+
+### 1) Look at the distribution of values from the different plots
+
+Use a graph to visually test wheter the distributions of `yield` is the same across all 6 blocks.
+
+```{r}
+boxplot(yield ~ block, data=npk)
+
+# There is definitely different range of yield based on which block you are collecting measurements.
+```
+
+### 2) Use a model to determine which nutrient, on its own, gave the best yield.
+
+```{r}
+summary(lm(yield ~ block+ P+ N+ K, data=npk))
+# Nitrogen gave the most yield
+```
+
+# Interactions
+
+For the interaction example, we will look at a dataset called `ToothGrowth`. The dataset measures tooth group in guinea pics. Each has recieved Vitaming C either from Orange juice, `OJ`, or ascorbic acid `VC`. The two treatments were also provided in different concentrations. We will look to see if there is a something going on.
+
+## 3) Create a chart that that shows the result based on the type and amount of treatment. Do you expect an interaction between Treatment and Dose? 
+
+```{r}
+boxplot(len ~ supp * dose, data=ToothGrowth)
+```
+
+## 4) Test to see if there is a significant interaction between the dosage of the treatment and the treatment.
+
+```{r}
+
+summary(lm(len ~ supp * dose, data=ToothGrowth))
+
+# The interaction is significant. We can see that the difference in the effect of the treatment is different based on dose. At low dose OJ is better but at high dose both are about the same.
+```
+
+## 5) Compare the interaction model with a model without the interaction. Is there a significant difference between the two? Which model should you keep?
+
+```{r}
+tooth_noint = lm(len ~ supp + dose, data=ToothGrowth)
+tooth_interact = lm(len ~ supp * dose, data=ToothGrowth)
+anova(tooth_interact, tooth_noint)
+
+# There is significant difference between the models, which means taking the more complex solution is justified. If it was not significant, we would pick the simpler model, in this case it would be the one withouth the interaction.
+```
+

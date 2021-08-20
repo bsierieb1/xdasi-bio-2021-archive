@@ -1,0 +1,118 @@
+---
+title: "dplyr"
+author: "Chris"
+date: "10/30/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(ggplot2)
+require(dplyr)
+require(tidyr)
+require(reshape2)
+require(scales)
+```
+
+## ggplot2
+
++ [Documentation](https://www.rdocumentation.org/packages/dplyr/versions/0.7.8)
++ [Cheat sheet](https://rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
+
+## Formatting Data
+
+Lets read in some expression data. This is genome-wide expression data (in transcript counts) of 6 samples in normal media (YPD) and 6 samples in normal media plus treatment with rapamycin (RAPA) for 30 minutes. Now there are wild-type (WT) samples and samples where a transcription factor (TF) has been deleted.
+
+```{r}
+expression.data <- read.delim("DPLYR_EXPRESSION_DATA.tsv")
+head(colnames(expression.data))
+head(rownames(expression.data))
+# Looks like this data is genes in rows and biological samples in columns
+
+```
+
+All the metadata (non-expression data containing information about the biological samples) is in a separate file. This is common.
+
+```{r}
+meta.data <- read.delim("DPLYR_SAMPLE_DATA.tsv")
+str(meta.data)
+summary(meta.data)
+```
+
+Let's convert from total transcript counts to TPM (Transcripts Per Million Transcripts).
+
+```{r}
+print("Counts per experiment:")
+print(colSums(expression.data))
+expression.data.normalized <- sweep(expression.data, 2, colSums(expression.data), FUN = "/") * 1e6
+print(colSums(expression.data.normalized))
+```
+
+Excellent; now each experiment has the same depth. Trying to make a readable heatmap with 140 biological samples x 6000 genes will be a nightmare though. Instead I want to collapse all of the replicates for each TF/Experiment pair into a set of summary statistics.
+
+Lets start by putting the meta data and the expression data together.
+
+```{r}
+# The expression data set needs to be biolgical samples x genes for this to work...
+
+# Lets rotate the data frame and then put the Sample_ID into a column (instead of row names)
+expression.data.normalized %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::mutate(Sample_ID = as.factor(rownames(.))) -> expression.data.normalized
+
+# Now we can use `join` to attach the meta data
+# This could be part of the same piped expression as above
+# Separating long pipes for readability is sometimes helpful though
+expression.data.normalized %>%
+  dplyr::left_join(meta.data, by="Sample_ID") -> expression.data.normalized
+```
+
+Much better. Now all the data is in one big data frame. Lets calculate the mean.
+
+```{r}
+expression.data.normalized %>%
+  dplyr::select(-Sample_ID) %>%
+  dplyr::group_by(Experiment, TF) %>%
+  dplyr::summarise_all("mean") -> mean.expression
+```
+
+Lets normalize to the control sample (WT in YPD)
+
+```{r}
+mean.expression %>%
+  filter(TF == "WT" & Experiment == "YPD") -> control.mean
+
+mean.expression %>%
+  dplyr::mutate_at(vars(-TF, -Experiment), funs(. / control.mean$.)) -> mean.normalized.expression
+```
+
+Well that was pretty easy - lot of NAs and INFs in this data though (dividing by 0 is a problem, isn't it)
+
+```{r}
+# This is easy enough to clean out by just omitting columns where the control mean was 0
+mean.normalized.expression <- mean.normalized.expression[, as.vector(control.mean !=0)]
+```
+
+## Heatmap
+
+Lets put this into a heatmap
+
+```{r}
+ggplot2::theme_set(theme_classic())
+
+# Lets melt, log-transform, and pipe the data into ggplot
+mean.normalized.expression %>%
+  reshape2::melt(id.vars=c("TF", "Experiment"), value.name="Expression", variable.name="Gene") %>%
+  dplyr::mutate(Expression = log2(Expression)) %>%
+  ggplot(aes(x=paste0(Experiment,"-",TF), y=Gene, fill=Expression)) -> heatmap.plt
+
+# Now we can add geometries and layout to the data no problem
+heatmap.plt +
+  geom_tile() +
+  scale_fill_gradient2(low='slateblue2', mid='black', high='yellow', limits=c(-3, 3), oob=squish, na.value="white") +
+  theme(axis.text.y = element_blank(),
+        axis.text.x = element_text(angle=90, hjust=0.5, vjust=0.5))
+```
+
+Well that was quite easy. Lets work on making this better (and doing some different analysis...)

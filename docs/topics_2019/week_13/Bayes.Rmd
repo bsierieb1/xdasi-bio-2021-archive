@@ -1,0 +1,138 @@
+---
+title: "Bayes"
+author: "Chris"
+date: "11/24/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(ggplot2)
+ggplot2::theme_set(theme_classic())
+require(bayestestR)
+require(rstanarm)
+```
+
+## Measurements
+
+```{r}
+measurements <- c(0, 0, 1, 1, 2)
+print(measurements)
+```
+
+## Likelihood Function
+
+```{r}
+# mu ~ Uniform(-1,2)
+mu <- seq(-1, 2, by = 0.02)
+
+# Calculate likelihoods for each mu value
+likelihood.function.of.mu <- function(x) {prod(dnorm(measurements, mean=x, sd=1))}
+
+likelihoods <- vapply(mu, likelihood.function.of.mu, double(1))
+
+
+# Normalize to area under the curve = 1 with the trapezoid rule
+likelihoods.density <- likelihoods / sum(mu * c(likelihoods[1], abs(likelihoods[2:151] - likelihoods[1:150])/2))
+
+qplot(mu, likelihoods.density, geom="line")
+```
+
+## Maximum likelihood
+
+```{r}
+print(mu[which.max(likelihoods)])
+print(mean(measurements))
+```
+
+## Bayes Factor
+
+Let's load some data and do bayesian regression
+
+```{r}
+gdh2 <- read.delim("Bayes_Data.tsv")
+qplot(time, GDH2_L2FC, data=gdh2, geom="point", color=Experiment)
+```
+
+Define a prior for time
+
+```{r}
+# X is the predictor data (time)
+# y is the response data (log2FC expression)
+# beta is the model parameter from regression
+# sigma is the standard deviation of the response data
+
+gdh2.prior <- rstanarm::normal(location = c(0.1), scale=c(0.1), autoscale = F)
+
+```
+
+Set prior knowledge and regress against the data (x)
+
+```{r}
+capture.output(rstanarm_results <- stan_glm(GDH2_L2FC ~ time, data=gdh2[gdh2$Experiment == "Treated",], prior = gdh2.prior), file="NULL")
+prior_summary(rstanarm_results)
+
+summary(rstanarm_results, probs=c(.025, .975), digits=3)
+
+plot(rstanarm_results)
+```
+
+What is this saying?
+
+```{r}
+posterior.draws <- as.data.frame(as.matrix(rstanarm_results))
+colnames(posterior.draws) <- c("Intercept", "time", "sigma")
+
+qplot(time, GDH2_L2FC, data=gdh2, geom="point", color=Experiment) +
+  geom_abline(data = posterior.draws, aes(intercept = Intercept, slope = time), color = "skyblue", size = 0.2, alpha = 0.1) + 
+  geom_abline(intercept = coef(rstanarm_results)[1], slope = coef(rstanarm_results)[2], color = "skyblue4", size = 1)
+```
+
+Let's load some new data.
+
+```{r}
+gdh2.more.data <- read.delim("Bayes_Update.tsv")
+qplot(time, GDH2_L2FC, data=gdh2.more.data, geom="point", color=Experiment)
+```
+
+How does it look if we just model this new data?
+
+```{r}
+capture.output(rstanarm_results_new <- stan_glm(GDH2_L2FC ~ time, data=gdh2.more.data[gdh2.more.data$Experiment == "Treated",], 
+                                                prior = gdh2.prior), 
+               file="NULL")
+prior_summary(rstanarm_results)
+
+summary(rstanarm_results_new, probs=c(.025, .975), digits=3)
+
+plot(rstanarm_results_new)
+
+posterior.draws <- as.data.frame(as.matrix(rstanarm_results_new))
+colnames(posterior.draws) <- c("Intercept", "time", "sigma")
+
+qplot(time, GDH2_L2FC, data=gdh2, geom="point", color=Experiment) +
+  geom_abline(data = posterior.draws, aes(intercept = Intercept, slope = time), color = "skyblue", size = 0.2, alpha = 0.1) + 
+  geom_abline(intercept = coef(rstanarm_results_new)[1], slope = coef(rstanarm_results_new)[2], color = "skyblue4", size = 1)
+```
+
+Now let's use the posterior prediction from the first set of data as the prior for this model
+
+```{r}
+updated.prior <- normal(location = coef(rstanarm_results)[2], scale = rstanarm_results$ses[[2]])
+updated.intercept <- normal(location = coef(rstanarm_results)[1], scale = rstanarm_results$ses[[1]])
+
+capture.output(rstanarm_results_updated <- stan_glm(GDH2_L2FC ~ time, 
+                                                    data=gdh2.more.data[gdh2.more.data$Experiment == "Treated",], 
+                                                    prior = updated.prior,
+                                                    prior_intercept = updated.intercept), file="NULL")
+
+summary(rstanarm_results_updated, probs=c(.025, .975), digits=3)
+
+posterior.draws <- as.data.frame(as.matrix(rstanarm_results_updated))
+colnames(posterior.draws) <- c("Intercept", "time", "sigma")
+
+qplot(time, GDH2_L2FC, data=gdh2, geom="point", color=Experiment) +
+  geom_abline(data = posterior.draws, aes(intercept = Intercept, slope = time), color = "skyblue", size = 0.2, alpha = 0.1) + 
+  geom_abline(intercept = coef(rstanarm_results_updated)[1], slope = coef(rstanarm_results_updated)[2], color = "skyblue4", size = 1)
+
+```

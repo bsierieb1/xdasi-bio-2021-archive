@@ -1,0 +1,179 @@
+---
+title: "Linear regression exercise"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# The trees dataset
+
+A dataset called ``trees`` contains information about ``Girth`` ( diameter of the tree ), ``Height`` and ``Volume`` of 31 cherry trees. Let's determine which variable is a better predictor of Volume.
+
+## Create linear model volume ~ height
+
+```{r}
+# load dataset
+head(trees)
+
+# create linear model -- the two expressions below are equivalent
+
+library(ggplot2)
+ggplot(trees, aes(x = Height, y=Volume)) +
+    geom_point(  ) +
+    stat_smooth(method="lm")
+
+```
+
+## Inspect plots and determine if lm is of good quality
+
+    - Is there a transformation that could help the model?
+    - Are there any outliers?
+    - Is the variance/residual equal around the model?
+
+```{r}
+
+tree_lm = lm(Volume ~ Height, data = trees)
+summary(tree_lm)
+```
+
+
+## LM plots
+
+Once you create an linear model, you can inspect the model by using the standard plots that are often used in assessing the linear model. 
+
+Here we will use a ggplot2 companion package called ggfortify which takes the normal baseR graphics and converts them into ggplot graphs.
+
+
+
+```{r}
+# look at various plots for the model
+#install.packages("ggfortify")
+library(ggfortify)
+
+tree_lm_plots = autoplot(tree_lm)
+
+```
+
+### Residuals vs Fitted
+
+The first plot looks at the Residuals vs the Fitted. The x-axis are the fitted values and the y-axis are the residuals. Remember residual is the distance between the data point and the predicted point for that x-value. Ideally the points should be as close to the dotted line ( where residual is 0 ). This graph also demonstrates the shape of the relationship. If it is a linear relationship the fitted line should be straigth, but in this case it looks like its polynomial.
+
+Also note that three of the points are numbered, this is the position of the point in the dataframe and it is bring your attention to them because they are outliers.
+
+```{r}
+tree_lm_plots[1]
+```
+
+### Normal QQ plot
+
+This plot is quantile - quantile plot which shows you whether the residuals are normally distributed. Again the best case scenario is that the points fall on the dashed line. Here again it looks like the data is nor normally distributed and may need to be transformed.
+
+```{r}
+tree_lm_plots[2]
+
+```
+
+### Scale location plot
+
+This plot is used to determine if the variance is equal thoughout the data. Homoscedasticity, or equal variance, is an assumption that is made when performing certain statistical tests. The more horizontal the data, the more equal the variance is across the data. In this example the variance increases as the predicted value increases.
+
+```{r}
+tree_lm_plots[3]
+
+```
+
+### Residuals vs Leverage
+
+Cook's distance is calculated by removing a specific data point and checking how much the model has changed. So the greater the Cook's distance the more influential that point is to the model, and in this case that is not good. When creating linear models, the outliers can be very disruptive to the actual model of the data and so this is a good way to determine if there are indeed outliers. 
+
+In the graph below, the threshold for Cook's distance is presented by a dashed red line, so in this case, even though it looks like we have an outlier, it doesn't disrupt the model too much.
+
+```{r}
+tree_lm_plots[4]
+plot(tree_lm)
+```
+
+
+## Do the same for Girth. 
+
+    - Is there a transformation that could help the model?
+    - Are there any outliers?
+    - Is the variance/residual equal around the model?
+
+```{r}
+# create linear model -- the two expressions below are equivalent
+# tree_lm = lm(trees$Volume ~ trees$Height)
+
+tree_lm = lm(Volume ~ Girth, data=trees)
+summary(tree_lm)
+anova(tree_lm)
+```
+
+```{r}
+# plot height by volume and the regression line
+
+ggplot(trees, aes(x=Girth, y=Volume))+
+    geom_point() +
+    stat_smooth(method="lm")
+
+```
+
+```{r}
+plot(tree_lm)
+
+```
+
+```{r}
+## ============================================================= ##
+# try a transformation of Height
+
+tree_lm = lm(sqrt(Volume) ~ Girth, data=trees)
+
+
+```
+
+```{r}
+plot(tree_lm)
+```
+
+```{r}
+
+
+```
+
+## Calculating standard error
+
+Pick a range of values (0:25) and then use the best linear model for Girth to predict the Volume, and the lower and upper intervals.  
+
+```{r}
+#summary(trees)
+test_data = 0:25
+prediction_values = predict(tree_lm, newdata = data.frame(Girth=test_data),
+        interval="prediction")
+```
+
+- 5) use ggplot2 to plot the predicted values and the lower and upper intervals for the values 0:25. 
+
+```{r}
+prediction_values_df = as.data.frame(prediction_values)
+prediction_values_df$Girth = 0:25
+
+head(prediction_values_df)
+```
+
+```{r}
+library(reshape2)
+prediction_values_melt = melt(prediction_values_df, id=c("Girth"))
+
+head(prediction_values_melt)
+tail(prediction_values_melt)
+
+ggplot(prediction_values_melt)+
+    geom_line(aes(x=Girth, y=value, col=variable))+
+    geom_point(aes(x=Girth, y=sqrt(Volume)), data=trees)
+
+
+```
+

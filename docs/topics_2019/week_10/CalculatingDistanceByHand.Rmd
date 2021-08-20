@@ -1,0 +1,87 @@
+---
+title: "Calculating Distance By Hand"
+author: "Manpreet S. Katari & Kris Gunsalus"
+date: "September 19, 2018"
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.align="center")
+```
+
+The goal of this exercise to learn about calculating distances.
+Instead of our standard dataset where we have tens of thousands of genes across dozens to hundreds of samples, we will work with a simulated dataset made up of 4 genes and 4 samples.
+
+Gene | Sample1 | Sample2 | Sample3 | Sample4
+-----|---------|---------|---------|----------
+  A  |    5    |    10   |   5     |    10
+  B  |   50    |   100   |  50     |   100
+  C  |   10    |    05   |  10     |     5
+  D  |   25    |   125   |  75     |   125
+
+
+# Calculating Euclidean distance
+
+Euclidean distance is simply the geometric distance between the two points. Recall the basic Pythagorean formula:
+$$a^2 + b^2 = c^2$$
+where $a$ and $b$ are sides of a right triangle and $c$ is the hypotenuse. Specifically, $a^2$ is the difference between the two points in the first dimension squared, and $b^2$ is the difference in the second dimension squared. To get the Euclidian distance $c$ we take the $\sqrt{c^2}$, or simply $\sqrt{a^2 + b^2}$.
+
+To express Euclidian distance in multiple dimensions, we can use the same formula, but we keep adding dimensions. e.g. $a^2 + b^2 + c^2 = d^2$. It now becomes more convenient to change our notation a bit. Let's say we have $n$ dimensions, and let's call them $D_1, D_2, ... D_n$. Now for any two points $\mathbf{x} = (x_1, ... , x_n)$ and $\mathbf{y} = (y_1, ... , y_n)$ in $n$-dimensional space, we can write the Euclidian distance as:
+
+$$ d_{xy} = \sqrt{\sum\limits_{i=1}^{n}{(y_i - x_i)} ^2} $$
+Most of the time we will omit writing out the limits of the summation explicitly, and instead just write $\sum$.
+
+** *Please review the class notes on "Distance and Clustering" for a more in-depth discussion of distance measures.* **
+
+## Pairwise distances between genes
+
+To find the Euclidean distance between GeneA and GeneB, let's refer to the value of GeneA in Sample1 as $A_1$ and the value of GeneA in Sample2 as $A_2$; let's call the value of GeneB in Sample1 $B_1$ and in Sample2 $B_2$; and so on. 
+
+The Euclidean distance between GeneA and GeneB can now be calcuated using the following formula:
+
+$$ d_{AB} = \sqrt{ \left( B_1-A_1 \right) ^2+ \left( B_2-A_2 \right) ^2 + \left( B_3-A_3 \right)^2 + \left( B_4-A_4 \right) ^2} = \sqrt{ \sum{_{i=1}^4} {(B_i - A_i) ^2 }} $$
+It's easy to see that since we have 4 samples, now we have four dimensions instead of two ($n=4$).
+
+## Exercise
+
+1) Calculate all the pairwise Euclidean distances by hand on paper !
+
+
+2) Based on the Euclidean distance, which two genes are the closest (most similar)?
+
+
+
+# Covariance calculation
+
+In some cases we don't want to calculate the distance between points, but rather compare how the points are changing relative to their means. For instance we may want to know which two genes are always high in Sample1 and Sample3 but low in Sample2 and Sample4. To determine such a relationship we can calculate the *covariance*.
+
+Recall that *variance* is simply the variation of each point from its mean. We square the difference because the variance -- just like distance -- must be positive (or more precisely, greater than or equal to zero):
+
+$$s^{2} = \frac{\sum_{i=1}^{n} (x_{i} - \bar{x}) ^2} {n-1}
+        = \frac{\sum (x_{i} - \bar{x})(x_{i} - \bar{x})} {n-1}$$
+  
+We divide by $n-1$ because we have $n-1$ degrees of freedom. For covariance, instead of squaring the deviation of a single variable from its mean, we multiply the deviation of two variables from their respective means:
+
+ $$cov_{x,y} = \frac{\sum\limits_{i=1}^{n}{(x_i-\overline{x})(y_i-\overline{y})} }{n-1}$$
+
+We then get the *Pearson correlation* by dividing the covariance by the standard deviation of both the genes being compared:
+
+$$r = \frac{\sum\limits_{i=1}^{n}{(x_i-\overline{x}) (y_i-\overline{y})}}
+{\sqrt{\sum\limits_{i=1}^{n} (x_{i} - \bar{x}) ^{2}}
+ \sqrt{\sum\limits_{i=1}^{n} (y_{i} - \bar{y}) ^{2}}} $$
+
+The correlation coefficient is a value between -1 and 1 and can be used to describe the relationship between the genes as *positive* or *negative*. It allows us to compare changes in the expression of A and B relative to each other, independent of their absolute magnitudes, because we have *standardized* their changes in expression relative to their mean and variance.
+
+## Exercise
+
+3) Let's calculate the covariance of the GeneA and GeneB.
+
+4) Now calculate the standard deviation of GeneA and GeneB.
+
+5) Finally, calculate the Pearson correlation by dividing the covariance by the product of the *sd* of both genes.
+
+6) Repeat for GeneA and GeneC and also GeneA and GeneD
+
+Since correlation is a measurement of similarity, we need to convert it into a distance. Things that are very similar to each other are very close to each other and things that are very different should be further away. We can do this conversion with this simple arithmetic: $1-r$. So if the correlation is 1, then $1-1$ will be 0 and if correlation is -1 then $1-(-1)$ will be 2. So now our distance measurement ranges from 0-2. 
+
