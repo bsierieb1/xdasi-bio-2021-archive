@@ -1,6 +1,6 @@
 ---
 title: Recitations
-nav_order: 1
+nav_order: 2.5
 has_children: true
 ---
 
@@ -22,9 +22,9 @@ By appointment
 
 # Schedule
 
-## Week 2 (9/7): R setup, recap of data types and data structures in R, loops, and functions.
+**Week 2 (9/7):** R setup, recap of data types and data structures in R, loops, and functions.
 
-## Week 3 (9/14): Import, cleaning, and manipulation of data
+**Week 3 (9/14):** Import, cleaning, and manipulation of data
 
 
 
