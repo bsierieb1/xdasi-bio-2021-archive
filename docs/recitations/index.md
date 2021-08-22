@@ -4,6 +4,21 @@ nav_order: 3
 has_children: true
 ---
 
+# Recitations
+{: .no_toc }
+## XDASI 2021: Exploratory Data Analysis and Statistical Inference (BIOL-GA2030)
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
+
+---
+
+
+
 # Logistics
 
 ## Classes
