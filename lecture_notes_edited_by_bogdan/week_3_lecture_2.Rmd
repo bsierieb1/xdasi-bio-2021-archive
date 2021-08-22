@@ -1,0 +1,677 @@
+---
+title: "Sampling Distributions of Sample Estimates"
+subtitle: "Standard Error, Confidence Intervals, and the Central Limit Theorem"
+author: "Kris Gunsalus"
+date: "Fall 2020"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    toc_depth: 4
+    highlight: pygments
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(tinytex.verbose = TRUE)
+library(tidyr)
+library(ggplot2)
+library(ggpubr)
+library(cowplot)
+library(DT)
+```
+
+## I. Overview
+
++ Review: summary statistics
++ Random sampling
++ Sampling distribution of an estimate
+  + Sampling distribution of the sample mean
++ Measuring uncertainty in an estimate
+  + Standard error
+  + Confidence intervals
++ The Central Limit Theorem (CLT)
+
+
+## II. Review: Summary statistics
+
+### Population parameters
+
+**Location / central tendency: mean, average**
+
+The **mean** is the ***expected value*** of all individuals in a population.
+
+$$E(X) = \mu = {\frac{1}{N}}\sum{x_i} $$
+
+**Scale / dispersion: variance**
+
+The **variance** of the population is the squared sum of differences between the population mean and each individual, divided by the total number of individuals in the population.
+
+$$Var(X) = \sigma^2 = \frac{1}{N}\sum({x_i - \mu)^2}$$
+
+The **standard deviation (SD)** is simply the square root of the variance, and is a measure of how far away from the average most of the individuals in the population are. The SD describes variation ***in the same units*** as the units of measurement, making it a more intuitive measure of scale than the variance.
+
+
+### Sample estimators
+
+**Sample mean and variance**
+
+The **sample mean** $\bar{X}$ and **variance** $s^2$ describe the ***sample distribution*** of an unbiased random sample of identical an independently distributed (i.i.d.) individuals taken from a population.
+
+$$\bar{X} = \frac{\sum(x)}{n}, \ \  s^2 = \frac{\sum({x_i - \bar{X})^2}}{n-1}$$
+These statistics are **estimators** of the true (usually unknown) **population parameters**.
+
+The **sample variance** has $n-1$ degrees of freedom, since we use up one degree of freedom in calculating the sample mean, $\bar{X}$ (so we have only $n-1$ independent values in the calculation). Dividing by $n$ vs. $n-1$ would underestimate the true variation in the population.
+
+
+### Estimates of scale: IQR, SD
+
+<div align=center>
+
+![**IQR and SD for a normal distribution** (_from Wikipedia_)](Images/1200px-boxplot_vs_PDF.png){width=50%}
+
+</div>
+
+***Rules of thumb for IQR***
+
++ The central 50% of the data are within the IQR.
++ Around 99% of the data are within the IQR +/- 1.5*IQR
+
+***Rules of thumb for SD***
+
+- Around 2/3 of the data are within 1 SD of the mean.
+- Around 95% of the data are within 2 SD
+- Around 99% of the data are within 2.5 SD
+- Around 99.7% of the data are within 3 SD
+
+
+
+## III. Sampling distributions of sample statistics
+
+We've talked a lot about why random sampling is important, and things to watch out for to minimize sample bias (what are the possible sources of sample bias?) Sampling error, due to bias or other sources of uncertainty, can affect both the ***accuracy*** and the ***precision*** of sample estimates.
+
+The **sampling distribution** of a sample estimator for a population parameter represents the ***distribution of all possible values for the sample statistic*** derived from a particular sample size, given an infinite number of samples drawn from the same population.
+
+Sampling distributions can be computed for all kinds of sample statistics, and give us an idea of how closely we can expect our sample statistics to represent the true population parameters.  
+
+Fortunately, statistics for sampling distribution can be computed from a **single sample** - so you don't actually need take numerous samples of $N$ individuals (or independent measurements from a population) to get a good idea of how precise your sample estimates are! Whew. Below we will illustrate empirically that this is the case.
+
+
+### Sampling distribution of the sample mean
+
+One of the most important sampling distributions is the **sampling distribution of the sample mean**, $\bar{X}$. When we talk about the distribution of sample means, **the sample mean is now our random variable!** 
+
+Why is the sampling distribution of $\bar{X}$ of particular interest to us? Because it allows us to determine how well our estimate represents the true **central tendency** of the population from which our samples are drawn.
+
+#### $\bar{X}$ follows a normal distribution
+
+We can actually **quantify** this distribution to provide an estimate of its variation, or precision, and make an educated guess about the range of values in which we expect the true population mean to be found.
+
+The sampling distribution of the sample mean is **approximately normal**, and with sufficiently large sample size $N$, it converges on the population mean $\mu$ and variance $\sigma^2/N$ as $N$ goes to infinity. In the notation for distributions (which we will learn more about soon) we can describe the distribution of theh sample mean $\bar{X}$ as follows:
+
+$$\bar{X} \sim \mathcal{N}(\mu,\frac{\sigma^2}{N})$$
+In words, this equation says that: *"The sample mean X bar follows a normal distribution with mean mu and variance equal to sigma squared divided by the sample size N."*
+
+This means that if you take a whole bunch of random samples from a population, then the distribution of the sample means will look pretty much like a bell curve. Moreover, since the variation in $\bar{X}$ is inversely proportional to $N$, the amount of uncertainty in your estimator will shrink as the sample size gets bigger.
+
+
+#### Standard Error of the Mean (SEM)
+
+The standard deviation of a sample statistic is called its **standard error**. For the sample mean $\bar{X}$, the standard error is called the **standard error of the mean** and is often abbreviated as **SEM**.
+
+The SEM provides a measure of how much the variable $\bar{X}$ is expected to differ from sample to sample, i.e. the ***precision*** of  which we are able to estimate the true population mean $\mu$.
+
+As noted above, the **variance** of $\bar{X}$ is dependent on the sample size $N$, and is equal to the population variance $\sigma^2$ divided by $N$:
+
+$$Var(\bar{X}) = \frac{\sigma^2}{N} $$
+The **SEM** is simply the square root of $Var(\bar{X})$:
+
+$$\sigma_{\bar{X}} = \sqrt{\frac{\sigma^2}{N}} = \frac{\sigma}{\sqrt{N}}$$
+
+#### SEM from data
+
+When the sample includes the entire population, then we know the population mean precisely. In practice, however, we usually do not have access to the entire population. 
+
+Instead, we can use the **sample standard deviation**, $s$, as an **estimate** for the population parameter $\sigma$. This also allows us to approximate the SEM using the SD of the sample:
+
+$$ SE_{\bar{X}} = \frac{s}{\sqrt{N}} \approx \frac{\sigma}{\sqrt{N}} $$
+ 
+
+### Confidence Intervals
+
+A **Confidence Interval (CI)** gives a range of values within which we would expect the true population parameter to fall most of the time. Confidence intervals can be calculated for all kinds of sample statistics, but are most commonly reported for the **sample mean**.
+
+The most commonly used CI is the **95% CI** of the mean, which gives us an estimate for ***a range of values within which the true population mean will fall 95% of the time***. 
+
+The following [link](https://rpsychologist.com/d3/ci/) contains a very intuitive visualization of what a CI of a sample is. Note that sample mean is **NOT** related to sample variance. So, the widths of the simulated CIs will vary a lot, and **narrow CIs are not necessarilly more accurate**, as they may still be far away from the true mean.
+
+Since the sampling distribution of the sample mean approximates a normal distribution, this means that the 95% CI is approximately equal to the sample mean plus or minus two times the SEM:
+
+$$ \bar{X} - 2*SE_\bar{X} < \mu < \bar{X} + 2*SE_\bar{X} $$
+
+For example, if we were to compute the sample mean $\bar{X}$ from 100 random samples taken from the same population, and compute a 95% CI for each of them, then the 95% CI for 95 of the 100 samples will contain the true population mean.
+
+***BEWARE:*** The 95%CI does **NOT** mean there is a 95% chance that the true population parameter falls within any particular CI. For any individual sample, the true population parameter either ***does*** or ***does not*** fall within the given range! (This is a common mistake, so we emphasize this point here: this is a binary outcome for any single CI that we can compute). Instead, 95 % of the CIs will include the population mean **in the long run**. ***"Confidence" in the name "confidence interval" is confidence in the algorithm rather than in an interval computed for a single sample.***
+
+
+### SE, CI and sample size
+
+Both the SE and the CI are heavily dependent on ***sample size***. Consequently, this should be an important consideration in designing experiments, which we will get to later in the course.
+
+
+## IV. The Central Limit Theorem
+
+### What is the Central Limit Theorem?
+
+The CLT is one of the most fundamental concepts in statistics and encapsulates the concepts discussed above. Briefly, it says that, as the sample size increases, a sample statistic will converge on the true population parameter, and its distribution will be approximately normal.
+
+Most commonly, the CLT is applied to the sample mean. In this context, the CLT is a statement about the ***sampling distribution of the sample mean***. More specifically, the CLT says that, if we were to take a whole bunch of different samples from the same population:
+
+1. The **variation** in the distribution of sample means will be ***inversely proportional*** to the **sample size** $N$.
+2. Moreover -- and this is key -- the sample means will follow a **normal distribution** centered around the population mean.
+
+Since the SEM decreases as the square root of the sample size, in the limit our uncertainty in the sample mean $\bar{X}$ will go to zero as $N$ goes to infinity (and therefore $\bar{X}$ will exactly equal the true population mean $\mu$):
+
+$$\lim_{N \rightarrow \infty}\frac{\sigma}{\sqrt{N}} = 0$$
+
+$\Rightarrow$ As it turns out, this distribution has ***maximum entropy***. This means that any individual sample gives no additional information about any of the other samples, i.e. they are uncorrelated. Anytime the measurements you use to estimate a random variable are **independent and identically distributed (iid)**, repeated estimates of your sample statistic will show a normal distribution.
+
+$\Rightarrow$ More generally, any sample statistic will follow the same general pattern: ***as the sample size increases, any estimator will converge on the true population parameter*** with a normal distribution, even if its own distribution is not normal. Your **confidence** in that value will increase because the variation among the sample estimates will get smaller.
+
+**Below, we will discover these principles empirically.**
+
+***
+
+## Examples
+
+### A. Sampling from a discrete uniform distribution
+
+Here, we sample from a flat distribution where the probability of any outcome is the same. This could be the chance of winning a lottery ticket, the month of the year in which anyone in the Biology Department was born, or the amount of time you will wait for a subway train that arrives (punctually!) every 15 minutes, if you enter the subway at any given moment. The lesson is the same regardless of the specific uniform distribution we sample from.
+
+Let's start by rolling a single six-sided die. Assuming the die is fair, then the chance of landing on any side is the same. This is an example of a ***discrete*** uniform distribution.
+
+Instead, if we roll 2 dice 10,000 times, we see a different pattern. Let's plot these two scenarios together:
+```{r}
+# roll a single die 10,000 times and record the face value for each roll
+one_die <- sample(1:6,10000,replace=TRUE)
+
+# roll two dice 10,000 times and record the sum of the face values each time
+pair_of_dice <- sample(1:6,10000,replace=TRUE) + sample(1:6,10000,replace=TRUE)
+
+one = ggplot(as.data.frame(one_die), aes(x=one_die)) +
+  geom_histogram(bins=6, fill="wheat1", color="black") +
+  theme_classic()
+
+two = ggplot(as.data.frame(pair_of_dice), aes(x=pair_of_dice)) +
+  geom_histogram(bins=6, fill="peachpuff2", color="black") +
+  theme_classic()
+
+ggarrange(one, two, labels="AUTO") +
+  theme(aspect.ratio = 0.4)
+```
+
+
+$\Rightarrow\ $ _**Why does this happen?**_
+
+First, let's compute how many ways are there to roll different total face values when throwing a pair of dice. Below are two different solutions that give the same output for two dice. One is more general.
+
+We can then run these functions to see how many ways we can get any particular value from a roll of two dice (both functions give the same output):
+
+```{r}
+## A short brute force function to compute number of ways to get 
+## a total face value for 2 fair dice, ranging from 1 to 12
+ncomb.2dice = function (value) {
+  # initialize an empty vector of length 12 with all zeroes
+  combos_2dice = rep(0,12)
+  for (i in 1:6) {  # compute all the combinations
+    for (j in 1:6) {
+      index = i+j
+      combos_2dice[index] = combos_2dice[index] + 1
+    }
+  }
+  return(combos_2dice[value]) # return the value(s) of interest
+}
+
+## A more elegant general solution by Chris Jackson for any number of dice
+# the default number is 2, but this can be overriden anytime.
+ncomb.ndice <- function (value, n_dice=2) {
+  outcomes <- table(rowSums(do.call(expand.grid, 
+                                    rep(list(1:6), n_dice))))
+  all.outcomes <- rep(0, (n_dice*6) + 1)
+  all.outcomes[as.numeric(names(outcomes)) + 1] <- as.numeric(outcomes)
+  return(all.outcomes[value + 1])
+}
+
+# how many ways are there to get each value?
+ncomb.ndice(3)
+ncomb.ndice(7)
+ncomb.ndice(1:12)  # surprise! This works for a vector too!
+```
+
+We can use the result of these functions to plot the distributions of outcomes for rolls of any number of dice at once:
+
+```{r, echo=FALSE}
+shinyApp(
+  ui = fluidPage(
+    sliderInput("n_dice",
+                "Select the number of dice cubes:",
+                min = 1,
+                max = 7,
+                value = 2,
+                step = 1,
+                animate = TRUE),
+    plotOutput("hist")
+  ),
+
+  server = function(input, output) {
+    output$hist = renderPlot({
+      min_max = 1:100
+      any_dice = data.frame(newsum = min_max, newcount = ncomb.ndice(min_max,n_dice=input$n_dice))
+    
+      ggplot(any_dice, aes(x=newsum, y=newcount)) +
+        geom_histogram(stat = "identity", fill="wheat1", color="black") +
+        labs(x="Total face value", y="Frequency") #+
+#        theme(axis.text=element_text(size=12),
+#              axis.title=element_text(size=14,face="bold"))
+    })
+  },
+  
+  options = list(height = 600)
+)
+```
+
+These distributions, showing the number of combinations that can give rise to each sum of dice, are actually examples of a **binomial distribution**. 
+
+Notice that the plot on the right looks kind of "bell shaped". A (continuous) normal distribution is often a good approximation for the (discrete) binomial distribution when the number of items sampled is large. We will learn more about these soon when we delve into probability distributions.
+
+***
+
+### B. Sampling from a continuous uniform distribution
+
+Above we looked at a **discrete** uniform distribution. The problem can be generalized to a **continuous** uniform distribution, in which all possible values in an interval are represented with equal probability. 
+
+For example, the time that you have to wait for a train to come is uniformly distributed between 0 and the usual interval at which trains arrive (assuming they are always on time). Sometimes the train will arrive right away when you step onto the platform, and sometimes you'll have to wait up to 15-10 minutes. It's impossible to know beforehand (without a train schedule).
+
+To get a feel for this, let's pick a bunch of numbers at random between zero and one. (This seems like a pretty boring thing to do, but we will see later why it's relevant to a lot of estimation problems.)
+
+Let's sample randomly 100 times from a uniform distribution (range = 0-1) and look at the results:
+
+```{r fig.width=5, fig.asp=.6}
+size = 100  # the sample size
+sample_unif = runif(size, min=0, max=1)
+head(sample_unif)
+
+# plot the results
+ggplot(data.frame(trial = rep(1:size), 
+                  value = runif(size, min=0, max=1)), aes(x=value)) +
+  geom_histogram(binwidth=.1, fill="indianred1", color="black") +
+  ggtitle(paste(size,"random draws from dunif",sep=" ")) +
+  theme_classic()
+```
+
+Let's write a function to do all this for us in one command. This will allow us to take a lot of different samples, and visualize how they compare:
+
+```{r fig.width=5, fig.asp=.8}
+# draw a histogram for a sample of size 'size' between zero and one
+# `return` is not strictly needed here because this function does only one thing, but 
+# it makes it explicit what the return value of the function will be. 
+runif.hist = function(size){
+  return(
+    ggplot(data.frame(trial = rep(1:size), 
+                      value = runif(size, 0, 1)), 
+         aes(x=value)) +
+    geom_histogram(binwidth=.1, fill="indianred1", color="black") +
+    ggtitle(paste(size,"random draws from dunif",sep=" ")) +
+    theme_classic()
+  )
+}
+ggarrange(runif.hist(size),runif.hist(size),
+          runif.hist(size),runif.hist(size), 
+          nrow=2, ncol=2)
+
+```
+
+Now we can use our function to plot random samples of any size. 
+
+#### Exercise
+
+$\Rightarrow\ $ _**What happens to the shape of the distributions if we do this 10, 100, or 1,000 times? Try it out yourself.**_
+
+```{r, echo=FALSE}
+shinyApp(
+  ui = fluidPage(
+    sliderInput("sample_size",
+                "Set the sample size:",
+                min = 5,
+                max = 1000,
+                value = 10,
+                step = 5,
+                animate = TRUE),
+    plotOutput("hist")
+  ),
+  
+  server = function(input, output) {
+    output$hist = renderPlot({
+      runif.hist(size=input$sample_size)
+    })
+  },
+  
+  options = list(height = 600)
+)
+```
+
+$\Rightarrow\ $ _**What do you notice about how the sample distribution changes with sample size?**_
+
+The sample distribution starts to converge toward the theoretical distribution as the sample size increases.
+
+
+***
+
+### C. Sampling distribution of the sample mean
+
+Let's remind ourselves what our goal is: we would like to figure out **how precisely we can estimate the population mean**, given a particular sample size. So far, we've drawn ***individual samples*** of a particular size from a uniform continuous distribution. 
+
+To get a feel for how our estimate will vary from sample to sample, let's look at the **mean of multiple samples**. This will tell us, for example, how long we would expect to wait for our subway train on the way to work ***on average*** over the course of a semester or a year (assuming there are no unexpected delays, and we all get back on the subway eventually).
+
+Here, we will look at the same uniform distribution as above. Keep in mind that the true mean of a continuous uniform distribution is the range divided by two (here, that would be 0.5).
+
+#### Sample mean for a single sample
+
+Let's calculate the mean of a single sample of 10 observations:
+
+```{r}
+# mean of 10 draws from a continuous uniform distribution
+# ranging from 0 to 1
+print("Sample mean for one sample of 10 observations:\n")
+mean(runif(10, min=0, max=1))
+```
+
+
+#### Sample means from many samples
+
+$\Rightarrow\ $ _**How close is the value we got above to the true population average? What happens if we repeat this a whole bunch of times?**_
+
+Let's plot the distribution of the sample means to get a better feel for how much the sample mean varies from sample to sample.
+
+Try this out yourself. Use the `replicate()` function to get the sample mean for each of 12 samples of size 10, and then visualize the results as a histogram:
+
+```{r warning=FALSE, message=FALSE, fig.width=5, fig.asp=.6}
+
+# Sample means for each of 12 samples of 10 observations
+n.samples = 12
+sample.size = 10
+sample.means = replicate( n.samples, mean( runif(sample.size, min=0, max=1) ) )
+sample.means
+
+# make a histogram of the results
+ggplot(data.frame(sample.name = (1:n.samples), 
+                  sample.mean = sample.means), 
+       aes(x=sample.mean)) +
+  geom_histogram(binwidth=0.05, fill="indianred1", color="black") +
+  xlim(0,1) +
+  ggtitle(paste("Means of",n.samples,"random samples of size",sample.size,"(runif)",sep=" "))
+
+```
+
+We can see from this that there is quite a lot of variation in the sample means! 
+
+Now let's create a **function** to draw a histogram of the **sampling distribution of sample means**, which will make it a lot easier to visualize our results for different numbers and sizes of samples. At the same time, let's also put some vertical lines on the plots to show the mean and SD of the distribution.
+
+```{r}
+# create a function that takes two parameters (with defaults):
+#   n.samples = number of times to replicate the sampling
+#   sample.size = number of observations for each sample
+mean.runif.hist = function(n.samples=100, sample.size=10) {
+
+  # generate n.samples and compute the sample mean for each sample
+  x.bar = replicate(n.samples, mean(runif(sample.size, min=0, max=1)))
+  sample.means = data.frame(sample.name = 1:n.samples,
+                            sample.mean = x.bar )
+  
+  # plot the distribution of sample means
+  ggplot(sample.means,aes(x=x.bar)) +
+    geom_histogram(binwidth=0.02, fill="indianred1", color="black", alpha=0.5) +
+    xlim(0,1) +
+    
+    # below is a trick to limit the number of significant digits
+    # displayed for the mean and SD (2 for 100, 3 for 1000, etc.)
+    ggtitle(paste("n=",n.samples,", size=",sample.size," (runif)\n",
+                  "(mean=", signif(mean(x.bar), log10(n.samples)),
+                  ", sd=", signif(sd(x.bar), log10(n.samples)),")",
+                  sep="") ) +
+    
+    # draw vlines for the mean and SD of the sample means
+    geom_vline(aes(xintercept=mean(x.bar)), color="turquoise1", size=1) +
+    geom_vline(aes(xintercept=mean(x.bar) + sd(x.bar)), 
+               color="blue", linetype="dotted", size=0.5) +
+    geom_vline(aes(xintercept=mean(x.bar) - sd(x.bar)), 
+               color="blue", linetype="dotted", size=0.5)
+}
+
+```
+
+#### Exercise: Histograms
+
+$\Rightarrow\ $ _**Experiment with how the plots change the $n$ and $size$ parameters vary. Try different combinations of $n$ and $size$ across several orders of magnitude (e.g. 10, 100, 1000). Try holding one parameter constant and changing the other and the other way around.**_ 
+
+```{r, echo=FALSE}
+shinyApp(
+  ui = fluidPage(
+    sliderInput("n_samples",
+                "Set the number of samples:",
+                min = 5,
+                max = 1000,
+                value = 10,
+                step = 5,
+                animate = TRUE),
+    sliderInput("sample_size",
+                "Set the sample size:",
+                min = 5,
+                max = 1000,
+                value = 10,
+                step = 5,
+                animate = TRUE),
+    plotOutput("hist")
+  ),
+  
+  server = function(input, output) {
+    output$hist = renderPlot({
+      mean.runif.hist(n.samples=input$n_samples,
+                      sample.size=input$sample_size)
+    })
+  },
+  
+  options = list(height = 700)
+)
+```
+
+$\Rightarrow$*How did the distributions change when you increased the number of sample sets, but kept the sample size the same?*
+
+Increasing the number of samples sets doesn't make that much difference.
+
+$\Rightarrow$*How did the distributions change when you increased the sample size?*
+
+Increasing the sample size narrows the distributions considerably.
+
+$\Rightarrow$_What does this tell you about the importance of **sample size** vs. the **number of samples** to your estimate of the population mean?_
+
+Sample size has much more of an effect on the estimate of the sample mean. The bigger the sample, the more precise the estimate of the population mean.
+
+
+#### Box plots
+
+We can also use **box plots** to summarize these distributions, which make it a little easier to compare them visually. Below we create a boxplot showing four distributions of the sample means for 100 samples, with varying sample sizes of 10, 100, and 1,000:
+
+```{r fig.width=5, fig.asp=.8}
+
+# a convenient function that returns a list of means for "n" samples of size "size" 
+sample.means.runif = function (n.samples, sample.size) {
+  replicate( n.samples, mean( runif(sample.size, min=0, max=1) ) )
+}
+```
+
+```{r, echo=FALSE}
+shinyApp(
+  ui = fluidPage(
+    sliderInput("sample_size",
+                "Set the sample size:",
+                min = 5,
+                max = 1000,
+                value = 10,
+                step = 5,
+                animate = TRUE),
+    column(7,
+            plotOutput("box")),
+    column(5,
+            dataTableOutput("table"))
+  ),
+  
+  server = function(input, output) {
+    a <- reactive({sample.means.runif(100,input$sample_size)})
+
+    output$box = renderPlot({
+      boxplot(a(),
+              horizontal=TRUE,
+              ylim=c(0.2,0.8),
+              range=1,
+              notch=T,
+              xlab = "Distribution of sample means",
+              ylab = "",
+              main="Distribution of sample means for \n 100 samples of a given sample size"
+      )
+    })
+    
+    output$table = DT::renderDataTable({
+      a_summary_stats <- c(input$sample_size,
+                           paste(round(min(a()),2),round(max(a()),2),sep="-"),
+                           round(mean(a()),2),
+                           round(sd(a())/sqrt(length(a())),3))
+      a_summary_stats <- data.frame(a_summary_stats)
+      rownames(a_summary_stats) <- c("Sample Size",
+                                     "Mean Range",
+                                     "Mean of Sample Means",
+                                     "SEM")
+      colnames(a_summary_stats) <- "Stats"
+      a_summary_stats
+    },
+      rownames = TRUE,
+      options = list(dom = 't')
+    )
+  },
+  
+  options = list(height = 600)
+)
+```
+
+The following table summarizes these results.
+
+```{r echo=FALSE, eval=TRUE }
+data <- data.frame(
+  10^(0:4),
+  c("0-1","0.2-0.8","0.4-0.6","0.47-0.53","0.49-0.51"), 
+  c("NA","~0.5","~0.5","0.50","0.50"), 
+  c("~0.3","~0.1","~0.03","~0.01","~0.003")
+)
+knitr::kable(data, row.names = NA,
+             col.names = c("Sample Size",
+                           "Mean Range","Mean of Sample Means","SEM"),
+             align=c('r','c','c','r')
+             )
+```
+
+These tests show empirically that we need a **100-fold increase in the sample size** in order to get a **10-fold decrease in the SEM**. So, the SEM indeed decreases as the square root of the sample size.
+
+The SEM computed with the sample SD approximates the SEM computed using the true population SD for the larger sample sizes (n = 100, 1000, 10000).
+
+### D. Confidence Intervals
+
+It is very rare that we know the true population parameters. We can report our uncertainty about how well a random variable estimates a population parameter using a **confidence interval (CI)**. The CI of the mean gives us an idea of how likely it is that the true mean falls within a specified range.
+
+For example, the **95% CI** gives us an interval that we expect will contain the true population mean 95% of the time, given a sample of size $N$. It is typical to see 90%, 95%, and 99% confidence intervals.
+
+How do we calculate the CI? Since we know our **sample estimate of the population mean** is **normally distributed**, we know that around 95% of the time our sample estimate of the population mean, $\bar{X}$, will be within two standard deviations of the true mean (even though every once in a while it will be rather far off because we are taking random samples). This is because around 95% of any normal distribution falls within 2 SD of the mean:
+```{r}
+pnorm(2) - pnorm(-2)       # z-score=2 is approximately 95%
+pnorm(1.96) - pnorm(-1.96) # this is closer to 95%
+```
+
+We can now find the range of the 95% CI for the population mean, which is approximately $\pm 2$ SD from the sample mean, $\bar{X}$:
+
+$$ \overline{X} - 2s_x/\sqrt{N} \le \mu_X \le \overline{X} + 2s_x/\sqrt{N} $$
+
+Technically, the 95% CI specifies that **95% of random intervals $\overline{X} \pm 1.96s_x/\sqrt{N}$ will contain the true population mean**. 
+
+Note that since our sample estimate is a random variable, the edges of the interval are also random. Any particular CI either does or does not contain the true population mean, and around 5% of randomly sampled intervals will not contain the mean.
+
+We can express any $100(1-\alpha)$% CI as a function of the central $1 - \alpha$ proportion of the standardized normal distribution of $\bar{X}$:
+
+$$ (1-\alpha/2)\%\ CI = \bar{X} \pm z_{1-(\alpha/2)}*\frac{\sigma}{\sqrt{N}}$$
+
+where $z_{1-(\alpha/2)}$ is the $z$-quantile function at probability $1-(\alpha/2)$. 
+
+For a 95% CI, $\alpha = 0.05$ and we can use `qnorm(0.975)` to get the limits of the interval, which corresponds to a $z$-score of 1.96.
+
+$$ 95\%\ CI \approx \bar{X} \pm 1.96\frac{\sigma}{\sqrt{N}}$$
+
+#### Exercise
+
+$\Rightarrow\ $ _**Calculate the 95% CI for 4 samples ranging in size from 10-10,000.**_
+
+```{r}
+# We will use z=1.96, which is technically more correct than using z=2 for 95% CI.
+# Since normal is symmetric, we can add and subtract this to get the CI.
+Q <- qnorm(0.975)
+
+# mean, SEM, and CI of our samples
+for ( i in c(10, 100,1000,10000) ) {
+  sample <- (runif(i, min=0, max=1))
+  mean_sample <- mean(sample)
+  sem <- sd(sample)/sqrt(i)
+  interval <- c(mean_sample - Q*sem, mean_sample + Q*sem)
+  
+  cat("Sample size:",i,"\nMean:",mean_sample,
+      "\n  SEM:",sem,"\n  CI:",interval,"\n\n",fill=FALSE)
+}
+```
+
+$\Rightarrow\ $ _**What can you learn from these comparisons?**_
+
+We observe that the 95% CI decreases as the sample size increases. If we repeat each of these 100 times, then 95 out of the 100 intervals will contain the true population mean.
+
+
+### E. Connection between the CI and the $p$-value
+
+In _**hypothesis testing**_, which we will discuss next week, we choose a significance threshold like $p=0.05$ to reject the null hypothesis that our sample comes from the null distribution. Correspondingly, if the 95% CI does not contain the mean for the null hypothesis, then the $p$-value for our sample statistic is less than 0.05. We will discuss this in a lot more detail in coming weeks.
+
+***
+
+## Summary
+
+Through the exercises above, we saw that increasing the sample ***size*** dramatically changes the width of the sampling distribution of sample means. If we have few observations per sample, the histogram of this distribution is wide, and with many observations per sample, it is very narrow.
+
+Key concepts:
+
++ The distribution of the sample means approximates a **normal distribution** and hence has predictable statistical properties.
+
++ The **sample mean** converges toward the **population mean** as the **sample size increases**. Correspondingly, the **variation** in the mean is **inversely proportional to the sample size**.
+
++ The **standard error of the mean**, representing the expected variation in the mean from sample to sample, can be computed from a **single sample of independent observations** due to its direct dependency on **sample size**.
+
++ It doesn't really matter how many different sample sets you take -- for the same sample size, the shape of the distribution stays about the same no matter how many times you run the experiment. _[Except when the sample size is really small, since we have so few measurements; we will return to this issue later.]_
+
+
+***
+
+
+## References
+
+**Whitlock & Schluter:** Chapter 4
+
+**Aho:** 
+
++ Section 3.2.2.2 (Normal distribution)
++ Section 5.2 (Sampling Distributions)
+  + 5.2.2 (Sampling Distribution of $\bar{X}$)
+  + 5.2.2.1 (Central Limit Theorem)
++ Section 5.3 (Confidence Intervals)
