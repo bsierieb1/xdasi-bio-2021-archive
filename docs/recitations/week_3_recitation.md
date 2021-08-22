@@ -34,7 +34,7 @@ The data originally come from [this study](https://www.ncbi.nlm.nih.gov/pmc/arti
 	- How many samples of each gender does the data set have?
 	- How many samples of each race and ethnicity does the data set have?
 	- What is the distribution of ages at initial pathologic diagnosis? Does it drastically differ between genders?
-	- Does the survival ("vital status") visibly differ between genders?
+	- Does the survival (`vital_status`) visibly differ between genders?
 4. Explore the gene expression data.
 	- Calculate the standard deviation of the expression levels of each gene across all samples using a `for` loop.
-	- Repeat this using an `apply` function.
+	- Repeat this using `apply()`.
