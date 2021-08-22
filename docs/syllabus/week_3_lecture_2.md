@@ -7,4 +7,4 @@ has_children: false
 
 
 
-[CLICK HERE TO ACCESS THE LECTURE NOTES](http://shiny.bio.nyu.edu/bs167/week_3_lecture_2/)
+[CLICK HERE TO ACCESS THE INTERACTIVE LECTURE NOTES](http://shiny.bio.nyu.edu/bs167/week_3_lecture_2/)
