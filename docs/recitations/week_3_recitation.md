@@ -1,5 +1,5 @@
 ---
-title: Week 3: Import, cleaning, and manipulation of data
+title: Week 3 - Import, cleaning, and manipulation of data
 parent: Recitations
 nav_order: 1
 has_children: false
