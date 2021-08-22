@@ -7,7 +7,7 @@ has_children: false
 
 
 
-### List of challenges
+### Assignment
 
 1. Data types in R that are most commonly used by biologists are `numeric`, `character`, and `logical`. Discuss what kind of data **can** be stored as each class. What kind of data **should** be stored as each class?
 2. The most basic data structure is a `vector`.
@@ -26,7 +26,6 @@ has_children: false
 		- Use `which()`.
 		- Use `table()`.
 	- Substitute the names of the levels with another set of names.
-		- Use a `for` loop.
 		- Use `which()`.
 		- Use an R shortcut.
 4. The most commonly used 2-dimensional data structures are `matrix` and `data.frame`.

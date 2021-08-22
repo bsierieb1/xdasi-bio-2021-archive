@@ -14,7 +14,7 @@ has_children: false
 The data set that contains the expression values of ~20,000 genes for 185 pancreatic cancer tumors. The expression matrix is accompanied by a meta data table that describes each patient from whom the tumor sample was taken.
 The data originally come from [this study](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6084949/). They were downloaded from [kaggle](https://www.kaggle.com/abhiparashar/cancer-prediction/version/1) and a few modifications were introduced.
 
-### List of challenges
+### Assignment
 
 1. Import the data.
 	- As long as the data are in a human-readable (i.e. not binary) format, always start by opening the file in a text editor.
