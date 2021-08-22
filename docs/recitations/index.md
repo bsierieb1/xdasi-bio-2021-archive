@@ -1,6 +1,6 @@
 ---
 title: Recitations
-nav_order: 2.5
+nav_order: 3
 has_children: true
 ---
 
