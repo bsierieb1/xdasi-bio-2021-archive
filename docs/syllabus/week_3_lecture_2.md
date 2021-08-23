@@ -7,9 +7,4 @@ has_children: false
 
 
 
-<iframe src="http://shiny.bio.nyu.edu/bs167/week_3_lecture_2/" width="100%" class="myIframe">
-</iframe>
-
-<script type="text/javascript" language="javascript"> 
-$('.myIframe').css('height', $(window).height()+'px');
-</script>
+[CLICK HERE TO ACCESS THE INTERACTIVE LECTURE NOTES](http://shiny.bio.nyu.edu/bs167/week_3_lecture_2/)
