@@ -1,0 +1,19 @@
+"","generation","phenotype","proportion"
+"1","P0","Few Cells",0
+"2","F1","Few Cells",0
+"3","F2","Few Cells",76
+"4","P0","Pachytene Arrest",0
+"5","F1","Pachytene Arrest",24
+"6","F2","Pachytene Arrest",4
+"7","P0","Reduced Germline",7
+"8","F1","Reduced Germline",26
+"9","F2","Reduced Germline",14
+"10","P0","Spermatogenesis Only",0
+"11","F1","Spermatogenesis Only",16
+"12","F2","Spermatogenesis Only",6
+"13","P0","Small Oocytes",45
+"14","F1","Small Oocytes",16
+"15","F2","Small Oocytes",0
+"16","P0","Minor Defects",48
+"17","F1","Minor Defects",18
+"18","F2","Minor Defects",0
