@@ -40,3 +40,6 @@ vignettes/*.pdf
 .DS_Store
 docs/learning_r/.DS_Store
 docs/learning_r/.DS_Store
+
+# KCG dev test area
+xdasi-test/
