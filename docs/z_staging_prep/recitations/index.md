@@ -1,6 +1,7 @@
 ---
 title: Recitations
-nav_order: 3
+parent: Staging
+nav_order: 1
 has_children: true
 ---
 

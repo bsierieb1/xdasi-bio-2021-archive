@@ -1,5 +1,5 @@
 ---
-title: Week 3 - Data cleaning
+title: Week 3 - Data Cleaning
 parent: Recitations
 grand_parent: Staging
 nav_order: 2
