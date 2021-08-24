@@ -9,7 +9,7 @@ has_children: false
 {: .no_toc }
 
 ## NYU Biology (BIOL-GA2030), Fall 2021
-{: .no_toc }
+{: .no_toc .text-delta }
 
 ## Table of contents
 {: .no_toc .text-delta }
@@ -19,98 +19,128 @@ has_children: false
 
 ---
 
-# Course Aims
+# Course Description
 
 To provide introductory theory and hands-on training in exploratory data analysis and statistics for graduate students in biology who have no prior computational experience. Students will learn basic R programming as well as foundational concepts and practical tools that provide a starting point for further advanced study in genomics, bioinformatics and computational biology.
 
-<details>
-  <summary>Expand/hide</summary>
-
-# Logistics
-
-## Classes
-+ One 120-minute lecture/lab (Mondays 9:00am-11:00am)
-+ One 75-minute recitation (Tuesdays 1:00pm-2:15pm)
-+ One 120-minute lecture/lab (Thursdays 9:00am-11:00am)
-
-## Location
-Room 805 CGSB (12 Waverly Place)
-
-## Instructor
-Dr. Kristin Gunsalus ([kcg1-at-nyu.edu](mailto:kcg1@nyu.edu))
-
-## Teaching Assistant
-Bogdan Sieriebriennikov ([bs167-at-nyu.edu](mailto:bs167@nyu.edu))
-
-## Office Hours
-By appointment
-
-## Course Sites
-
-### NYU Brightspace
-
-
-For students who cannot attend the "synchronous" portion of the course, recordings of each class will also be posted here.
-
-### Course Website
-
-Reading, class notes, and in-class exercises will be posted here on a weekly basis.
-
-### Course Slack Workspace
-
-
-## Grading
-
-___Class Participation: 10%___
-
-*   Classes will include presentations, tutorials, group discussion, and in-class coding exercises.
-*   You will be asked to share thoughts, explain ideas, and share coding solutions with other students during class.  
-*   You will sometimes be asked to work together with one or two other students to discuss concepts or work on an R exercise or coding challenge.
-
-___Quizzes: 15%___
-
-*    Classes will begin with a ***5-minute quiz*** designed gauge your knowledge of basic statistical concepts. Quizzes will consists of 5 random questions from a set of study questions for each chapter in the textbook, which will be provided in advance.
-
-___Homework: 50%___
-
-*   Weekly homework assignments involving R coding will posted on Brightspace and will be due **Sundays at 11:55pm EST/EDT**. You are expected to complete all assigned homework.
-*   A total of **ten homework assignments** will contribute toward the final grade for the course; other assignments with the lowest scores will be dropped.
-*   Students will have an opportunity to **resubmit revised versions** of their solutions through **Tuesday at 1:00pm EST/EDT**. Resubmissions will receive a **10% penalty** if submitted by **Monday at 11:55pm EST/EDT** and an additional **5% penalty** if handed in after that. No homework submissions will be accepted later than Tuesday afternoon at 1pm.
-
-___Final In-class Exam:  10%___
-
-*   An in-class written exam on major statistical concepts and theory will be given on the last day of class.
-
-___Final Take-Home Exam / Project:  15%___
-
-*   An R coding project will be assigned that will challenge you to apply statistical techniques from throughout the semester to modern biological data. This will take the form either of an extended homework assignment or a final project of your choice. A final project will require prior approval from the instructor and the TA.
-
-
-## Textbook and Reference Materials
-
-### Statistics Texts
-
-*   The textbook we will use is called ***The Analysis of Biological Data*** by Whitlock and Schluter, 3rd edition. You may either purchase a hard copy or purchase / rent an e-copy from [Amazon](https://smile.amazon.com/dp/B081ZH5PL2).
-
-*   Additional assigned reading will draw from a variety of reference books and other informational resources. The course syllabus, reading assignments, lab exercises, tutorials, and links to useful resources will be posted on the **[course website](https://xdasi.bio.nyu.edu/)**.
-
-
-### R Coding
-
-*   There are many online resources for learning R. Some of these are listed on this website under **R Resources**. Students will be pointed to relevant references throughout the semester.
-
-*   Students will have free access to ***[DataCamp](http://www.datacamp.com/)*** for the duration of the course. Students with little or no experience in R programming are encouraged to **complete the first series of online tutorials prior to the first class** in order to familiarize them with R programming concepts, syntax, operators, and data structures.
-
-*   All NYU students have free access to electronic versions of a large number of the ***technical programming manuals*** (R, Python, etc.) through NYU’s subscription to ProQuest. You can access it through the **[NYU Library](https://guides.nyu.edu/az.php?q=safari)** or through this **[persistent link](https://persistent.library.nyu.edu/arch/NYU01272)** (requires NYU two-factor authentication; you will be redirected automatically).
-
-</details>
-
----
-
-# Course Description
+<details closed markdown="block">
+  <summary> More </summary>
 
 The course will cover both classical and modern statistical methods, including frequentist, Bayesian, and resampling methods, as well as exploratory data analysis (descriptive statistics and dimensional reduction with clustering, PCA, t-SNE). Applications to the analysis of laboratory data will include problems commonly encountered in bioinformatics, genomics, molecular biology, and systems biology. In-class exercises and problem sets will draw from data generated in our own department, public-domain websites, and simulations. Data sets will be analyzed in the context of hypotheses underlying the experiments in which they were generated. The role of simulation techniques for testing statistical methods applied to real data will be emphasized throughout the course.
 
 Several modern statistical methods are lumped under the broad umbrella term, "resampling statistics." Resampling methods date back to the 1930's, but they did not become practical until recently. These methods are computer-intensive, but not time-consuming, thanks to fast processing speeds and inexpensive memory in modern personal computers. Resampling methods involve randomization, permutation and Monte Carlo techniques applied to the original experimental data (sample). These methods involve no statistical tables and do not rely on assumptions about the distributions of the underlying random variables. Resampling methods are intuitively satisfying and easy to understand. Such statistical methods are commonly used in bioinformatics, genomics, and systems biology, but they are not covered in many classical biostatistics textbooks.
 
 The course assumes no previous background in statistics or programming. Students will receive hands-on training using the public-domain statistical programming environment RStudio. R is widely used in bioinformatics, genomics, and systems biology. R, which is similar to Matlab, is free and platform-independent software that can be run on Unix, Linux, Windows and any Macintosh OS X operating system. The software is specifically designated for statistical analysis of data, data manipulation and visualization, and generation of publication-quality figures.
+
+</details>
+
+---
+
+# Instructors
+
+**Professor** - Kristin Gunsalus ([kcg1-at-nyu.edu](mailto:kcg1@nyu.edu))
+
+**TA** - Bogdan Sieriebriennikov ([bs167-at-nyu.edu](mailto:bs167@nyu.edu))
+
+
+# Meetings
+
++ One 120-minute lecture/lab (Mondays 9:00am-11:00am)
++ One 75-minute recitation (Tuesdays 1:00pm-2:15pm)
++ One 120-minute lecture/lab (Thursdays 9:00am-11:00am)
+
+All classes will take place in **Room 805, CGSB** (12 Waverly Place). Office hours may be requested by appointment.
+
+
+# Course Resources
+
+### Course Website
+{: .no_toc }
+
+The course syllabus, reading assignments, class notes, in-class exercises, tutorials, and links to useful resources will be posted here.
+
+### NYU Brightspace
+{: .no_toc }
+
+Quizzes, homework assignments, and class recordings will be posted here.
+
+
+### Course Slack Workspace
+{: .no_toc }
+
+To facilitate communication, we have set up a Slack workspace for the course. The instructors will monitor the site regularly, so this is the place to post questions and share all things related to the course (thoughts, coding tricks, problems, etc.)
+
+
+# Grading
+
+### Class Participation: 10%{: .text-green-200}
+{: .no_toc }
+
+*   Classes will include presentations, tutorials, group discussion, and in-class coding exercises.
+*   You will be asked to share thoughts, explain ideas, and share coding solutions with other students during class.  
+*   You will sometimes be asked to work together with one or two other students to discuss concepts or work on an R exercise or coding challenge.
+
+### Quizzes: 15%{: .text-green-200}
+{: .no_toc }
+
+* Classes will begin with a ***5-minute quiz*** designed gauge your knowledge of basic statistical concepts. Quizzes will consists of 5 random questions from a set of study questions for each chapter in the textbook, which will be provided in advance.
+
+### Homework: 50%{: .text-green-200}
+
+* Weekly homework assignments involving R coding will posted on Brightspace.
+* A total of ***ten homework assignments*** will contribute toward the final grade for the course (the lowest scores will be dropped).
+* Assignments will be due **Sundays at 11:55pm EST/EDT**. You are expected to complete all assigned homework.
+  * Students will have an opportunity to resubmit revised versions of their solutions through **Tuesday at 1:00pm EST/EDT**.
+  * Resubmissions will receive a 10% penalty if submitted by Monday at 11:55pm EST/EDT, and an additional 5% penalty if handed in after that.
+  * No homework submissions will be accepted later than Tuesday afternoon at 1pm.
+
+### Final In-class Exam: 10%{: .text-green-200}
+{: .no_toc }
+
+*   An in-class written exam on major statistical concepts and theory will be given on the last day of class.
+
+### Final Take-Home Exam / Project: 15%{: .text-green-200}
+{: .no_toc }
+
+*   An R coding project will be assigned that will challenge you to apply statistical techniques from throughout the semester to modern biological data. This will take the form either of an extended homework assignment or a final project of your choice. A final project will require prior approval from the instructor and the TA.
+
+
+# Textbook and Reference Materials
+
+## Statistics
+{: .no_toc }
+
+*   The textbook we will use is called ***The Analysis of Biological Data*** by Whitlock and Schluter, 3rd edition. You may either purchase a hard copy or purchase / rent an e-copy from [Amazon](https://smile.amazon.com/dp/B081ZH5PL2).
+
+*   Additional assigned reading will draw from a variety of reference books and other informational resources.
+
+
+## R Coding
+{: .no_toc }
+
+### DataCamp{: .text-green-200}
+{: .no_toc }
+
+We provide free access to a customized [**DataCamp for Education**](https://app.datacamp.com/groups/exploratory-data-analysis-and-statistical-inference){: target="_blank"} site for the duration of the course. Students with little or no experience in R programming are encouraged to **complete the first series of online tutorials prior to the first class** in order to familiarize them with R programming concepts, syntax, operators, and data structures.
+
+### Online Resources{: .text-green-200}
+{: .no_toc }
+
+There are many online resources for learning R. Some of these are listed on this website under **R Resources**. Students will be pointed to relevant references throughout the semester.
+
+### Safari Books Online{: .text-green-200}
+{: .no_toc }
+
+All NYU students have free access to electronic versions of a large number of O'Reilly technical programming manuals (R, Python, etc.) through [**NYU Libraries**](https://guides.nyu.edu/az.php?q=safari){: target="_blank"}. You may access them [**here**](https://persistent.library.nyu.edu/arch/NYU01272){: target="_blank"} (requires NYU two-factor authentication; you will be redirected automatically).
+  + A good introductory text for R programming that is available here is **R for Everyone: Advanced Analytics and Graphics**, by _Jared Lander_.
+
+### ProQuest Bookshelf{: .text-green-200}
+{: .no_toc }
+
+NYU also provides subscription to ProQuest, which provides free access to many additional reference books online. You can access it [**here**](https://www-proquest-com.proxy.library.nyu.edu/){: target="_blank"}. Note that you will need to either be on campus or connected to the NYU network through a proxy server (Cisco AnyConnect).
+
+___Please let us know if any of the above links do not work!___
+
+---
+
+[Bck to top](#top)
