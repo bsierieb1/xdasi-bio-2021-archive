@@ -23,7 +23,6 @@ has_children: false
 
 To provide introductory theory and hands-on training in exploratory data analysis and statistics for graduate students in biology who have no prior computational experience. Students will learn basic R programming as well as foundational concepts and practical tools that provide a starting point for further advanced study in genomics, bioinformatics and computational biology.
 
-<div>
 <details>
   <summary>Expand/hide</summary>
 
@@ -105,7 +104,6 @@ ___Final Take-Home Exam / Project:  15%___
 *   All NYU students have free access to electronic versions of a large number of the ***technical programming manuals*** (R, Python, etc.) through NYU’s subscription to ProQuest. You can access it through the **[NYU Library](https://guides.nyu.edu/az.php?q=safari)** or through this **[persistent link](https://persistent.library.nyu.edu/arch/NYU01272)** (requires NYU two-factor authentication; you will be redirected automatically).
 
 </details>
-</div>
 
 ---
 
