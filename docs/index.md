@@ -23,6 +23,10 @@ has_children: false
 
 To provide introductory theory and hands-on training in exploratory data analysis and statistics for graduate students in biology who have no prior computational experience. Students will learn basic R programming as well as foundational concepts and practical tools that provide a starting point for further advanced study in genomics, bioinformatics and computational biology.
 
+<div>
+<details>
+  <summary>Expand/hide</summary>
+
 # Logistics
 
 ## Classes
@@ -83,16 +87,16 @@ ___Final Take-Home Exam / Project:  15%___
 *   An R coding project will be assigned that will challenge you to apply statistical techniques from throughout the semester to modern biological data. This will take the form either of an extended homework assignment or a final project of your choice. A final project will require prior approval from the instructor and the TA.
 
 
-# Textbook and Reference Materials
+## Textbook and Reference Materials
 
-## Statistics Texts
+### Statistics Texts
 
 *   The textbook we will use is called ***The Analysis of Biological Data*** by Whitlock and Schluter, 3rd edition. You may either purchase a hard copy or purchase / rent an e-copy from [Amazon](https://smile.amazon.com/dp/B081ZH5PL2).
 
 *   Additional assigned reading will draw from a variety of reference books and other informational resources. The course syllabus, reading assignments, lab exercises, tutorials, and links to useful resources will be posted on the **[course website](https://xdasi.bio.nyu.edu/)**.
 
 
-## R Coding
+### R Coding
 
 *   There are many online resources for learning R. Some of these are listed on this website under **R Resources**. Students will be pointed to relevant references throughout the semester.
 
@@ -100,6 +104,10 @@ ___Final Take-Home Exam / Project:  15%___
 
 *   All NYU students have free access to electronic versions of a large number of the ***technical programming manuals*** (R, Python, etc.) through NYU’s subscription to ProQuest. You can access it through the **[NYU Library](https://guides.nyu.edu/az.php?q=safari)** or through this **[persistent link](https://persistent.library.nyu.edu/arch/NYU01272)** (requires NYU two-factor authentication; you will be redirected automatically).
 
+</details>
+</div>
+
+---
 
 # Course Description
 

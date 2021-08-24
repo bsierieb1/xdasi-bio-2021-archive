@@ -1,7 +1,7 @@
 ---
 title: Week 3, lecture 2 - Sampling Distributions of Sample Estimates
 parent: Syllabus
-nav_order: 1
+nav_order: 2
 has_children: false
 ---
 

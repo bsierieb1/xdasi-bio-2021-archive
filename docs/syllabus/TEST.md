@@ -5,7 +5,7 @@ nav_order: 1
 has_children: false
 ---
 
-<script language="javascript"> 
+<script language="javascript">
     function toggle(id) {
         var ele = document.getElementById("toggleText" + id);
         var text = document.getElementById("displayText" + id);
@@ -16,7 +16,7 @@ has_children: false
             ele.style.display = "block";
             text.innerHTML = "Hide Solution";
         }
-    } 
+    }
 </script>
 
 <button id="displayTextunnamed-chunk-3" onclick="javascript:toggle('unnamed-chunk-3');">
