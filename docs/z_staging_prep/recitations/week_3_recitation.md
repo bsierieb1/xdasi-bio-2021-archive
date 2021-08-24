@@ -1,7 +1,8 @@
 ---
 title: Week 3 - Data cleaning
 parent: Recitations
-nav_order: 1
+grand_parent: Staging
+nav_order: 2
 has_children: false
 ---
 

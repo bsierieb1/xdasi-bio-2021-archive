@@ -1,6 +1,7 @@
 ---
-title: Week 2 - R basics
+title: Week 2 - R Basics
 parent: Recitations
+grand_parent: Staging
 nav_order: 1
 has_children: false
 ---
