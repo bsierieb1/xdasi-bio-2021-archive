@@ -1,7 +1,9 @@
 ---
-title: Introduction
+title: Syllabus
 nav_order: 1
 has_children: true
 ---
 
-# Week 1: Introduction
+# Syllabus
+
+Reading assignments, class notes, and exercises will be posted here on a weekly basis.
