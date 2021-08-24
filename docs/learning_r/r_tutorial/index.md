@@ -4,7 +4,7 @@ layout: default
 parent: Learning R
 nav_order: 2
 has_children: true
-nave_exclude: true
+nav_exclude: true
 ---
 
 
