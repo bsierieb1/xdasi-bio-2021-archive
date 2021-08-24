@@ -76,6 +76,14 @@ The following two books are highly recommended for a succinct introduction to ba
   - [purchase at Amazon](https://www.amazon.com/Everyone-Advanced-Analytics-Graphics-Addison-Wesley-ebook-dp-B071X9KT1D/dp/B071X9KT1D)
 
 
+## Style Guide
+<!-- Note: also put this section in the Best Practices index page -->
+
+Establishing good programming habits is really important. We will be encouraging you to adhere to best coding practices throughout the course.
+
+A brief overview of good coding style coding style by Hadley Wickham can be found here:[Style Guide](http://adv-r.had.co.nz/Style.html)
+
+
 [Back to top](#top)
 
 ---

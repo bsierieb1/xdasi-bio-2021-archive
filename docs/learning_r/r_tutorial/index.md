@@ -47,6 +47,9 @@ There are many other R tutorials and reference materials online. Here are a few 
 
 * [**Quick-R**](http://www.statmethods.net/index.html) _all the basics, with standard statistical methods and built-in graphics (does not cover dplyr and ggplot2)_
 
+* **Data Carpentry**](https://datacarpentry.org/)
+  + [Data Analysis and Visualization in R for Ecologists](https://datacarpentry.org/R-ecology-lesson/index.html)
+  + [Intro to R and RStudio for Genomics (alpha version)](https://datacarpentry.org/genomics-r-intro/index.html)
 ---
 
 # eBooks and Printed Texts
