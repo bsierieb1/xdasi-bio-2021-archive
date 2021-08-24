@@ -1,3 +1,13 @@
+---
+title: Data Types and Variables
+parent: R Tutorial
+grand_parent: Learning R
+nav_order: 3
+has_children: false
+nav_exclude: true
+---
+
+<!-- original .Rmd document -->
 
 ### R Objects
 

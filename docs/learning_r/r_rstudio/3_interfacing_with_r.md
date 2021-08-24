@@ -125,15 +125,34 @@ Click on the image below for a quick peek:
   <img src="images/console_demo.png" alt="Console demo" style="width:300px;border:0"/>
 </a>
 
+Both the Console and Editor allow you to **cut and paste text**. Note that **MS Word is not a good choice for this** because when you paste it can insert funny characters.
+
+**Familiar commands that work in R**
+
++ Ctrl-c : copy
++ Ctrl-v : paste
++ Ctrl-Shift-L : clear the console
++ Esc : terminate an ongoing command (useful if a command is taking too long to execute)
+
 ---
 
-[**History and Environment** _(top right)_](https://support.rstudio.com/hc/en-us/articles/200526217-Command-History-in-the-RStudio-IDE){: .btn .btn-green target="_blank"}
+[*Environment, History and Git** _(top right)_](https://support.rstudio.com/hc/en-us/articles/200526217-Command-History-in-the-RStudio-IDE){: .btn .btn-green target="_blank"}
 
-  - Shows all variables in the working environment
-  - Shows all previous commands that you have executed, either from the console or within a script (even incorrect commands containing errors are included here, so be careful!)
-  - Provides integration for version control (git, svn) - connecting RStudio to a GitHub repository is a great way to back up and share your work!
+![Environment](images/environment.png){: width="30%"} ![History](images/history.png){: width="30%"} ![Git](images/RStudio_git_pane.png){: width="30%"}
 
-![Environment](images/environment.png){: width="30%"} ![History](images/history.png){: width="30%"}
+**Environment**: Shows all variables in the working environment
+
+  - Inspect any data structure you have created
+  - Toggle complex data structures to see their contents using the arrow button
+  - Open the data viewer in the Editor pane to see the full data structure
+
+**History**: Shows all previous commands that you have executed, either from the console or within a script (even incorrect commands containing errors are included here, so be careful!)
+
+  - All of the commands you have typed in the current session (in either the Console or the Editor) are saved in a file called **.Rhistory** in your working directory.
+    - **Caution**: Your history will also contain your mistakes! So, if you are testing things out and want to keep track of just your successful commands, you can select "New File=>R Script" from the File Menu and enter them in the Editor, then save them as a separate file.
+  - The command history can be accessed by using the **UP** and **DOWN** keys while in the Console pane.
+
+**Git**: Provides integration with version control; connecting RStudio to a GitHub repository is a great way to back up and share your work!
 
 ---
 

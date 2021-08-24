@@ -55,6 +55,12 @@ RStudio allows you to install and load packages using the packages tab.
 ![](RStudio/Slide7_large.png)
 
 
+### CRAN - Comprehensive R Archive Network
+
+<https://cran.r-project.org/> - Place to download R and other packages.
+
+
+
 ## Bioconductor
 
 Another excellent source for Biology related R packages is Bioconductor. The R packages for Bioconductor are easily accessible via CRAN. To install a Bioconductor packages you must first install BiocManager package and then use the BiocManager::install() function to install a package. We will get into the details in the later lectures, but below is the code.

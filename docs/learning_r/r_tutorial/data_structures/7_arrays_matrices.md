@@ -2,7 +2,7 @@
 title: Arrays / Matrices
 parent: R Tutorial
 grand_parent: Learning R
-nav_order: 8
+nav_order: 7
 has_children: false
 ---
 

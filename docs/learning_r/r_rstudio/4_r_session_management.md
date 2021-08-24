@@ -97,7 +97,7 @@ Instead of saving your current workspace with the default name .Rdata, you may s
 
 **If you are working in an RProject, a named .Rdata file will be created automatically when you set up the RProject and will be loaded each time you open the project.**{: .text-green-200}
 
-## Loading and Saving Workspaces
+## Managing Workspaces
 
 You may save and load workspaces manually, however if you are using an **RProject**{: .text-green-200} (see below) all of this will be handled magically for you.
 
@@ -116,6 +116,59 @@ The key commands for managing workspaces are:
 **ls()**{: .text-green-200} - list the R data objects that belong to your current workspace
 
 To manually load a previously saved .RData file, set your **current working directory** to the one where .RData is located, and then use the **load()** command or use the RStudio menus to load it. You can do this using the Session menu or by clicking on the filename in the Files pane.
+
+### Examples
+
++ Code blocks below that include the R commandline prompt (`>`) show what was entered in the console window.
++ Comments begin with a hashtag (`#`).
++ The resulting output is shown below each command.
++ Note that some commands do not generate any output on the commandline.
+
+```
+> # Get working directory
+> getwd()
+[1] "/Users/kcg1/code/kriscgun/xdasi-bio-2021/exercises"
+
+> # assign current dir to a variable
+> CWD <- getwd()
+```
+
+```
+# Create a folder to use for working directory
+> dir.create("ex1")
+Warning message:
+In dir.create("ex1") : 'ex1' already exists
+```
+
+```
+> # Change working directory
+> setwd("ex1")
+```
+
+```
+> # List the contents of your working directory
+> dir()
+[1] "example1.R"
+```
+
+```
+> # Return to original directory
+> setwd(CWD)
+```
+
+```
+> # Save a (named) workspace
+> save.image("Name_of_workspace.RData")
+```
+
+```
+> # Load a workspace
+> load("Name_of_workspace.RData")
+>
+> # Do not do this!
+> load.image(".RData")
+Error in load.image(".RData") : could not find function "load.image"
+```
 
 
 ## Workspace Hygiene

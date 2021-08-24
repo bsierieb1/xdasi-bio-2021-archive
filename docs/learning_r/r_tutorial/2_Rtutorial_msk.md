@@ -4,6 +4,7 @@ parent: R Tutorial
 grand_parent: Learning R
 nav_order: 3
 has_children: false
+nav_exclude: true
 ---
 
 # NEED TO REORGANIZE -- a lot of this is now redundant with other pages
