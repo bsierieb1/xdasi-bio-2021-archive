@@ -55,18 +55,18 @@ All classes will take place in **Room 805, CGSB** (12 Waverly Place). Office hou
 # Course Resources
 
 ### **Course Website**
-{: .text-green-200}
+{: .no_toc .text-green-200}
 
 The course syllabus, reading assignments, class notes, in-class exercises, tutorials, and links to useful resources will be posted here.
 
 ### **NYU Brightspace**
-{: .text-green-200}
+{: .no_toc .text-green-200}
 
 Quizzes, homework assignments, and class recordings will be posted here.
 
 
 ### **Course Slack Workspace**
-{: .text-green-200}
+{: .no_toc .text-green-200}
 
 To facilitate communication, we have set up a Slack workspace for the course. The instructors will monitor the site regularly, so this is the place to post questions and share all things related to the course (thoughts, coding tricks, problems, etc.)
 
