@@ -1,7 +1,6 @@
 ---
 title: Functions
-parent: R Tutorial
-grand_parent: Learning R
+parent: Learning R
 nav_order: 4
 has_children: false
 ---

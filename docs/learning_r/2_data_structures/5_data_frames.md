@@ -2,7 +2,7 @@
 title: Data Frames
 parent: R Tutorial
 grand_parent: Learning R
-nav_order: 8
+nav_order: 5
 has_children: false
 ---
 

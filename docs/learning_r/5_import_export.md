@@ -1,7 +1,6 @@
 ---
 title: Import / Export
-parent: R Tutorial
-grand_parent: Learning R
+parent: Learning R
 nav_order: 5
 has_children: false
 ---

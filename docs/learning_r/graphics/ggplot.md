@@ -1,6 +1,6 @@
 ---
 title: Grammar of Graphics
-parent: R Tutorial
+parent: Data Visualization
 grand_parent: Learning R
 nav_order: 5
 has_children: false

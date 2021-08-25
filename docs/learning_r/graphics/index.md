@@ -1,8 +1,7 @@
 ---
 title: Data Visualization
 layout: default
-parent: R Tutorial
-grand_parent: Learning R
+parent: Learning R
 nav_order: 4
 has_children: true
 ---

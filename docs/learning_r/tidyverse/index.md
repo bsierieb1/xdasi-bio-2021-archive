@@ -1,7 +1,6 @@
 ---
 title: The Tidyverse
-parent: R Tutorial
-grand_parent: Learning R
+parent: Learning R
 nav_order: 6
 has_children: true
 ---
