@@ -1,4 +1,11 @@
 ---
+title: R Graphics
+layout: default
+parent: Data Visualization
+grand_parent: R Tutorial
+nav_order: 2
+has_children: false
+
 output:
   html_document:
     toc: yes
@@ -8,7 +15,7 @@ output:
 ---
 # [xdas-bio-2020](https://xdas.bio.nyu.edu/)
 
-# Data Visualization 
+# R Graphics
 
 Visualizing data is a core component of data science. It is important for communication, but also plays a key role in data exploration and modeling. Actually ***looking*** at your data helps to understand its nature and scope, spot any problems that may exist within the data, formulate and test hypotheses, and distill information to convey to others.
 
@@ -18,7 +25,7 @@ A typical workflow is illustrated in this figure from [***R for Data Science***]
 
 In order to work with data, it is usually necessary to clean, format, and transform it in preparation for visualization and exploratory data analysis. This usually involves an iterative cycle in which we use or data to generate and test hypotheses and to discover and model relationships. Finally, effective visualizations are key to communicating results and conclusions in a clear and concise manner.
 
-# R Graphics Overview
+# Overview
 
 R is very powerful for creating beautiful publication-ready graphs of all kinds. There are a lot of **built-in functions** for making graphs. It is important to know that these exist, and get a feel for some of the basics.
 
