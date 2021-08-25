@@ -52,25 +52,6 @@ The course assumes no previous background in statistics or programming. Students
 All classes will take place in **Room 805, CGSB** (12 Waverly Place). Office hours may be requested by appointment.
 
 
-# Course Resources
-
-### **Course Website**
-{: .no_toc .text-green-200}
-
-The course syllabus, reading assignments, class notes, in-class exercises, tutorials, and links to useful resources will be posted here.
-
-### **NYU Brightspace**
-{: .no_toc .text-green-200}
-
-Quizzes, homework assignments, and class recordings will be posted here.
-
-
-### **Course Slack Workspace**
-{: .no_toc .text-green-200}
-
-To facilitate communication, we have set up a Slack workspace for the course. The instructors will monitor the site regularly, so this is the place to post questions and share all things related to the course (thoughts, coding tricks, problems, etc.)
-
-
 # Grading
 
 ### **Class Participation: 10%**
@@ -105,6 +86,25 @@ To facilitate communication, we have set up a Slack workspace for the course. Th
 {: .no_toc .text-green-200}
 
 *   An R coding project will be assigned that will challenge you to apply statistical techniques from throughout the semester to modern biological data. This will take the form either of an extended homework assignment or a final project of your choice. A final project will require prior approval from the instructor and the TA.
+
+
+# Course Resources
+
+### **Course Website**
+{: .no_toc .text-green-200}
+
+The course syllabus, reading assignments, class notes, in-class exercises, tutorials, and links to useful resources will be posted here.
+
+### **NYU Brightspace**
+{: .no_toc .text-green-200}
+
+Quizzes, homework assignments, and class recordings will be posted here.
+
+
+### **Course Slack Workspace**
+{: .no_toc .text-green-200}
+
+To facilitate communication, we have set up a Slack workspace for the course. The instructors will monitor the site regularly, so this is the place to post questions and share all things related to the course (thoughts, coding tricks, problems, etc.)
 
 
 # Textbook and Reference Materials
