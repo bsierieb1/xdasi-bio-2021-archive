@@ -1,8 +1,8 @@
 ---
 title: Lists
-parent: R Tutorial
-grand_parent: Learning R
-nav_order: 6
+parent: Data Structures
+grand_parent: R Tutorial
+nav_order: 3
 has_children: false
 ---
 

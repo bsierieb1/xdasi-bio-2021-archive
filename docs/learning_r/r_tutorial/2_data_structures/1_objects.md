@@ -2,7 +2,7 @@
 title: Objects
 parent: Data Structures
 grand_parent: R Tutorial
-nav_order: 3
+nav_order: 1
 has_children: false
 ---
 

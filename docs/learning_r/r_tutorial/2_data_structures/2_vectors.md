@@ -1,8 +1,8 @@
 ---
 title: Vectors
-parent: R Tutorial
-grand_parent: Learning R
-nav_order: 5
+parent: Data Structures
+grand_parent: R Tutorial
+nav_order: 2
 has_children: false
 ---
 

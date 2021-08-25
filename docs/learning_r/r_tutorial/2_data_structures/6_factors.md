@@ -1,8 +1,8 @@
 ---
 title: Factors
-parent: R Tutorial
-grand_parent: Learning R
-nav_order: 9
+parent: Data Structures
+grand_parent: R Tutorial
+nav_order: 6
 has_children: false
 ---
 
