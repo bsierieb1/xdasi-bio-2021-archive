@@ -1,6 +1,7 @@
 ---
 title: Getting Help
-parent: Learning R
+parent: Working with Data
+grand_parent: Learning R
 nav_order: 1
 has_children: false
 ---
