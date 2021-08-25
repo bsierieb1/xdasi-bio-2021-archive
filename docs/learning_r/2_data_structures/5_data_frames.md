@@ -1,6 +1,6 @@
 ---
 title: Data Frames
-parent: R Tutorial
+parent: Data Structures
 grand_parent: Learning R
 nav_order: 5
 has_children: false

@@ -117,7 +117,7 @@ The key commands for managing workspaces are:
 
 To manually load a previously saved .RData file, set your **current working directory** to the one where .RData is located, and then use the **load()** command or use the RStudio menus to load it. You can do this using the Session menu or by clicking on the filename in the Files pane.
 
-### Examples
+## Examples
 
 + Code blocks below that include the R commandline prompt (`>`) show what was entered in the console window.
 + Comments begin with a hashtag (`#`).

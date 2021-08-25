@@ -40,7 +40,7 @@ The course assumes no previous background in statistics or programming. Students
 
 **Professor**{: .text-green-200} - Kristin Gunsalus ([kcg1-at-nyu.edu](mailto:kcg1@nyu.edu))
 
-**TA**{: .text-green-200} - Bogdan Sieriebriennikov ([bs167-at-nyu.edu](mailto:bs167@nyu.edu))
+**Co-Instructor**{: .text-green-200} - Bogdan Sieriebriennikov ([bs167-at-nyu.edu](mailto:bs167@nyu.edu))
 
 
 # Meetings

@@ -5,4 +5,4 @@ has_children: true
 nav_exclude: false
 ---
 
-# Week #: Title
+# Week 2: Data Types and Data Visualization
