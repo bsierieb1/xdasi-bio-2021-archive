@@ -1,7 +1,8 @@
 ---
 title: TEST
-parent: Syllabus
-nav_order: 1
+parent: Week 2
+grand_parent: Syllabus
+nav_order: 3
 has_children: false
 ---
 
