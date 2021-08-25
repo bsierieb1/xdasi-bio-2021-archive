@@ -38,9 +38,9 @@ The course assumes no previous background in statistics or programming. Students
 
 # Instructors
 
-**Professor** - Kristin Gunsalus ([kcg1-at-nyu.edu](mailto:kcg1@nyu.edu))
+**Professor**{: .text-green-200} - Kristin Gunsalus ([kcg1-at-nyu.edu](mailto:kcg1@nyu.edu))
 
-**TA** - Bogdan Sieriebriennikov ([bs167-at-nyu.edu](mailto:bs167@nyu.edu))
+**TA**{: .text-green-200} - Bogdan Sieriebriennikov ([bs167-at-nyu.edu](mailto:bs167@nyu.edu))
 
 
 # Meetings
@@ -54,38 +54,40 @@ All classes will take place in **Room 805, CGSB** (12 Waverly Place). Office hou
 
 # Course Resources
 
-### Course Website
-{: .no_toc }
+### **Course Website**
+{: .text-green-200}
 
 The course syllabus, reading assignments, class notes, in-class exercises, tutorials, and links to useful resources will be posted here.
 
-### NYU Brightspace
-{: .no_toc }
+### **NYU Brightspace**
+{: .text-green-200}
 
 Quizzes, homework assignments, and class recordings will be posted here.
 
 
-### Course Slack Workspace
-{: .no_toc }
+### **Course Slack Workspace**
+{: .text-green-200}
 
 To facilitate communication, we have set up a Slack workspace for the course. The instructors will monitor the site regularly, so this is the place to post questions and share all things related to the course (thoughts, coding tricks, problems, etc.)
 
 
 # Grading
 
-### Class Participation: 10%{: .text-green-200}
-{: .no_toc }
+### **Class Participation: 10%**
+{: .no_toc .text-green-200}
 
 *   Classes will include presentations, tutorials, group discussion, and in-class coding exercises.
 *   You will be asked to share thoughts, explain ideas, and share coding solutions with other students during class.  
 *   You will sometimes be asked to work together with one or two other students to discuss concepts or work on an R exercise or coding challenge.
 
-### Quizzes: 15%{: .text-green-200}
-{: .no_toc }
+### **Quizzes: 15%**
+{: .no_toc .text-green-200}
 
 * Classes will begin with a ***5-minute quiz*** designed gauge your knowledge of basic statistical concepts. Quizzes will consists of 5 random questions from a set of study questions for each chapter in the textbook, which will be provided in advance.
 
-### Homework: 50%{: .text-green-200}
+### **Homework: 50%**
+{: .no_toc .text-green-200}
+
 
 * Weekly homework assignments involving R coding will posted on Brightspace.
 * A total of ***ten homework assignments*** will contribute toward the final grade for the course (the lowest scores will be dropped).
@@ -94,13 +96,13 @@ To facilitate communication, we have set up a Slack workspace for the course. Th
   * Resubmissions will receive a 10% penalty if submitted by Monday at 11:55pm EST/EDT, and an additional 5% penalty if handed in after that.
   * No homework submissions will be accepted later than Tuesday afternoon at 1pm.
 
-### Final In-class Exam: 10%{: .text-green-200}
-{: .no_toc }
+### **Final In-class Exam: 10%**
+{: .no_toc .text-green-200}
 
 *   An in-class written exam on major statistical concepts and theory will be given on the last day of class.
 
-### Final Take-Home Exam / Project: 15%{: .text-green-200}
-{: .no_toc }
+### **Final Take-Home Exam / Project: 15%**
+{: .no_toc .text-green-200}
 
 *   An R coding project will be assigned that will challenge you to apply statistical techniques from throughout the semester to modern biological data. This will take the form either of an extended homework assignment or a final project of your choice. A final project will require prior approval from the instructor and the TA.
 
@@ -118,29 +120,29 @@ To facilitate communication, we have set up a Slack workspace for the course. Th
 ## R Coding
 {: .no_toc }
 
-### DataCamp{: .text-green-200}
-{: .no_toc }
+### **DataCamp**
+{: .no_toc .text-green-200}
 
 We provide free access to a customized [**DataCamp for Education**](https://app.datacamp.com/groups/exploratory-data-analysis-and-statistical-inference){: target="_blank"} site for the duration of the course. Students with little or no experience in R programming are encouraged to **complete the first series of online tutorials prior to the first class** in order to familiarize them with R programming concepts, syntax, operators, and data structures.
 
-### Online Resources{: .text-green-200}
-{: .no_toc }
+### **Online Resources**
+{: .no_toc .text-green-200}
 
 There are many online resources for learning R. Some of these are listed on this website under **R Resources**. Students will be pointed to relevant references throughout the semester.
 
-### Safari Books Online{: .text-green-200}
-{: .no_toc }
+### **Safari Books Online**
+{: .no_toc .text-green-200}
 
 All NYU students have free access to electronic versions of a large number of O'Reilly technical programming manuals (R, Python, etc.) through [**NYU Libraries**](https://guides.nyu.edu/az.php?q=safari){: target="_blank"}. You may access them [**here**](https://persistent.library.nyu.edu/arch/NYU01272){: target="_blank"} (requires NYU two-factor authentication; you will be redirected automatically).
   + A good introductory text for R programming that is available here is **R for Everyone: Advanced Analytics and Graphics**, by _Jared Lander_.
 
-### ProQuest Bookshelf{: .text-green-200}
-{: .no_toc }
+### **ProQuest Bookshelf**
+{: .no_toc .text-green-200}
 
 NYU also provides subscription to ProQuest, which provides free access to many additional reference books online. You can access it [**here**](https://www-proquest-com.proxy.library.nyu.edu/){: target="_blank"}. Note that you will need to either be on campus or connected to the NYU network through a proxy server (Cisco AnyConnect).
 
-___Please let us know if any of the above links do not work!___
+___Please let us know if any of the above links do not work!___{: .text-green-200}
 
 ---
 
-[Bck to top](#top)
+[Back to top](#top)
