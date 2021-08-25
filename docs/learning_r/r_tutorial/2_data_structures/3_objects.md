@@ -1,7 +1,7 @@
 ---
-title: Data Types and Variables
-parent: R Tutorial
-grand_parent: Learning R
+title: Objects
+parent: Data Structures
+grand_parent: R Tutorial
 nav_order: 3
 has_children: false
 ---
@@ -18,7 +18,7 @@ has_children: false
 
 ---
 
-# R object
+# Data Types, Variables, and Objects
 
 Container for a piece of data or lines of code Objects can be named so they can be accessed at any point. Three ways to assign data to a named object:
 

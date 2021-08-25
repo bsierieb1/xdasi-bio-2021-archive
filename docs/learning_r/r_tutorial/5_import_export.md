@@ -2,11 +2,11 @@
 title: Import / Export
 parent: R Tutorial
 grand_parent: Learning R
-nav_order: 12
+nav_order: 5
 has_children: false
 ---
 
-# Reading, Importing, and Writing Data Files 
+# Reading, Importing, and Writing Data Files
 {: .no_toc }
 
 

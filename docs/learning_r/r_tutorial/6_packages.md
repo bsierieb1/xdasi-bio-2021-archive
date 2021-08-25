@@ -2,7 +2,7 @@
 title: R Packages
 parent: R Tutorial
 grand_parent: Learning R
-nav_order: 10
+nav_order: 6
 has_children: false
 ---
 

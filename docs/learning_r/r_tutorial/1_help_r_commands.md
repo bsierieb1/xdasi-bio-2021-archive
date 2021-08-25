@@ -2,7 +2,7 @@
 title: Getting Help
 parent: R Tutorial
 grand_parent: Learning R
-nav_order: 2
+nav_order: 1
 has_children: false
 ---
 
