@@ -29,6 +29,7 @@ This course will provide introductory theory and hands-on training in explorator
 
 <details closed markdown="block">
   <summary> More </summary>
+  {: .text-delta}
 
 The course will cover both classical and modern statistical methods, including frequentist, Bayesian, and resampling methods, as well as exploratory data analysis (descriptive statistics and dimensional reduction with clustering, PCA, t-SNE). Applications to the analysis of laboratory data will include problems commonly encountered in bioinformatics, genomics, molecular biology, and systems biology. In-class exercises and problem sets will draw from data generated in our own department, public-domain websites, and simulations. Data sets will be analyzed in the context of hypotheses underlying the experiments in which they were generated. The role of simulation techniques for testing statistical methods applied to real data will be emphasized throughout the course.
 
@@ -60,6 +61,7 @@ All classes will take place in **Room 805, CGSB** (12 Waverly Place). Office hou
 
 <details closed markdown="block">
   <summary> Breakdown </summary>
+  {: .text-delta}
 
 ### **Class Participation: 10%**
 {: .no_toc .text-green-200}

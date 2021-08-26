@@ -109,11 +109,15 @@ The key commands for managing workspaces are:
 
 **setwd("path_to_dir")**{: .text-green-200} - set the working directory to dir
 
+**dir.create("path_to_dir")**{: .text-green-200} - create a new subdirectory in your current working directory
+
 **load("myproject.Rdata")**{: .text-green-200} - load an existing (default or named) workspace
 
 **save.image()**{: .text-green-200} - save your current workspace
 
-**ls()**{: .text-green-200} - list the R data objects that belong to your current workspace
+**ls()**{: .text-green-200} - list the R data objects in your current workspace
+
+**q()**{: .text-green-200} - quit R (you will be prompted as to whether you want to save your current workspace)
 
 To manually load a previously saved .RData file, set your **current working directory** to the one where .RData is located, and then use the **load()** command or use the RStudio menus to load it. You can do this using the Session menu or by clicking on the filename in the Files pane.
 
