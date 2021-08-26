@@ -20,7 +20,7 @@ has_children: false
 
 # Data Types
 
-Data analysis is about working with data! The major kinds of data that you will work with are:
+Data analysis is about working with data! The major kinds of data that R can handle are:
 
 + Numeric: numbers (integers or floating-point)
 + Character: alphanumeric values
@@ -28,12 +28,12 @@ Data analysis is about working with data! The major kinds of data that you will 
 + Complex: complex numbers (i = square root of -1)
 + Raw: bytes (for example images)
 
-R has multiple kinds of containers for holding data, which are called "Objects". Here we describe the main classes of objects used to perform data analysis in R.
-
 
 # R Objects
 
-Objects are containers for data that are stored in the working R environment. Persistent objects are created by giving them a name and assigning values to them, so that they can be retrieved and modified at any time. Objects can be very simple or very complex data structures, or lines of code such as a function.
+R has multiple kinds of containers for holding data, called "Objects", which are stored in the R environment and can be saved in an `.Rdata` file.
+
+Persistent objects are created by giving them a name and assigning values to them, so that they can be retrieved and modified at any time. Objects can be very simple or very complex data structures, or lines of code such as a function.
 
 The simplest kind of object is just a single variable that holds a single value (e.g. a number or a character string). It's actually a vector of length one. The important classes of data structures that you will need to know about when working with data are:
 
