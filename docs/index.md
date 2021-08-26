@@ -19,9 +19,13 @@ has_children: false
 
 ---
 
+# Welcome!
+
+We are very happy to welcome you to our biostatistics course, BIOL-GA2030, which we informally call “Exploratory Data Analysis and Statistical Inference (XDASI)”.
+
 # Course Description
 
-To provide introductory theory and hands-on training in exploratory data analysis and statistics for graduate students in biology who have no prior computational experience. Students will learn basic R programming as well as foundational concepts and practical tools that provide a starting point for further advanced study in genomics, bioinformatics and computational biology.
+This course will provide introductory theory and hands-on training in exploratory data analysis and statistics for graduate students in biology. Students will learn basic R programming as well as foundational concepts and practical tools that provide a starting point for further advanced study in genomics, bioinformatics and computational biology.
 
 <details closed markdown="block">
   <summary> More </summary>
@@ -53,6 +57,9 @@ All classes will take place in **Room 805, CGSB** (12 Waverly Place). Office hou
 
 
 # Grading
+
+<details closed markdown="block">
+  <summary> Breakdown </summary>
 
 ### **Class Participation: 10%**
 {: .no_toc .text-green-200}
@@ -87,13 +94,17 @@ All classes will take place in **Room 805, CGSB** (12 Waverly Place). Office hou
 
 *   An R coding project will be assigned that will challenge you to apply statistical techniques from throughout the semester to modern biological data. This will take the form either of an extended homework assignment or a final project of your choice. A final project will require prior approval from the instructor and the TA.
 
+</details>
 
-# Course Resources
+---
+
+# Course Websites and Slack
 
 ### **Course Website**
 {: .no_toc .text-green-200}
 
 The course syllabus, reading assignments, class notes, in-class exercises, tutorials, and links to useful resources will be posted here.
+
 
 ### **NYU Brightspace**
 {: .no_toc .text-green-200}
@@ -128,7 +139,7 @@ We provide free access to a customized [**DataCamp for Education**](https://app.
 ### **Online Resources**
 {: .no_toc .text-green-200}
 
-There are many online resources for learning R. Some of these are listed on this website under **R Resources**. Students will be pointed to relevant references throughout the semester.
+There are many online resources for learning R. Some of these are listed on this website under [**R Resources**](/learning_r/7_r_resources/). Students will be pointed to relevant references throughout the semester.
 
 ### **Safari Books Online**
 {: .no_toc .text-green-200}
@@ -142,6 +153,30 @@ All NYU students have free access to electronic versions of a large number of O'
 NYU also provides subscription to ProQuest, which provides free access to many additional reference books online. You can access it [**here**](https://www-proquest-com.proxy.library.nyu.edu/){: target="_blank"}. Note that you will need to either be on campus or connected to the NYU network through a proxy server (Cisco AnyConnect).
 
 ___Please let us know if any of the above links do not work!___{: .text-green-200}
+
+---
+
+# Academic Integrity
+
+Students are expected to know and understand the policies on academic integrity, including [**University**](https://www.nyu.edu/about/policies-guidelines-compliance/policies-and-guidelines/academic-integrity-for-students-at-nyu.html){: target="_blank"} and [**CAS**](https://cas.nyu.edu/content/nyu-as/cas/academic-integrity.html){: target="_blank"} policies.
+
+The instructors of this course will not tolerate cheating or plagiarism. When academic dishonesty is suspected, it will be dealt with seriously in adherence to these policies.
+
+If a student is caught cheating or plagiarizing, the instructors may, at their discretion, give the student an academic sanction. Such a sanction may include a reduction of the grade on that assignment or exam (possibly to 0) or even a reduction of the final course grade (in consultation with the Director of Graduate Studies, who may meet with the instructors and the student to discuss the nature of the offense).
+
+Depending on the severity of the infraction, the sanction could mean failure of the student in the course. The student may appeal any grade reduction to the Director of Graduate Studies. The departmental decision is final. In addition, any substantial case brought by an instructor to the Director of Graduate Studies must be referred to the Dean's office for possible disciplinary action.
+
+If you have any questions or uncertainties about these policies, please consult the instructor, Director of Graduate Studies, or Dean’s office.
+
+
+## Diversity and Inclusion
+
+The instructors of this course share [**NYU's commitment**](https://www.nyu.edu/life/global-inclusion-and-diversity.html){: target="_blank"} to “building a culture that respects and embraces diversity, inclusion, and equity”. We aim to create a learning environment in which every student feels included, supported, and respected. We will hold students (and ourselves) to the CAS Honor Code's pledge to "behave with decorum and civility, and with respectful regard" for others.
+
+
+## Accommodations for Students with Disabilities
+
+Academic accommodations are available to students with disabilities. Students should please register with the [**Moses Center for Students with Disabilities**](http://www.nyu.edu/csd){: target="_blank"} as early as possible in the semester.
 
 ---
 
