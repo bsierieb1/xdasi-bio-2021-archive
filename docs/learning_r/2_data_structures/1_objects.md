@@ -20,19 +20,20 @@ has_children: false
 
 # Data Types
 
-R can store several different types of data:
+Data analysis is about working with data! The major kinds of data that you will work with are:
 
-+ Numeric : numbers (integers or floating-point)
-+ Character: Alphanumeric values
-+ Logical : True/False
-+ Complex : complex numbers (i = square root of -1)
-+ Raw : Bytes (for example images)
++ Numeric: numbers (integers or floating-point)
++ Character: alphanumeric values
++ Logical: True/False
++ Complex: complex numbers (i = square root of -1)
++ Raw: bytes (for example images)
 
-These data types can be stored in different kinds of containers, or "objects", in the R environment.
+R has multiple kinds of containers for holding data, which are called "Objects". Here we describe the main classes of objects used to perform data analysis in R.
 
-# Objects
 
-Objects are stored by giving them a name and assigning values to them, so that they can be retrieved and modified at any time. Objects can be very simple or very complex data structures, or lines of code such as a function.
+# R Objects
+
+Objects are containers for data that are stored in the working R environment. Persistent objects are created by giving them a name and assigning values to them, so that they can be retrieved and modified at any time. Objects can be very simple or very complex data structures, or lines of code such as a function.
 
 The simplest kind of object is just a single variable that holds a single value (e.g. a number or a character string). It's actually a vector of length one. The important classes of data structures that you will need to know about when working with data are:
 
