@@ -12,14 +12,22 @@ output:
 
 ## Overview
 
+
 R has a family of built-in functions for a large number of common probability distributions. You can find a list of these functions by typing `help(Distributions)` at the R console.
+
+There are four types of functions for working with distributions:
+
++ Taking random samples from a pre-defined distribution (e.g. binomial, normal, exponential, Poisson, etc.)
++ Probability density functions (PDF)
++ Cumulative density functions (CDF)
++ Inverse CDF
 
 The four types of functions start with **d, q, p,** and **r**:
 
-+ **r: random sample** 
++ **r: random sample**
   + Take a ***random sample*** from a distribution
-+ **d: density** 
-  + Find the ***height*** of the **PDF** (probability density function) at one or more values of $x$ 
++ **d: density**
+  + Find the ***height*** of the **PDF** (probability density function) at one or more values of $x$
   + The PDF is written as $f(x)$
 + **p: probability**
   + Find the ***total probability*** for a certain interval of $x$ values
@@ -30,6 +38,7 @@ The four types of functions start with **d, q, p,** and **r**:
   + $p$ ranges from 0-1
   + This is the **inverse CDF**, $F^{-1}(p)$
 
+
 ## Relationships between distribution functions
 
 The height of the **PDF** gives the value of a function at different values of a random variable $x$. The **CDF** gives the total area under the curve from $X = - \infty$ to $x$, which corresponds to the total probability that the random variable $X$ takes on a value less than or equal to $x$: $Pr[X \le x]$. For a normal distribution, this can be illustrated as follows:
@@ -39,6 +48,7 @@ The height of the **PDF** gives the value of a function at different values of a
 The **quantile** function is the inverse of the **CDF**: whereas the CDF gives the total probability $Pr[X \le x]$, the inverse CDF gives the value of $x$ corresponding to a particular total probability -- that is, the value of $x$ below which some fraction (quantile) of all the data fall:
 
 ![](Images/CDF-inverseCDF.png){width=45%}
+
 
 ## Example: the normal distribution
 
@@ -95,7 +105,7 @@ plot(z_scores, # if omitted, the vector indices for dvalues are used instead
      ylab="Density",
 #     xaxt = "n", # Don't label the x-axis tick marks
      type = "l", # Make it a line plot
-     main = "PDF of the Standard Normal") 
+     main = "PDF of the Standard Normal")
 
 # If you want to add your own labels, you can uncomment these and the 'xaxt' line above
 # These commands label the x-axis:
@@ -104,7 +114,7 @@ plot(z_scores, # if omitted, the vector indices for dvalues are used instead
 #axis(1, at=which(dvalues == dnorm(2)), labels=c(-2, 2))
 ```
 
-As you can see, `dnorm` will give us the height of the PDF of the standard normal 
+As you can see, `dnorm` will give us the height of the PDF of the standard normal
 distribution at whatever Z-score we provide as an argument to `dnorm`.
 
 ---
@@ -114,13 +124,13 @@ distribution at whatever Z-score we provide as an argument to `dnorm`.
 The function `pnorm` returns the integral from $-\infty$ to $q$ of the PDF of a normal distribution. `pnorm` has the same default `mean` and `sd` arguments as `dnorm`, so for a standard normal distribution $q$ is the same as a Z-score. Try to guess the value of `pnorm(0)`.
 
 ```{r}
-# Arguments: q = 0, mean = 0, sd = 1 
+# Arguments: q = 0, mean = 0, sd = 1
 pnorm(0)  # same as pnorm(q=0, mean=0, sd=1)
 ```
 
 The `pnorm` function also takes the argument `lower.tail`. If `lower.tail` is
-set equal to `FALSE` then `pnorm` returns the integral from $q$ to $\infty$ of 
-the PDF of the normal distribution. Note that `pnorm(q)` is the same as 
+set equal to `FALSE` then `pnorm` returns the integral from $q$ to $\infty$ of
+the PDF of the normal distribution. Note that `pnorm(q)` is the same as
 `1-pnorm(q, lower.tail = FALSE)`
 
 ```{r}
@@ -142,7 +152,7 @@ the back of the statistics textbook qnd can be used to get p-values.
 Let's take our vector of Z-scores from before (`z_scores`) and compute a new vector using `pnorm`. A plot of these shows the cumulative distribution function of the standard normal distribution.
 
 ```{r}
-z_scores = seq(-3, 3, by = .1) 
+z_scores = seq(-3, 3, by = .1)
 p_values = pnorm(z_scores)
 
 # Now we'll make two different plots ... notice the different labels on the x-axis.
@@ -150,24 +160,24 @@ par(mfrow=c(1,2))
 
 # This plot shows the **Z-scores** vs. the cumulative density
 plot(z_scores, p_values,
-     type = "l", # Make it a line plot 
-     main = "CDF of the Standard Normal", 
+     type = "l", # Make it a line plot
+     main = "CDF of the Standard Normal",
      xlab= "Z-score",
      ylab="Cumulative Density")  
 
-# This plot shows the **quantiles** vs. the cumulative density 
+# This plot shows the **quantiles** vs. the cumulative density
 plot(p_values,     # x is omitted, so y = values and x = vector indexes
-     xaxt = "n",  # Don't label ticks on the x-axis 
+     xaxt = "n",  # Don't label ticks on the x-axis
      type = "l",  # Make it a line plot
      main = "CDF of the Standard Normal",
      xlab= "Quantile",
      ylab="Cumulative Density")
 
 # These commands label the x-axis for the second graph
-axis(1, at=which(p_values == pnorm(-2)), labels=round(pnorm(-2), 2)) 
-axis(1, at=which(p_values == pnorm(-1)), labels=round(pnorm(-1), 2)) 
+axis(1, at=which(p_values == pnorm(-2)), labels=round(pnorm(-2), 2))
+axis(1, at=which(p_values == pnorm(-1)), labels=round(pnorm(-1), 2))
 axis(1, at=which(p_values == pnorm(0)), labels=c(.5))
-axis(1, at=which(p_values == pnorm(1)), labels=round(pnorm(1), 2)) 
+axis(1, at=which(p_values == pnorm(1)), labels=round(pnorm(1), 2))
 axis(1, at=which(p_values == pnorm(2)), labels=round(pnorm(2), 2))
 ```
 
@@ -201,7 +211,7 @@ z_scores <- seq(-3, 3, by = .1)
 pvalues <- pnorm(z_scores)
 
 # Make a vector of quantiles: from 0 to 1 by increments of .05
-# distribution is infinite so don't try to hit limits of probability 
+# distribution is infinite so don't try to hit limits of probability
 quantiles <- seq(0.001, 0.999, by = .01)
 quantiles
 
@@ -238,7 +248,7 @@ qnorm(pnorm(0))
 
 If you want to generate a vector of normally distributed random numbers, `rnorm`
 is the function you should use. The first argument `n` is the number of numbers
-you want to generate, followed by the standard `mean` and `sd` arguments. 
+you want to generate, followed by the standard `mean` and `sd` arguments.
 
 You can plot a histogram of the samples along with the empirical density of the sample along with the theoretical curve:
 
@@ -266,7 +276,7 @@ The _**weak law of large numbers**_, or _Bernoulli’s theorem_, states that the
 
 ```{r, warning=FALSE}
 # The set.seed function takes a number as an argument and sets a seed from which random
-# numbers are generated. It's important to set a seed so that your code is reproduceable. 
+# numbers are generated. It's important to set a seed so that your code is reproduceable.
 # Some people like to set seeds to the "date", which is just the arithmetic equation
 # "month minus day minus year". The following evaluates to -2028:
 set.seed(9-18-2019)  # it's my birthday!
@@ -280,7 +290,7 @@ rnorm(5)
 # The seed only sticks once!
 rnorm(5)
 
-# Now onto using rnorm. Let's generate three different vectors of random numbers 
+# Now onto using rnorm. Let's generate three different vectors of random numbers
 # from a normal distribution.
 n10 <- rnorm(10, mean = 70, sd = 5)
 n100 <- rnorm(100, mean = 70, sd = 5)
@@ -329,21 +339,21 @@ If a sample doesn’t match the QQ line, then it’s not very representative of 
 Now we can put all of these together:
 
 ```{r}
-set.seed(9-18-2019) 
-xseq<-seq(-4,4,.01) 
+set.seed(9-18-2019)
+xseq<-seq(-4,4,.01)
 
 random.samples<-rnorm(1000,0,1)
-densities<-dnorm(xseq, 0,1) 
-cumulative<-pnorm(xseq, 0, 1) 
+densities<-dnorm(xseq, 0,1)
+cumulative<-pnorm(xseq, 0, 1)
 
 par(mfrow=c(1,3), mar=c(3,4,4,2))
-hist(random.samples, main="Random draws from Std Normal", 
+hist(random.samples, main="Random draws from Std Normal",
      cex.axis=.8, xlim=c(-4,4))
-plot(xseq, densities, main="PDF of Standard Normal", 
+plot(xseq, densities, main="PDF of Standard Normal",
      col="blue", xlab="", ylab="Density",
      type="l", lwd=2, cex=2, cex.axis=.8)
 plot(xseq, cumulative, main="CDF of Standard Normal",
-     col="orange", xlab="", ylab="Cumulative Probability", 
+     col="orange", xlab="", ylab="Cumulative Probability",
      type="l", lwd=2, cex=2, cex.axis=.8)
 ```
 

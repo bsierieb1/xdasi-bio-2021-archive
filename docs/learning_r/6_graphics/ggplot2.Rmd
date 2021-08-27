@@ -28,6 +28,11 @@ The principal components of every plot can be defined as follows:
 + `qplot()` stands for quick plot, which can be used to produce easily simple plots.
 + `ggplot()` function is more flexible and robust than `qplot()` for building a plot piece by piece.
 
+## Cheatsheets
+
+* [**ggplot2** Cheatsheet (PDF)](https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf)
+
+
 ## Resources
 
 ***Under construction ...***

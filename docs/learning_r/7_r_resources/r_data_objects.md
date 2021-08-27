@@ -1,5 +1,5 @@
 ---
-title: R Data Typs and Structures
+title: R Data Objects
 layout: default
 parent: R Resources
 grand_parent: Learning R
@@ -15,6 +15,9 @@ has_children: false
 
 - TOC
 {:toc}
+
+
+UNDER CONSTRUCTION{: .label .label-red }
 
 The following provide general overviews of:
 

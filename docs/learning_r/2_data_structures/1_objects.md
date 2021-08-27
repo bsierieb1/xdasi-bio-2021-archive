@@ -128,9 +128,9 @@ which is used to compare two things with each other.
 However, since most other languages use `=` for assignment, this syntax is commonly used as well.
 
 
-# Object Class and Structure
+# Inspecting Objects
 
-You can find out what kind of object a variable contains, and what its structure is, using the `class()` and `str()` commands:
+You can find out what kind of data an object contains, and what its structure is, using the `mode()`, `class()` and `str()` commands:
 
 ```
 > # a vector

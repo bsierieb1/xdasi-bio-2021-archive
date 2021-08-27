@@ -1,6 +1,6 @@
 ---
 title: Data Wrangling
-parent: Reproducible Science
+parent: Best Practices
 nav_order: 3
 has_children: false
 ---

@@ -1,5 +1,5 @@
 ---
-title: Best Practices for Reproducible Science
+title: Best Practices
 layout: default
 nav_order: 4
 has_children: true
@@ -14,4 +14,4 @@ The following short "horror film" encapsulates the motivation behind the recent 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/s3JldKoA0zw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
-Here we introduce principles and best practices to help you develop good habits for writing code and managing your data and analysis workflows.
+Here we introduce principles and best practices to help you develop good habits for writing code, managing your data and analysis workflows, and thinking about data analysis more broadly.

@@ -1,6 +1,6 @@
 ---
 title: Additional Resources
-parent: Reproducible Science
+parent: Best Practices
 nav_order: 4
 has_children: false
 ---

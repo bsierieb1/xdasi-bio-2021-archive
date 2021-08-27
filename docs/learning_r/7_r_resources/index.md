@@ -5,30 +5,23 @@ nav_order: 7
 has_children: true
 ---
 
+UNDER CONSTRUCTION{: .label .label-red }
+
+
 # Help with commands, syntax, and more!
-{: .no_toc }
 
-## Table of contents
-{: .no_toc .text-delta }
-
-- TOC
-{:toc}
-
-**Can't remember a command or some basic syntax? You'll find everything you need below!**{: .text-green-200}
+**Can't remember a command or some basic syntax? You'll find (links to) everything you need here!**{: .text-green-200}
 
 Over the last few years, there has been a huge explosion of online resources for learning R, including:
 
 + Cheatsheets
 + Quick guides
 + Tutorials - _(ome sites offer interactive training courses)_
-+ Online books - _I've found some of these to be really useful, either for a quick review of key concepts, or for an in-depth treatment of a specific topic._
++ Bookdown books - _I've found some of these to be really useful, either for a quick review of key concepts, or for an in-depth treatment of a specific topic._
++ Books available in print, PDF, and/or eBooks - _Old-school reference books and manuals still rock! NYU provides free access to lots of books on R programming, many of which can be read online or downloaded as PDFs._
 + Graphics recipes and galleries - _How to choose different visual representations and how to create them_
 
-There are also many books in print on R programming, some of which are also available as PDFs or eBooks.
-
-Below are some lists of online resources for programming in R and related topics. We will refer you to some of these during the semester. If you find more that you really like, please let us know and we can add them to this list!
-
-[Back to top](#top)
+Here we provide links to many resources for programming in R. We will refer you to some of these during the semester. If you find more that you really like, please let us know and we can add them to these lists!
 
 ---
 
@@ -38,8 +31,6 @@ We know that the first thing most of us do is to use the **Google** search engin
 
 **HOWEVER, you can also easily get lost going down a rabbit hole at places like StackExchange.**{: .text-red-200} If you find that you're spending more than a few minutes trying to find what you are looking for, please take a look at one of the following sites, which provide systematic, organized information on a variety of topics.
 
-[Back to top](#top)
-
 ---
 
 # Cheatsheets
@@ -48,23 +39,28 @@ You can find a few really helpful cheatsheets and other help topics in RStudio u
 
 The RStudio website also maintains an [extensive list](https://www.rstudio.com/resources/cheatsheets/) of cheatsheets on all kinds of topics (almost too many! and not that well organized ...)
 
-[Back to top](#top)
+Links to cheatsheets on different topics are included within their respective pages in this section.
+
 
 ---
 
-# R Programming
 
-## Cheatsheets
+---
 
-* [**Base R Commands** Cheetsheat _(PDF)_](https://github.com/rstudio/cheatsheets/raw/master/base-r.pdf)
-* [**250+ Abbreviations of R commands explained**](r_abbreviations.md) - _If you find yourself wondering what different commands stand for, look here!_
+# Online Tutorials
 
+There are many tutorials and reference materials about different aspects of R programming available online. Here are a few to get you started:
 
-## eTextbooks
+* [**R tutorial - NYU Gencore**](https://learn.gencore.bio.nyu.edu/rna-seq-analysis/introduction-to-r/) _basic R tutorial similar to the one provided here_
 
-The following two books are highly recommended for a succinct introduction to basic R programming. There are many, many other books on R that are available either online or as printed books. A more comprehensive list of R books can be found in the [**Other Resources**]() section.
+* [**Quick-R**](http://www.statmethods.net/index.html) _all the basics, with standard statistical methods and built-in graphics (does not cover dplyr and ggplot2)_
 
-**You should definitely get one or more R reference books, which will make it easier for you to review different aspects of R programming.**{: .text-green-200}
+* **Data Carpentry**](https://datacarpentry.org/)
+  + [Data Analysis and Visualization in R for Ecologists](https://datacarpentry.org/R-ecology-lesson/index.html)
+  + [Intro to R and RStudio for Genomics (alpha version)](https://datacarpentry.org/genomics-r-intro/index.html)
+---
+
+# eBooks and Printed Texts
 
 - **YaRrr! The Pirate’s Guide to R** _Nathaniel D. Philips_ (2018-01-22)
   - _An online book that provides a nice concise introduction to R programming, data wrangling, and basic statistics._
@@ -74,114 +70,37 @@ The following two books are highly recommended for a succinct introduction to ba
   - _Another concise and practical book on learning R that may be purchased in paperback or as a Kindle eTextbook_
   - [purchase at Amazon](https://www.amazon.com/Everyone-Advanced-Analytics-Graphics-Addison-Wesley-ebook-dp-B071X9KT1D/dp/B071X9KT1D)
 
+* [**Introduction to R** (PDF)](Intro_to_R_Aho.pdf) _Ken Aho_
+  - _Electronic supplement to Aho textbook_
 
-## Style Guide
-<!-- Note: also put this section in the Best Practices index page -->
+---
 
-Establishing good programming habits is really important. We will be encouraging you to adhere to best coding practices throughout the course.
+# Interactive Tutorials
 
-A brief overview of good coding style coding style by Hadley Wickham can be found here:[Style Guide](http://adv-r.had.co.nz/Style.html)
+* [**DataCamp**](https://datacamp.com)
+    + We have set up a DataCamp custom course for you that will be freely accessible throughout the semester. The modules we have selected cover R data structures, operations, functions, data manipulation, and visualization. These are not required but you may want to work through some of the courses and assessments for extra practice.
 
+* [**Swirl Website**](https://swirlstats.com)
+    + You may also wish to work your way through the **swirl** tutorial that comes with RStudio. Similar to the DataCamp series, it provides interactive feedback and covers the basic commands and data structures that we will use throughout the course. Since it runs through your R console instead of a browser, you can work through this anytime on your own without needing to be online. To use it, follow the simple instructions at the link above.
 
 [Back to top](#top)
 
 ---
 
-# RStudio
+# Video Tutorials
 
-## Cheatsheets
+If you like watching videos, feel free to check out **Manny Katari's** R playlists on YouTube:
 
-* [**RStudio Cheat Sheets**](https://www.rstudio.com/resources/cheatsheets/)  _includes dplyr, ggplot2, R Markdown, and many others_
-* [**RStudio IDE Cheat Sheet**](rstudio-ide.pdf)
-
-## RStudio Utilities
-
-* [**Keyboard Shortcuts**](https://support.rstudio.com/hc/en-us/articles/200711853-Keyboard-Shortcuts-in-the-RStudio-IDE){: .text-green-200}  _Work faster with these shortcuts! (Tools => Keyboard Shortcuts Help)_
-
-* [**Command Palette**](https://blog.rstudio.com/2020/10/14/rstudio-v1-4-preview-command-palette/) _Instant, searchable access to all available commands in RStudio (Tools => Show Command Palette)_
-
-## Online Guides and Books
-
-* [**RStudio R Markdown guide**](https://rmarkdown.rstudio.com/lesson-1.html)
-
-* [[**RStudio Windows _(from the Pirate's Guide to R)_**](https://bookdown.org/ndphillips/YaRrr/the-four-rstudio-windows.html)
+* [**Intro to R**](https://www.youtube.com/playlist?list=PLv9k4CPCZjhyLgE7RgQI0moWiPqLsg2o_)
+* [**Writing Functions in R**](https://www.youtube.com/playlist?list=PLv9k4CPCZjhy2xwsuZh-ZpVDjH4iWU6Nh)
 
 ---
 
-# R Markdown
-
-**We will make heavy use of Markdown documents in this class.**{: .text-green-200} The following references will help you with creating, formatting, executing, and rendering R Markdown documents.
-
-## Cheatsheets
-
-  * [**R Markdown** Cheatsheet (PDF)](https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf)
-  * [**R Markdown** Reference Guide (PDF)](https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf)
-  * You may also go to **File > Help > Markdown Quick Reference** to open the Markdown Quick Reference in the RStudio **Help pane**.
-
-## Online Guides
-
-* [**R Markdown Guide**](https://www.markdownguide.org/basic-syntax/) - _Start here for a concise syntax reference, with online cheatsheet_
-
-* [**RStudio R Markdown Manual**](https://rmarkdown.rstudio.com/lesson-1.html) - _Outlines all the basic components, mechanics, and output formats_
-
-## Advanced Topics
-
-* [**R Markdown: The Definitive Guide**](https://bookdown.org/yihui/rmarkdown/)
-    _Yihui Xie, J. J. Allaire, Garrett Grolemund_ (2021-04-09)
-
-* [**bookdown: Authoring Books and Technical Documents with R Markdown**](https://bookdown.org/yihui/bookdown/)
-    _Yihui Xie_ (2021-08-06)
-
-* [**R Markdown Cookbook**](https://bookdown.org/yihui/rmarkdown-cookbook/)
-    _Yihui Xie, Christophe Dervieux, Emily Riederer_ (2021-07-25)
-
-[Back to top](#top)
-
----
-
-# R Graphics
-
-## Base R Graphics
-
-
-## ggplot
-
-* [**ggplot2** Cheatsheet (PDF)](https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf)
+# Additional Resources
 
 
 
-[Back to top](#top)
 
----
-
-# Useful R Functions
-
-* [**Syntax Equivalents: Base R vs. Tidyverse**](base-r_tidyverse_equivalents.html)
-  + A comparison of basic syntax for working with data frames, by Hugo Tavares.
-
-* [**Introduction to functions for probability distributions (d, q, p, r)**](Intro_R_dqpr_functions.html)
-  + Random sampling, PDF, CDF, and inverse CDF functions for standard probability distributions
-
----
-
-# LaTeX
-
-What is LaTeX? It is a typesetting system that uses plain text to encode mathematical symbols for rendering upon publication (such as turning your .Rmd file into a .pdf file). It allows the proper formatting of complex mathematical expressions, and all the special characters that are needed to write them.
-
-How do you pronounce it? The 'X' is often pronounced as 'k', after the Greek symbol Chi.
-
-There are a lot of LaTeX references online. Here are a few:
-
-* [**RStudio: LaTeX Cheatsheet**](https://wch.github.io/latexsheet/latexsheet.pdf)
-
-* [**LaTeX Math Symbols (quick guide)**](LATEX_Math_Symbols_short.pdf)
-A condensed list of the LaTeX notation you will need to write mathematical expressions using LaTeX.
-
-* [**LaTeX Math Symbols (comprehensive)**](LATEX_Math_Symbols_long.pdf)
-An expansive compendium of all the LaTeX notation you will ever need.
-
-* [**AoPS: LaTeX Symbols**](https://artofproblemsolving.com/wiki/index.php/LaTeX:Symbols)
-A short online list of LaTeX symbols from the Art of Problem Solving website, which also contains links to a lot of other resources for writing and drawing mathematical concepts.
 
 ---
 
