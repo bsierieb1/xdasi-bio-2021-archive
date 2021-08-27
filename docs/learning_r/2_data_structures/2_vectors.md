@@ -221,3 +221,12 @@ Now instead of positions, we can also use their names.
 ```{r}
 v[c("a","c")]
 ```
+
+# Additional Resources
+
+## Basic
+
+
+## Advanced
+
++ [**Advanced R: Vectors**](https://adv-r.hadley.nz/vectors-chap.html) _Chapter 3 from Hadley Wickham's Advanced R book_
