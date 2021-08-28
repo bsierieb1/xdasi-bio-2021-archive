@@ -1,11 +1,11 @@
 ---
-title: Data Wrangling
+title: Tidy Data
 parent: Best Practices
 nav_order: 2
 has_children: false
 ---
 
-# Data Wrangling
+# Tidy Data
 {: .no_toc }
 
 
@@ -15,9 +15,7 @@ has_children: false
 - TOC
 {:toc}
 
-Under construction
-{: .label .label-red }
-
+# Data Wrangling
 
 Learning how to manipulate data is essential for data science. You need to know how to import data, inspect it, clean it, tidy it, and document it.
 
