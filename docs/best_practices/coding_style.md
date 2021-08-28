@@ -62,13 +62,13 @@ R scripts are great, but they are not ideal for generating reproducible workflow
 
 This example is taken from the same source used for the movie clip shown above:
 
-<p>
+<!-- <p>
   <a href="images/Rmd_manuscript_framework.png" title="Open in new window" target="blank">
     <img src="images/Rmd_manuscript_framework.png" alt="markdown manuscript template" />
   </a>
-</p>
+</p> -->
 
-[![Manuscript template](images/Rmd_manuscript_framework.png)](https://kriscgun.github.io/xdasi-bio-2021/best_practices/images/Rmd_manuscript_framework.png){: target="blank"}
+[![Manuscript template](images/Rmd_manuscript_framework.png)](https://kriscgun.github.io/xdasi-bio-2021/best_practices/images/Rmd_manuscript_framework.png){: title="Open in new window" target="blank"}
 
 You will get plenty of practice with R Markdowns in this class!
 
