@@ -139,3 +139,5 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 - [drat: R repositories made easy](http://eddelbuettel.github.io/drat/)
 
 </details>
+
+---

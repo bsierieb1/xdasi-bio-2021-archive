@@ -56,7 +56,7 @@ R scripts are great, but they are not ideal for generating reproducible workflow
 
 This example is taken from the same source used for the movie clip shown above:
 
-![Manuscript template](images/Rmd_manuscript_framework.png)
+![Manuscript template](images/Rmd_manuscript_framework.png){: target="blank"}
 
 You will get plenty of practice with R Markdowns in this class!
 
