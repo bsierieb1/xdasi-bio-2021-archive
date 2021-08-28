@@ -12,7 +12,7 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 [^1]: https://github.com/ecoinfAEET/Reproducibilidad/blob/master/Recursos.md  
 
 
-# General Resources
+## General Resources
 
 <details closed markdown="block">
   <h4><summary>Toggle Display</summary></h4>
@@ -38,10 +38,10 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 </details>
 
 
-# Data Handling
+## Data Handling
 
 <details closed markdown="block">
-  <h4><summary>Toggle Display</summary></h4>
+  <summary><h4>show/hide</summary>
 
 - [A guide to data management in ecology and evolution (British Ecological Society)](http://www.britishecologicalsociety.org/wp-content/uploads/Publ_Data-Management-Booklet.pdf)
 - [Ecoinformatics: supporting ecology as a data-intensive science](http://dx.doi.org/10.1016/j.tree.2011.11.016)
@@ -59,7 +59,7 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 - [Data organization](http://kbroman.org/dataorg/)
 - [Repositorios de datos](http://www.re3data.org/)
 - [Open Science Framework](http://osf.io)
-- [Paquetes de rOpenSci para publicación de datos](http://ropensci.org/packages/#data_publication)
+- [Paquetes de rOpenSci para publicación de datos](http://ropensci.org/packages/##data_publication)
 - [Paquete de R para interaccionar con Open Science Framework](https://github.com/chartgerink/osfr)
 - [Ecological Metadata Language](http://knb.ecoinformatics.org/software/eml/)
 - [The what, why, and how of born-open data](http://link.springer.com/article/10.3758%2Fs13428-015-0630-z)
@@ -67,7 +67,7 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 </details>
 
 
-# Data Analysis and Dynamic Documents
+## Data Analysis and Dynamic Documents
 
 <details closed markdown="block">
   <h4><summary>Toggle Display</summary></h4>
@@ -85,7 +85,7 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 </details>
 
 
-# Version Control (Git & GitHub)
+## Version Control (Git & GitHub)
 
 <details closed markdown="block">
   <h4><summary>Toggle Display</summary></h4>
@@ -94,7 +94,7 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 - [A Quick Introduction to Version Control with Git and GitHub](http://dx.doi.org/10.1371/journal.pcbi.1004668)
 - [Git can facilitate greater reproducibility and increased transparency in science](http://dx.doi.org/10.1186/1751-0473-8-7)
 - [Git and GitHub (Hadley Wickham)](http://r-pkgs.had.co.nz/git.html)
-- [R development using GitHub](https://github.com/MangoTheCat/github-workshop#readme)
+- [R development using GitHub](https://github.com/MangoTheCat/github-workshop##readme)
 - [Happy Git and GitHub for the useR](http://happygitwithr.com/)
 - [Working with RStudio, Git, GitHub (STAT 545)](http://stat545-ubc.github.io/git00_index.html)
 - [Version control with git (R. Fitzjohn)](http://nicercode.github.io/2014-02-13-UNSW/lessons/70-version-control/)
@@ -112,7 +112,7 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 </details>
 
 
-# Project Organization and Package Creation
+## Project Organization and Package Creation
 
 <details closed markdown="block">
   <h4><summary>Toggle Display</summary></h4>
@@ -131,7 +131,7 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 </details>
 
 
-# Dependency Management
+## Dependency Management
 
 <details closed markdown="block">
   <h4><summary>Toggle Display</summary></h4>
@@ -145,6 +145,3 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 - [drat: R repositories made easy](http://eddelbuettel.github.io/drat/)
 
 </details>
----
-
-[Back to top](#top)
