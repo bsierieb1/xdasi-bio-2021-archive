@@ -18,6 +18,8 @@ has_children: false
 
 ---
 
+# File Types
+
 R can import many different types of data files:
 
 - Comma delimited (.csv)
@@ -176,10 +178,13 @@ To create a file we will use the `write.table()` command.
 
 # Writing data tables to files
 
-Functions for exporting data are similar to those for importing data and follow the same syntax as their counterparts in the different packages.
+Functions for exporting data are similar to those for importing data and follow the same syntax as their counterparts in the different packages. Check the Help documentation for details on usage and syntax (links also provided below).
 
++ Base R: [`write.table()`](https://www.rdocumentation.org/packages/utils/versions/3.6.2/topics/write.table){: target="blank"} family of functions
++ Tidyverse: [`write_*()`](https://readr.tidyverse.org/reference/write_delim.html){: target="blank"} function family
++ data.table: [`fwrite()``](https://www.rdocumentation.org/packages/data.table/versions/1.14.0/topics/fwrite){: target="blank"}
 
-## Example
+## Example: write.table()
 
 ``` r
 write.table(data, "adatafile.txt",
