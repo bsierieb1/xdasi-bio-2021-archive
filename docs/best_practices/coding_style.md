@@ -91,10 +91,10 @@ There are two R packages available that can help you adhere to the style guide a
 + **styler** - interactively restyle selected text, files, or entire projects.
   + _This package includes an RStudio add-in, the easiest way to re-style existing code._
 
-  ![Styler Addin](images/styler_addin.png)
-
+![Styler Addin](images/styler-addin.png){: width="40%"}
 
 + **lintr** - performs automated checks to confirm that you conform to the style guide.
+
 ---
 
 [Back to top](#top)

@@ -1,7 +1,7 @@
 ---
 title: Data Wrangling
 parent: Best Practices
-nav_order: 3
+nav_order: 2
 has_children: false
 ---
 
@@ -30,21 +30,11 @@ If you like watching videos, you can watch Hadley Wickham's presentation on Tidy
 
 
 
-## Additional Resources
+# Additional Resources
 
 * [**Data Carpentry: Data Analysis and Visualization in R for Ecologists**](https://datacarpentry.org/R-ecology-lesson/index.html)
 
 * [**Data Science for Psychologists**](https://bookdown.org/hneth/ds4psy/)
-
-
-
-
-# Data Analysis
-
-[**Elements of Data Analytic Style**](datastyle.pdf): A guide for people who want to analyze data
-_Jeff Leek_ (2015-03-02) - **Highly recommended reading!**{: .text-green-200}
-
-This short (93-page) book, published by LeanPub, gives a brief summary of the key ideas, practices, and pitfalls of modern data analysis . It summarizes in a succinct way the most common difficulties encountered by practicing data analysts and includes a basic checklist that can be used as a rubric for evaluating data analyses. The book is modeled loosely in format and aim on the classic book about how to write well, _The Elements of Style_ by William Strunk.
 
 ---
 
