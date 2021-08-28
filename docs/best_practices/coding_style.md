@@ -29,10 +29,15 @@ Establishing good programming habits is really important. We will be encouraging
 
 **Clarity** is key to good programming style. The following are important features of clear and reproducible code:
 
-+ A clear articulation of the overall goal of the project - What is your program about? What is it for?
-+ Give your data structures human-readable names - This makes your code much more understandable
-+ Separate different sections of your code with empty lines - This provides visual cues about organization and flow
-+ **COMMENT EVERYTHING!** - Start each section of your code with a header comment describing what task is being performed
++ A clear articulation of the overall goal of the project
+  - _What is your program about? What is it for?_
++ Give your data structures human-readable names
+  - _This makes your code much more understandable_
++ Separate different sections of your code with empty lines
+  - _This provides visual cues about organization and flow_
++ **COMMENT EVERYTHING!**
+  - _Include a short description of what your code is supposed to do_
+  - _Start each section of your code with a header comment describing what task is being performed_
 
 
 ## Data Files
@@ -41,11 +46,12 @@ It is a good idea to adhere to the following conventions for storing your data:
 
 + Use descriptive file names
 + Everything should be a **TEXT FILE**
-+ Use a simple data format like `.csv` - Proprietary formats can change and become obsolete / unreadable over time
++ Use a simple data format like `.csv`
+  - _Proprietary formats can change and become obsolete / unreadable over time_
 + Organize your files
-  + especially if you have more than one input or output file, use sub-directories (e.g. `/data`, `/input`, `/output`)
+  - _Especially if you have more than one input or output file, use sub-directories (e.g. `/data`, `/input`, `/output`)_
 + Provide a metadata file if needed
-  + this provides additional information about the contents of your data file (e.g. full names and descriptions of the contents, experimental design etc.)
+  + _This provides additional information about the contents of your data file (e.g. full names and descriptions of the contents, experimental design etc.)_
 
 
 ## Reproducible Workflows with R Markdown
@@ -65,18 +71,18 @@ You will get plenty of practice with R Markdowns in this class!
 
 ## R Programming
 
-Hadley Wickham, the creator of the Tidyverse, has some strong opinions on coding style that we encourage you to adopt, as described in these guides:
+**Hadley Wickham**, the creator of the **Tidyverse**, has some strong opinions on coding style that we encourage you to adopt, as described in these guides:
 
-+ [**Style Guide**](http://adv-r.had.co.nz/Style.html) - Hadley Wickam
-  + a very short overview
++ [**Style Guide**](http://adv-r.had.co.nz/Style.html)
+  - _a very short overview_
 
-+ [**The tidyverse Style Guide**](https://style.tidyverse.org/index.html) - Hadley Wickam
-  + an updated and expanded guide of his earlier guide that addresses many more topics
++ [**The tidyverse Style Guide**](https://style.tidyverse.org/index.html)
+  - _an updated and expanded guide of his earlier guide that addresses many more topics_
 
 
 ## R Markdown
 
-The following provides a succinct guide on best practices for both coding style and generating reports with R Markdown:
+A succinct guide on best practices for both coding style and generating reports with R Markdown:
 
 * [**Reproducibility and literate programming in R**](https://exeter-data-analytics.github.io/LitProg/index.html){: target="blank"} _TJ McKinley_
 
