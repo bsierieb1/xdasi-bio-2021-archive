@@ -95,9 +95,10 @@ A succinct guide on best practices for both coding style and generating reports 
 There are two R packages available that can help you adhere to the style guide advocated above:
 
 + **styler** - interactively restyle selected text, files, or entire projects.
-  + _This package includes an RStudio add-in, the easiest way to re-style existing code._
+  - [Documentation](https://styler.r-lib.org/index.html) (note there are multiple pages here)
+   _This package includes an RStudio add-in, the easiest way to re-style existing code._
 
-![Styler Addin](images/styler-addin.png){: width="40%"}
+![Styler Addin](images/styler0.1.gif){: width="60%"}
 
 + **lintr** - performs automated checks to confirm that you conform to the style guide.
 
