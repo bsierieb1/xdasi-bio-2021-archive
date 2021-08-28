@@ -6,16 +6,6 @@ has_children: false
 ---
 
 # Additional Resources for Reproducible Science
-{: .no_toc }
-
-
-## Table of contents
-{: .no_toc .text-delta }
-
-- TOC
-{:toc}
-
----
 
 The following lists of resources below were compiled by Francisco Rodriguez-Sanches[^1]
 
@@ -23,6 +13,9 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 
 
 # General Resources
+
+<details closed markdown="block">
+  <h4><summary>Toggle Display</summary></h4>
 
 - [Reproducible research in computational science](http://dx.doi.org/10.1126/science.1213847)
 - [Nature special: Challenges in irreproducible research](http://www.nature.com/news/reproducibility-1.17552)
@@ -42,11 +35,13 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 - [Digital History Methods in R](http://lincolnmullen.com/projects/dh-r/)
 - [Doing reproducible science: from your hard-won data to a publishable manuscript without going mad](https://github.com/Pakillo/ReproducibleScience/raw/master/ReproducibleScience.pdf)
 
-[Back to top](#top)
+</details>
 
----
 
 # Data Handling
+
+<details closed markdown="block">
+  <h4><summary>Toggle Display</summary></h4>
 
 - [A guide to data management in ecology and evolution (British Ecological Society)](http://www.britishecologicalsociety.org/wp-content/uploads/Publ_Data-Management-Booklet.pdf)
 - [Ecoinformatics: supporting ecology as a data-intensive science](http://dx.doi.org/10.1016/j.tree.2011.11.016)
@@ -69,11 +64,13 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 - [Ecological Metadata Language](http://knb.ecoinformatics.org/software/eml/)
 - [The what, why, and how of born-open data](http://link.springer.com/article/10.3758%2Fs13428-015-0630-z)
 
-[Back to top](#top)
+</details>
 
----
 
 # Data Analysis and Dynamic Documents
+
+<details closed markdown="block">
+  <h4><summary>Toggle Display</summary></h4>
 
 - [knitr](http://yihui.name/knitr/)
 - [rmarkdown](http://rmarkdown.rstudio.com)
@@ -85,11 +82,13 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 - [Implementing reproducible research](https://osf.io/s9tya/wiki/home/)
 - [Reproducible Research with R and Rstudio](http://christophergandrud.github.io/RepResR-RStudio/)
 
-[Back to top](#top)
+</details>
 
----
 
 # Version Control (Git & GitHub)
+
+<details closed markdown="block">
+  <h4><summary>Toggle Display</summary></h4>
 
 - [Why you need version control](http://ellisp.github.io/blog/2016/09/16/version-control)
 - [A Quick Introduction to Version Control with Git and GitHub](http://dx.doi.org/10.1371/journal.pcbi.1004668)
@@ -110,11 +109,13 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 - [Hello World (GitHub first steps)](https://guides.github.com/activities/hello-world/)
 - [GitHub guides](https://guides.github.com/)
 
-[Back to top](#top)
+</details>
 
----
 
 # Project Organization and Package Creation
+
+<details closed markdown="block">
+  <h4><summary>Toggle Display</summary></h4>
 
 - [A quick guide to organizing computational biology projects](http://dx.doi.org/10.1371/journal.pcbi.1000424)
 - [Reproducible Research Project Initialization](https://github.com/Reproducible-Science-Curriculum/rr-init)
@@ -127,11 +128,13 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 - [A minimal tutorial on make (K. Broman)](http://kbroman.org/minimal_make/)
 - [remake](https://github.com/richfitz/remake)
 
-[Back to top](#top)
+</details>
 
----
 
 # Dependency Management
+
+<details closed markdown="block">
+  <h4><summary>Toggle Display</summary></h4>
 
 - [rctrack: An R package that automatically collects and archives details for reproducible computing](http://dx.doi.org/10.1186/1471-2105-15-138)
 - [checkpoint package](https://cran.r-project.org/web/packages/checkpoint/vignettes/checkpoint.html)
@@ -141,6 +144,7 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 - [R Docker tutorial](http://ropenscilabs.github.io/r-docker-tutorial/)
 - [drat: R repositories made easy](http://eddelbuettel.github.io/drat/)
 
+</details>
 ---
 
 [Back to top](#top)

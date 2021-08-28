@@ -15,6 +15,10 @@ has_children: false
 - TOC
 {:toc}
 
+Under construction
+{: .label .label-red }
+
+
 Learning how to manipulate data is essential for data science. You need to know how to import data, inspect it, clean it, make it tidy, and document it. Below are some useful resources for thinking about and doing essential data handling tasks.
 
 # What is Tidy Data?

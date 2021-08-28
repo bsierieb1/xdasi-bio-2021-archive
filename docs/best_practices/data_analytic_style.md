@@ -19,7 +19,9 @@ has_children: false
 
 Thinking about the process of data analysis at a conceptual level can really help you hone your skills! Here we distill some basic concepts from the following treatise:
 
-**Elements of Data Analytic Style: A guide for people who want to analyze data** _Jeff Leek_ (2015-03-02) - [PDF](pdf_files/datastyle.pdf){: target="blank"} - [Leanpub (EPUB/Kindle/eBook)](https://leanpub.com/datastyle){: target="blank"}
+**Elements of Data Analytic Style: A guide for people who want to analyze data**
+
+_Jeff Leek_ (2015-03-02) - [PDF](pdf_files/datastyle.pdf){: target="blank"} - [Leanpub (EPUB/Kindle/eBook)](https://leanpub.com/datastyle){: target="blank"}
 
 This short (93-page) book outlines the key ideas, practices, and pitfalls of modern data analysis. It summarizes in a succinct way the most common difficulties encountered by practicing data analysts and includes a basic checklist that can be used as a rubric for evaluating data analyses. The book is modeled loosely in format and aim on the classic book about how to write well, _The Elements of Style_ by William Strunk.
 
@@ -30,14 +32,12 @@ This short (93-page) book outlines the key ideas, practices, and pitfalls of mod
 
 Before embarking on your data analysis quest, it is important to think about what you are trying to accomplish. A graphical flowchart provides a conceptual framework for thinking about your goals:
 
-![Data analysis flowchart](images/analysis_flowchart.png){width="70%"}
+![Data analysis flowchart](images/analysis_flowchart.png){: width="70%"}
 
 
 # Data Analysis Checklist
 
-The book above provides a handy checklist that you should think about for every problem you set out to solve.
-
-This process is summarized (in abbreviated form) below, but you should really peruse the book to get a better idea about what each of these steps entails, and the kinds of pitfalls that may await the unsuspecting data analyst.
+The book above provides a handy checklist that you should think about for every problem you set out to solve. This checklist is summarized (in abbreviated form) below, but you should really **peruse the book** to get a better idea about what each of these steps entails, and the kinds of pitfalls that may await the unsuspecting data analyst.
 
 ## 1. Define the question
 
