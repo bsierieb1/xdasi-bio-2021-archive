@@ -17,10 +17,10 @@ has_children: true
 
 ---
 
-UNDER CONSTRUCTION{: .label .label-red }
+UNDER CONSTRUCTION
+{: .label .label-red }
 
 # What is Tidy Data?
-
 
 
 

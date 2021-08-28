@@ -94,6 +94,8 @@ Some people really like this package, but I haven't used it so can't tell you mo
 There are a variety of ways to inspect a dataset that you have imported, as shown below using the built-in `iris` dataset:
 
 + `View(iris)` - shows a data frame in the Editor pane in RStudio
+  - allows you to sort, filter, and search within data frames
+  - [RStudio documentation](https://support.rstudio.com/hc/en-us/articles/205175388-Using-the-Data-Viewer-in-the-RStudio-IDE){: target="blank"}
 + `data(iris)` - shows a "promise" of the data frame in RStudio's Environment pane
   + clicking on the name of the data frame then issues the `force(iris)` command, which loads the data frame and prints it in the Console pane
 
