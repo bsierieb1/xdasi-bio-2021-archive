@@ -15,7 +15,6 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 ## General Resources
 
 <details closed markdown="block">
-  <h4><summary>Toggle Display</summary></h4>
 
 - [Reproducible research in computational science](http://dx.doi.org/10.1126/science.1213847)
 - [Nature special: Challenges in irreproducible research](http://www.nature.com/news/reproducibility-1.17552)
@@ -41,7 +40,6 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 ## Data Handling
 
 <details closed markdown="block">
-  <summary><h4>show/hide</summary>
 
 - [A guide to data management in ecology and evolution (British Ecological Society)](http://www.britishecologicalsociety.org/wp-content/uploads/Publ_Data-Management-Booklet.pdf)
 - [Ecoinformatics: supporting ecology as a data-intensive science](http://dx.doi.org/10.1016/j.tree.2011.11.016)
@@ -70,7 +68,6 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 ## Data Analysis and Dynamic Documents
 
 <details closed markdown="block">
-  <h4><summary>Toggle Display</summary></h4>
 
 - [knitr](http://yihui.name/knitr/)
 - [rmarkdown](http://rmarkdown.rstudio.com)
@@ -88,7 +85,6 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 ## Version Control (Git & GitHub)
 
 <details closed markdown="block">
-  <h4><summary>Toggle Display</summary></h4>
 
 - [Why you need version control](http://ellisp.github.io/blog/2016/09/16/version-control)
 - [A Quick Introduction to Version Control with Git and GitHub](http://dx.doi.org/10.1371/journal.pcbi.1004668)
@@ -115,7 +111,6 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 ## Project Organization and Package Creation
 
 <details closed markdown="block">
-  <h4><summary>Toggle Display</summary></h4>
 
 - [A quick guide to organizing computational biology projects](http://dx.doi.org/10.1371/journal.pcbi.1000424)
 - [Reproducible Research Project Initialization](https://github.com/Reproducible-Science-Curriculum/rr-init)
@@ -134,7 +129,6 @@ The following lists of resources below were compiled by Francisco Rodriguez-Sanc
 ## Dependency Management
 
 <details closed markdown="block">
-  <h4><summary>Toggle Display</summary></h4>
 
 - [rctrack: An R package that automatically collects and archives details for reproducible computing](http://dx.doi.org/10.1186/1471-2105-15-138)
 - [checkpoint package](https://cran.r-project.org/web/packages/checkpoint/vignettes/checkpoint.html)

@@ -17,4 +17,12 @@ has_children: true
 
 ---
 
-# What is Tidy Data? -- MAY WANT TO REORG AS PUT SOME OF THIS UNDER OTHER RESOURCES
+UNDER CONSTRUCTION{: .label .label-red }
+
+# What is Tidy Data?
+
+
+
+
+* [**Syntax Equivalents: Base R vs. Tidyverse**](base-r_tidyverse_equivalents.html)
+  + A comparison of basic syntax for working with data frames, by Hugo Tavares.
