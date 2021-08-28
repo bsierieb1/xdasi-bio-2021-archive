@@ -30,10 +30,10 @@ Below are some useful resources for thinking about and doing essential data hand
 
 Hadley Wickham introduced a structured framework for thinking about data organization in his 2014 paper [**Tidy Data**](https://vita.had.co.nz/papers/tidy-data.html), published in the _Journal of Statistical Software_.
 
-The paper makes a clear distinction between "messy" vs. "tidy" data, and introduced a small set of tools to perform essential tasks for data cleaning and tidying. The following brief introduction distills / excerpts some of the basics of data tidying based on Wickham's framework, as described in these books:
+The paper makes a clear distinction between "messy" vs. "tidy" data, and introduced a small set of tools to perform essential tasks for data cleaning and tidying. The following brief introduction distills / excerpts some of the basics of data tidying based on Wickham's framework, as described in the chapters on data tidying from these two books:
 
-+ [**R for Data Science**](https://garrettgman.github.io/) - by Hadley Wickham
-+ [**Data Science with R**](https://garrettgman.github.io/) - by Garrett Grolemund
++ [**R for Data Science: Tidy Data**](https://garrettgman.github.io/tidying/) - by Hadley Wickham
++ [**Data Science with R: Data Tidying**](https://garrettgman.github.io/tidying/) - by Garrett Grolemund
 
 
 ## Basic Principles
@@ -44,7 +44,7 @@ Before diving in further, it is useful to remember that R is a **vectorized** pr
 
 Data structures in R are built from vectors, and R’s operations are optimized to work with vectors. In fact, under the hood a data frame is just a list of atomic vectors arranged to look like a table, where each column in the table is an atomic vector:
 
-![A tidy data table](images/tidy-2.png){: width="85%"}
+![A tidy data table](images/tidy-2.png){: width="90%"}
 
 
 ## Tidy datasets
@@ -56,7 +56,7 @@ Data structures in R are built from vectors, and R’s operations are optimized 
   + Each observation is placed in its own row
   + Each value is placed in its own cell
 
-![A tidy data table](images/tidy-4.png){: width="85%"}
+![A tidy data table](images/tidy-4.png){: width="90%"}
 
 
 ## Pivoting
@@ -76,7 +76,7 @@ In this format, each row actually represents two "observations" (here, number of
 
 To make the data tidy, we want to **pivot**  the columns labeled `1999` and `2000` into a new pair of variables, `year` and `cases`:
 
-![A tidy data table](images/tidy-9.png){: width="85%"}
+![A tidy data table](images/tidy-9.png){: width="90%"}
 
 This creates a longer table that is easier to extract data summaries from using standard R tools.
 
@@ -85,7 +85,7 @@ This creates a longer table that is easier to extract data summaries from using 
 
 On the flip side, sometimes multiple measurements (e.g. cases, population) for the same variable (e.g. year) are distributed across multiple rows. In this situation, we want to pivot the data into a wider format so that each observation is arranged on a single row:
 
-![A tidy data table](images/tidy-8.png){: width="85%"}
+![A tidy data table](images/tidy-8.png){: width="90%"}
 
 
 ## Missing Values
@@ -149,13 +149,6 @@ You can use this to filter out rows with missing data when you are cleaning and 
 
 
 # Additional Resources
-
-## Tutorials
-
-The following are very similar and were written by collaborators:
-
-+ [**R for Data Science: Tidy Data**](https://garrettgman.github.io/tidying/) - by Hadley Wickham
-+ [**Data Science with R: Data Tidying**](https://garrettgman.github.io/tidying/) - by Garrett Grolemund
 
 ## Video
 
