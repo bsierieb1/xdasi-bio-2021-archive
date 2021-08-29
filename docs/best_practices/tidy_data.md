@@ -62,7 +62,7 @@ Data structures in R are built from vectors, and R’s operations are optimized 
 ### Pivot longer
 {: .no_toc}
 
-Sometimes column names are not names of variables but they are actually values of a variable (e.g. year) across which multiple observations (e.g. cases) have been made, as illustrated below:
+Sometimes column names are not names of variables but they are actually values of a variable (e.g. year) across which multiple observations (e.g. tuberculosis cases) have been made, as illustrated below:
 
 | country     |   1999 |   2000 |
 |:------------|-------:|-------:|
@@ -145,6 +145,9 @@ You can use this to filter out rows with missing data when you are cleaning and 
 
 [**Tidyverse**](http://www.tidyverse.org) tools provide a collection of packages that help you store, format, manipulate, and display your data. We will introduce some of these tools as we practice working with data throughout the semester.
 
+# Exercises
+
+For practice, work through [**Chapter 12: Tidy Data**](https://r4ds.had.co.nz/tidy-data.html#tidy-data) in **R for Data Science**.
 
 # Additional Resources
 
