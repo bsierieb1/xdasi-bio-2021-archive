@@ -17,6 +17,18 @@ The following short "horror film" encapsulates the motivation behind the recent 
 
 The book [**R for Data Science**](https://r4ds.had.co.nz/introduction.html){: target="blank"} introduces a model for a typical analysis workflow:
 
-![](images/data-science.png){: width="80%"}
+![Data science model](images/data-science.png){: width="80%"}
+
+Within this framework, you will develop workflows designed for reprodibility that will look something like this figure from the book [**Reproducible Workflows with R and RStudio**](https://englianhu.files.wordpress.com/2016/01/reproducible-research-with-r-and-studio-2nd-edition.pdf){: target="blank"}:
+
+![Data science workflow](images/workflow.png){: width="80%"}
+
+You should plan to organize your research with the following in mind: 
+
+1. Document everything!
+2. Everything is a (text) file.
+3. All files should be human readable.
+4. Explicitly tie your files together.
+5. Have a plan to organize, store, and make your files available.
 
 Here we introduce principles and best practices to help you develop good habits for writing code, managing your data and analysis workflows, and thinking about data analysis more broadly.
