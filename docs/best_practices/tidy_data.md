@@ -148,12 +148,15 @@ You can use this to filter out rows with missing data when you are cleaning and 
 
 # Exercises
 
-For practice, work through [**Chapter 12: Tidy Data**](https://r4ds.had.co.nz/tidy-data.html#tidy-data) in **R for Data Science**.
+For practice, try working through these vignettes:
+
++ [**Chapter 12: Tidy Data**](https://r4ds.had.co.nz/tidy-data.html#tidy-data){: target="blank"} in **R for Data Science**
++ [**Tidy data**](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html){: target="blank"} _from the CRAN tidyr documentation_
 
 
 # Additional Resources
 
-## Video
+## Tidy Video
 
 If you like watching videos, you can watch watch his presentation on Tidy Data and Tidy Tools (58:45):
 
