@@ -86,7 +86,7 @@ On the flip side, sometimes multiple measurements (e.g. cases, population) for t
 ![A tidy data table](images/tidy-8.png){: width="90%"}
 
 
-## Missing Values
+## Missing values
 
 A really important thing you need to watch out for is missing data. This is pretty common, especially for e.g. RNA-seq data, where some genes may not have any read counts, and so will be absent from a table of differentially expressed genes.
 

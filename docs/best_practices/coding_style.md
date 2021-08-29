@@ -73,6 +73,12 @@ This example is taken from the same source used for the movie clip shown above:
 You will get plenty of practice with R Markdowns in this class!
 
 
+### R Markdown Resources
+{: .no_toc}
+
+A list of resources for working with R Markdowns is included in the **Learning R**](https://kriscgun.github.io/xdasi-bio-2021/learning_r/7_r_resources/r_markdown.html) section of the course website.
+
+
 # Style Guides
 
 ## R Programming
