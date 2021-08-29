@@ -145,9 +145,11 @@ You can use this to filter out rows with missing data when you are cleaning and 
 
 [**Tidyverse**](http://www.tidyverse.org) tools provide a collection of packages that help you store, format, manipulate, and display your data. We will introduce some of these tools as we practice working with data throughout the semester.
 
+
 # Exercises
 
 For practice, work through [**Chapter 12: Tidy Data**](https://r4ds.had.co.nz/tidy-data.html#tidy-data) in **R for Data Science**.
+
 
 # Additional Resources
 

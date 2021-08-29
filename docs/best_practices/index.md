@@ -13,5 +13,10 @@ The following short "horror film" encapsulates the motivation behind the recent 
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/s3JldKoA0zw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
+# Data Analysis Framework
+
+The book [**R for Data Science**](https://r4ds.had.co.nz/introduction.html){: target="blank"} introduces a model for a typical analysis workflow:
+
+![](images/data-science.png){: width="80%"}
 
 Here we introduce principles and best practices to help you develop good habits for writing code, managing your data and analysis workflows, and thinking about data analysis more broadly.
