@@ -7,7 +7,7 @@ nav_order: 2
 
 # ggplot2, aka do it the tidyverse way
 
-If you want to create publication-quality, aesthetically beautiful figures, or even if you just need to create a complex plot with multiple layers of information for yourself, ggplot2 is your friend. While the ggplot2 syntaxis may seem scary to you at first, you will learn to appreciate its logic once you understand what is what.
+If you want to create publication-quality, aesthetically pleasing figures, or even if you just need to create a complex plot with multiple layers of information for yourself, ggplot2 is your friend. While the ggplot2 syntaxis may seem scary to you at first, you will learn to appreciate its logic once you understand what is what.
 
 Prefer to read a textbook first? Refer to [chapter 3.7 in "R Programming for Research"](https://geanders.github.io/RProgrammingForResearch/exploring-data-1.html#plots-to-explore-data){: target="blank"}.
 
