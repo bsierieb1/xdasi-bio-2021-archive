@@ -108,7 +108,7 @@ Often you just want to get a peek at the data. To do this you can use the follow
 
 ## Example : read.table()
 
-Download these files for the following exercise: [data/example.txt](example.txt) [data/example.csv](example.csv)
+Download these files for the following exercise: [example.txt](data/example.txt) [example.csv](data/example.csv)
 
 ``` r
 data = read.table("example.txt")
