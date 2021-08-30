@@ -2,7 +2,7 @@
 title: Data structures
 parent: R resources
 nav_order: 2
-has_children: true
+has_children: false
 ---
 
 # Data structures
