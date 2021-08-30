@@ -28,7 +28,7 @@ We are very happy to welcome you to our biostatistics course, BIOL-GA2030, which
 This course will provide introductory theory and hands-on training in exploratory data analysis and statistics for graduate students in biology. Students will learn basic R programming as well as foundational concepts and practical tools that provide a starting point for further advanced study in genomics, bioinformatics and computational biology.
 
 <details closed markdown="block">
-  <h4><summary>More</summary></h4> 
+  <h4><summary>More</summary></h4>
 
 
 The course will cover both classical and modern statistical methods, including frequentist, Bayesian, and resampling methods, as well as exploratory data analysis (descriptive statistics and dimensional reduction with clustering, PCA, t-SNE). Applications to the analysis of laboratory data will include problems commonly encountered in bioinformatics, genomics, molecular biology, and systems biology. In-class exercises and problem sets will draw from data generated in our own department, public-domain websites, and simulations. Data sets will be analyzed in the context of hypotheses underlying the experiments in which they were generated. The role of simulation techniques for testing statistical methods applied to real data will be emphasized throughout the course.
@@ -172,6 +172,11 @@ Depending on the severity of the infraction, the sanction could mean failure of 
 If you have any questions or uncertainties about these policies, please consult the instructor, Director of Graduate Studies, or Dean’s office.
 
 
+# Religious Observance
+
+As a nonsectarian, inclusive institution, NYU policy permits members of any religious group to absent themselves from classes without penalty when required for compliance with their religious obligations. The policy and principles to be followed by students and faculty may be found here: [The University Calendar Policy on Religious Holidays](http://www.nyu.edu/about/policies-guidelines-compliance/policies-and-guidelines/university-calendar-policy-on-religious-holidays.html){: target="blank"}.
+
+
 # Diversity and Inclusion
 
 The instructors of this course share [**NYU's commitment**](https://www.nyu.edu/life/global-inclusion-and-diversity.html){: target="_blank"} to “building a culture that respects and embraces diversity, inclusion, and equity”. We aim to create a learning environment in which every student feels included, supported, and respected. We will hold students (and ourselves) to the CAS Honor Code's pledge to "behave with decorum and civility, and with respectful regard" for others.
@@ -179,7 +184,13 @@ The instructors of this course share [**NYU's commitment**](https://www.nyu.edu/
 
 # Accommodations for Students with Disabilities
 
-Academic accommodations are available to students with disabilities. Students should please register with the [**Moses Center for Students with Disabilities**](http://www.nyu.edu/csd){: target="_blank"} as early as possible in the semester.
+Academic accommodations are available to any student with a chronic, psychological, visual, mobility, learning disability, or who is deaf or hard of hearing. Students should please register with the [**Moses Center for Students with Disabilities**](http://www.nyu.edu/csd){: target="_blank"} as early as possible in the semester.
+
+NYU's Henry and Lucy Moses Center for Students with Disabilities
+726 Broadway, 2nd Floor
+New York, NY 10003-6675
+Telephone: 212-998-4980
+
 
 ---
 
