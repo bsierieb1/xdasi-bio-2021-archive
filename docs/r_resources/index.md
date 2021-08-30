@@ -5,7 +5,7 @@ nav_order: 4
 has_children: true
 ---
 
-# Learning R
+# R resources
 
 Here you will find basic information about **R**, working with the powerful integrated development enviroment (IDE) **RStudio**, **tutorials** on the R language, and other useful **resources** for mastering R.
 
