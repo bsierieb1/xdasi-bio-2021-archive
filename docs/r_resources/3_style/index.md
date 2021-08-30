@@ -9,4 +9,4 @@ has_children: false
 
 Your coding style is paramount to your ability and the ability of other people to later understand and reproduce your analyses.
 
-### Please refer to ["Reproducibility and literate programming in R"](https://exeter-data-analytics.github.io/LitProg/index.html){: target="blank"}.
+Please refer to ["Reproducibility and literate programming in R"](https://exeter-data-analytics.github.io/LitProg/index.html){: target="blank"}.
