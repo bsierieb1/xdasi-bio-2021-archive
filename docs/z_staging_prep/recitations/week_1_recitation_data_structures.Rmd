@@ -1,0 +1,138 @@
+---
+title: "Week 1: markdown basics, data structures, data export and import"
+author: "Bogdan Sieriebriennikov (bs167@nyu.edu)"
+date: 9/3/21
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE) # this line makes sure that the code from each chunk is included in the final file, unless specified otherwise (see below)
+```
+
+## R Markdown basics
+
+While it may seem somewhat overwhelming in the beginning, markdown is the best way to combine ("knit together") code, its outputs, and the documentation. The result is an aesthetically pleasing and easily readable html, pdf, or Word document. We will go over the very basics of R markdown. For details, please refer to <http://rmarkdown.rstudio.com> or [consult the cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf).
+
+By default, what you are typing here will be formatted as text. To add the bits that contain actual R code, do one of the following:
+
+1. Manually type ` ```{r} `, then your code on the next line, and then ` ``` `.
+2. ⌘+⌥+i  (PC: Ctrl+Alt+i).
+3. Click the "Insert a new code chunk button" in RStudio.
+
+```{r}
+print("Hi, I am your first code chunk!") # note that you can add comments inside chunks
+```
+You can run a code chunk by clicking the green arrow in its upper right corner, going to Code > Run Region > Run Current Chunk, or using a keyboard shortcut (shortcuts for your OS will be shown in the Run Region menu). Note that you can run more than one chunk at once.
+
+When you **Knit** the document, it **will be automatically saved (careful!)** and then an html, pdf or MS Word document will be rendered. All chunks will be executed and their output shown, unless you add extra `knitr` arguments {inside the curly braces}:
+
+<br>
+`include = FALSE` prevents both code and results from appearing in the knitted file. Let us try it here:
+```{r include=FALSE}
+second_chunk_greeting <- "Hi, I am your second code chunk!"
+print(second_chunk_greeting)
+```
+Note that the code above is excluded from the knitted file but **it still runs**, and the results are accessible to other code chunks.
+```{r}
+print(second_chunk_greeting)
+```
+
+<br>
+`echo = FALSE` prevents the code, but not the results, from appearing in the finished file. This is a useful way to embed figures.
+```{r echo=FALSE}
+print("Hi, I am your fourth code chunk!")
+```
+
+## Data types and data structures in R
+
+The most basic data structure that can store multiple pieces of data is a `vector`. Let us practice creating and operating on vectors:
+```{r}
+# Create a short (5-10 values) vector filled with *numeric* values.
+
+# Determine its length.
+
+# Subset first, second, last, first three, all but first, and all but second elements.
+
+# Multiply each value of the vector by 2.
+# Note that there is more than one way to do this.
+# First, try writing a for loop.
+
+# Now, use array programming instead.
+
+```
+
+A structure superficially similar to a `vector` that you will likely end up using a lot is a `factor`. Think of a `factor` as a `vector` where you additionally store the information about all possible values that the elements of the `vector` can take. `factors` are useful when a `vector` contains multiple repeated values, e.g. twelve "control" and fifteen "test" samples.
+
+```{r}
+# Create a short (5-10 values) factor filled with *character* values.
+
+# Extract its levels.
+
+# Count how many elements correspond to each level?
+# Note that there is more than one way to do it.
+# First, try using which().
+
+# Now, use table().
+
+# Substitute the names of the levels with some other set of names.
+# Note that there is more than one way to do this.
+# First, try using which().
+
+# Now, use an R shortcut.
+
+```
+
+Both `vector` and `factor` store sequences of data. In other words, they are 1-dimensional data structures. Very often, we need to operate on an entire "table", which is 2-dimensional. The most commonly used 2-dimensional data structures are `matrix` and `data.frame`.
+
+```{r}
+# Create a 5x3 matrix filled with *numeric* values.
+
+# Determine the dimensions of the matrix.
+
+# Subset first row, first column, last row, last column, all but second columns.
+
+# Multiply each value by 2 using array programming.
+
+# Multiple first two columns by the third column.
+
+# Calculate the sum (the function for that is sum()) of each row.
+# Note that there is more than one way to do this.
+# First, try writing a `for` loop for that.
+
+# Now, use apply().
+
+# Modify the loop and the apply() expression above to calculate the sum of each column.
+
+# Convert the matrix to a data.frame and add a new column filled with *character* values.
+
+# Try subsetting the columns by column names.
+
+# Convert the data.frame back to matrix and check the data type in each column.
+
+```
+
+## Export and import of data
+
+The most commonly used functions are the ones that deal with exporting or importing "tables" as text files (note that .csv files are also text files).
+
+```{r}
+# Save the matrix from above using write.table(). Try to specify as few arguments as possible.
+
+# Do the same using write.csv().
+
+# Open both files in a text editor and compare.
+# Now import the saved matrix using read.table().
+
+# Repeat using read.csv().
+
+```
+
+Additionally, you can always save any R object as and .RDS ("R Data Serialized") file.
+
+```{r}
+# Use saveRDS() to save the matrix above.
+
+# Use readRDS() to import the matrix.
+
+```
+
