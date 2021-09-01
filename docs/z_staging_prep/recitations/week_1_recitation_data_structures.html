@@ -209,7 +209,7 @@ pre code {
 <pre class="r"><code>print(second_chunk_message)</code></pre>
 <pre><code>## [1] &quot;You hid both my code and the output but I still ran in the background.&quot;</code></pre>
 <p><br> <code>echo = FALSE</code> prevents the code, but not the results, from appearing in the finished file. This is a useful way to embed figures.</p>
-<pre><code>## [1] &quot;You hid the code but you can still see the output.&quot;</code></pre>
+<pre><code>## [1] &quot;You hid the code but you can still see the output here.&quot;</code></pre>
 </div>
 </div>
 <div id="data-types-and-data-structures-in-r" class="section level2">
@@ -219,9 +219,11 @@ pre code {
 <p>The most basic data structure that can store multiple pieces of data is a <code>vector</code>. Let us practice creating and operating on vectors:</p>
 <pre class="r"><code># Create a short (5-10 values) vector filled with *numeric* values.
 
-# Determine its length.
+# Append two more *numeric* values at the end.
 
-# Subset first, second, last, first three, all but first, and all but second elements.
+# Determine the length of the vector.
+
+# Subset first, second, last, first three, all but first, and all but first and second elements.
 
 # Multiply each value of the vector by 2.
 # Note that there is more than one way to do this.
@@ -233,20 +235,17 @@ pre code {
 <h3>Factors</h3>
 <p>A structure superficially similar to a <code>vector</code> that you will likely end up using a lot is a <code>factor</code>. Think of a <code>factor</code> as a <code>vector</code> where you additionally store the information about all possible values that the elements of the <code>vector</code> can take. <code>factors</code> are useful when a <code>vector</code> contains multiple repeated values, e.g. twelve “control” and fifteen “test” samples.</p>
 <pre class="r"><code># Create a short (5-10 values) factor filled with *character* values.
+# Hint: using rep() may speed up the typing and simplify the code.
 
-# Extract its levels.
+# Extract the levels of the factor.
+
+# Substitute the names of the levels with some other set of names.
 
 # Count how many elements correspond to each level?
 # Note that there is more than one way to do it.
 # First, try using which().
 
-# Now, use table().
-
-# Substitute the names of the levels with some other set of names.
-# Note that there is more than one way to do this.
-# First, try using which().
-
-# Now, use an R shortcut.</code></pre>
+# Now, use table().</code></pre>
 </div>
 <div id="matrices-and-data.frames" class="section level3">
 <h3>Matrices and data.frames</h3>
@@ -261,15 +260,17 @@ pre code {
 
 # Multiple first two columns by the third column.
 
-# Calculate the sum (the function for that is sum()) of each row.
+# Calculate the sum (function sum()) of each column
 # Note that there is more than one way to do this.
 # First, try writing a `for` loop for that.
 
 # Now, use apply().
 
-# Modify the loop and the apply() expression above to calculate the sum of each column.
+# Convert the matrix to a data.frame.
 
-# Convert the matrix to a data.frame and add a new column filled with *character* values.
+# Modify the apply() expression above to calculate the sum of each row and add it as a new column.
+
+# Add one more column filled with *character* values.
 
 # Try subsetting the columns by column names.
 
