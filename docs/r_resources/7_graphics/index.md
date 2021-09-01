@@ -5,7 +5,7 @@ nav_order: 7
 has_children: true
 ---
 
-# tidyverse basics
+# Data visualization
 {: .no_toc }
 
 
@@ -17,4 +17,6 @@ has_children: true
 
 ---
 
-[tidyverse](https://www.tidyverse.org/){: target="blank"} is an immensely useful family ("universe") of packages for data wrangling and visualization.
+Most people use one of the two packages to plot data - base R or `ggplot2`. Briefly, base R code is quicker to write, while `ggplot2` is more powerful and it produces more visually appealing plots.
+
+We will cover the basics in this course, but please also refer to the excellent [R Graphics Cookbook](https://r-graphics.org/index.html) for detailed guidance on how to visualize data in R.
