@@ -1,5 +1,5 @@
 ---
-title: "Week 1: markdown basics, data structures, data export and import"
+title: "Week 1: markdown, data structures, writing and reading data"
 author: "Bogdan Sieriebriennikov (bs167@nyu.edu)"
 date: 9/3/21
 output: html_document
@@ -11,39 +11,63 @@ knitr::opts_chunk$set(echo = TRUE) # this line makes sure that the code from eac
 
 ## R Markdown basics
 
-While it may seem somewhat overwhelming in the beginning, markdown is the best way to combine ("knit together") code, its outputs, and the documentation. The result is an aesthetically pleasing and easily readable html, pdf, or Word document. We will go over the very basics of R markdown. For details, please refer to <http://rmarkdown.rstudio.com> or [consult the cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf).
+While it may seem somewhat overwhelming in the beginning, markdown is the best way to combine ("knit together") code, its outputs, and the documentation. The result is an aesthetically pleasing and easily readable html, pdf, or Word document. We will go over the very basics of R markdown. For details, please refer to [the R Markdown website](http://rmarkdown.rstudio.com), [consult this resource](https://monashdatafluency.github.io/r-rep-res/part-i-rmarkdown-from-scratch.html) or [check out the cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf).
 
-By default, what you are typing here will be formatted as text. To add the bits that contain actual R code, do one of the following:
+### Adding and running code chunks
 
-1. Manually type ` ```{r} `, then your code on the next line, and then ` ``` `.
-2. ⌘+⌥+i  (PC: Ctrl+Alt+i).
-3. Click the "Insert a new code chunk button" in RStudio.
+By default, what you are typing in the script editor panel will be formatted as text. To add the bits that contain actual R code, do one of the following:
+
+* Click the "Insert a new code chunk" button ("+c") in the upper right corner of the script editor panel.
+* Go to Code > Insert Chunk in the menu bar.
+* Cmd+Option+i on Mac or Ctrl+Alt+i on PC.
+* Manually type ` ```{r} `, then your code on the next line, and then ` ``` `.
 
 ```{r}
 print("Hi, I am your first code chunk!") # note that you can add comments inside chunks
 ```
-You can run a code chunk by clicking the green arrow in its upper right corner, going to Code > Run Region > Run Current Chunk, or using a keyboard shortcut (shortcuts for your OS will be shown in the Run Region menu). Note that you can run more than one chunk at once.
 
-When you **Knit** the document, it **will be automatically saved (careful!)** and then an html, pdf or MS Word document will be rendered. All chunks will be executed and their output shown, unless you add extra `knitr` arguments {inside the curly braces}:
+Now that you have added a code chunk, you can run it by doing one of the following:
+
+* Click the green "play" arrow in the upper right corner of the chunk.
+* Go to Code > Run Region > Run Current Chunk in the menu bar.
+* Use a keyboard shortcut (shortcuts for your OS will be shown in the Run Region menu).
+* Copy the code from the chunk and paste it into the console (not the most efficient way but can be useful e.g. if you want to try a quick and dirty change in the code).
+
+Note that you can run more than one chunk at once. See the list of available options in Code > Run Region in the menu bar.
+
+### Knitting the document
+
+To generate the final output file where the code, its outputs, and the documentation are all combined, you have to "knit" the document by doing one of the following:
+
+* Click the "Knit" button in the upper left corner of the script editor panel.
+* Go to File > Knit Document in the menu bar.
+* Use a keyboard shortcut (shortcut for your OS will be shown in the File menu).
+
+Note that when you knit the document, all changes **will be automatically saved (careful!)**.
+
+<br>
+By default, every chunk will be executed and its output shown. If you want to change this behavior for any reason, you can add extra `knitr` arguments {inside the curly braces}. For example:
 
 <br>
 `include = FALSE` prevents both code and results from appearing in the knitted file. Let us try it here:
 ```{r include=FALSE}
-second_chunk_greeting <- "Hi, I am your second code chunk!"
-print(second_chunk_greeting)
+second_chunk_message <- "You hid both my code and the output but I still ran in the background."
+print(second_chunk_message)
 ```
 Note that the code above is excluded from the knitted file but **it still runs**, and the results are accessible to other code chunks.
 ```{r}
-print(second_chunk_greeting)
+print(second_chunk_message)
 ```
 
 <br>
 `echo = FALSE` prevents the code, but not the results, from appearing in the finished file. This is a useful way to embed figures.
 ```{r echo=FALSE}
-print("Hi, I am your fourth code chunk!")
+print("You hid the code but you can still see the output here.")
 ```
 
 ## Data types and data structures in R
+
+### Vectors
 
 The most basic data structure that can store multiple pieces of data is a `vector`. Let us practice creating and operating on vectors:
 ```{r}
@@ -61,12 +85,17 @@ The most basic data structure that can store multiple pieces of data is a `vecto
 
 ```
 
+### Factors
+
 A structure superficially similar to a `vector` that you will likely end up using a lot is a `factor`. Think of a `factor` as a `vector` where you additionally store the information about all possible values that the elements of the `vector` can take. `factors` are useful when a `vector` contains multiple repeated values, e.g. twelve "control" and fifteen "test" samples.
 
 ```{r}
 # Create a short (5-10 values) factor filled with *character* values.
+# Hint: using rep() may speed up the typing and simplify the code.
 
 # Extract its levels.
+
+# Substitute the names of the levels with some other set of names.
 
 # Count how many elements correspond to each level?
 # Note that there is more than one way to do it.
@@ -74,13 +103,9 @@ A structure superficially similar to a `vector` that you will likely end up usin
 
 # Now, use table().
 
-# Substitute the names of the levels with some other set of names.
-# Note that there is more than one way to do this.
-# First, try using which().
-
-# Now, use an R shortcut.
-
 ```
+
+### Matrices and data.frames
 
 Both `vector` and `factor` store sequences of data. In other words, they are 1-dimensional data structures. Very often, we need to operate on an entire "table", which is 2-dimensional. The most commonly used 2-dimensional data structures are `matrix` and `data.frame`.
 
@@ -111,7 +136,7 @@ Both `vector` and `factor` store sequences of data. In other words, they are 1-d
 
 ```
 
-## Export and import of data
+## Writing and reading data
 
 The most commonly used functions are the ones that deal with exporting or importing "tables" as text files (note that .csv files are also text files).
 
