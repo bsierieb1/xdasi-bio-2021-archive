@@ -1,5 +1,5 @@
 ---
-title: RStudio Session Management
+title: Session Management
 parent: R, RStudio, and the Basics
 grand_parent: R Resources
 nav_order: 3
