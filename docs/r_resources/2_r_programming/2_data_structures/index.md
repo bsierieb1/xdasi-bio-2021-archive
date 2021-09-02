@@ -6,7 +6,7 @@ nav_order: 2
 has_children: false
 ---
 
-# Data structures
+# Data Structures
 
 How does R process data? How should you organize your data?
 
