@@ -371,45 +371,39 @@ class(df.my_cool_data)
 <li>You can find out how long a vector is using the <code>length()</code> function.</li>
 </ul>
 <pre class="r"><code># - a scalar is just a vector of length 1
-my.scalar =  # Euler&#39;s number
-my.scalar
-## Error in eval(expr, envir, enclos): object &#39;my.scalar&#39; not found
-my.scalar[1] # vector notation (see below)
-## Error in eval(expr, envir, enclos): object &#39;my.scalar&#39; not found
+  # Euler&#39;s number
+  # take a look at the result
+  # vector notation (see below)
 
-vec.num = c(2,5,3,8,9)
-vec.num
-## [1] 2 5 3 8 9
-is(vec.num)  # what is this data structure?
-## [1] &quot;numeric&quot; &quot;vector&quot;
+vec.num =    # combine five numbers into a vector
+  
+  # take a look at it
+  # what *is* this data structure?
 
-# subsetting
-vec.num[4]
-## [1] 8
-vec.num[5:6]       # what happened? there is no element at index position 6
-## [1]  9 NA
-vec.num[c(1:3,5)]  # get values at index positions 1-3 and 5
-## [1] 2 5 3 9
+# subsetting: square brackets
 
-length(vec.num)
-## [1] 5
+  # a single element
+  # a slice - watch out for non-existent elements!
+  # get values at index positions 1-3 and 5
+
+# how long is it?
 
 # reassignment
-vec.num[4] = 10
-vec.num
-## [1]  2  5  3 10  9
 
 # adding elements
-vec.num[10] = 42
-vec.num           # interesting! what happened here?
-##  [1]  2  5  3 10  9 NA NA NA NA 42</code></pre>
+## Error: &lt;text&gt;:23:0: unexpected end of input
+## 21: # adding elements
+## 22: 
+##    ^</code></pre>
 </div>
 <div id="character-vectors" class="section level2">
 <h2>Character Vectors</h2>
 <p>A character vector is simply a collection of strings.</p>
-<pre class="r"><code>vec.char = c(&quot;Gene1&quot;, &quot;Gene2&quot;, &quot;Gene3&quot;)
-vec.char</code></pre>
-<pre><code>## [1] &quot;Gene1&quot; &quot;Gene2&quot; &quot;Gene3&quot;</code></pre>
+<pre class="r"><code>vec.char = </code></pre>
+<pre><code>## Error: &lt;text&gt;:3:0: unexpected end of input
+## 1: vec.char = 
+## 2: 
+##   ^</code></pre>
 <div id="special-characters" class="section level3">
 <h3>Special Characters</h3>
 <p>Certain characters that have a special meaning in R. To tell R not to use them as special characters, you have to “escape” them using a backslash, <code>\</code>. These include:</p>
@@ -451,32 +445,20 @@ print(&quot; &quot;hello world!&quot; &quot;)
 </ul>
 <p>Note that the value <code>NA</code> (not available, like NAN in Python) is also special and is ignored in numerical comparisons, so we use the function <code>is.na()</code> to find these instead.</p>
 <pre class="r"><code>vec.num
-##  [1]  2  5  3 10  9 NA NA NA NA 42
-vec.num &gt; 3
-##  [1] FALSE  TRUE FALSE  TRUE  TRUE    NA    NA    NA    NA  TRUE
+## Error in eval(expr, envir, enclos): object &#39;vec.num&#39; not found
+  
+# compare all values to a number
 
 # which values are NA?
-is.na(vec.num)
-##  [1] FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE FALSE
 
 # remove NA&#39;s
-!is.na(vec.num)
-##  [1]  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE  TRUE
-vec.filter = vec.num[!is.na(vec.num)]
-vec.filter
-## [1]  2  5  3 10  9 42
 
-# filter by value
-which(vec.num &gt; 3)          # index positions with values &gt; 3
-## [1]  2  4  5 10
-vec.num[vec.num &gt; 3]        # subset of elements &gt; 3 (but still has NA&#39;s!)
-## [1]  5 10  9 NA NA NA NA 42
-vec.filter[vec.filter &gt; 3]  # ok this looks good!
-## [1]  5 10  9 42
+# filter based on some criteria
+  # index positions with values &gt; 3
+  # subset of elements &gt; 3 (but still has NA&#39;s!)
+  # get it right
 
-# do it all in one go!
-vec.num[ !is.na(vec.num) &amp; vec.num &gt; 3 ]
-## [1]  5 10  9 42</code></pre>
+  # do it all in one go!</code></pre>
 <p>Note that some operators have precedence over others. When in doubt, use parentheses!</p>
 </div>
 </div>
@@ -486,27 +468,20 @@ vec.num[ !is.na(vec.num) &amp; vec.num &gt; 3 ]
 <p>Below we compute the mean values for a set of measurements using the function <code>tapply</code>, which applies a function on an object based on their corresponding factor groupings, and then creates a table with the result. We will go over the <code>apply</code> family of functions later.</p>
 <pre class="r"><code>
 # some measurements (3 controls, 3 treatment replicates)
-expvalues = c(10,12,9, 52,47,60)
+expvalues = 
 
 # the experimental groups
-expgroup = factor(c(rep(&quot;control&quot;,3),rep(&quot;treatment&quot;,3)))
+expgroup = 
 expvalues
-## [1] 10 12  9 52 47 60
+## Error in eval(expr, envir, enclos): object &#39;expvalues&#39; not found
 expgroup
-## [1] control   control   control   treatment treatment treatment
-## Levels: control treatment
+## Error in eval(expr, envir, enclos): object &#39;expgroup&#39; not found
 
-levels(expgroup)  # the unique group &quot;levels&quot;
-## [1] &quot;control&quot;   &quot;treatment&quot;
+# the unique group &quot;levels&quot;
 
-table(expgroup)   # summarize the number of items in each group
-## expgroup
-##   control treatment 
-##         3         3
+# summarize the number of items in each group
 
-tapply(expvalues, expgroup, mean)  # the mean values in each group
-##   control treatment 
-##  10.33333  53.00000</code></pre>
+# get the mean values in each group with tapply</code></pre>
 <p>Factors are ordered alphabetically by default. You can reorder, rename, and add labels (such as numerical codes) to factors as desired. We will get into this more later.</p>
 </div>
 </div>
@@ -524,106 +499,74 @@ tapply(expvalues, expgroup, mean)  # the mean values in each group
 <li>if not the same length/size, values will be recycled (beware!)</li>
 </ul></li>
 </ul>
-<pre class="r"><code>x=c(4,12,1,5,21,7,10,7,2,19,24,3)  # a vector
+<pre class="r"><code>x = c(4,12,1,5,21,7,10,7,2,19,24,3)  # a vector
 
 # 1) matrix function
-mat = matrix(x, nrow=4, ncol=3)
+mat = 
 mat
-##      [,1] [,2] [,3]
-## [1,]    4   21    2
-## [2,]   12    7   19
-## [3,]    1   10   24
-## [4,]    5    7    3
+## Error in eval(expr, envir, enclos): object &#39;mat&#39; not found
 class(mat)
-## [1] &quot;matrix&quot; &quot;array&quot;
+## Error in eval(expr, envir, enclos): object &#39;mat&#39; not found
 
 # 2) array function
-mat2 = array(letters[1:12], dim=c(2,6))
+mat2 = 
 mat2
-##      [,1] [,2] [,3] [,4] [,5] [,6]
-## [1,] &quot;a&quot;  &quot;c&quot;  &quot;e&quot;  &quot;g&quot;  &quot;i&quot;  &quot;k&quot; 
-## [2,] &quot;b&quot;  &quot;d&quot;  &quot;f&quot;  &quot;h&quot;  &quot;j&quot;  &quot;l&quot;
+## Error in eval(expr, envir, enclos): object &#39;mat2&#39; not found
 
-# 3) dim function
-dim(x)=c(3,4)
-x
-##      [,1] [,2] [,3] [,4]
-## [1,]    4    5   10   19
-## [2,]   12   21    7   24
-## [3,]    1    7    2    3
+# 3) dim function on a vector
+mat3 = 
+mat3
+## Error in eval(expr, envir, enclos): object &#39;mat3&#39; not found
 
 # 4) bind vectors or matrices
 v1 = c(letters[1:3])
 v2 = c(&quot;d&quot;,&quot;e&quot;,&quot;f&quot;)
 v3 = c(LETTERS[7:9])
 
-rmat = rbind(v1, v2, v3) # rows are named
+rmat = 
 rmat
-##    [,1] [,2] [,3]
-## v1 &quot;a&quot;  &quot;b&quot;  &quot;c&quot; 
-## v2 &quot;d&quot;  &quot;e&quot;  &quot;f&quot; 
-## v3 &quot;G&quot;  &quot;H&quot;  &quot;I&quot;
+## Error in eval(expr, envir, enclos): object &#39;rmat&#39; not found
 rownames(rmat)
-## [1] &quot;v1&quot; &quot;v2&quot; &quot;v3&quot;
+## Error in rownames(rmat): object &#39;rmat&#39; not found
 colnames(rmat)
-## NULL
+## Error in is.data.frame(x): object &#39;rmat&#39; not found
 
-cmat = cbind(v1, v2, v3) # cols are named
+cmat = 
 cmat
-##      v1  v2  v3 
-## [1,] &quot;a&quot; &quot;d&quot; &quot;G&quot;
-## [2,] &quot;b&quot; &quot;e&quot; &quot;H&quot;
-## [3,] &quot;c&quot; &quot;f&quot; &quot;I&quot;
+## Error in eval(expr, envir, enclos): object &#39;cmat&#39; not found
 rownames(cmat)
-## NULL
+## Error in rownames(cmat): object &#39;cmat&#39; not found
 colnames(cmat)
-## [1] &quot;v1&quot; &quot;v2&quot; &quot;v3&quot;
+## Error in is.data.frame(x): object &#39;cmat&#39; not found
 
-rbind(rmat,cmat)  # stick two matrices together - what happened to the names?
-##    v1  v2  v3 
-## v1 &quot;a&quot; &quot;b&quot; &quot;c&quot;
-## v2 &quot;d&quot; &quot;e&quot; &quot;f&quot;
-## v3 &quot;G&quot; &quot;H&quot; &quot;I&quot;
-##    &quot;a&quot; &quot;d&quot; &quot;G&quot;
-##    &quot;b&quot; &quot;e&quot; &quot;H&quot;
-##    &quot;c&quot; &quot;f&quot; &quot;I&quot;</code></pre>
+# stick two matrices together - what happened to the names?</code></pre>
 <p>Note that if you try to bind two vectors of unequal lengths, the values in the shorter vector will be recycled.</p>
 <pre class="r"><code>#create vectors of values
-sepal.length&lt;-c(5.1,4.9,7.0,6.4,6.3,5.8)
-sepal.width&lt;-c(3.5,3.0,3.2,3.2,3.3,2.7)
+sepal.length &lt;- c(5.1, 4.9, 7.0, 6.4, 6.3, 5.8) # 6 values
+sepal.width  &lt;- c(3.5, 3.0, 3.2, 3.2, 3.3)      # only 5 values 
 
-mat&lt;-cbind(sepal.length, sepal.width)
+# combine vectors as columns
+mat &lt;- 
 mat</code></pre>
-<pre><code>##      sepal.length sepal.width
-## [1,]          5.1         3.5
-## [2,]          4.9         3.0
-## [3,]          7.0         3.2
-## [4,]          6.4         3.2
-## [5,]          6.3         3.3
-## [6,]          5.8         2.7</code></pre>
-<pre class="r"><code>mat[3,]</code></pre>
-<pre><code>## sepal.length  sepal.width 
-##          7.0          3.2</code></pre>
-<pre class="r"><code>#colnames of matrix
+<pre><code>## Error in eval(expr, envir, enclos): object &#39;mat&#39; not found</code></pre>
+<pre class="r"><code># inspect subsets of the data
+  # just one element
+  # a row and all columns
+  # a column and all rows
+
+# row and column names of matrix
 colnames(mat)</code></pre>
-<pre><code>## [1] &quot;sepal.length&quot; &quot;sepal.width&quot;</code></pre>
+<pre><code>## Error in is.data.frame(x): object &#39;mat&#39; not found</code></pre>
 <pre class="r"><code>rownames(mat)</code></pre>
-<pre><code>## NULL</code></pre>
-<pre class="r"><code>rownames(mat) = c(&quot;p1&quot;,&quot;p2&quot;,&quot;p3&quot;,&quot;p4&quot;,&quot;p5&quot;,&quot;p6&quot;)
+<pre><code>## Error in rownames(mat): object &#39;mat&#39; not found</code></pre>
+<pre class="r"><code># set row names
 
-mat[&quot;p4&quot;,&quot;sepal.length&quot;] = 5
+# access / assign values using row and column names
+mat[&quot;p4&quot;,&quot;sepal.length&quot;] = 5</code></pre>
+<pre><code>## Error in mat[&quot;p4&quot;, &quot;sepal.length&quot;] = 5: object &#39;mat&#39; not found</code></pre>
+<pre class="r"><code># get a logical matrix
 
-# get logical matrix
-mat &lt; 4</code></pre>
-<pre><code>##    sepal.length sepal.width
-## p1        FALSE        TRUE
-## p2        FALSE        TRUE
-## p3        FALSE        TRUE
-## p4        FALSE        TRUE
-## p5        FALSE        TRUE
-## p6        FALSE        TRUE</code></pre>
-<pre class="r"><code>mat [ mat &lt; 4]</code></pre>
-<pre><code>## [1] 3.5 3.0 3.2 3.2 3.3 2.7</code></pre>
+# filter using a logical statement</code></pre>
 <div id="indexing" class="section level2">
 <h2>Indexing</h2>
 <p>Elements of vectors and matrices can be accessed in a variety of ways.</p>
@@ -631,25 +574,12 @@ mat &lt; 4</code></pre>
 ## [1]  4 12  1
 
 mat[c(1,3,4), ]  # specific rows, all columns
-##    sepal.length sepal.width
-## p1          5.1         3.5
-## p3          7.0         3.2
-## p4          5.0         3.2
+## Error in eval(expr, envir, enclos): object &#39;mat&#39; not found
 mat[ , 1:2]      # all rows, first two cols
-##    sepal.length sepal.width
-## p1          5.1         3.5
-## p2          4.9         3.0
-## p3          7.0         3.2
-## p4          5.0         3.2
-## p5          6.3         3.3
-## p6          5.8         2.7
+## Error in eval(expr, envir, enclos): object &#39;mat&#39; not found
 
 mat[c(TRUE,TRUE,FALSE),]  # a logical vector
-##    sepal.length sepal.width
-## p1          5.1         3.5
-## p2          4.9         3.0
-## p4          5.0         3.2
-## p5          6.3         3.3
+## Error in eval(expr, envir, enclos): object &#39;mat&#39; not found
 
 x[x&lt;5]  # a logical expression
 ## [1] 4 1 2 3
@@ -684,52 +614,37 @@ lunch
 </ul></li>
 </ul>
 <p>Dataframe elements can be accessed using the traditional <code>[]</code> notation, but named columns can also be accessed using the more convenient <code>$</code> notation.</p>
-<pre class="r"><code>sepal.length = c(5.1, 4.9, 7.0, 6.4, 6.3, 5.8)
+<pre class="r"><code># data vectors
+sepal.length = c(5.1, 4.9, 7.0, 6.4, 6.3, 5.8)
 sepal.width  = c(3.5, 3.0, 3.2, 3.2, 3.3, 2.7)
 
-species = c(&quot;setosa&quot;,&quot;setosa&quot;,
-            &quot;versicolor&quot;,&quot;versicolor&quot;,
-            &quot;virginica&quot;,&quot;virginica&quot;)
+# group vector
+species = c(&quot;setosa&quot;, &quot;setosa&quot;,
+            &quot;versicolor&quot;, &quot;versicolor&quot;,
+            &quot;virginica&quot;, &quot;virginica&quot;)
 
-# build a dataframe from three vectors
-iris.df = data.frame(sepal.width, sepal.length, species, 
-                     stringsAsFactors = TRUE)
+  # how can we do this using rep()?
+
+# build a dataframe from three vectors - set strings as factors
+iris.df =  
 
 # assign row names
-rownames(iris.df)&lt;-c(&quot;p1&quot;,&quot;p2&quot;,&quot;p3&quot;,&quot;p4&quot;,&quot;p5&quot;,&quot;p6&quot;)
-iris.df</code></pre>
-<pre><code>##    sepal.width sepal.length    species
-## p1         3.5          5.1     setosa
-## p2         3.0          4.9     setosa
-## p3         3.2          7.0 versicolor
-## p4         3.2          6.4 versicolor
-## p5         3.3          6.3  virginica
-## p6         2.7          5.8  virginica</code></pre>
+rownames(iris.df) &lt;- c(&quot;p1&quot;,&quot;p2&quot;,&quot;p3&quot;,&quot;p4&quot;,&quot;p5&quot;,&quot;p6&quot;)</code></pre>
+<pre><code>## Error in rownames(iris.df) &lt;- c(&quot;p1&quot;, &quot;p2&quot;, &quot;p3&quot;, &quot;p4&quot;, &quot;p5&quot;, &quot;p6&quot;): object &#39;iris.df&#39; not found</code></pre>
+<pre class="r"><code>iris.df</code></pre>
+<pre><code>## Error in eval(expr, envir, enclos): object &#39;iris.df&#39; not found</code></pre>
 <pre class="r"><code># view the species column
-iris.df[,2]</code></pre>
-<pre><code>## [1] 5.1 4.9 7.0 6.4 6.3 5.8</code></pre>
-<pre class="r"><code>iris.df$species</code></pre>
-<pre><code>## [1] setosa     setosa     versicolor versicolor virginica  virginica 
-## Levels: setosa versicolor virginica</code></pre>
-<pre class="r"><code>class(iris.df$species)  # a factor</code></pre>
-<pre><code>## [1] &quot;factor&quot;</code></pre>
-<pre class="r"><code># view the number of items in each group in a table
-table(iris.df$species)</code></pre>
-<pre><code>## 
-##     setosa versicolor  virginica 
-##          2          2          2</code></pre>
-<pre class="r"><code># a row from a dataframe is still a dataframe because it contains mixed data types
+  # basic matrix notation
+  # access species column by name (doesn&#39;t work for matrices)
+  # what is the class of this column?
+
+# make a table to view the number of items in each group
+
+
+# a row from a dataframe is still a dataframe because it contains mixed data types
 class(iris.df[2,])</code></pre>
-<pre><code>## [1] &quot;data.frame&quot;</code></pre>
-<pre class="r"><code># get a quick overview of the data distribution
-summary(iris.df)</code></pre>
-<pre><code>##   sepal.width     sepal.length         species 
-##  Min.   :2.700   Min.   :4.900   setosa    :2  
-##  1st Qu.:3.050   1st Qu.:5.275   versicolor:2  
-##  Median :3.200   Median :6.050   virginica :2  
-##  Mean   :3.150   Mean   :5.917                 
-##  3rd Qu.:3.275   3rd Qu.:6.375                 
-##  Max.   :3.500   Max.   :7.000</code></pre>
+<pre><code>## Error in eval(expr, envir, enclos): object &#39;iris.df&#39; not found</code></pre>
+<pre class="r"><code># get a summary of the data distribution</code></pre>
 </div>
 <div id="lists" class="section level1">
 <h1>Lists</h1>
@@ -769,35 +684,20 @@ a_list$width</code></pre>
 <div id="inspecting-objects" class="section level1">
 <h1>Inspecting Objects</h1>
 <p>There are a variety of useful commands for getting information about objects.</p>
-<pre class="r"><code>obj = iris.df
-
-class(obj)</code></pre>
-<pre><code>## [1] &quot;data.frame&quot;</code></pre>
+<pre class="r"><code>obj = iris.df</code></pre>
+<pre><code>## Error in eval(expr, envir, enclos): object &#39;iris.df&#39; not found</code></pre>
+<pre class="r"><code>class(obj)</code></pre>
+<pre><code>## Error in eval(expr, envir, enclos): object &#39;obj&#39; not found</code></pre>
 <pre class="r"><code>is(obj)               # show class and inheritance</code></pre>
-<pre><code>## [1] &quot;data.frame&quot; &quot;list&quot;       &quot;oldClass&quot;   &quot;vector&quot;</code></pre>
+<pre><code>## Error in is(obj): object &#39;obj&#39; not found</code></pre>
 <pre class="r"><code>is(obj, &quot;data.frame&quot;) # test the class type</code></pre>
-<pre><code>## [1] TRUE</code></pre>
+<pre><code>## Error in is(obj, &quot;data.frame&quot;): object &#39;obj&#39; not found</code></pre>
 <pre class="r"><code>str(obj)</code></pre>
-<pre><code>## &#39;data.frame&#39;:    6 obs. of  3 variables:
-##  $ sepal.width : num  3.5 3 3.2 3.2 3.3 2.7
-##  $ sepal.length: num  5.1 4.9 7 6.4 6.3 5.8
-##  $ species     : Factor w/ 3 levels &quot;setosa&quot;,&quot;versicolor&quot;,..: 1 1 2 2 3 3</code></pre>
+<pre><code>## Error in str(obj): object &#39;obj&#39; not found</code></pre>
 <pre class="r"><code>head(obj)</code></pre>
-<pre><code>##    sepal.width sepal.length    species
-## p1         3.5          5.1     setosa
-## p2         3.0          4.9     setosa
-## p3         3.2          7.0 versicolor
-## p4         3.2          6.4 versicolor
-## p5         3.3          6.3  virginica
-## p6         2.7          5.8  virginica</code></pre>
+<pre><code>## Error in head(obj): object &#39;obj&#39; not found</code></pre>
 <pre class="r"><code>summary(obj)</code></pre>
-<pre><code>##   sepal.width     sepal.length         species 
-##  Min.   :2.700   Min.   :4.900   setosa    :2  
-##  1st Qu.:3.050   1st Qu.:5.275   versicolor:2  
-##  Median :3.200   Median :6.050   virginica :2  
-##  Mean   :3.150   Mean   :5.917                 
-##  3rd Qu.:3.275   3rd Qu.:6.375                 
-##  Max.   :3.500   Max.   :7.000</code></pre>
+<pre><code>## Error in summary(obj): object &#39;obj&#39; not found</code></pre>
 </div>
 
 

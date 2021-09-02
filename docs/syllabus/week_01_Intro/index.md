@@ -35,8 +35,14 @@ We will use three main resources for the course:
 
 ## A brief introduction to reproducible workflows in data science
 
++ [Reproducible Science](https://kriscgun.github.io/xdasi-bio-2021/best_practices/){: target="blank"}
+
 ## R and RStudio: Introduction and Exercise
+
++ [R, RStudio Basics](https://kriscgun.github.io/xdasi-bio-2021/r_resources/1_r_rstudio/){: target="blank"}
 
 ##TAKE A BREAK!!!**
 
 ## R coding: Basics and Tutorial
+
++ Files: [HTML](file:///Users/kcg1/code/kriscgun/xdasi-bio-2021/docs/syllabus/week_01_Intro/W1.C1_RDataStructures.html){: target="blank"} - [RMD](file:///Users/kcg1/code/kriscgun/xdasi-bio-2021/docs/syllabus/week_01_Intro/W1.C1_RDataStructures.Rmd)
