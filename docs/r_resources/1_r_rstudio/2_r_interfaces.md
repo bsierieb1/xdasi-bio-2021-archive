@@ -1,6 +1,6 @@
 ---
 title: Interfacing with R
-parent: R, RStudio, and the basics
+parent: R, RStudio, and the Basics
 grand_parent: R Resources
 nav_order: 2
 ---

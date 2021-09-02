@@ -1,6 +1,6 @@
 ---
 title: Installing R and RStudio
-parent: R, RStudio, and the basics
+parent: R, RStudio, and the Basics
 grand_parent: R Resources
 nav_order: 1
 ---
