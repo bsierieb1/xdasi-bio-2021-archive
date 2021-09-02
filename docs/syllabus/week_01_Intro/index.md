@@ -6,6 +6,8 @@ has_children: false
 
 # Week 1: Introduction
 
+<!-- ########################################################################### -->
+
 ## Class - Thursday, Sept. 2
 
 <details closed markdown="block">
@@ -66,3 +68,5 @@ We will use three main resources for the course:
 + Files: [HTML](Class_2021.09.02/Exercise_RDataStructures.html){: target="blank"} - [RMD](https://kriscgun.github.io/xdasi-bio-2021/syllabus/week_01_Intro/Class_2021.09.02/Exercise_RDataStructures.Rmd)
 
 </details>
+
+<!-- ########################################################################### -->
