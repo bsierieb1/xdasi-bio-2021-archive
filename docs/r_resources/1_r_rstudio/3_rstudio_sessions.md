@@ -20,7 +20,7 @@ nav_order: 3
 
 To work effectively in RStudio, you need to keep in mind the following **four components**:
 
-[Working Directory](https://support.rstudio.com/hc/en-us/articles/200711843-Working-Directories-and-Workspaces){: target="blank"}
+[Working Directory](https://support.rstudio.com/hc/en-us/articles/200711843-Working-Directories-and-Workspaces){: .btn .btn-green target="blank"}
 
 Whenever you are working on a project, your code (scripts and markdown files), workspace (data structures), commandline history, and data files are located somewhere on your filesystem.
 
@@ -31,19 +31,19 @@ It is recommended that you keep each of your projects in a separate folder conta
 For example, it's a good idea to create a parent folder called something like "R_homework", and then create a separate folder for each week's assignment. Fortunately, RStudio can help you organize your work using **RProjects**{: .text-green-200}. More on this below.
 
 
-[Workspace](https://support.rstudio.com/hc/en-us/articles/200711843-Working-Directories-and-Workspaces){: target="blank"}
+[Workspace](https://support.rstudio.com/hc/en-us/articles/200711843-Working-Directories-and-Workspaces){: .btn .btn-green target="blank"}
 
 All of the **R data objects**{: .text-green-200} you create in your current session will be stored in a file with the extension **.Rdata**{: .text-green-200} that can be reloaded next time you want to work on the same project. This will include anything like variables, vectors, data frames, etc.
 
 
-[Command History](https://support.rstudio.com/hc/en-us/articles/200526217-Command-History-in-the-RStudio-IDE){: target="blank"}
+[Command History](https://support.rstudio.com/hc/en-us/articles/200526217-Command-History-in-the-RStudio-IDE){: .btn .btn-green target="blank"}
 
 R keeps a record of all the commands you have executed in the current R session. Your command history can be accessed from the Console by using the **up**{: .text-green-200} and **down**{: .text-green-200} keys, or you can select to re-run previous commands from the History window in the GUI.
 
 Your commandline history is also saved as an **.Rhistory**{: .text-green-200} file in your working directory. You may want to save your successful commands in a separate file (or script) because your history will also contain your mistakes!
 
 
-[R Projects](https://support.rstudio.com/hc/en-us/articles/200526207){: target="blank"}
+[R Projects](https://support.rstudio.com/hc/en-us/articles/200526207){: .btn .btn-green target="blank"}
 
 **R Projects**{: .text-green-200} are an RStudio convenience that enables you to easily manage working directories, workspaces, and associated files for any R project.
 
