@@ -2,7 +2,7 @@
 title: Week 2
 parent: Syllabus
 has_children: true
-nav_exclude: false
+nav_exclude: true
 ---
 
-# Week 2: Data Types and Data Visualization
+# Week 2: Data Visualization
