@@ -8,14 +8,6 @@ has_children: false
 ---
 
 # LaTeX
-{: .no_toc }
-
-## Table of contents
-{: .no_toc .text-delta }
-
-- TOC
-{:toc}
-
 
 What is LaTeX? It is a typesetting system that uses plain text to encode mathematical symbols for rendering upon publication (such as turning your .Rmd file into a .pdf file). It allows the proper formatting of complex mathematical expressions, and all the special characters that are needed to write them.
 
