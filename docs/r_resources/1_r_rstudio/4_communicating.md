@@ -1,6 +1,6 @@
 ---
 title: Communicating with R
-parent: R, RStudio, and the Basics
+parent: R / RStudio Basics
 grand_parent: R Resources
 nav_order: 4
 ---
@@ -11,4 +11,4 @@ So, you have successfully installed R and RStudio, you've taken a tour of the wi
 
 Now, you may want to learn how to "talk" to R and how to make sense of what it "tells" you.
 
-Please refer to [Part I of "R Programming for Research"](https://geanders.github.io/RProgrammingForResearch/r-preliminaries.html){: target="blank"}. You may skip section 1.9 for now.
+Please refer to [Part I of "R Programming for Research"](https://geanders.github.io/RProgrammingForResearch/r-preliminaries.html){: target="blank"}, in particular sections 1.3-1.8. You may skip section 1.9 for now.

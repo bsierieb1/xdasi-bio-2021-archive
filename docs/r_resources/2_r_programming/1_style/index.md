@@ -1,6 +1,6 @@
 ---
 title: Coding Style
-parent: R Programming Fundamentals
+parent: R Programming
 grand_parent: R Resources
 nav_order: 1
 has_children: false

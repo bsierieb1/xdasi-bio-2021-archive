@@ -1,5 +1,5 @@
 ---
-title: R Programming Fundamentals
+title: R Programming
 parent: R Resources
 layout: default
 nav_order: 2

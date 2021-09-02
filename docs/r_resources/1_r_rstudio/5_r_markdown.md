@@ -1,7 +1,7 @@
 ---
 title: R Markdown
 layout: default
-parent: R, RStudio, and the Basics
+parent: R / RStudio Basics
 grand_parent: R Resources
 nav_order: 5
 has_children: false
