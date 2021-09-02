@@ -1,11 +1,11 @@
 ---
-title: tidyverse basics
-parent: R resources
+title: Tidyverse Basics
+parent: R Resources
 nav_order: 6
 has_children: true
 ---
 
-# tidyverse basics
+# Tidyverse Basics
 {: .no_toc }
 
 

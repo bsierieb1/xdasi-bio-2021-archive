@@ -1,7 +1,7 @@
 ---
 title: R, RStudio, and the basics
 layout: default
-parent: R resources
+parent: R Resources
 nav_order: 1
 has_children: true
 ---

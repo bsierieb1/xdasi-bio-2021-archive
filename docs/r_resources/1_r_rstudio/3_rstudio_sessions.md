@@ -1,11 +1,11 @@
 ---
-title: R Session Management
+title: RStudio Session Management
 parent: R, RStudio, and the basics
-grand_parent: R resources
+grand_parent: R Resources
 nav_order: 3
 ---
 
-# R Session Management
+# RStudio Session Management
 {: .no_toc }
 
 ## Table of contents
@@ -18,7 +18,7 @@ nav_order: 3
 
 # Key Concepts
 
-To work effectively in R/RStudio, you need to keep in mind the following **four components**:
+To work effectively in RStudio, you need to keep in mind the following **four components**:
 
 [Working Directory](https://support.rstudio.com/hc/en-us/articles/200711843-Working-Directories-and-Workspaces){: target="blank"}
 

@@ -1,11 +1,11 @@
 ---
-title: Quick and dirty base R
+title: Quick and Dirty Base R
 parent: Data visualization
-grand_parent: R resources
+grand_parent: R Resources
 nav_order: 1
 ---
 
-# Quick and dirty base R
+# Quick and Dirty Base R
 
 When you are still just exploring the data, you do not always need to build aesthetically pleasing plots that display multiple layers of information. Sometimes, you just need to quickly build a simple scatterplot or a boxplot. Ideally, you want to do it using a single line of code without thinking too much about the syntaxis. This is where base R graphics come to help.
 

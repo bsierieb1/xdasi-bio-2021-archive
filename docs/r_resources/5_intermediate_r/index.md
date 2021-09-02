@@ -1,6 +1,6 @@
 ---
 title: Intermediate R
-parent: R resources
+parent: R Resources
 nav_order: 5
 has_children: false
 ---

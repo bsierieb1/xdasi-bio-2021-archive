@@ -1,11 +1,11 @@
 ---
-title: Coding style
-parent: R resources
+title: Coding Style
+parent: R Resources
 nav_order: 3
 has_children: false
 ---
 
-# Coding style
+# Coding Style
 
 Your coding style is paramount to your ability and the ability of other people to later understand and reproduce your analyses.
 

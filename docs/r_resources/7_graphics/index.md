@@ -1,11 +1,11 @@
 ---
-title: Data visualization
-parent: R resources
+title: Data Visualization
+parent: R Resources
 nav_order: 7
 has_children: true
 ---
 
-# Data visualization
+# Data Visualization
 {: .no_toc }
 
 

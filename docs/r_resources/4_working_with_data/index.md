@@ -1,11 +1,11 @@
 ---
-title: Importing / Exporting data
-parent: R resources
+title: Importing / Exporting Data
+parent: R Resources
 nav_order: 4
 has_children: false
 ---
 
-# Importing / Exporting data
+# Importing / Exporting Data
 {: .no_toc }
 
 

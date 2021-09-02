@@ -1,6 +1,6 @@
 ---
-title: Data structures
-parent: R resources
+title: Data Structures
+parent: R Resources
 nav_order: 2
 has_children: false
 ---
