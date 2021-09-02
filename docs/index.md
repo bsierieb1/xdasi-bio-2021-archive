@@ -28,8 +28,7 @@ We are very happy to welcome you to our biostatistics course, BIOL-GA2030, which
 This course will provide introductory theory and hands-on training in exploratory data analysis and statistics for graduate students in biology. Students will learn basic R programming as well as foundational concepts and practical tools that provide a starting point for further advanced study in genomics, bioinformatics and computational biology.
 
 <details closed markdown="block">
-  <h4><summary>More</summary></h4>
-
+  <summary>More</summary>
 
 The course will cover both classical and modern statistical methods, including frequentist, Bayesian, and resampling methods, as well as exploratory data analysis (descriptive statistics and dimensional reduction with clustering, PCA, t-SNE). Applications to the analysis of laboratory data will include problems commonly encountered in bioinformatics, genomics, molecular biology, and systems biology. In-class exercises and problem sets will draw from data generated in our own department, public-domain websites, and simulations. Data sets will be analyzed in the context of hypotheses underlying the experiments in which they were generated. The role of simulation techniques for testing statistical methods applied to real data will be emphasized throughout the course.
 
