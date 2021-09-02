@@ -1,6 +1,7 @@
 ---
 title: Importing / Exporting Data
-parent: R Resources
+parent: R Programming Fundamentals
+grand_parent: R Resources
 nav_order: 4
 has_children: false
 ---

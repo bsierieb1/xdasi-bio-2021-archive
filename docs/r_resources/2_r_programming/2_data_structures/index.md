@@ -1,6 +1,7 @@
 ---
 title: Data Structures
-parent: R Resources
+parent: R Programming Fundamentals
+grand_parent: R Resources
 nav_order: 2
 has_children: false
 ---

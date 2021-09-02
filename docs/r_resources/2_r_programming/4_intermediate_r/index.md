@@ -1,7 +1,8 @@
 ---
 title: Intermediate R
-parent: R Resources
-nav_order: 5
+parent: R Programming Fundamentals
+grand_parent: R Resources
+nav_order: 4
 has_children: false
 ---
 

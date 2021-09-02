@@ -1,7 +1,8 @@
 ---
 title: Coding Style
-parent: R Resources
-nav_order: 3
+parent: R Programming Fundamentals
+grand_parent: R Resources
+nav_order: 1
 has_children: false
 ---
 
