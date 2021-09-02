@@ -6,6 +6,10 @@ has_children: false
 
 # Week 1: Introduction
 
+## Class - Thursday, Sept. 2
+
+<details closed markdown="block">
+
 ## Overview
 
 ### Main course resources
@@ -60,3 +64,5 @@ We will use three main resources for the course:
 ## R coding: Basics and Tutorial
 
 + Files: [HTML](https://kriscgun.github.io/xdasi-bio-2021/syllabus/week_01_Intro/Class_2021.09.02/Exercise_RDataStructures.html){: target="blank"} - [RMD](https://kriscgun.github.io/xdasi-bio-2021/syllabus/week_01_Intro/Class_2021.09.02/Exercise_RDataStructures.Rmd)
+
+</details>
