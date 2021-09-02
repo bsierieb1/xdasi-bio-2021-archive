@@ -1,6 +1,6 @@
 ---
 title: ggplot2, a.k.a. the tidyverse way
-parent: Data visualization
+parent: Data Visualization
 grand_parent: R Resources
 nav_order: 2
 ---

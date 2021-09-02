@@ -123,7 +123,7 @@ mean = mean(2,3)
 mean
 ```
 
-+ It can be really helpful to include a tag to help you remember what kind of object you are working with.
++ It can be really helpful to include a tag in your object name to help you remember what kind of data structure you are working with.
 ```{r, collapse=TRUE}
 # a data frame
 df.my_cool_data = data.frame(101:103)

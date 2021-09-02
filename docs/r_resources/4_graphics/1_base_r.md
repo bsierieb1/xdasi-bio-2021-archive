@@ -1,6 +1,6 @@
 ---
 title: Quick and Dirty Base R
-parent: Data visualization
+parent: Data Visualization
 grand_parent: R Resources
 nav_order: 1
 ---

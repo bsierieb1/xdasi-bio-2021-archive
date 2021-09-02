@@ -1,7 +1,7 @@
 ---
 title: Data manipulation with dplyr
-parent: tidyverse basics
-grand_parent: R resources
+parent: Tidyverse Basics
+grand_parent: R Resources
 nav_order: 2
 ---
 
