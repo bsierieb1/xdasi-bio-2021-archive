@@ -1,7 +1,6 @@
 ---
 title: TEST
-parent: Week 2
-grand_parent: Syllabus
+parent: Staging
 nav_order: 3
 nav_exclude: true
 has_children: false
