@@ -45,4 +45,4 @@ We will use three main resources for the course:
 
 ## R coding: Basics and Tutorial
 
-+ Files: [HTML](file:///Users/kcg1/code/kriscgun/xdasi-bio-2021/docs/syllabus/week_01_Intro/W1.C1_RDataStructures.html){: target="blank"} - [RMD](file:///Users/kcg1/code/kriscgun/xdasi-bio-2021/docs/syllabus/week_01_Intro/W1.C1_RDataStructures.Rmd)
++ Files: [HTML](https://kriscgun.github.io/xdasi-bio-2021/syllabus/week_01_Intro//W1.C1_RDataStructures.html){: target="blank"} - [RMD](https://kriscgun.github.io/xdasi-bio-2021/syllabus/week_01_Intro//W1.C1_RDataStructures.Rmd)
