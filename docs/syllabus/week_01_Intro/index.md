@@ -11,6 +11,7 @@ has_children: false
 ## Class - Thursday, Sept. 2
 
 <details closed markdown="block">
+  <summary>Details</summary>
 
 ## Overview
 
@@ -69,4 +70,14 @@ We will use three main resources for the course:
 
 </details>
 
+
 <!-- ########################################################################### -->
+
+<!-- ## Recitation - Friday, Sept. 3
+
+<details closed markdown="block">
+  <summary>Details</summary>
+
+  </details> -->
+
+  <!-- ########################################################################### -->
