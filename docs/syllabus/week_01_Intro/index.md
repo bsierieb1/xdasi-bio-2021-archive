@@ -5,6 +5,13 @@ has_children: true
 ---
 
 # Week 1: Introduction
+{: .no_toc }
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
 
 ## Overview
 
@@ -39,9 +46,22 @@ We will use three main resources for the course:
 
 ## R and RStudio: Introduction and Exercise
 
-+ [R, RStudio Basics](https://kriscgun.github.io/xdasi-bio-2021/r_resources/1_r_rstudio/){: target="blank"}
++ [R/RStudio Basics](https://kriscgun.github.io/xdasi-bio-2021/r_resources/1_r_rstudio/){: target="blank"}
+  + Installing R/Rstudio
+  + Interfacing with R
+  + RStudio Session Management
 
-##TAKE A BREAK!!!**
++ [R Markdown slides](Lecture/Rmd_tour.html){: target="blank"}
+  + See the [R Markdowns]() page for cheatsheets, quick guides, and other resources
+
++ [R, RStudio Basics](https://kriscgun.github.io/xdasi-bio-2021/r_resources/1_r_rstudio/){: target="blank"}
+  + See [R Resources]() page for links to additional learning resources
+
+---
+
+** TAKE A BREAK!!! **
+
+---
 
 ## R coding: Basics and Tutorial
 
