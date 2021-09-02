@@ -1,7 +1,7 @@
 ---
 title: What is tidy data?
 parent: Tidyverse Basics
-grand_parent: R resources
+grand_parent: R Resources
 nav_order: 1
 ---
 
