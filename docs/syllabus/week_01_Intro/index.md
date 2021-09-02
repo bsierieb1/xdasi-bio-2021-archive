@@ -15,7 +15,7 @@ has_children: true
 
 ## Overview
 
-1. Main course resources
+### Main course resources
 
 We will use three main resources for the course:
 
@@ -31,7 +31,8 @@ We will use three main resources for the course:
   - Post questions, comments, helpful links, etc. here.
   - Share with the whole class or individual students or instructors.
 
-2. Course format, grading, academic integrity
+### Course format, grading, academic integrity
+
 
 ## Basic concepts in statistics
 
@@ -40,9 +41,11 @@ We will use three main resources for the course:
 3. What kinds of studies can we perform?
 4. Basic data types and variables
 
+
 ## A brief introduction to reproducible workflows in data science
 
 + [Reproducible Science](https://kriscgun.github.io/xdasi-bio-2021/best_practices/){: target="blank"}
+
 
 ## R and RStudio: Introduction and Exercise
 
