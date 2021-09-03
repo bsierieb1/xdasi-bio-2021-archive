@@ -8,16 +8,6 @@ nav_exclude: true
 # Week 1: Introduction
 {: .no_toc }
 
-<details open markdown="block">
-  <summary>
-    Table of contents
-  </summary>
-  {: .text-delta }
-- TOC
-{:toc}
-</details>
-
-
 <details closed markdown="block">
   <summary>
     Table of contents
