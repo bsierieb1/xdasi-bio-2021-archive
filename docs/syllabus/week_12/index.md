@@ -1,9 +1,41 @@
 ---
 title: Week 12
 parent: Syllabus
-has_children: true
-nav_order: 12
+has_children: false
 nav_exclude: true
 ---
 
-# Week #: Title
+# Week 12: Title
+
+<!-- ########################################################################### -->
+
+<!-- ## Class - Monday, Nov. 15
+
+<details closed markdown="block">
+  <summary>Details</summary>
+
+</details> -->
+
+<!-- ########################################################################### -->
+
+<!-- ########################################################################### -->
+
+<!-- ## Class - Thursday, Nov. 18
+
+<details closed markdown="block">
+  <summary>Details</summary>
+
+</details> -->
+
+<!-- ########################################################################### -->
+
+<!-- ########################################################################### -->
+
+<!-- ## Recitation - Friday, Nov. 19
+
+<details closed markdown="block">
+  <summary>Details</summary>
+
+</details> -->
+
+<!-- ########################################################################### -->

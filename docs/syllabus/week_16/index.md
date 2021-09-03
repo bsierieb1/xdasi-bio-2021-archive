@@ -1,15 +1,15 @@
 ---
-title: Week 11
+title: Week 16
 parent: Syllabus
 has_children: false
 nav_exclude: true
 ---
 
-# Week 11: Title
+# Week 16: Title
 
 <!-- ########################################################################### -->
 
-<!-- ## Class - Monday, Nov. 8
+<!-- ## Class - Monday, Dec. 13
 
 <details closed markdown="block">
   <summary>Details</summary>
@@ -20,22 +20,6 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- ## Class - Thursday, Nov. 11
-
-<details closed markdown="block">
-  <summary>Details</summary>
-
-</details> -->
-
-<!-- ########################################################################### -->
-
-<!-- ########################################################################### -->
-
-<!-- ## Recitation - Friday, Nov. 12
-
-<details closed markdown="block">
-  <summary>Details</summary>
-
-</details> -->
+<!-- ## FINAL EXAMS - Thursday, Dec. 16 - Wed. Dec. 22 -->
 
 <!-- ########################################################################### -->

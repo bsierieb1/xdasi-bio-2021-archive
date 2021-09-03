@@ -1,7 +1,7 @@
 ---
 title: Week 3
 parent: Syllabus
-has_children: true
+has_children: false
 nav_exclude: true
 ---
 
@@ -9,7 +9,7 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- ## Class - Monday, Sept. 14
+<!-- ## Class - Monday, Sept. 13
 
 <details closed markdown="block">
   <summary>Details</summary>
