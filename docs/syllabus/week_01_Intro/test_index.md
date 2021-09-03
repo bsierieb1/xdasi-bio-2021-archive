@@ -8,13 +8,24 @@ nav_exclude: true
 # Week 1: Introduction
 {: .no_toc }
 
-
-## Table of contents
-{: .no_toc .text-delta }
-
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
 - TOC
 {:toc}
+</details>
 
+
+<details closed markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
 ---
 
 <!-- ########################################################################### -->
@@ -48,9 +59,20 @@ We will use three main resources for the course:
 ## Basic concepts in statistics
 
 1. What is the field of statistics about?
-2. What kinds of questions do we ask?
-3. What kinds of studies can we perform?
-4. Basic data types and variables
+  + Methods to measure aspects of populations and quantify uncertainty
+  + Estimation: infer an unknown quantity of a population based on samples
+  + Hypothesis testing
+  + Sampling error: accuracy / precision,  random samples / bias
+2. What kinds of questions are asked?
+  + Exploratory analysis
+  + Inference about a population based on a sample
+  + Correlations between variables (correlation is not causation)
+  + Prediction of unknown samples
+3. Types of studies
+  + Experimental vs. observational
+4. Data types and variables
+  + Categorical: nominal vs. ordinal
+  + Numerical: discrete vs. continuous
 
 
 ## A brief introduction to reproducible workflows in data science
