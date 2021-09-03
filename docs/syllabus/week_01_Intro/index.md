@@ -20,7 +20,7 @@ has_children: false
 
 <!-- ########################################################################### -->
 
-## Class - Thursday, Sept. 2
+# Class - Thursday, Sept. 2
 
 <details closed markdown="block">
   <summary>Details</summary>
@@ -96,7 +96,7 @@ We will use three main resources for the course:
 
 <!-- ########################################################################### -->
 
-<!-- ## Recitation - Friday, Sept. 3
+<!-- # Recitation - Friday, Sept. 3
 
 <details closed markdown="block">
   <summary>Details</summary>
