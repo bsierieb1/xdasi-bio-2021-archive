@@ -5,14 +5,15 @@ has_children: false
 nav_exclude: true
 ---
 
-# Week 16: Title
+# Week 16: Final In-Class Exam
+
+---
 
 <!-- ########################################################################### -->
 
 <!-- ## Class - Monday, Dec. 13
 
-<details closed markdown="block">
-  <summary>Details</summary>
+Study questions for in-class exam: [](){: target="blank"}
 
 </details> -->
 

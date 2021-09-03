@@ -6,6 +6,18 @@ nav_exclude: true
 ---
 
 # Week 2: Data Wrangling & Visualization
+{: .no_toc }
+
+<details closed markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
+
+---
 
 <!-- ########################################################################### -->
 
@@ -17,7 +29,8 @@ nav_exclude: true
 Please complete the following and hand in through Brightspace:
 
 + Quiz: Whitlock & Schluter, Chapter 1
-+ Exercise: R/RStudio Basics and Data Structures 
+  + 5 random questions from the [W&S Study Guide](){: target="blank"}
++ Exercise: R/RStudio Basics and Data Structures
 
 </details> -->
 

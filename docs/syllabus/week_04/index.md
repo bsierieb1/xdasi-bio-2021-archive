@@ -6,7 +6,18 @@ nav_exclude: true
 ---
 
 # Week 4: Title
+{: .no_toc }
 
+<details closed markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
+
+---
 
 <!-- ########################################################################### -->
 
