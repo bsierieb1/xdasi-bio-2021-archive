@@ -21,7 +21,7 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- ## Class - Tuesday, Oct. 12 (Legislative Monday)
+<!-- # Class - Tuesday, Oct. 12 (Legislative Monday)
 
 <details closed markdown="block">
   <summary>Details</summary>
@@ -32,7 +32,7 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- ## Class - Thursday, Oct. 14
+<!-- # Class - Thursday, Oct. 14
 
 <details closed markdown="block">
   <summary>Details</summary>
@@ -43,7 +43,7 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- ## Recitation - Friday, Oct. 15
+<!-- # Recitation - Friday, Oct. 15
 
 <details closed markdown="block">
   <summary>Details</summary>

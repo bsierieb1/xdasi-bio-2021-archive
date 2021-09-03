@@ -11,7 +11,7 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- ## Class - Monday, Dec. 13
+<!-- # Class - Monday, Dec. 13
 
 Study questions for in-class exam: [](){: target="blank"}
 
@@ -21,6 +21,6 @@ Study questions for in-class exam: [](){: target="blank"}
 
 <!-- ########################################################################### -->
 
-<!-- ## FINAL EXAMS - Thursday, Dec. 16 - Wed. Dec. 22 -->
+<!-- # FINAL EXAMS - Thursday, Dec. 16 - Wed. Dec. 22 -->
 
 <!-- ########################################################################### -->

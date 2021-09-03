@@ -11,7 +11,7 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- ## Class - Monday, Nov. 22
+<!-- # Class - Monday, Nov. 22
 
 <details closed markdown="block">
   <summary>Details</summary>
@@ -22,6 +22,6 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- ## THANKSGIVING - No Class Thursday or Friday, Nov. 25-26 -->
+<!-- # THANKSGIVING - No Class Thursday or Friday, Nov. 25-26 -->
 
 <!-- ########################################################################### -->

@@ -21,7 +21,7 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- ## Class - Monday, Nov. 29
+<!-- # Class - Monday, Nov. 29
 
 <details closed markdown="block">
   <summary>Details</summary>
@@ -32,7 +32,7 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- ## Class - Thursday, Dec. 2
+<!-- # Class - Thursday, Dec. 2
 
 <details closed markdown="block">
   <summary>Details</summary>
@@ -43,7 +43,7 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- ## Recitation - Friday, Dec. 3
+<!-- # Recitation - Friday, Dec. 3
 
 <details closed markdown="block">
   <summary>Details</summary>

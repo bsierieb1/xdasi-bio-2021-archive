@@ -21,7 +21,7 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- ## Class - Monday, Sept. 13
+<!-- # Class - Monday, Sept. 13
 
 <details closed markdown="block">
   <summary>Details</summary>
@@ -32,7 +32,7 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- ## Class - Thursday, Sept. 16
+<!-- # Class - Thursday, Sept. 16
 
 <details closed markdown="block">
   <summary>Details</summary>
@@ -43,7 +43,7 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- ## Recitation - Friday, Sept. 17
+<!-- # Recitation - Friday, Sept. 17
 
 <details closed markdown="block">
   <summary>Details</summary>

@@ -21,7 +21,7 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- ## Homework Assignment - Due Tuesday, Sept. 7 by 5pm
+<!-- # Homework Assignment - Due Tuesday, Sept. 7 by 5pm
 
 <details closed markdown="block">
   <summary>Details</summary>
@@ -38,7 +38,7 @@ Please complete the following and hand in through Brightspace:
 
 <!-- ########################################################################### -->
 
-<!-- ## Class - Thursday, Sept. 9
+<!-- # Class - Thursday, Sept. 9
 
 <details closed markdown="block">
   <summary>Details</summary>
@@ -49,7 +49,7 @@ Please complete the following and hand in through Brightspace:
 
 <!-- ########################################################################### -->
 
-<!-- ## Recitation - Friday, Sept. 10
+<!-- # Recitation - Friday, Sept. 10
 
 <details closed markdown="block">
   <summary>Details</summary>
