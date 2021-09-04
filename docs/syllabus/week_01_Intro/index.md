@@ -89,18 +89,21 @@ We will use three main resources for the course:
 
 ## R coding: Basics and Tutorial
 
-+ Files: [HTML](Class_2021.09.02/Exercise_RDataStructures.html){: target="blank"} - [RMD](https://kriscgun.github.io/xdasi-bio-2021/syllabus/week_01_Intro/Class_2021.09.02/Exercise_RDataStructures.Rmd)
++ Files: [HTML](Class_2021.09.02/W1.C1_Exercise_RDataStructures.html){: target="blank"} - [RMD](https://kriscgun.github.io/xdasi-bio-2021/syllabus/week_01_Intro/Class_2021.09.02/W1.C1_Exercise_RDataStructures.Rmd)
++ Answer key: [HTML](Class_2021.09.02/W1.C1_Exercise_RDataStructures_KEY.html){: target="blank"} - [RMD](https://kriscgun.github.io/xdasi-bio-2021/syllabus/week_01_Intro/Class_2021.09.02/W1.C1_Exercise_RDataStructures_KEY.Rmd)
+  + Note that the section on indexing matrices was reorganized a little bit to make the presentation clearer.
 
 </details>
 
+---
 
-<!-- ########################################################################### -->
-
-<!-- # Recitation - Friday, Sept. 3
+# Recitation - Friday, Sept. 3
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-  </details> -->
+Today we just finished working on the exercises we started yesterday. The answer key is posted along with the original exercise under the Class section of this page.
 
-  <!-- ########################################################################### -->
+</details>
+
+---
