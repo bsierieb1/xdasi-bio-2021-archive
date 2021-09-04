@@ -551,4 +551,3 @@ iris.df.from.txt = read.table("/Users/bsierieb/Desktop/iris.df.txt",
 iris.df.from.txt
 ```
 
-

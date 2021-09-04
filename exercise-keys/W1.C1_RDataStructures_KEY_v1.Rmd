@@ -1,6 +1,6 @@
 ---
 title: "R Basics and Data Structures"
-date: "September 2-3, 2021"
+date: "September 2, 2021"
 output: 
   html_document:
     toc: TRUE
@@ -288,126 +288,78 @@ A matrix can be created in multiple ways:
   - if not the same length/size, values will be recycled (beware!)
 
 ```{r, collapse=TRUE}
-vector_for_matrix = c(4,12,1,5,21,7,10,7,2,19,24,3)  # a vector
+x=c(4,12,1,5,21,7,10,7,2,19,24,3)  # a vector
 
 # 1) matrix function
-mat = matrix(data=vector_for_matrix,
-             nrow=3,
-             ncol=4) # every argument is named
-mat = matrix(vector_for_matrix,
-             3,
-             4) # the same, but with positional arguments
+mat = matrix(x, nrow=4, ncol=3)
 mat
 class(mat)
 
 # 2) array function
-mat2 = array(data=vector_for_matrix,
-             dim=c(3,4))
+mat2 = array(letters[1:12], dim=c(2,6))
 mat2
 
-# 3) dim function on a vector and a matrix
-dim(vector_for_matrix) # check vector dimensions, dim() returns NULL for 1D objects
-
-matrix_from_vector = vector_for_matrix # make a copy of the vector
-dim(matrix_from_vector) = c(3,4) # force the vector into 3x4 dimensions, which turns it into a matrix
-matrix_from_vector
-class(matrix_from_vector)
+# 3) dim function
+dim(x)=c(3,4)
+x
 
 # 4) bind vectors or matrices
 v1 = c(letters[1:3])
 v2 = c("d","e","f")
 v3 = c(LETTERS[7:9])
-v1
-v2
-v3
 
-rmat = rbind(v1,v2,v3)
+rmat = rbind(v1, v2, v3) # rows are named
 rmat
 rownames(rmat)
 colnames(rmat)
 
-cmat = cbind(v1,v2,v3)
+cmat = cbind(v1, v2, v3) # cols are named
 cmat
 rownames(cmat)
 colnames(cmat)
 
-# stick two matrices together - what happened to the names?
-matrix_stitched = rbind(rmat,cmat)
-matrix_stitched
-
-# assign new row names
-rownames(matrix_stitched) = c("r1","r2","r3","r4","r5","r6")
-matrix_stitched
+rbind(rmat,cmat)  # stick two matrices together - what happened to the names?
 ```
 
 Note that if you try to bind two vectors of unequal lengths, the values in the shorter vector will be recycled.
 
-```{r, collapse=TRUE}
+```{r}
 #create vectors of values
-sepal.length <- c(5.1, 4.9, 7.0, 6.4, 6.3, 5.8) # 6 values
-sepal.width  <- c(3.5, 3.0, 3.2, 3.2, 3.3)      # only 5 values 
+sepal.length<-c(5.1,4.9,7.0,6.4,6.3,5.8)
+sepal.width<-c(3.5,3.0,3.2,3.2,3.3,2.7)
 
-# combine vectors as columns
-mat <- cbind(sepal.width,sepal.length) # a warning is displayed but the code runs!
-mat # note that no NAs are introduced, be careful!
+mat<-cbind(sepal.length, sepal.width)
+mat
+mat[3,]
 
-# row and column names of matrix
+#colnames of matrix
 colnames(mat)
 rownames(mat)
+rownames(mat) = c("p1","p2","p3","p4","p5","p6")
 
-# set row names
-rownames(mat) <- c("r1","r2","r3","r4","r5","r6")
-mat
+mat["p4","sepal.length"] = 5
 
+# get logical matrix
+mat < 4
+
+mat [ mat < 4]
 ```
 
 
-## Indexing and Assignment
+## Indexing
 
 Elements of vectors and matrices can be accessed in a variety of ways.
 
-a) Numerical indices
 ```{r, collapse=TRUE}
-vector_for_matrix[1:3]  # sequential indices in a vector
-
-mat[1,]  # a row and all columns
-mat[,1]  # a column and all rows
+x[1:3]  # sequential indices
 
 mat[c(1,3,4), ]  # specific rows, all columns
 mat[ , 1:2]      # all rows, first two cols
 
-# inspect subsets of the data
-mat[9]   # just one element - what's going on here?
-  # using this expression, the matrix is interpreted as a single (column) vector
-  # so element 9 is really the 3rd row in the 2nd column
-  # avoid this type of indexing with matrices!!!
-mat[3,2] # ah, much better!
-```
+mat[c(TRUE,TRUE,FALSE),]  # a logical vector
 
-b) Logical operations
-```{r collapse= TRUE}
-# access / assign values using row and column names
-mat["r2","sepal.length"]     # access the value stored in the cell
-mat["r2","sepal.length"] = 5 # assign a new value
-mat
+x[x<5]  # a logical expression
 
-# get a logical matrix
-mat < 5
-
-# filter using a logical expression
-mat[ mat < 5 ]
-
-# a logical vector - beware, can produce confusing results!
-mat[c(TRUE,TRUE,FALSE,FALSE),]
-
-  # can you see what happened here? the logical vector got recycled!
-  # so the first two rows and the last two rows were retained
-  # (1,2,5,6 interpreted as TRUE; 3,4 interpreted as FALSE)
-
-```
-
-c) Named elements
-```{r}
 # vector of named elements
 fruit <- c(5, 10, 1, 20) 
 fruit
@@ -418,11 +370,12 @@ lunch <- fruit[c("apple","orange")]
 lunch
 ```
 
+
 # Data Frames
 
 A drawback to matrices is that all the values have to be the same mode (either all numeric or all character). If you try to combine a combination of types, it will default to the `character` class because numbers can be treated as characters, but not vice versa. 
 
-A data.frame is composed of vectors of the same length arranged as columns, where each column can be of a different type. This makes the data frame a perfect structure for mixed-type biomedical data!
+A dataframe is composed of vectors of the same length arranged as columns, where each column can be of a different type. This makes the data frame a perfect structure for mixed-type biomedical data!
 
 Ideally, each **row** of a data frame should contain a single "observation", i.e. data for a single item (e.g. a test subject, a gene), and each **column** should contain a different type of information or measurement (e.g. height, weight, etc.).
 
@@ -431,54 +384,44 @@ Other useful properties of data frames:
 + Can be built by combining vectors or converting matrices
 + Rows can columns can be named using the `rownames()` and `colnames()` functions, or during data import
 + Character columns can be converted to factors (making it easy to summarize and manipulate data by groups)
-  + **IMPORTANT NOTE**: the `stringsAsFactors` parameter used to be set to `TRUE` by default, but as of R4.0.0, this is no longer the case!!!
+  + **IMPORTANT NOTE**: the `stringsAsFactors` parameter used to be set to `TRUE` by default, but as of R4.0.0, this is no longer true!!!
 
-Data.frame elements can be accessed using the traditional ``[]`` notation, but named columns can also be accessed using the more convenient `$` notation.
+Dataframe elements can be accessed using the traditional ``[]`` notation, but named columns can also be accessed using the more convenient `$` notation.
 
-```{r, collapse=TRUE}
-# data vectors
+```{r}
 sepal.length = c(5.1, 4.9, 7.0, 6.4, 6.3, 5.8)
 sepal.width  = c(3.5, 3.0, 3.2, 3.2, 3.3, 2.7)
 
-# group vector
-species = c("setosa", "setosa",
-            "versicolor", "versicolor",
-            "virginica", "virginica")
+species = c("setosa","setosa",
+            "versicolor","versicolor",
+            "virginica","virginica")
 
-# we can also use rep()
-species = c(rep("setosa",2),
-            rep("versicolor",2),
-            rep("virginica",2))
-
-# build a dataframe from three vectors - set strings as factors
-iris.df =  data.frame(sepal.length,sepal.width,species, # you can list ANY number of vectors here
-                      stringsAsFactors=TRUE)
-iris.df
+# build a dataframe from three vectors
+iris.df = data.frame(sepal.width, sepal.length, species, 
+                     stringsAsFactors = TRUE)
 
 # assign row names
-rownames(iris.df) <- c("p1","p2","p3","p4","p5","p6")
+rownames(iris.df)<-c("p1","p2","p3","p4","p5","p6")
 iris.df
 
 # view the species column
-iris.df[,3]     # basic matrix notation
-iris.df$species # access species column by name (doesn't work for matrices)
+iris.df[,2]
+iris.df$species
+class(iris.df$species)  # a factor
 
-# what is the class of this column?
-class(iris.df$species)
-
-# make a table to view the number of items in each group
+# view the number of items in each group in a table
 table(iris.df$species)
 
 # a row from a dataframe is still a dataframe because it contains mixed data types
 class(iris.df[2,])
 
-# get a summary of the data distribution
+# get a quick overview of the data distribution
 summary(iris.df)
 ```
 
 # Lists
 
-A list is a collection of objects. It can contain vectors, matrices, and data.frames of different lengths. It's a great way to collate a bunch of different information.
+A list is a collection of objects. It can contain vectors, matrices, and dataframes of different lengths. It's a great way to collate a bunch of different information.
 
 Data frames are actually lists with a few restrictions:
 
@@ -490,7 +433,7 @@ List elements are indexed using double sqaure brackets ``[[]]`` or (if named) us
 
 Beware: there is no restriction on giving different items of a list the same name, but then only the first one will be accessed using the `$` notation.
 
-```{r, collapse=TRUE}
+```{r}
 a_list = list(sepal.width, sepal.length, 
               c("setosa", "versicolor","virginica"))
 
@@ -507,12 +450,13 @@ a_list$width
 mean(a_list$length)
 ```
 
+
 # Inspecting Objects
 
 There are a variety of useful commands for getting information about objects.
 
 ```{r}
-obj <- iris.df
+obj = iris.df
 
 class(obj)
 is(obj)               # show class and inheritance
@@ -521,57 +465,4 @@ str(obj)
 head(obj)
 summary(obj)
 ```
-
-# Writing/reading data
-
-## R Data Serialized objects
-
-You can write **any** single R object to a file using the function `saveRDS()`. The convention is to use an extension ".RDS" in the file name, although this is not imperative. To read a file that has been saved in this way, use `readRDS()`.
-
-The main **advantages** of using this pair of functions to write/read data are:
-
-* You can save an object of any structure (i.e. even if it is not a matrix or a data.frame).
-* You do not need to specify any additional parameters when you read a saved object (in contrast to `read.table()`, which you will see below).
-
-The main **disadvantage** is:
-
-* .RDS files are **not** human-readable (i.e. even if you have saved a data.frame, you will not be able to view it in a text editor).
-
-```{r}
-# save iris.df
-saveRDS(iris.df,
-        file="iris.df.RDS")
-
-# read iris.df from the saved file
-iris.df.from.file = readRDS("iris.df.RDS")
-iris.df.from.file
-```
-
-## Text files
-
-To write and read matrices and data.frames, a commonly used pair of functions is `write.table()` and `read.table()`. 
-
-If you are working with comma-separated files, you may use the special flavors `write.csv()` and `read.csv()`. The usage of `...table()` and `...csv()` is overall very similar, but some parameters are different - please refer to the help pages of these functions.
-
-The main **advantage** of using this pair of functions to write/read data is:
-
-* The files are human-readable, i.e. you can view them in a text editor or import them into Excel or other spreadsheet software.
-
-The main **disadvantages** are:
-
-* These functions are limited to data organized as tables.
-* You may need to carefully specify the parameters of these functions, e.g. whether to include row names or not, whether to surround each value with quotes etc.
-
-```{r}
-# save iris.df using write.table()
-write.table(iris.df,
-            file="iris.df.txt",
-            row.names=F)
-
-# read iris.df from the saved file
-iris.df.from.txt = read.table("iris.df.txt",
-                              header=TRUE)
-iris.df.from.txt
-```
-
 

@@ -10,6 +10,7 @@
 
 
 
+<meta name="date" content="2021-09-02" />
 
 <title>R Basics and Data Structures</title>
 
@@ -240,7 +241,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">R Basics and Data Structures</h1>
-<h4 class="date">September 2-3, 2021</h4>
+<h4 class="date">September 2, 2021</h4>
 
 </div>
 
@@ -531,58 +532,40 @@ tapply(expvalues, expgroup, mean)  # the mean values in each group
 <li>if not the same length/size, values will be recycled (beware!)</li>
 </ul></li>
 </ul>
-<pre class="r"><code>vector_for_matrix = c(4,12,1,5,21,7,10,7,2,19,24,3)  # a vector
+<pre class="r"><code>x=c(4,12,1,5,21,7,10,7,2,19,24,3)  # a vector
 
 # 1) matrix function
-mat = matrix(data=vector_for_matrix,
-             nrow=3,
-             ncol=4) # every argument is named
-mat = matrix(vector_for_matrix,
-             3,
-             4) # the same, but with positional arguments
+mat = matrix(x, nrow=4, ncol=3)
 mat
-##      [,1] [,2] [,3] [,4]
-## [1,]    4    5   10   19
-## [2,]   12   21    7   24
-## [3,]    1    7    2    3
+##      [,1] [,2] [,3]
+## [1,]    4   21    2
+## [2,]   12    7   19
+## [3,]    1   10   24
+## [4,]    5    7    3
 class(mat)
 ## [1] &quot;matrix&quot; &quot;array&quot;
 
 # 2) array function
-mat2 = array(data=vector_for_matrix,
-             dim=c(3,4))
+mat2 = array(letters[1:12], dim=c(2,6))
 mat2
+##      [,1] [,2] [,3] [,4] [,5] [,6]
+## [1,] &quot;a&quot;  &quot;c&quot;  &quot;e&quot;  &quot;g&quot;  &quot;i&quot;  &quot;k&quot; 
+## [2,] &quot;b&quot;  &quot;d&quot;  &quot;f&quot;  &quot;h&quot;  &quot;j&quot;  &quot;l&quot;
+
+# 3) dim function
+dim(x)=c(3,4)
+x
 ##      [,1] [,2] [,3] [,4]
 ## [1,]    4    5   10   19
 ## [2,]   12   21    7   24
 ## [3,]    1    7    2    3
-
-# 3) dim function on a vector and a matrix
-dim(vector_for_matrix) # check vector dimensions, dim() returns NULL for 1D objects
-## NULL
-
-matrix_from_vector = vector_for_matrix # make a copy of the vector
-dim(matrix_from_vector) = c(3,4) # force the vector into 3x4 dimensions, which turns it into a matrix
-matrix_from_vector
-##      [,1] [,2] [,3] [,4]
-## [1,]    4    5   10   19
-## [2,]   12   21    7   24
-## [3,]    1    7    2    3
-class(matrix_from_vector)
-## [1] &quot;matrix&quot; &quot;array&quot;
 
 # 4) bind vectors or matrices
 v1 = c(letters[1:3])
 v2 = c(&quot;d&quot;,&quot;e&quot;,&quot;f&quot;)
 v3 = c(LETTERS[7:9])
-v1
-## [1] &quot;a&quot; &quot;b&quot; &quot;c&quot;
-v2
-## [1] &quot;d&quot; &quot;e&quot; &quot;f&quot;
-v3
-## [1] &quot;G&quot; &quot;H&quot; &quot;I&quot;
 
-rmat = rbind(v1,v2,v3)
+rmat = rbind(v1, v2, v3) # rows are named
 rmat
 ##    [,1] [,2] [,3]
 ## v1 &quot;a&quot;  &quot;b&quot;  &quot;c&quot; 
@@ -593,7 +576,7 @@ rownames(rmat)
 colnames(rmat)
 ## NULL
 
-cmat = cbind(v1,v2,v3)
+cmat = cbind(v1, v2, v3) # cols are named
 cmat
 ##      v1  v2  v3 
 ## [1,] &quot;a&quot; &quot;d&quot; &quot;G&quot;
@@ -604,161 +587,100 @@ rownames(cmat)
 colnames(cmat)
 ## [1] &quot;v1&quot; &quot;v2&quot; &quot;v3&quot;
 
-# stick two matrices together - what happened to the names?
-matrix_stitched = rbind(rmat,cmat)
-matrix_stitched
+rbind(rmat,cmat)  # stick two matrices together - what happened to the names?
 ##    v1  v2  v3 
 ## v1 &quot;a&quot; &quot;b&quot; &quot;c&quot;
 ## v2 &quot;d&quot; &quot;e&quot; &quot;f&quot;
 ## v3 &quot;G&quot; &quot;H&quot; &quot;I&quot;
 ##    &quot;a&quot; &quot;d&quot; &quot;G&quot;
 ##    &quot;b&quot; &quot;e&quot; &quot;H&quot;
-##    &quot;c&quot; &quot;f&quot; &quot;I&quot;
-
-# assign new row names
-rownames(matrix_stitched) = c(&quot;r1&quot;,&quot;r2&quot;,&quot;r3&quot;,&quot;r4&quot;,&quot;r5&quot;,&quot;r6&quot;)
-matrix_stitched
-##    v1  v2  v3 
-## r1 &quot;a&quot; &quot;b&quot; &quot;c&quot;
-## r2 &quot;d&quot; &quot;e&quot; &quot;f&quot;
-## r3 &quot;G&quot; &quot;H&quot; &quot;I&quot;
-## r4 &quot;a&quot; &quot;d&quot; &quot;G&quot;
-## r5 &quot;b&quot; &quot;e&quot; &quot;H&quot;
-## r6 &quot;c&quot; &quot;f&quot; &quot;I&quot;</code></pre>
+##    &quot;c&quot; &quot;f&quot; &quot;I&quot;</code></pre>
 <p>Note that if you try to bind two vectors of unequal lengths, the values in the shorter vector will be recycled.</p>
 <pre class="r"><code>#create vectors of values
-sepal.length &lt;- c(5.1, 4.9, 7.0, 6.4, 6.3, 5.8) # 6 values
-sepal.width  &lt;- c(3.5, 3.0, 3.2, 3.2, 3.3)      # only 5 values 
+sepal.length&lt;-c(5.1,4.9,7.0,6.4,6.3,5.8)
+sepal.width&lt;-c(3.5,3.0,3.2,3.2,3.3,2.7)
 
-# combine vectors as columns
-mat &lt;- cbind(sepal.width,sepal.length) # a warning is displayed but the code runs!
-## Warning in cbind(sepal.width, sepal.length): number of rows of result is not a
-## multiple of vector length (arg 1)
-mat # note that no NAs are introduced, be careful!
-##      sepal.width sepal.length
-## [1,]         3.5          5.1
-## [2,]         3.0          4.9
-## [3,]         3.2          7.0
-## [4,]         3.2          6.4
-## [5,]         3.3          6.3
-## [6,]         3.5          5.8
+mat&lt;-cbind(sepal.length, sepal.width)
+mat</code></pre>
+<pre><code>##      sepal.length sepal.width
+## [1,]          5.1         3.5
+## [2,]          4.9         3.0
+## [3,]          7.0         3.2
+## [4,]          6.4         3.2
+## [5,]          6.3         3.3
+## [6,]          5.8         2.7</code></pre>
+<pre class="r"><code>mat[3,]</code></pre>
+<pre><code>## sepal.length  sepal.width 
+##          7.0          3.2</code></pre>
+<pre class="r"><code>#colnames of matrix
+colnames(mat)</code></pre>
+<pre><code>## [1] &quot;sepal.length&quot; &quot;sepal.width&quot;</code></pre>
+<pre class="r"><code>rownames(mat)</code></pre>
+<pre><code>## NULL</code></pre>
+<pre class="r"><code>rownames(mat) = c(&quot;p1&quot;,&quot;p2&quot;,&quot;p3&quot;,&quot;p4&quot;,&quot;p5&quot;,&quot;p6&quot;)
 
-# row and column names of matrix
-colnames(mat)
-## [1] &quot;sepal.width&quot;  &quot;sepal.length&quot;
-rownames(mat)
-## NULL
+mat[&quot;p4&quot;,&quot;sepal.length&quot;] = 5
 
-# set row names
-rownames(mat) &lt;- c(&quot;r1&quot;,&quot;r2&quot;,&quot;r3&quot;,&quot;r4&quot;,&quot;r5&quot;,&quot;r6&quot;)
-mat
-##    sepal.width sepal.length
-## r1         3.5          5.1
-## r2         3.0          4.9
-## r3         3.2          7.0
-## r4         3.2          6.4
-## r5         3.3          6.3
-## r6         3.5          5.8</code></pre>
-<div id="indexing-and-assignment" class="section level2">
-<h2>Indexing and Assignment</h2>
+# get logical matrix
+mat &lt; 4</code></pre>
+<pre><code>##    sepal.length sepal.width
+## p1        FALSE        TRUE
+## p2        FALSE        TRUE
+## p3        FALSE        TRUE
+## p4        FALSE        TRUE
+## p5        FALSE        TRUE
+## p6        FALSE        TRUE</code></pre>
+<pre class="r"><code>mat [ mat &lt; 4]</code></pre>
+<pre><code>## [1] 3.5 3.0 3.2 3.2 3.3 2.7</code></pre>
+<div id="indexing" class="section level2">
+<h2>Indexing</h2>
 <p>Elements of vectors and matrices can be accessed in a variety of ways.</p>
-<ol style="list-style-type: lower-alpha">
-<li>Numerical indices</li>
-</ol>
-<pre class="r"><code>vector_for_matrix[1:3]  # sequential indices in a vector
+<pre class="r"><code>x[1:3]  # sequential indices
 ## [1]  4 12  1
 
-mat[1,]  # a row and all columns
-##  sepal.width sepal.length 
-##          3.5          5.1
-mat[,1]  # a column and all rows
-##  r1  r2  r3  r4  r5  r6 
-## 3.5 3.0 3.2 3.2 3.3 3.5
-
 mat[c(1,3,4), ]  # specific rows, all columns
-##    sepal.width sepal.length
-## r1         3.5          5.1
-## r3         3.2          7.0
-## r4         3.2          6.4
+##    sepal.length sepal.width
+## p1          5.1         3.5
+## p3          7.0         3.2
+## p4          5.0         3.2
 mat[ , 1:2]      # all rows, first two cols
-##    sepal.width sepal.length
-## r1         3.5          5.1
-## r2         3.0          4.9
-## r3         3.2          7.0
-## r4         3.2          6.4
-## r5         3.3          6.3
-## r6         3.5          5.8
+##    sepal.length sepal.width
+## p1          5.1         3.5
+## p2          4.9         3.0
+## p3          7.0         3.2
+## p4          5.0         3.2
+## p5          6.3         3.3
+## p6          5.8         2.7
 
-# inspect subsets of the data
-mat[9]   # just one element - what&#39;s going on here?
-## [1] 7
-  # using this expression, the matrix is interpreted as a single (column) vector
-  # so element 9 is really the 3rd row in the 2nd column
-  # avoid this type of indexing with matrices!!!
-mat[3,2] # ah, much better!
-## [1] 7</code></pre>
-<ol start="2" style="list-style-type: lower-alpha">
-<li>Logical operations</li>
-</ol>
-<pre class="r"><code># access / assign values using row and column names
-mat[&quot;r2&quot;,&quot;sepal.length&quot;]     # access the value stored in the cell
-## [1] 4.9
-mat[&quot;r2&quot;,&quot;sepal.length&quot;] = 5 # assign a new value
-mat
-##    sepal.width sepal.length
-## r1         3.5          5.1
-## r2         3.0          5.0
-## r3         3.2          7.0
-## r4         3.2          6.4
-## r5         3.3          6.3
-## r6         3.5          5.8
+mat[c(TRUE,TRUE,FALSE),]  # a logical vector
+##    sepal.length sepal.width
+## p1          5.1         3.5
+## p2          4.9         3.0
+## p4          5.0         3.2
+## p5          6.3         3.3
 
-# get a logical matrix
-mat &lt; 5
-##    sepal.width sepal.length
-## r1        TRUE        FALSE
-## r2        TRUE        FALSE
-## r3        TRUE        FALSE
-## r4        TRUE        FALSE
-## r5        TRUE        FALSE
-## r6        TRUE        FALSE
+x[x&lt;5]  # a logical expression
+## [1] 4 1 2 3
 
-# filter using a logical expression
-mat[ mat &lt; 5 ]
-## [1] 3.5 3.0 3.2 3.2 3.3 3.5
-
-# a logical vector - beware, can produce confusing results!
-mat[c(TRUE,TRUE,FALSE,FALSE),]
-##    sepal.width sepal.length
-## r1         3.5          5.1
-## r2         3.0          5.0
-## r5         3.3          6.3
-## r6         3.5          5.8
-
-  # can you see what happened here? the logical vector got recycled!
-  # so the first two rows and the last two rows were retained
-  # (1,2,5,6 interpreted as TRUE; 3,4 interpreted as FALSE)</code></pre>
-<ol start="3" style="list-style-type: lower-alpha">
-<li>Named elements</li>
-</ol>
-<pre class="r"><code># vector of named elements
+# vector of named elements
 fruit &lt;- c(5, 10, 1, 20) 
-fruit</code></pre>
-<pre><code>## [1]  5 10  1 20</code></pre>
-<pre class="r"><code>names(fruit) &lt;- c(&quot;orange&quot;, &quot;banana&quot;, &quot;apple&quot;, &quot;peach&quot;)
-fruit</code></pre>
-<pre><code>## orange banana  apple  peach 
-##      5     10      1     20</code></pre>
-<pre class="r"><code>lunch &lt;- fruit[c(&quot;apple&quot;,&quot;orange&quot;)] 
-lunch</code></pre>
-<pre><code>##  apple orange 
+fruit
+## [1]  5 10  1 20
+names(fruit) &lt;- c(&quot;orange&quot;, &quot;banana&quot;, &quot;apple&quot;, &quot;peach&quot;)
+fruit
+## orange banana  apple  peach 
+##      5     10      1     20
+
+lunch &lt;- fruit[c(&quot;apple&quot;,&quot;orange&quot;)] 
+lunch
+##  apple orange 
 ##      1      5</code></pre>
 </div>
 </div>
 <div id="data-frames" class="section level1">
 <h1>Data Frames</h1>
 <p>A drawback to matrices is that all the values have to be the same mode (either all numeric or all character). If you try to combine a combination of types, it will default to the <code>character</code> class because numbers can be treated as characters, but not vice versa.</p>
-<p>A data.frame is composed of vectors of the same length arranged as columns, where each column can be of a different type. This makes the data frame a perfect structure for mixed-type biomedical data!</p>
+<p>A dataframe is composed of vectors of the same length arranged as columns, where each column can be of a different type. This makes the data frame a perfect structure for mixed-type biomedical data!</p>
 <p>Ideally, each <strong>row</strong> of a data frame should contain a single “observation”, i.e. data for a single item (e.g. a test subject, a gene), and each <strong>column</strong> should contain a different type of information or measurement (e.g. height, weight, etc.).</p>
 <p>Other useful properties of data frames:</p>
 <ul>
@@ -766,82 +688,60 @@ lunch</code></pre>
 <li>Rows can columns can be named using the <code>rownames()</code> and <code>colnames()</code> functions, or during data import</li>
 <li>Character columns can be converted to factors (making it easy to summarize and manipulate data by groups)
 <ul>
-<li><strong>IMPORTANT NOTE</strong>: the <code>stringsAsFactors</code> parameter used to be set to <code>TRUE</code> by default, but as of R4.0.0, this is no longer the case!!!</li>
+<li><strong>IMPORTANT NOTE</strong>: the <code>stringsAsFactors</code> parameter used to be set to <code>TRUE</code> by default, but as of R4.0.0, this is no longer true!!!</li>
 </ul></li>
 </ul>
-<p>Data.frame elements can be accessed using the traditional <code>[]</code> notation, but named columns can also be accessed using the more convenient <code>$</code> notation.</p>
-<pre class="r"><code># data vectors
-sepal.length = c(5.1, 4.9, 7.0, 6.4, 6.3, 5.8)
+<p>Dataframe elements can be accessed using the traditional <code>[]</code> notation, but named columns can also be accessed using the more convenient <code>$</code> notation.</p>
+<pre class="r"><code>sepal.length = c(5.1, 4.9, 7.0, 6.4, 6.3, 5.8)
 sepal.width  = c(3.5, 3.0, 3.2, 3.2, 3.3, 2.7)
 
-# group vector
-species = c(&quot;setosa&quot;, &quot;setosa&quot;,
-            &quot;versicolor&quot;, &quot;versicolor&quot;,
-            &quot;virginica&quot;, &quot;virginica&quot;)
+species = c(&quot;setosa&quot;,&quot;setosa&quot;,
+            &quot;versicolor&quot;,&quot;versicolor&quot;,
+            &quot;virginica&quot;,&quot;virginica&quot;)
 
-# we can also use rep()
-species = c(rep(&quot;setosa&quot;,2),
-            rep(&quot;versicolor&quot;,2),
-            rep(&quot;virginica&quot;,2))
-
-# build a dataframe from three vectors - set strings as factors
-iris.df =  data.frame(sepal.length,sepal.width,species, # you can list ANY number of vectors here
-                      stringsAsFactors=TRUE)
-iris.df
-##   sepal.length sepal.width    species
-## 1          5.1         3.5     setosa
-## 2          4.9         3.0     setosa
-## 3          7.0         3.2 versicolor
-## 4          6.4         3.2 versicolor
-## 5          6.3         3.3  virginica
-## 6          5.8         2.7  virginica
+# build a dataframe from three vectors
+iris.df = data.frame(sepal.width, sepal.length, species, 
+                     stringsAsFactors = TRUE)
 
 # assign row names
-rownames(iris.df) &lt;- c(&quot;p1&quot;,&quot;p2&quot;,&quot;p3&quot;,&quot;p4&quot;,&quot;p5&quot;,&quot;p6&quot;)
-iris.df
-##    sepal.length sepal.width    species
-## p1          5.1         3.5     setosa
-## p2          4.9         3.0     setosa
-## p3          7.0         3.2 versicolor
-## p4          6.4         3.2 versicolor
-## p5          6.3         3.3  virginica
-## p6          5.8         2.7  virginica
-
-# view the species column
-iris.df[,3]     # basic matrix notation
-## [1] setosa     setosa     versicolor versicolor virginica  virginica 
-## Levels: setosa versicolor virginica
-iris.df$species # access species column by name (doesn&#39;t work for matrices)
-## [1] setosa     setosa     versicolor versicolor virginica  virginica 
-## Levels: setosa versicolor virginica
-
-# what is the class of this column?
-class(iris.df$species)
-## [1] &quot;factor&quot;
-
-# make a table to view the number of items in each group
-table(iris.df$species)
-## 
+rownames(iris.df)&lt;-c(&quot;p1&quot;,&quot;p2&quot;,&quot;p3&quot;,&quot;p4&quot;,&quot;p5&quot;,&quot;p6&quot;)
+iris.df</code></pre>
+<pre><code>##    sepal.width sepal.length    species
+## p1         3.5          5.1     setosa
+## p2         3.0          4.9     setosa
+## p3         3.2          7.0 versicolor
+## p4         3.2          6.4 versicolor
+## p5         3.3          6.3  virginica
+## p6         2.7          5.8  virginica</code></pre>
+<pre class="r"><code># view the species column
+iris.df[,2]</code></pre>
+<pre><code>## [1] 5.1 4.9 7.0 6.4 6.3 5.8</code></pre>
+<pre class="r"><code>iris.df$species</code></pre>
+<pre><code>## [1] setosa     setosa     versicolor versicolor virginica  virginica 
+## Levels: setosa versicolor virginica</code></pre>
+<pre class="r"><code>class(iris.df$species)  # a factor</code></pre>
+<pre><code>## [1] &quot;factor&quot;</code></pre>
+<pre class="r"><code># view the number of items in each group in a table
+table(iris.df$species)</code></pre>
+<pre><code>## 
 ##     setosa versicolor  virginica 
-##          2          2          2
-
-# a row from a dataframe is still a dataframe because it contains mixed data types
-class(iris.df[2,])
-## [1] &quot;data.frame&quot;
-
-# get a summary of the data distribution
-summary(iris.df)
-##   sepal.length    sepal.width          species 
-##  Min.   :4.900   Min.   :2.700   setosa    :2  
-##  1st Qu.:5.275   1st Qu.:3.050   versicolor:2  
-##  Median :6.050   Median :3.200   virginica :2  
-##  Mean   :5.917   Mean   :3.150                 
-##  3rd Qu.:6.375   3rd Qu.:3.275                 
-##  Max.   :7.000   Max.   :3.500</code></pre>
+##          2          2          2</code></pre>
+<pre class="r"><code># a row from a dataframe is still a dataframe because it contains mixed data types
+class(iris.df[2,])</code></pre>
+<pre><code>## [1] &quot;data.frame&quot;</code></pre>
+<pre class="r"><code># get a quick overview of the data distribution
+summary(iris.df)</code></pre>
+<pre><code>##   sepal.width     sepal.length         species 
+##  Min.   :2.700   Min.   :4.900   setosa    :2  
+##  1st Qu.:3.050   1st Qu.:5.275   versicolor:2  
+##  Median :3.200   Median :6.050   virginica :2  
+##  Mean   :3.150   Mean   :5.917                 
+##  3rd Qu.:3.275   3rd Qu.:6.375                 
+##  Max.   :3.500   Max.   :7.000</code></pre>
 </div>
 <div id="lists" class="section level1">
 <h1>Lists</h1>
-<p>A list is a collection of objects. It can contain vectors, matrices, and data.frames of different lengths. It’s a great way to collate a bunch of different information.</p>
+<p>A list is a collection of objects. It can contain vectors, matrices, and dataframes of different lengths. It’s a great way to collate a bunch of different information.</p>
 <p>Data frames are actually lists with a few restrictions:</p>
 <ul>
 <li>Different columns must have different names</li>
@@ -853,32 +753,31 @@ summary(iris.df)
 <pre class="r"><code>a_list = list(sepal.width, sepal.length, 
               c(&quot;setosa&quot;, &quot;versicolor&quot;,&quot;virginica&quot;))
 
-a_list
-## [[1]]
+a_list</code></pre>
+<pre><code>## [[1]]
 ## [1] 3.5 3.0 3.2 3.2 3.3 2.7
 ## 
 ## [[2]]
 ## [1] 5.1 4.9 7.0 6.4 6.3 5.8
 ## 
 ## [[3]]
-## [1] &quot;setosa&quot;     &quot;versicolor&quot; &quot;virginica&quot;
-
-a_list = list(width=sepal.width, 
+## [1] &quot;setosa&quot;     &quot;versicolor&quot; &quot;virginica&quot;</code></pre>
+<pre class="r"><code>a_list = list(width=sepal.width, 
               length=sepal.length, 
               species=c(&quot;setosa&quot;, &quot;versicolor&quot;,&quot;virginica&quot;),
               numberOfFlowers=50,
               length=&quot;test&quot; # yikes! watch out!
               )
 
-a_list$width
-## [1] 3.5 3.0 3.2 3.2 3.3 2.7
-mean(a_list$length)
-## [1] 5.916667</code></pre>
+a_list$width</code></pre>
+<pre><code>## [1] 3.5 3.0 3.2 3.2 3.3 2.7</code></pre>
+<pre class="r"><code>mean(a_list$length)</code></pre>
+<pre><code>## [1] 5.916667</code></pre>
 </div>
 <div id="inspecting-objects" class="section level1">
 <h1>Inspecting Objects</h1>
 <p>There are a variety of useful commands for getting information about objects.</p>
-<pre class="r"><code>obj &lt;- iris.df
+<pre class="r"><code>obj = iris.df
 
 class(obj)</code></pre>
 <pre><code>## [1] &quot;data.frame&quot;</code></pre>
@@ -888,85 +787,25 @@ class(obj)</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 <pre class="r"><code>str(obj)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    6 obs. of  3 variables:
-##  $ sepal.length: num  5.1 4.9 7 6.4 6.3 5.8
 ##  $ sepal.width : num  3.5 3 3.2 3.2 3.3 2.7
+##  $ sepal.length: num  5.1 4.9 7 6.4 6.3 5.8
 ##  $ species     : Factor w/ 3 levels &quot;setosa&quot;,&quot;versicolor&quot;,..: 1 1 2 2 3 3</code></pre>
 <pre class="r"><code>head(obj)</code></pre>
-<pre><code>##    sepal.length sepal.width    species
-## p1          5.1         3.5     setosa
-## p2          4.9         3.0     setosa
-## p3          7.0         3.2 versicolor
-## p4          6.4         3.2 versicolor
-## p5          6.3         3.3  virginica
-## p6          5.8         2.7  virginica</code></pre>
+<pre><code>##    sepal.width sepal.length    species
+## p1         3.5          5.1     setosa
+## p2         3.0          4.9     setosa
+## p3         3.2          7.0 versicolor
+## p4         3.2          6.4 versicolor
+## p5         3.3          6.3  virginica
+## p6         2.7          5.8  virginica</code></pre>
 <pre class="r"><code>summary(obj)</code></pre>
-<pre><code>##   sepal.length    sepal.width          species 
-##  Min.   :4.900   Min.   :2.700   setosa    :2  
-##  1st Qu.:5.275   1st Qu.:3.050   versicolor:2  
-##  Median :6.050   Median :3.200   virginica :2  
-##  Mean   :5.917   Mean   :3.150                 
-##  3rd Qu.:6.375   3rd Qu.:3.275                 
-##  Max.   :7.000   Max.   :3.500</code></pre>
-</div>
-<div id="writingreading-data" class="section level1">
-<h1>Writing/reading data</h1>
-<div id="r-data-serialized-objects" class="section level2">
-<h2>R Data Serialized objects</h2>
-<p>You can write <strong>any</strong> single R object to a file using the function <code>saveRDS()</code>. The convention is to use an extension “.RDS” in the file name, although this is not imperative. To read a file that has been saved in this way, use <code>readRDS()</code>.</p>
-<p>The main <strong>advantages</strong> of using this pair of functions to write/read data are:</p>
-<ul>
-<li>You can save an object of any structure (i.e. even if it is not a matrix or a data.frame).</li>
-<li>You do not need to specify any additional parameters when you read a saved object (in contrast to <code>read.table()</code>, which you will see below).</li>
-</ul>
-<p>The main <strong>disadvantage</strong> is:</p>
-<ul>
-<li>.RDS files are <strong>not</strong> human-readable (i.e. even if you have saved a data.frame, you will not be able to view it in a text editor).</li>
-</ul>
-<pre class="r"><code># save iris.df
-saveRDS(iris.df,
-        file=&quot;iris.df.RDS&quot;)
-
-# read iris.df from the saved file
-iris.df.from.file = readRDS(&quot;iris.df.RDS&quot;)
-iris.df.from.file</code></pre>
-<pre><code>##    sepal.length sepal.width    species
-## p1          5.1         3.5     setosa
-## p2          4.9         3.0     setosa
-## p3          7.0         3.2 versicolor
-## p4          6.4         3.2 versicolor
-## p5          6.3         3.3  virginica
-## p6          5.8         2.7  virginica</code></pre>
-</div>
-<div id="text-files" class="section level2">
-<h2>Text files</h2>
-<p>To write and read matrices and data.frames, a commonly used pair of functions is <code>write.table()</code> and <code>read.table()</code>.</p>
-<p>If you are working with comma-separated files, you may use the special flavors <code>write.csv()</code> and <code>read.csv()</code>. The usage of <code>...table()</code> and <code>...csv()</code> is overall very similar, but some parameters are different - please refer to the help pages of these functions.</p>
-<p>The main <strong>advantage</strong> of using this pair of functions to write/read data is:</p>
-<ul>
-<li>The files are human-readable, i.e. you can view them in a text editor or import them into Excel or other spreadsheet software.</li>
-</ul>
-<p>The main <strong>disadvantages</strong> are:</p>
-<ul>
-<li>These functions are limited to data organized as tables.</li>
-<li>You may need to carefully specify the parameters of these functions, e.g. whether to include row names or not, whether to surround each value with quotes etc.</li>
-</ul>
-<pre class="r"><code># save iris.df using write.table()
-write.table(iris.df,
-            file=&quot;iris.df.txt&quot;,
-            row.names=F)
-
-# read iris.df from the saved file
-iris.df.from.txt = read.table(&quot;iris.df.txt&quot;,
-                              header=TRUE)
-iris.df.from.txt</code></pre>
-<pre><code>##   sepal.length sepal.width    species
-## 1          5.1         3.5     setosa
-## 2          4.9         3.0     setosa
-## 3          7.0         3.2 versicolor
-## 4          6.4         3.2 versicolor
-## 5          6.3         3.3  virginica
-## 6          5.8         2.7  virginica</code></pre>
-</div>
+<pre><code>##   sepal.width     sepal.length         species 
+##  Min.   :2.700   Min.   :4.900   setosa    :2  
+##  1st Qu.:3.050   1st Qu.:5.275   versicolor:2  
+##  Median :3.200   Median :6.050   virginica :2  
+##  Mean   :3.150   Mean   :5.917                 
+##  3rd Qu.:3.275   3rd Qu.:6.375                 
+##  Max.   :3.500   Max.   :7.000</code></pre>
 </div>
 
 
