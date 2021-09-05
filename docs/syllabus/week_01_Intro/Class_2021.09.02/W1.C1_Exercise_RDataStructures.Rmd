@@ -131,10 +131,14 @@ class(df.my_cool_data)
 
 A vector is the most basic type of data structure in R. Actually, pretty much everything in R is made up of vectors! We will see this as we go through each type of object. Vectors have the following properties:
 
-- A sequence of one or more that can be numbers, characters or logical values 
+- A sequence of one or more that can be numbers, characters, logical values, or dates 
 - Elements of a vector must be same type 
 - Characters must be enclosed in either single or double quotes
 - Missing data can be represented as NA
+
+This figure from [**R Programming for Research**](https://geanders.github.io/RProgrammingForResearch/r-preliminaries.html#vectors) illustrates the different types of vectors:
+
+![](Images/vector_classes.png){width="60%"}
 
 
 ## Working with Vectors
