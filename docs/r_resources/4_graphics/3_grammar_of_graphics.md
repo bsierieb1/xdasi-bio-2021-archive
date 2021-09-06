@@ -2,7 +2,7 @@
 title: Grammar of Graphics
 parent: Data Visualization
 grand_parent: R Resources
-nav_order: 2
+nav_order: 3
 ---
 
 # The Grammar of Graphics

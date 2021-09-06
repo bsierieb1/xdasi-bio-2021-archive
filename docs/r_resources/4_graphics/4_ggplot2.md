@@ -2,7 +2,7 @@
 title: ggplot2
 parent: Data Visualization
 grand_parent: R Resources
-nav_order: 3
+nav_order: 4
 ---
 
 # ggplot2, a.k.a Do it the tidyverse way!

@@ -2,7 +2,7 @@
 title: Base R Graphics
 parent: Data Visualization
 grand_parent: R Resources
-nav_order: 1
+nav_order: 2
 ---
 
 # Base R Graphics
