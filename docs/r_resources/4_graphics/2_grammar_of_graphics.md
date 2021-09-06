@@ -21,7 +21,7 @@ ggplot2 combines multiple **layers** to produce plots, each serving a particular
 
 # Mappings
 
-Every ggplot2 graph is composed of **three essential layers**[^From [Grammar of Graphics](https://vimeo.com/332290655) by David Keys]:
+Every ggplot2 graph is composed of **three essential layers[^1]**:
 
 ![](Images/grammar_of_graphics.png){: width="60%"}
 
@@ -47,3 +47,5 @@ to **layers**, with simple examples using the famous "iris" dataset that comes w
 
 
 Continue on to the [**ggplot2**](3_ggplot2) page for examples of how to make different kinds of graphs with ggplot2.
+
+[^1]: From [Grammar of Graphics](https://vimeo.com/332290655) by David Keys

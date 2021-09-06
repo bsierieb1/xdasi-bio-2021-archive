@@ -3,19 +3,10 @@ title: Data Visualization
 parent: R Resources
 nav_order: 4
 has_children: true
+
 ---
 
 # Data Visualization
-{: .no_toc }
-
-
-## Table of contents
-{: .no_toc .text-delta }
-
-- TOC
-{:toc}
-
----
 
 Before we dive in to the nuts and bolts of plotting in R, let's take a few minutes to think more broadly about data visualization. As the saying goes, "a picture is worth a thousand words". Consider this famous illustration of Napoleon's Russian campaign of 1812-1813:
 
