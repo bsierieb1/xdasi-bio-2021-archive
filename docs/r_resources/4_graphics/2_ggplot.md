@@ -3,6 +3,7 @@ title: ggplot2, a.k.a. the tidyverse way
 parent: Data Visualization
 grand_parent: R Resources
 nav_order: 2
+nav_exclude: true
 ---
 
 # ggplot2, a.k.a Do it the tidyverse way!
