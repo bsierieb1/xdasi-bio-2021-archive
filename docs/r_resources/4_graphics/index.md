@@ -108,12 +108,12 @@ display.brewer.all() # show all the palettes
 ## Other Color Resources
 
 + A good discussion about thinking about and handling colors in R may be found [**here**](https://bookdown.org/hneth/ds4psy/D-apx-colors.html).
-+ You can also read more about choosing colors [**here**](http://www.sthda.com/english/wiki/the-elements-of-choosing-colors-for-great-data-visualization-in-r)
-This blog post introduces another tool for designing color palettes called **colortools**.
++ You can also read more about choosing colors [**here**](http://www.sthda.com/english/wiki/the-elements-of-choosing-colors-for-great-data-visualization-in-r) - This blog post introduces another tool for designing color palettes called **colortools**.
 
 + [**SDHTA**: ggplot2 colors](http://www.sthda.com/english/wiki/ggplot2-colors-how-to-change-colors-automatically-and-manually) tutorial
 + [**R Cookbook**: colors with ggplot2 (includes RColorBrewere)](http://www.cookbook-r.com/Graphs/Colors_(ggplot2))
 + [**Tidyverse**: RColorBrewer with ggplot2](https://ggplot2.tidyverse.org/reference/scale_brewer.html)
++ [**Comprehensive list of color palettes in R**](https://github.com/EmilHvitfeldt/r-color-palettes) - provides a link to an interactive color picker
 
 
 # General R Graphics Resources
