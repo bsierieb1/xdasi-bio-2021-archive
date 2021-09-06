@@ -6,17 +6,19 @@ nav_order: 2
 nav_exclude: true
 ---
 
-# Introduction
+# The Grammar of Graphics
 
 One great feature of R is the powerful and flexible [**ggplot2**](https://ggplot2.tidyverse.org/) package, implemented by Hadley Wickham, for producing elegant graphics. It uses a systematic framework called the **grammar of graphics**  that allows very fine-grained control over how your final product looks.
 
 You will get lots of practice using ggplot during this course. Here, we just review the overall framework so you can get a feel for generating meaningful graphics using this framework.
+
 
 # Layers
 
 ggplot2 combines multiple **layers** to produce plots, each serving a particular function:
 
 ![](Images/7-layers-of-grammar-of-graphics.png){width="70%"}
+
 
 # Mappings
 
