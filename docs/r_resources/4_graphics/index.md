@@ -8,12 +8,15 @@ has_children: true
 
 # Data Visualization
 
-Before we dive in to the nuts and bolts of plotting in R, let's take a few minutes to think more broadly about data visualization. As the saying goes, "a picture is worth a thousand words". Consider this famous illustration of Napoleon's Russian campaign of 1812-1813:
+As the saying goes, ***"A picture is worth a thousand words"***.
+
+Before we dive in to the nuts and bolts of plotting in R, let's take a few minutes to think more broadly about data visualization. Consider Minard's famous illustration of Napoleon's Russian campaign of 1812-1813:
 
 ![](Images/Minard_Napolen_1812.jpg)
 
 Napoleon's army left Paris in June with over 400,000 soldiers; only a few thousand returned, after a harrowing retreat in the bitter cold of winter. This graphic makes the point concisely and impressively.
 
+---
 
 # Visualization in Data Science
 
@@ -31,7 +34,7 @@ A typical data science workflow is illustrated in this figure from [***R for Dat
 It is usually necessary to clean, format, and transform your data in preparation for **exploratory data analysis** and visualization. This often involves an iterative cycle in which we use or data to generate and test hypotheses and to discover and model relationships. Finally, we must **communicate** our results and conclusions in a clear, concise, and effective manner.
 
 
-# Choosing a Visual Paradigm
+## Choosing a Visual Paradigm
 
 Deciding what kind of plot to use will depend on the type of data you are trying to plot. A couple good websites are very useful for helping you identify the type of plot you want to make, based on what kind of data you have. They also have examples and code for different types of plots:
 
@@ -40,6 +43,7 @@ Deciding what kind of plot to use will depend on the type of data you are trying
 + [**R Graph Gallery**](https://www.r-graph-gallery.com/index.html)
   + Contains a lot of examples of different types of graphs, and provides tips for plotting with both base R and ggplot2.
 
+---
 
 # R Graphics Overview
 
@@ -49,13 +53,16 @@ Briefly, **Base R graphics** are great for **exploratory data analysis** because
 
 On the other hand, **ggplot2** is better adapted to **scientific communication** - it is more powerful, produces more visually appealing plots, and has many extensions that enable sophisticated graphical presentations. As a result, most people now use this package for much of their data analysis, and for producing publication quality graphs.
 
-We will cover the basics of both packages in this course, but please also refer to the excellent [**R Graphics Cookbook**](https://r-graphics.org/index.html) for detailed guidance on how to visualize data in R (and tons of examples). Here we provide two short guides to plotting with both methods, with links to a variety of other useful resources for each. We will follow these up with a lot of exercises to get you going with both methods.
+We will cover the basics of both packages in this course, but please also refer to the excellent [***R Graphics Cookbook***](https://r-graphics.org/index.html) for detailed guidance on how to visualize data in R (and tons of examples).
 
-+ [**Base R Graphics**](1_base_r.html)
-+ [**ggplot2: the tidyverse way!**](3_ggplot2.html)
+Here we provide two short guides to plotting with both methods, with links to a variety of other useful resources for each. We will follow these up with a lot of exercises to get you going with both methods.
 
++ [Base R Graphics](1_base_r.html)
++ [ggplot2: the tidyverse way!](3_ggplot2.html)
 
-# Effective Use of Color
+---
+
+# Using Colors Effectively
 
 Color is an important aspect of conveying information, and there is a lot of theory behind choosing colors. Color is important for:
 
@@ -90,8 +97,7 @@ There are several ways to refer to colors in R:
   + **hexacecimal** - "#RRGGBB", e.g. `#0000FF` = blue
     - each pair of digits from 00-FF corresponds to the intensity of red, green, or blue
 
-
-# Color Resources
+## Color Resources
 
 + [**Data Science for Psychologists**](https://bookdown.org/hneth/ds4psy/) - _Hansjörg Neth_ (2021-09-03)
   - A good discussion about thinking about and handling colors and palettes, both generally and in R

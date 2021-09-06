@@ -23,29 +23,29 @@ The generic **function** for plotting R objects is aptly called `plot()`, and it
 We will go through examples that show how to generate all the main types of plots using both base R methods and ggplot.
 
 
-# Getting and Setting Parameters
+## Getting and Setting Parameters
 
 There are many ***parameters*** that control the appearance and output format of a plot: points and lines, axis ticks, plot labels, text, and arrangement of plots (to display multiple plots at the same time). Other packages will come with their own plotting functions, but generally they access the same range of parameters.
 
 All the basic plotting functions have default settings that can be changed manually using the `par()` command. Some useful graphical parameters include:
 
-+ pch – style of points (circle, cross, start, etc)
-+ bty – plot border type
-+ tck – draw gridlines of tick marks
-+ xaxt/yaxt - Plot x or y tick marks and labels
-+ lab – number of tick marks on each axis
-+ las – orientation of axes labels
++ `pch` – style of points (circle, cross, start, etc)
++ `bty` – plot border type
++ `tck` – draw gridlines of tick marks
++ `xaxt`,`yaxt` - Plot x or y tick marks and labels
++ `lab` – number of tick marks on each axis
++ `las` – orientation of axes labels
 
 The `type` parameter controls the appearance of the data points on a plot:
 
-+ "p" – points
-+ "l" – lines
-+ "b" – both lines and points
-+ "c" – lines but not where points are
-+ "o" – non overlapping points and lines
-+ "h" – histogram-like vertical lines
-+ "s" – draw lines as steps
-+ "n" – draw only axes.
++ `p` – points
++ `l` – lines
++ `b` – both lines and points
++ `c` – lines but not where points are
++ `o` – non overlapping points and lines
++ `h` – histogram-like vertical lines
++ `s` – draw lines as steps
++ `n` – draw only axes.
 
 ## Arranging multiple plots
 
