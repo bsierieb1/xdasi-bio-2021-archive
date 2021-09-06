@@ -16,14 +16,14 @@ You will get lots of practice using ggplot during this course. Here, we just rev
 
 ggplot2 combines multiple **layers** to produce plots, each serving a particular function:
 
-![](Images/7-layers-of-grammar-of-graphics.png){width="60%"}
+![](Images/7-layers-of-grammar-of-graphics.png){: width="60%"}
 
 
 # Mappings
 
 Every ggplot2 graph is composed of **three essential layers**[^From [Grammar of Graphics](https://vimeo.com/332290655) by David Keys]:
 
-![](Images/grammar_of_graphics.png){width="60%"}
+![](Images/grammar_of_graphics.png){: width="60%"}
 
 + **data**
   - The foundation for any visualization (a data frame).
