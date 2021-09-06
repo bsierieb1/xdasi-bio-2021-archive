@@ -3,7 +3,6 @@ title: Grammar of Graphics
 parent: Data Visualization
 grand_parent: R Resources
 nav_order: 2
-nav_exclude: true
 ---
 
 # The Grammar of Graphics
@@ -17,14 +16,14 @@ You will get lots of practice using ggplot during this course. Here, we just rev
 
 ggplot2 combines multiple **layers** to produce plots, each serving a particular function:
 
-![](Images/7-layers-of-grammar-of-graphics.png){width="70%"}
+![](Images/7-layers-of-grammar-of-graphics.png){width="60%"}
 
 
 # Mappings
 
 Every ggplot2 graph is composed of **three essential layers**[^From [Grammar of Graphics](https://vimeo.com/332290655) by David Keys]:
 
-![](Images/grammar_of_graphics.png){width="70%"}
+![](Images/grammar_of_graphics.png){width="60%"}
 
 + **data**
   - The foundation for any visualization (a data frame).
