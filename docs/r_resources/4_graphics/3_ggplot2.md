@@ -15,11 +15,11 @@ If you want to create publication-quality, aesthetically pleasing figures, or ev
 The ggplot2 package employs two major **functions** to draw graphs:
 
 + `qplot()` - "quick plot", used to easily produce simple plots for data exploration
-  - uses similar syntax to base R methods; see [**Quick R**](https://www.statmethods.net/advgraphs/ggplot2.html){: target="blank"} by DataCamp for a brief overview
+  - uses similar syntax to base R methods; see [**Quick R**](https://www.statmethods.net/advgraphs/ggplot2.html){: target="blank"} by DataCamp for a brief overview, with examples
 + `ggplot()` - a more flexible and robust function for building a plot layer by layer
   - uses explicit Grammar for Graphics syntax
 
-To get a feel for the similarities and differences between base R plotting, `qplot()`, and `ggplot()` syntax, see [**Chapter 2](https://r-graphics.org/chapter-quick){: target="blank"} of the excellent **R Graphics Cookbook** by Winston Chang.
+To get a feel for the similarities and differences between base R plotting, `qplot()`, and `ggplot()` syntax, see the numerous examples in [**Chapter 2**](https://r-graphics.org/chapter-quick){: target="blank"} of the excellent **R Graphics Cookbook** by Winston Chang.
 
 
 # Resources
