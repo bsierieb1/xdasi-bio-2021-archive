@@ -31,8 +31,7 @@ There are several ways to refer to colors in R:
     - amount of red, green, and blue, ranging from 0-255, plus transparency
   + **hexacecimal** - "#RRGGBB", e.g. `#0000FF` = blue
     - each pair of digits from 00-FF corresponds to the intensity of red, green, or blue
-  + **HCL** - hue, chroma, luminescence
-    - an alternative representation of color
+  + **HCL** - hue, chroma, luminescence - an alternative representation of color
 
 
 ## Palettes
