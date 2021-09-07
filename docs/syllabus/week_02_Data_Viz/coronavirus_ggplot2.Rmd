@@ -1,0 +1,206 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,eval = TRUE, warning = FALSE)
+# Load required packages
+#install.packages("dplyr")
+#install.packages("ggplot2")
+#install.packages("reshape2")
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+```
+
+# Coronavirus cases
+
+Here we will replicate what we did yesterday using base R graphics, only we will use **ggplot2**.
+
+## Import and subset data
+
+Import the `coronavirus.csv` data into a data frame called `covid` and subset using the `dplyr` package by selecting only the date, country, type and cases columns.  
+```{r}
+covid = read.csv("coronavirus.csv")
+covid = select(covid, c("date","country","type","cases"))
+
+# check its structure and first few lines
+str(covid)
+head(covid)
+```
+
+## Histogram
+
+We have data where we can see how many deaths have taken place every day for several months in several countries. Let's look at the distribution of daily deaths around the world.
+
+We first want to focus on **death** only. Filter the dataset to retain rows where the "type" column contains the text "death" and store in a new variable called "deaths" (hint: filter to retain rows where covid$type=="death")
+
+```{r}
+deaths = filter(covid, type == "death")
+head(deaths)
+```
+
+Now make a histogram of the deaths using ggplot2.
+
+```{r}
+ggplot(deaths, aes(x=cases)) + 
+  geom_histogram()
+```
+**Question**: How does this plot look different from the one we made yesterday?
+
+When the values are quite variable, it is better to visualize them in *log* scale. Create a histogram of log10 values of cases using ggplot2.
+
+```{r}
+ggplot(deaths, aes(x=log10(cases))) + 
+  geom_histogram()
+
+```
+
+That looks a lot better! Let's pretty it up a bit. You may want to do this in steps:
+
++ Change the fill to something else besides the default gray (pick your favorite color), and set the outline to black. 
++ Next, try changing the position of the bins so that the left-hand side of the first bin coincides with 0.
++ Change the x-axis scale so it shows the original numbers (rather than the log values).
++ Finally, add some nice axis labels and label the plot (what is it that you are actually plotting here?)
+
+```{r}
+ggplot(deaths, aes(x=log10(cases))) + 
+  geom_histogram(fill="lightblue", color="black", origin=0)
+
+# or control the breaks (overrides "origin" and sets scale limit)
+ggplot(deaths, aes(x=log10(cases))) + 
+  geom_histogram(fill="lightblue", color="black", origin=0, breaks = seq(0,4,by=.1))
+
+ggplot(deaths, aes(x=log10(cases))) + 
+  geom_histogram(fill="lightblue", color="black", origin=0, breaks = seq(0,4,by=.1)) +
+  scale_x_continuous(label = function(x){return(round(10^x,1))}) +
+  xlab("Number of cases") + ylab("Deaths recorded") +
+  ggtitle("Total number of COVID-19 deaths recorded globally (per day per country)")
+```
+
+How informative is this for understanding the number of cases per country, or the number that occurred on a single day across the globe? How could you divide the data up to better show these kinds of things?
+
+## Barplots
+
+Let's see how the total number of **confirmed** cases changed across time. Based on the data we have, we can do this daily, however it maybe easier to visualize this monthly.
+
+Convert the days to months using the `substr()` function to trim the date, and add the new date as a new column to our covid dataframe using dplyr (recall that the date is in the format YYYY-MM-DD).
+
+```{r}
+covid = mutate(covid, newdate=substr(date,1,7))
+```
+
+Creat a new object called **usa_monthly_average** using `group_by()` and `summarise()` functions to get the sum of all cases for each `newdate`. Start with the original covid dataset and filter **USA** from the **country** column and **confirmed** from **type** column.
+
+```{r}
+usa_monthly_average = covid %>% 
+  filter(country=="US") %>% 
+  filter(type=="confirmed") %>% 
+  group_by(newdate) %>% 
+  summarise(totalcases=sum(cases),.groups="drop") %>% 
+  mutate_if(is.character, as.factor) # not really needed here
+
+str(usa_monthly_average)
+head(usa_monthly_average)
+```
+
+Finally let's create a barplot of this data that looks pretty much the same as the one we made with base R. Note that the x-axis labels will happen automatically, and you will need to use a different syntax to get the labels to show up vertically. Add some axis labels and a plot title while you're at it.
+
+```{r}
+# yesterday's graph
+barplot(usa_monthly_average$totalcases, 
+        names = usa_monthly_average$newdate,
+        horiz = F, las=2, col="lightgreen")
+
+ggplot(usa_monthly_average, aes(x=newdate, y=totalcases)) +
+  geom_bar(stat="identity", fill="lightgreen", color="black") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  xlab("Month") + ylab("Number of cases") +
+  ggtitle("Confirmed monthly COVID-19 cases in US")
+```
+Create the same barplot for Italy using a new object called **italy_monthly_average**.
+
+```{r}
+italy_monthly_average = covid %>% 
+  filter(country == "Italy") %>% 
+  filter(type=="confirmed") %>% 
+  group_by(newdate) %>% 
+  summarise(totalcases=sum(cases), .groups="drop")
+
+barplot(italy_monthly_average$totalcases, 
+        names = italy_monthly_average$newdate,
+        horiz = F, las=2, col="lightblue")
+
+```
+
+Note that the trend is happening at different times of the year. Italy peaked earlier than USA. Let's try to plot the barplot side by side. First we need to `merge()` the two dataframes, **usa_monthly_average** and **italy_monthly_average** together. Simply provide the two data frames as the first two arguments and the `by='newdate'` which will make sure the dataframes are correctly aligned. Call the new dataframe **usa_italy**.
+
+```{r}
+usa_italy = merge(usa_monthly_average, 
+                  italy_monthly_average,
+                  by="newdate")
+```
+
+Use the `colnames()` to fix the column names of **usa_italy** dataframe.
+
+```{r}
+colnames(usa_italy)=c("newdate","usa","italy")
+
+head(usa_italy)
+```
+
+Now that we have the dataframe merged, we can plot the barplot. 
+
++ To make our data "tidy" for this kind of display, however, we first need to transform the data to "long" format using the `melt()` function from the **reshape2** package.
++ Let's rename the columns while we're at it.
+
+```{r}
+usa_italy_melt = melt(usa_italy) %>% 
+  rename(country = variable, cases = value)
+
+head(usa_italy_melt)
+```
+
+Now we can make our plot using the melted data frame. Don't forget to plot the cases using a log scale!
+
+```{r}
+ggplot(usa_italy_melt, aes(x=newdate, y=log10(cases), fill=country)) +
+  geom_bar(stat="identity", 
+           position=position_dodge()) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  xlab("Month") + ylab("Number of cases") +
+  ggtitle("Confirmed monthly COVID-19 cases in US vs. Italy")
+
+barplot(log10(as.matrix(t(usa_italy[,2:3]))), 
+        beside = T, 
+        names=usa_monthly_average$newdate,
+        las=2, col=c("lightgreen","lightblue"))
+legend(1,5,c("usa","italy"),fill=c("lightgreen","lightblue"))
+```
+
+
+## Boxplot
+
+Barplots are very helpful, but our summarized data is missing information about the variation in the data. In order to capture the daily variation, we will look at each daily value but group them by month. 
+
+To create a boxplot for the US cases by month, we need to go back to the original dataset and filter for just the **US** values. Let's do this first:
+
+```{r}
+us_confirmed = covid %>% 
+          filter(type=="confirmed") %>% 
+          filter(country=="US") %>% 
+  select(newdate, cases)
+
+us_confirmed$newdate = as.factor(us_confirmed$newdate)
+
+head(us_confirmed)
+```
+
+```{r}
+ggplot(us_confirmed, aes(x=newdate, y = log10(cases))) +
+ geom_boxplot(fill="lightgreen")
+```
+
+Can you figure out how to layer the cases for Italy on top of this plot? Instead of overplotting, try plotting the boxes side-by-side.
+
+```{r}
+# add Italy data to the USA plot for comparison
+
+```
+

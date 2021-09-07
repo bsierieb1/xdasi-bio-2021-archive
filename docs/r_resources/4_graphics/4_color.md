@@ -5,7 +5,7 @@ grand_parent: R Resources
 nav_order: 4
 ---
 
-# Using Colors Effectively
+# Working with Color
 
 Color is an important aspect of visual communication, and there is a lot of theory behind choosing colors. Color can be used for:
 
@@ -13,8 +13,12 @@ Color is an important aspect of visual communication, and there is a lot of theo
 + distinguishing quantitative variables
 + highlighting information
 
+***It's really important to learn to use colors effectively.***
+
 
 ## Color Codes
+
+In Base R, different graph elements can be set using the `col` parameter (also col.axis, col.lab, col.main, col.sub). Other packages include additional functions for controlling colors (e.g. `fill` in ggplot2).
 
 There are several ways to refer to colors in R:
 
@@ -29,8 +33,6 @@ There are several ways to refer to colors in R:
     - each pair of digits from 00-FF corresponds to the intensity of red, green, or blue
   + **HCL** - hue, chroma, luminescence
     - an alternative representation of color
-
-In Base R, different graph elements can be set using the `col` parameter (also col.axis, col.lab, col.main, col.sub). Other packages include additional functions for controlling colors (e.g. `fill` in ggplot2; )
 
 
 ## Palettes
@@ -59,18 +61,21 @@ Some color packages in R:
 + grDevices (Base R)
   - a built-in package that comes with a range of functions for defining palettes
   - includes rainbow, heat.colors, cm.colors
++ colorspace - hcl colors, now implemented in grDevices as `hcl.color()`
 + RColorBrewer - provides nice set of palettes for different display purposes
   - after installing, palettes can be accessed using `display.brewer.all()`
 + viridis - robust color scales for colorblindness
 + ggsci - scientific journal color palettes
++ unikn - color schemes of the University of Konstanz (used in the Neth book below)
 + wesanderson - 16 palettes from Wes Anderson movies (!)
+
 
 
 ## Color Resources
 
-+ [**Data Science for Psychologists**](https://bookdown.org/hneth/ds4psy/) - _Hansjörg Neth_ (2021-09-03)
-  - A good discussion about thinking about and handling colors and palettes, both generally and in R
-  - Introduces the color packages *RColorBrewer*, *viridis*, and *unikn*
++ [**Data Science for Psychologists: Appendix D**](https://bookdown.org/hneth/ds4psy/D-apx-colors.html){: target="blank"} - _Hansjörg Neth_ (2021-09-03)
+  - A good discussion about colors, palettes, and R color packages
+
 + **R Graph Gallery**
   + [**base R**](https://www.r-graph-gallery.com/colors.html){: target="blank"}
   + [**ggplot2**](https://www.r-graph-gallery.com/ggplot2-color.html){: target="blank"}

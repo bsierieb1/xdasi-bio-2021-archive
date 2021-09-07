@@ -1,8 +1,8 @@
 ---
-title: ggplot2
+title: ggplot2: the tidyverse way
 parent: Data Visualization
 grand_parent: R Resources
-nav_order: 4
+nav_order: 3
 ---
 
 # ggplot2, a.k.a Do it the tidyverse way!
