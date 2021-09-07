@@ -2,7 +2,7 @@
 title: Grammar of Graphics
 parent: Data Visualization
 grand_parent: R Resources
-nav_order: 3
+nav_order: 2
 ---
 
 # The Grammar of Graphics
@@ -21,7 +21,7 @@ ggplot2 combines multiple **layers** to produce plots, each serving a particular
 
 # Mappings
 
-Every ggplot2 graph is composed of **three essential layers[^1]**:
+Every ggplot2 graph is composed of **three essential layers** (image from the short video tutorial below):
 
 ![](Images/grammar_of_graphics.png){: width="60%"}
 
@@ -34,7 +34,7 @@ Every ggplot2 graph is composed of **three essential layers[^1]**:
 + **Geometries**
   - The visual paradigm, or **type of plot** (histogram, box plot, line plot, density plot, scatter plot, etc.) used to display the data.
 
-Sometimes, **statistical transformations** are also applied, making it very easy to rapidly model your data.
+Sometimes, **statistical transformations** are also applied, making it very easy to rapidly model your data. Different **themes** may also be applied to change the look and feel of the plot.
 
 
 # Tutorials
