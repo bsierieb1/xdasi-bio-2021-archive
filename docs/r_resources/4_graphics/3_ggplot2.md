@@ -24,10 +24,12 @@ The ggplot2 package employs two major **functions** to draw graphs:
 The basic format for a ggplot2 graph is **Plot = data + aesthetics + geometry** (other layers are optional):
 
 ```
-ggplot(data = , aes(x= ,y= , col= )) +  # data and aesthetics
-  geom() +                              # geometry
-  stat() +                              # statistics
-  theme()                               # theme
+ggplot(data = <data.frame>,              # data (a data frame)
+       mapping = aes(x= ,y= , col= )) +  # aesthetics
+                                         # x,y are columns of the data frame
+  geom_<type of geometry>() +            # geometry
+  stat() +                               # statistics (optional)
+  theme()                                # theme (optional)
 ```
 
 To get a feel for the similarities and differences between base R plotting, `qplot()`, and `ggplot()` syntax, see the numerous examples in [**Chapter 2**](https://r-graphics.org/chapter-quick){: target="blank"} of the excellent **R Graphics Cookbook** by Winston Chang.
@@ -41,7 +43,7 @@ We will go through lots of examples in the course.
 
 + [**RStudio: ggplot cheatsheet (PDF)**](https://github.com/rstudio/cheatsheets/raw/master/data-visualization.pdf){: target="blank"}
   - comprehensive guide to syntax
-+ [**qplot RGraphics Cheatsheet**](https://dcgerard.github.io/stat_412_612/lectures/03_graphics/03_qplot_cheatsheet.pdf){: target = "blank|"} - by David Gerard (2019-01-22)
++ [**qplot RGraphics Cheatsheet**](https://dcgerard.github.io/stat_412_612/lectures/03_graphics/03_qplot_cheatsheet.pdf){: target = "blank"} - by David Gerard (2019-01-22)
   + simple examples of different kinds of plots
 
 ## Textbooks
@@ -68,7 +70,7 @@ Both of these are freely available through the [**XDASI DataCamp for Education**
     - Main title, axis labels; legend title; legend position and appearance; controlling colors; point shapes, colors, and sizes; text annotations; line types; themes and background colors; axis scales and transformations; axis ticks; add straight lines to a plot; rotate, flip, and reverse plots; faceting
   + **Extensions to ggplot2**
     - More R packages for extending ggplot functionality
-+ [**STHDA: Easy Way to Mix Multiple Graphs on The Same Page**](http://www.sthda.com/english/articles/24-ggpubr-publication-ready-plots/81-ggplot2-easy-way-to-mix-multiple-graphs-on-the-same-page/){: target="blank"} 
++ [**STHDA: Easy Way to Mix Multiple Graphs on The Same Page**](http://www.sthda.com/english/articles/24-ggpubr-publication-ready-plots/81-ggplot2-easy-way-to-mix-multiple-graphs-on-the-same-page/){: target="blank"}
   - examples using different packages to arrange multiple graphs on the same page
   - really useful for producing publication-quality figures!
   - covers `ggarange()` from the **ggpubr** package, **cowplot**, **grid**, and **gridExtra** packages
