@@ -6,6 +6,16 @@ nav_order: 1
 ---
 
 # Base R Graphics
+{: .no_toc }
+
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
+
+---
 
 When you are still just exploring the data, you do not always need to build aesthetically pleasing plots that display multiple layers of information. Sometimes, you just need to quickly build a simple scatterplot or a boxplot. Ideally, you want to do it using a single line of code without thinking too much about the syntax. This is where base R graphics come to help.
 
@@ -15,6 +25,7 @@ Learning to fine-tune the appearance of plots using the base graphics package ca
 
 You may always consult the documentation to check on available options and the correct **syntax** for the commands you want to use, either on the web or directly in RStudio (type `?commandname` in the console, or use the **Help** tab).
 
+---
 
 # Plotting Functions
 
@@ -61,6 +72,7 @@ DataCamp's **QuickR** provides some useful quick guides for setting parameters:
 The `mfrow()` and `mfcol()` arguments for the `par()` function allow you to define the number of
 figure panels you want to diplay, and how they are to be arranged in terms of rows and columns. For examples, to draw four plots in two rows and two columns, use `par(mfrow=c(2,2))` before issuing the `plot()` commands.
 
+---
 
 # Output Devices
 
@@ -106,6 +118,7 @@ dev.off()                                  # close the device to finish
 
 ![](Images/std_norm.png){: width="40%"}
 
+---
 
 # Tutorials
 

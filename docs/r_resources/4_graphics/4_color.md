@@ -6,6 +6,16 @@ nav_order: 4
 ---
 
 # Working with Color
+{: .no_toc }
+
+
+## Table of contents
+{: .no_toc .text-delta }
+
+- TOC
+{:toc}
+
+---
 
 Color is an important aspect of visual communication, and there is a lot of theory behind choosing colors. Color can be used for:
 
@@ -13,10 +23,11 @@ Color is an important aspect of visual communication, and there is a lot of theo
 + distinguishing quantitative variables
 + highlighting information
 
-***It's really important to learn to use colors effectively.***
+***It's really important to learn to use colors effectively.***{: .text-green-200}
 
+---
 
-## Color Codes
+# Color Codes
 
 In Base R, different graph elements can be set using the `col` parameter (also col.axis, col.lab, col.main, col.sub). Other packages include additional functions for controlling colors (e.g. `fill` in ggplot2).
 
@@ -33,8 +44,9 @@ There are several ways to refer to colors in R:
     - each pair of digits from 00-FF corresponds to the intensity of red, green, or blue
   + **HCL** - hue, chroma, luminescence - an alternative representation of color
 
+---
 
-## Palettes
+# Palettes
 
 **Palettes** are groups of related colors that are used together to convey or highlight different kinds of information. A good discussion on palettes (and colors more generally) may be found [**here**](https://bookdown.org/hneth/ds4psy/D-1-apx-colors-intro.html){: target="blank"}.
 
@@ -52,8 +64,9 @@ Many different palettes are available in R for representing categorical or quant
 
 Since a palette is simply a vector of color codes in R, you can also define your own palettes by manually specifying a vector of color codes, but there are also a lot of R color packages that provide a range of different color palettes.
 
+---
 
-## R Color Packages
+# R Color Packages
 
 Some color packages in R:
 
@@ -69,8 +82,9 @@ Some color packages in R:
 + wesanderson - 16 palettes from Wes Anderson movies (!)
 
 
+---
 
-## Color Resources
+# Color Resources
 
 + [**Data Science for Psychologists: Appendix D**](https://bookdown.org/hneth/ds4psy/D-apx-colors.html){: target="blank"} - _Hansjörg Neth_ (2021-09-03)
   - A good discussion about colors, palettes, and R color packages

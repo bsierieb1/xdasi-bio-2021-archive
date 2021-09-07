@@ -7,7 +7,7 @@ has_children: true
 
 # Introduction
 
-As the saying goes, ***"A picture is worth a thousand words"***.
+As the saying goes, ***"A picture is worth a thousand words"***{: .text-green-200}.
 
 Before we dive in to the nuts and bolts of plotting in R, let's take a few minutes to think more broadly about data visualization. Consider Minard's famous illustration of Napoleon's Russian campaign of 1812-1813:
 
