@@ -273,7 +273,7 @@ Histograms are good for showing the distribution of a **single quantitative vari
 
 ## hist() in base R
 
-Base R has a special function called hist().
+Base R has a special function called `hist()`.
 
 ```{r}
 hist(iris$Sepal.Length)
@@ -352,15 +352,91 @@ figure
 
 # Bar plots
 
-
+Bar plots are among the most common plots and are useful for comparing data values.
+More complex bar plots can show the different factors that contribute to the value.
 
 ## barplot() in base R
 
+Base R has a built-in function `barplot()`.
 
++ The first argument to `barplot()` is `height`, which is expected to be a vector or a matrix.
++ The arrangment of bars is given by the `beside` argument. The default value is `FALSE`.
++ If `height` is a matrix, the default setting makes a stacked barplot.
+
+```{r}
+# create sample data
+sampleData.df = data.frame(Control=sample(20,5),
+                           Nitrogen=sample(20,5),
+                           Phospate=sample(20,5))
+rownames(sampleData.df) = c("GeneA","GeneB","GeneC", "GeneD", "GeneE")
+sampleData.df # take a look
+
+# genes in Control condition
+barplot(height=sampleData.df$Control,
+        names.arg=row.names(sampleData.df))
+
+# matrix with stacked bars
+barplot(height=as.matrix(sampleData.df))
+#barplot(height = sampleData.df) # this does not work!
+
+# side-by-side bars in the rainbow palette, horizontal orientation
+barplot(height=as.matrix(sampleData.df),
+        beside=TRUE,
+        horiz=TRUE,
+        col=rainbow(4))
+```
+
+Oops! What happened? `rainbow(4)` makes a palette that just recycles four different colors. Since we have 5 genes, and we want the colors to match across groups, we need the right number of colors. Let's fix this up, and also add a legend. We will place the legend somewhere on the graph by specifying x- and y-coordinates.
+
+```{r}
+barplot(height=as.matrix(sampleData.df),
+        beside=TRUE,
+        horiz=TRUE,
+        col=rainbow(5))
+legend(15, 10, legend = rownames(sampleData.df), fill = rainbow(5))
+```
 
 ## geom_bar() in ggplot2
 
+To use ggplot2, we will need to transform `sampleData.df`. To plot the numerical data grouped by both gene and condition attribute, we need to put each of these three "dimensions" into a different **column**. This means we need to **transform** our  data from a ***wide*** format to a ***long*** format:
 
+![Wide format](Images/tidy_wide.png){width=60%}
+![Ling format](Images/long.png){width=60%}
+
+To do this we can use the `stack()` command.
+
+```{r}
+sampleData.df.long = stack(sampleData.df)
+head(sampleData.df.long) # check
+
+colnames(sampleData.df.long)[2] = "Condition" # rename "ind" to "Condition"
+
+sampleData.df.long$Gene = rep(rownames(sampleData.df),3) # create "Gene" column from the row names of sampleData.df
+head(sampleData.df.long) # check
+```
+
+Stacked bars:
+
+```{r, out.width = "60%"}
+ggplot(data=sampleData.df.long,
+       aes(x=Condition,
+           y=values,
+           fill=Gene)) +
+  geom_bar(stat="identity",
+           color="black")
+```
+
+Bars side-by-side:
+
+```{r}
+ggplot(data=sampleData.df.long,
+       aes(x=Condition,
+           y=values,
+           fill=Gene)) +
+  geom_bar(stat="identity",
+           color="black",
+           position=position_dodge())
+```
 
 # Faceting
 
@@ -384,7 +460,7 @@ boxplot(iris$Petal.Length ~ iris$Species,main="Petal Length",xlab="Species",ylab
 boxplot(iris$Petal.Length ~ iris$Species,main="Petal Width",xlab="Species",ylab="cm")
 
 # reset display to one graph only
-par(morow=c(1,1))
+par(mfrow=c(1,1))
 ```
 
 ## facet_wrap() and facet_grid() in ggplot2
