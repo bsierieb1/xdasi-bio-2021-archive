@@ -108,7 +108,7 @@ fig <- ggplot(iris, aes(Sepal.Length, fill = Species)) + geom_density(alpha = 0.
 cvd_grid(fig)
 ```
 
-![](Images/colorblindr-iris-cvd-grid-1.png){: width="60%"}
+![](Images/colorblindr-iris-cvd-grid-1.png){: width="100%"}
 
 ---
 
