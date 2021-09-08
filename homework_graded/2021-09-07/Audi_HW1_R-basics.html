@@ -1,0 +1,454 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><head></head><body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="fluid-row">
+
+
+
+<h1 class="title toc-ignore">XDASI-2021 HW1: R Basics</h1>
+<h4 class="author">Lauren Audi</h4>
+<h4 class="date">9/7/2021</h4>
+
+</div>
+
+<div>
+<ul>
+<li><a rel="noopener" href="#part-i-r-and-rstudio-basics">Part I: R and RStudio basics</a></li>
+<li><a rel="noopener" href="#part-ii-working-with-data">Part II: Working with data</a><ul>
+<li><a rel="noopener" href="#ii.1-matrices">II.1) Matrices</a></li>
+<li><a rel="noopener" href="#ii.2-dataframes">II.2) Dataframes</a></li>
+</ul></li>
+<li><a rel="noopener" href="#part-iii-data-import-export">Part III: Data Import / Export</a></li>
+</ul>
+</div>
+
+<hr/>
+<p>As you go through each section below, you may wonder about some of the markdown syntax you see (e.g.&#160;“##”, “+”, etc.) in the text. If so, take a look at an R Markdown cheatsheet or the R Markdown documentation. Links to these resources are provided on the course website in the “R Resources =&gt; R/RStudio Basics” section.</p>
+<div class="section level2">
+<h2>Part I: R and RStudio basics</h2>
+<p>I.1) What is an R workspace? How do you save and load workspaces manually?</p>
+<pre class="r"><code>#an r workspace is .... Manually save a work place by hitting the save button under file or the floppy disk. Manually laod workspace by going to file/open file</code></pre>
+<p>I.2) What is a working directory? How do you set it and how do you determine which directory is the working directory?</p>
+<pre class="r"><code>#a working directory is the directory where your files are being uploaded/saved to
+
+#set working directory 
+setwd(&quot;/Users/sicg_labmanager/Documents/NYU BIO/Biostats/week1&quot;)
+
+#check working directory 
+getwd()</code></pre>
+<p>I.3) Where does R save the history of your commands?</p>
+<pre class="r"><code># Rhistory in your current working directory</code></pre>
+<p>I.4) How is an RStudio Project related to the R workspace and working directory? What is the big advantage of using R Projects?</p>
+<pre class="r"><code>#RSTUDIO is a gui that runs R programming and allows you to save projects in a working directory to come back to later. </code></pre>
+<p>I.5) How do you start a new R script in RStudio?</p>
+<pre class="r"><code>#start a new R script = file&gt;new file&gt;r script</code></pre>
+<p>I.6) What does it mean then R prompts you with a “+” in the beginning of the line?</p>
+<pre class="r"><code># means your command has not been closed or finished properly. </code></pre>
+<p>I.7) What are three ways you can retrieve documentation related to a function and its usage in RStudio?</p>
+<pre class="r"><code># 1)go to the help bar and search it 
+# 2) help(&#39;function name&#39;)
+# 3) help.search(&#39;function name&#39;)</code></pre>
+<p>I.8) What are the three basic components of R Markdown files?</p>
+<pre class="r"><code>\
+# 1) header with metadata 
+# 2)text
+# 3) code blocks</code></pre>
+<p>I.9) What happens when you knit an R Markdown file?</p>
+<pre class="r"><code># it compiles the entire file into an html or pdf (What ever you set it as)</code></pre>
+<p>I.10) R Markdown code blocks</p>
+<pre class="r"><code># what is the keyboard shortcut to create a new code block?
+#cmd + opt + i = new code block
+
+# what are two ways you can run a single line in a code block?
+# 1) cmd + return 
+# 2) highliht and click run selected line
+
+# what are two ways you can run an entire code block at once?
+#1) cmd + shift + return 
+#2)highliht and click run current chunk
+
+# how do you prevent a code block from being executed when you knit the document?
+
+{r eval=FALSE}
+
+# how do you prevent a code block from being displayed in a rendered document?
+
+{r echo=FALSE} #runs the code but doesnt show it. Shows results 
+{r include = FALSE} #runs code but doesn&#39;t show it or the results 
+
+#</code></pre>
+<hr/>
+</div>
+<div class="section level2">
+<h2>Part II: Working with data</h2>
+<div class="section level3">
+<h3>II.1) Matrices</h3>
+<ol style="list-style-type: lower-alpha;">
+<li>Create three vectors and display their contents.</li>
+</ol>
+<ul>
+<li>“GeneA”, with the values 3,4,5,7</li>
+<li>“GeneB”, with the values 4,6,8,5</li>
+<li>“GeneC”, with the values 5,3,9,8</li>
+</ul>
+<pre class="r"><code># create the vectors
+
+GeneA = c(3,4,5,7)
+GeneB = c(4,6,8,5)
+GeneC = c(5,3,9,8)
+
+
+# take a look at them
+GeneA
+## [1] 3 4 5 7
+GeneB
+## [1] 4 6 8 5
+GeneC
+## [1] 5 3 9 8</code></pre>
+<ol start="2" style="list-style-type: lower-alpha;">
+<li>Create a character vector with the words, “control”, “nitrogen”,“potassium”, and “phosphate”. Call it “Experiments” and display the contents.</li>
+</ol>
+<pre class="r"><code>experiments = c(&quot;contorl&quot;, &quot;nitrogen&quot;, &quot;potassium&quot;, &quot;phosphate&quot;)
+experiments</code></pre>
+<pre><code>## [1] &quot;contorl&quot;   &quot;nitrogen&quot;  &quot;potassium&quot; &quot;phosphate&quot;</code></pre>
+<ol start="3" style="list-style-type: lower-alpha;">
+<li>Use two different methods to create a <strong>3x4</strong> matrix where each row contains data for one gene (don’t assign them to a variable, just make them):</li>
+</ol>
+<ul>
+<li><code>matrix()</code> - look up the documentation, and make sure you fill the matrix by <em>rows</em>, not by <em>columns</em></li>
+<li><code>rbind()</code> - combine vectors by rows</li>
+</ul>
+<pre class="r"><code># method 1: use matrix()
+
+matrix(c(GeneA, GeneB, GeneC), 3, 4, byrow=TRUE)</code></pre>
+<pre><code>##      [,1] [,2] [,3] [,4]
+## [1,]    3    4    5    7
+## [2,]    4    6    8    5
+## [3,]    5    3    9    8</code></pre>
+<pre class="r"><code># method 2: use rbind()
+rbind(GeneA, GeneB, GeneC)</code></pre>
+<pre><code>##       [,1] [,2] [,3] [,4]
+## GeneA    3    4    5    7
+## GeneB    4    6    8    5
+## GeneC    5    3    9    8</code></pre>
+<ol start="4" style="list-style-type: lower-alpha;">
+<li>What’s the difference between the output when you use these two different methods to create the matrix?</li>
+</ol>
+<pre class="r"><code>#rbind includes the row names </code></pre>
+<ol start="5" style="list-style-type: lower-alpha;">
+<li>Use the <code>rbind()</code> method to make a matrix called “expvalues”, and add column names to it using the “Experiments” vector. Display the resulting matrix.</li>
+</ol>
+<pre class="r"><code># make the matrix &quot;expvalues&quot;
+expvalues = rbind(GeneA, GeneB, GeneC)
+# assign column names
+colnames(expvalues) = experiments
+
+# check your work
+expvalues</code></pre>
+<pre><code>##       contorl nitrogen potassium phosphate
+## GeneA       3        4         5         7
+## GeneB       4        6         8         5
+## GeneC       5        3         9         8</code></pre>
+</div>
+<div class="section level3">
+<h3>II.2) Dataframes</h3>
+<ol style="list-style-type: lower-alpha;">
+<li>What’s the key difference between a matrix and a data frame? In what situation would you prefer a dataframe over a matrix?</li>
+</ol>
+<pre class="r"><code>#a dataframe allows you to have data of different classes in the same table (i.e. character, numeric). You would want to use a dataframe if you have a dataset with mixed data types (categorical and continuous)</code></pre>
+<ol start="2" style="list-style-type: lower-alpha;">
+<li>Convert the “expvalues” matrix you just made into a data frame. Call it “expvalues.df” and display the resulting object. Also, take a look at the <code>class()</code> and <code>structure()</code> of the object.</li>
+</ol>
+<pre class="r"><code># convert to df
+expvalues.df &lt;- data.frame(expvalues)
+# check the class and structure
+class(expvalues.df)
+## [1] &quot;data.frame&quot;
+str(expvalues.df)
+## &#39;data.frame&#39;:    3 obs. of  4 variables:
+##  $ contorl  : num  3 4 5
+##  $ nitrogen : num  4 6 3
+##  $ potassium: num  5 8 9
+##  $ phosphate: num  7 5 8</code></pre>
+<ol start="3" style="list-style-type: lower-alpha;">
+<li>Use two different methods to view just the data from the “potassium” column.</li>
+</ol>
+<pre class="r"><code># a) square brackets notation
+expvalues.df
+##       contorl nitrogen potassium phosphate
+## GeneA       3        4         5         7
+## GeneB       4        6         8         5
+## GeneC       5        3         9         8
+expvalues.df[,3]
+## [1] 5 8 9
+
+# b) dollar sign notation
+expvalues.df$potassium
+## [1] 5 8 9</code></pre>
+<ol start="4" style="list-style-type: lower-alpha;">
+<li>Get just the control and nitrogen values for GeneA from “expvalues.df”.</li>
+</ol>
+<pre class="r"><code># a) select desired columns using numerical indices
+
+expvalues.df[1,c(1:2)]
+##       contorl nitrogen
+## GeneA       3        4
+
+# b) alternatively, you can exclude unwanted columns using -c()
+
+expvalues.df[-c(2:3),-c(3:4)]
+##       contorl nitrogen
+## GeneA       3        4</code></pre>
+<ol start="5" style="list-style-type: lower-alpha;">
+<li>You can also select rows from data frames based on their values using the <code>which()</code> function with logical expressions!</li>
+</ol>
+<pre class="r"><code># select rows whose values satisfy specific criteria
+# here we are asking for genes whose expression in the potassium condition is above 7
+interesting_genes = which(expvalues.df$potassium &gt; 7)
+interesting_genes
+## [1] 2 3
+expvalues.df[interesting_genes,]
+##       contorl nitrogen potassium phosphate
+## GeneB       4        6         8         5
+## GeneC       5        3         9         8
+
+# do it all at once
+expvalues.df[which(expvalues.df$potassium &gt; 7),]
+##       contorl nitrogen potassium phosphate
+## GeneB       4        6         8         5
+## GeneC       5        3         9         8</code></pre>
+<hr/>
+</div>
+</div>
+<div class="section level2">
+<h2>Part III: Data Import / Export</h2>
+<ol style="list-style-type: lower-alpha;">
+<li>Inside RStudio (not in your file system):</li>
+</ol>
+<ul>
+<li>get your current working directory</li>
+<li>create a new directory inside of it called “data” using <code>dir.create()</code>
+<ul>
+<li>Note: you will get a warning if you run this more than once, but it’s ok</li>
+</ul></li>
+<li>list the contents of the directory using either <code>dir()</code> or <code>list.files()</code></li>
+</ul>
+<pre class="r"><code>#set WD 
+setwd(&quot;/Users/sicg_labmanager/Documents/NYU BIO/Biostats/week1&quot;)
+
+#check directory
+getwd()
+## [1] &quot;/Users/sicg_labmanager/Documents/NYU BIO/Biostats/week1&quot;
+
+#create new directory with WD
+dir.create(&quot;data&quot;)
+## Warning in dir.create(&quot;data&quot;): &#39;data&#39; already exists
+dir()
+##  [1] &quot;class1-review.R&quot;           &quot;data&quot;                     
+##  [3] &quot;fly_pheno.csv&quot;             &quot;fly_pheno.rds&quot;            
+##  [5] &quot;HW1_R-basics.html&quot;         &quot;HW1_R-basics.Rmd&quot;         
+##  [7] &quot;rmd_temp.html&quot;             &quot;rmd_temp.log&quot;             
+##  [9] &quot;rmd_temp.Rmd&quot;              &quot;rmd_temp.tex&quot;             
+## [11] &quot;W1.C1_RDataStructures.Rmd&quot;</code></pre>
+<ol start="2" style="list-style-type: lower-alpha;">
+<li>Download the data file called “hw1_fly_phenotypes.tsv” and put it into the data directory you just created. (Don’t try to use RStudio for this, just use your filesytem.)</li>
+</ol>
+<ul>
+<li>First, check that the file is where you think it is from within RStudio using the appropriate command to list all the files in the data directory.</li>
+</ul>
+<pre class="r"><code>#check the file is there 
+dir(&quot;data&quot;)</code></pre>
+<pre><code>## [1] &quot;fly_pheno.csv&quot;          &quot;fly_pheno.rds&quot;          &quot;hw1_fly_phenotypes.tsv&quot;</code></pre>
+<ul>
+<li>Next, look at the documentation for <code>read.table()</code> and compare the default settings for the different variations of this function.</li>
+<li>Decide which function you will use, paying attention to the default parameter settings for <code>header</code>, <code>sep</code>, and <code>stringsAsFactors</code>. Note that any of the arguments can be overridden by explicitly specifying them, but it’s easier to just pick the function with the right defaults. Some things to think about:
+<ul>
+<li>Does the file contain column headers?</li>
+<li>What are the column delimiters?</li>
+<li>What kind of data does the file contain?</li>
+<li>Do you want to make factors right away?</li>
+</ul></li>
+<li>Once you’ve decided on how you will import the data, read in the data file using one of these functions and store it in a data frame called “fly_pheno”.</li>
+<li>You should do this <em>without changing your current working directory</em> from within RStudio. (Hint: You can use a relative path name to do this.)</li>
+</ul>
+<pre class="r"><code>fly_pheno = read.table(&quot;data/hw1_fly_phenotypes.tsv&quot;, header = TRUE, stringsAsFactors = TRUE)
+#fly_pheno</code></pre>
+<ul>
+<li>Finally, take a look at the structure of the object you have created using <code>str()</code>.</li>
+<li>Also, use the <code>head()</code> command to just take a peek at the first few lines of the file (it’s pretty long). Does everything look ok?</li>
+</ul>
+<pre class="r"><code>str(fly_pheno)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    4252 obs. of  2 variables:
+##  $ SEX      : Factor w/ 2 levels &quot;F&quot;,&quot;M&quot;: 2 1 2 2 1 1 1 1 2 2 ...
+##  $ EYE_COLOR: Factor w/ 2 levels &quot;RED&quot;,&quot;WHI&quot;: 1 1 1 2 1 1 1 1 1 2 ...</code></pre>
+<ol start="3" style="list-style-type: lower-alpha;">
+<li>Rename the column labels by making them into lower-case font. You can do this using the <code>tolower()</code> function. Check to see if this worked.</li>
+</ol>
+<pre class="r"><code>colnames(fly_pheno) = tolower(colnames(fly_pheno))
+#fly_pheno</code></pre>
+<ol start="4" style="list-style-type: lower-alpha;">
+<li>The eye colors have been encoded as three-letter strings. This seems unnecessarily cryptic, so change the strings for white eyes back to “WHITE”.</li>
+</ol>
+<p>Depending on whether you set <code>stringsToFactors</code> as <code>TRUE</code> or <code>FALSE</code> when you imported the data, you will need to choose a different method to do this:</p>
+<ul>
+<li><code>TRUE</code>: use the <code>levels()</code> command
+<ul>
+<li>this will automatically change both the factors and the corresponding values in the column vector</li>
+<li>WARNING: if you use the <code>levels()</code> command on a column that is not already a factor, you will be setting levels, but you won’t actually change the values in the column.</li>
+</ul></li>
+<li><code>FALSE</code>: use the <code>which()</code> command
+<ul>
+<li>find elements in the “eye_color” vector whose value is “WHI” (see Part II.d), and then reassign them as “WHITE”</li>
+<li>WARNING: if you try to use <code>which()</code> and the column is already a factor, then if “WHITE” is not already one of the factor levels, all of the elements you tried to set to “WHITE” will now contain NA’s! (R will show you a warning if this happens)</li>
+</ul></li>
+</ul>
+<p>Check the structure of the data frame again and take a look at the first few lines of the file to make sure everything looks ok.</p>
+<pre class="r"><code># If you used stringsToFactors = TRUE
+
+levels(fly_pheno) = c(&quot;RED&quot;, &quot;WHITE&quot;)
+
+# If you used stringsToFactors = FALSE
+
+# check what happened
+str(fly_pheno)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    4252 obs. of  2 variables:
+##  $ sex      : Factor w/ 2 levels &quot;F&quot;,&quot;M&quot;: 2 1 2 2 1 1 1 1 2 2 ...
+##  $ eye_color: Factor w/ 2 levels &quot;RED&quot;,&quot;WHI&quot;: 1 1 1 2 1 1 1 1 1 2 ...
+##  - attr(*, &quot;levels&quot;)= chr [1:2] &quot;RED&quot; &quot;WHITE&quot;</code></pre>
+<ol start="5" style="list-style-type: lower-alpha;">
+<li>If it isn’t already, convert the “sex” column into a factor. Then, make a table that summarizes the number of flies of each sex that have red or white eyes.</li>
+</ol>
+<pre class="r"><code># make &quot;sex&quot; a factor if not already
+fly_pheno$sex = as.factor(fly_pheno$sex)
+
+# check your work
+class(fly_pheno$sex)</code></pre>
+<pre><code>## [1] &quot;factor&quot;</code></pre>
+<pre class="r"><code># make a table
+table(fly_pheno)</code></pre>
+<pre><code>##    eye_color
+## sex  RED  WHI
+##   F 2459    0
+##   M 1011  782</code></pre>
+<ol start="6" style="list-style-type: lower-alpha;">
+<li>Great! You now have a data frame that you like! Let’s save the massaged data in the “data” directory. We will work with this dataset again in a future homework.</li>
+</ol>
+<ul>
+<li>First write it to a <strong>comma-delimited</strong> text file with the file extension “.csv”. Set <code>row.names = FALSE</code>.</li>
+<li>Also save it as an <strong>RDS</strong> object in a file with the “rds” extension.</li>
+<li>Just be sure, check the contents of the “data” directory.</li>
+</ul>
+<pre class="r"><code># CSV file
+write.csv(fly_pheno, &quot;data/fly_pheno.csv&quot;)
+# RDS file
+saveRDS(fly_pheno, &quot;data/fly_pheno.rds&quot;)
+# Check what&#39;s in the &quot;data&quot; directory
+dir(&quot;data&quot;)</code></pre>
+<pre><code>## [1] &quot;fly_pheno.csv&quot;          &quot;fly_pheno.rds&quot;          &quot;hw1_fly_phenotypes.tsv&quot;</code></pre>
+<ol start="7" style="list-style-type: lower-alpha;">
+<li>Now you are ready to knit your document to hand it in.</li>
+</ol>
+<ul>
+<li><p>Sometimes, if you’ve been working on something for a while, you might be executing some commands on variables that do not contain what you think they do (e.g.&#160;because you made mistakes in naming something, and/or assigned the wrong data to a particular variable and failed to correct it).</p></li>
+<li><p>First, check the variables that you have in your current environment using <code>ls()</code>.</p></li>
+<li><p>Next, to make sure everything is running the way you expect it to, remove all of the variables in your environment by running the command <code>rm(list = ls())</code> and check the result using <code>ls()</code>.</p></li>
+<li><p>Finally, knit the file using the “Knit” button at the top of the editor window and review the html output that is created.</p>
+<ul>
+<li>Are you getting any errors? If so, you will see a message indicating where things went wrong in the “R Markdown” pane (another tab in the window with the Console that opens when you try to knit).</li>
+<li>If your file won’t knit, go back and try to correct the mistakes you made above, then remove all your environment variables and try again.</li>
+<li>If your document still won’t knit, feel free to reach out to us for help, or ask one of your classmates if they can detect what’s wrong with your code.</li>
+</ul></li>
+</ul>
+<pre class="r"><code># check the objects in the current environment
+ls()</code></pre>
+<pre><code>## [1] &quot;experiments&quot;       &quot;expvalues&quot;         &quot;expvalues.df&quot;     
+## [4] &quot;fly_pheno&quot;         &quot;GeneA&quot;             &quot;GeneB&quot;            
+## [7] &quot;GeneC&quot;             &quot;interesting_genes&quot;</code></pre>
+<pre class="r"><code># remove all of them
+rm(list = ls())
+# check to make sure they are all gone
+ls()</code></pre>
+<pre><code>## character(0)</code></pre>
+<p><strong>Voil&#224;! First homework exercise completed! Yay!!! You may now submit your final .Rmd file through Brightspace.</strong></p>
+</div>
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/d2l/common/math/MathML.js?v=20.21.8.31671 "></script><script type="text/javascript">document.addEventListener('DOMContentLoaded', function() { D2LMathML.DesktopInit('https://s.brightspace.com/lib/mathjax/2.7.4/MathJax.js?config=MML_HTMLorMML','https://s.brightspace.com/lib/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML','130',true); });</script></body></html>
