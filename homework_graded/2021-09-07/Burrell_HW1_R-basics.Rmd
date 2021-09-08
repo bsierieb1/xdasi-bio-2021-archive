@@ -1,0 +1,316 @@
+---
+title: "XDASI-2021 HW1: R Basics"
+author: "Wells Burrell"
+date: "9/7/2021"
+output: 
+  html_document:
+    toc: TRUE
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+---
+
+As you go through each section below, you may wonder about some of the markdown syntax you see (e.g. "##", "+", etc.) in the text. If so, take a look at an R Markdown cheatsheet or the R Markdown documentation. Links to these resources are provided on the course website in the "R Resources => R/RStudio Basics" section.
+
+## Part I: R and RStudio basics
+
+I.1) What is an R workspace? How do you save and load workspaces manually?
+
+```{r eval=FALSE}
+# An R workspace describes all of the objects in your working environment. In order to save and load worskpaces manually, we can use the save() function, specifying the file we want to save and the location we want to save it in. Loading a workspace works similarly using the load() function putting the objects in parenthesis. 
+```
+
+I.2) What is a working directory? How do you set it and how do you determine which directory is the working directory?
+
+```{r eval=FALSE}
+# a working directory in R describes the location where you are working. Importantly, this is the place on your computer where you will save your work. You can determine your working directory using the getwd() function and set it using the setwd() function.
+```
+
+I.3) Where does R save the history of your commands?
+
+```{r eval=FALSE}
+# R will automatically save your command history in a file called .Rhistory within your working directory.
+```
+
+I.4) How is an RStudio Project related to the R workspace and working directory? What is the big advantage of using R Projects?
+
+```{r eval=FALSE}
+# an RStudio Project is a working directory with a .RProj designation. It is helpful since it allows you to keep all of the files associated with a particular project together for easy saving and loading. 
+```
+
+I.5) How do you start a new R script in RStudio?
+
+```{r eval=FALSE}
+# you can do this either by going to file->new file->R script or by using the shortcut Command-Shift-N 
+```
+
+I.6) What does it mean when R prompts you with a  "+" in the beginning of the line?
+
+```{r eval=FALSE}
+# it means R is waiting/expecting you to finish asking it something.
+```
+
+I.7) What are three ways you can retrieve documentation related to a function and its usage in RStudio?
+
+```{r eval=FALSE}
+# 1) type ?function into the console and hit return
+# 2) type the function name into the help search option
+# 3) use help() function
+```
+
+I.8) What are the three basic components of R Markdown files?
+
+```{r eval=FALSE}
+# 1) A header (also called a YAML header)
+# 2) Narrative or comments
+# 3) Coding blocks
+```
+
+I.9) What happens when you knit an R Markdown file?
+
+```{r eval=FALSE}
+# The code is run and an HTML/PDF/Word file is produced with the readout of the entire markdown
+```
+
+I.10) R Markdown code blocks
+
+```{r eval=FALSE}
+# what is the keyboard shortcut to create a new code block?
+# Command-option-i
+# what are two ways you can run a single line in a code block?
+# Command-Enter with cursor over the line or run->run selected lines
+# what are two ways you can run an entire code block at once?
+# Shift-Command-Enter or run->run current chunk
+# how do you prevent a code block from being executed when you knit the document?
+# specify eval=FALSE in coding chunk header brackets
+# how do you prevent a code block from being displayed in a rendered document?
+# specify include=FALSE in the block header brackets
+```
+
+---
+
+## Part II: Working with data
+
+### II.1) Matrices
+
+a. Create three vectors and display their contents.
+  + "GeneA", with the values 3,4,5,7
+  + "GeneB", with the values 4,6,8,5
+  + "GeneC", with the values 5,3,9,8
+
+```{r collapse=TRUE}
+# create the vectors
+GeneA = c(3,4,5,7)
+GeneB = c(4,6,8,5)
+GeneC = c(5,3,9,8)
+
+# take a look at them
+GeneA
+GeneB
+GeneC
+```
+
+b. Create a character vector with the words, "control", "nitrogen","potassium", and "phosphate". Call it "Experiments" and display the contents.
+```{r}
+Experiments = c("control","nitrogen","potassium","phosphate")
+Experiments
+```
+
+c. Use two different methods to create a **3x4** matrix where each row contains data for one gene (don't assign them to a variable, just make them):
+
+  - `matrix()` - look up the documentation, and make sure you fill the matrix by *rows*, not by *columns*
+  - `rbind()` - combine vectors by rows
+```{r}
+# method 1: use matrix()
+matrix(data = c(GeneA, GeneB, GeneC), nrow = 3, ncol= 4)
+
+# method 2: use rbind()
+rbind(GeneA, GeneB, GeneC)
+
+```
+
+d. What's the difference between the output when you use these two different methods to create the matrix?
+```{r eval=FALSE}
+# matrix() automatically organizes vectors into columns whereas rbind() puts them in rows (cbind() would put them into columns).
+```
+
+e. Use the `rbind()` method to make a matrix called "expvalues", and add column names to it using the "Experiments" vector. Display the resulting matrix.
+```{r}
+# make the matrix "expvalues"
+expvalues = rbind(GeneA, GeneB, GeneC)
+# assign column names
+colnames(expvalues) = Experiments
+# check your work
+expvalues
+```
+
+
+### II.2) Dataframes
+
+a. What's the key difference between a matrix and a data frame? In what situation would you prefer a dataframe over a matrix?
+```{r eval=FALSE}
+# A matrix requires that all values be the same mode i.e. numerical or categorical but not both. With a data frame, mixed-type data sets can be incorporated into the same data structure and analyzed together; therefore, data frames are preferable in circumstances where mixed-type data is obtained.
+```
+
+b. Convert the "expvalues" matrix you just made into a data frame. Call it "expvalues.df" and display the resulting object. Also, take a look at the `class()` and `structure()` of the object.
+```{r collapse=TRUE}
+# convert to df
+expvalues.df = data.frame(expvalues)
+expvalues.df
+# check the class and structure
+class(expvalues.df)
+structure(expvalues.df)
+```
+
+c. Use two different methods to view just the data from the "potassium" column.
+```{r collapse=TRUE}
+# a) square brackets notation
+expvalues.df[,3]
+# b) dollar sign notation
+expvalues.df$potassium
+
+```
+
+d. Get just the control and nitrogen values for GeneA from "expvalues.df".
+```{r collapse=TRUE}
+# a) select desired columns using numerical indices
+expvalues.df["GeneA",1:2]
+# b) alternatively, you can exclude unwanted columns using -c()
+expvalues.df["GeneA",-c(3,4)]
+```
+
+e. You can also select rows from data frames based on their values using the `which()` function with logical expressions!
+```{r collapse=TRUE}
+# select rows whose values satisfy specific criteria
+# here we are asking for genes whose expression in the potassium condition is above 7
+interesting_genes = which(expvalues.df$potassium > 7)
+interesting_genes
+expvalues.df[interesting_genes,]
+
+# do it all at once
+expvalues.df[which(expvalues.df$potassium > 7),]
+```
+
+---
+
+## Part III: Data Import / Export
+
+a. Inside RStudio (not in your file system):
+  + get your current working directory
+  + create a new directory inside of it called "data" using `dir.create()`
+    + Note: you will get a warning if you run this more than once, but it's ok
+  + list the contents of the directory using either `dir()` or `list.files()`
+```{r collapse=TRUE}
+dir.create("data")
+getwd()
+list.files()
+```
+
+b. Download the data file called "hw1_fly_phenotypes.tsv" and put it into the data directory you just created. (Don't try to use RStudio for this, just use your filesytem.) 
+
+  - First, check that the file is where you think it is from within RStudio using the appropriate command to list all the files in the data directory.
+```{r}
+list.files("data")
+```
+
+  - Next, look at the documentation for `read.table()` and compare the default settings for the different variations of this function.
+  - Decide which function you will use, paying attention to the default parameter settings for `header`,  `sep`, and `stringsAsFactors`. Note that any of the arguments can be overridden by explicitly specifying them, but it's easier to just pick the function with the right defaults. Some things to think about: 
+    - Does the file contain column headers? 
+    - What are the column delimiters? 
+    - What kind of data does the file contain? 
+    - Do you want to make factors right away?
+
+  - Once you've decided on how you will import the data, read in the data file using one of these functions and store it in a data frame called "fly_pheno".
+   - You should do this *without changing your current working directory* from within RStudio. (Hint: You can use a relative path name to do this.)
+```{r}
+fly_pheno = read.table(file = "/Users/wellsburrell/Desktop/R/Data/hw1_fly_phenotypes.tsv", header = TRUE)
+head(fly_pheno)
+```
+
+  - Finally, take a look at the structure of the object you have created using `str()`. 
+  - Also, use the `head()` command to just take a peek at the first few lines of the file (it's pretty long). Does everything look ok? 
+```{r}
+str(fly_pheno)
+head(fly_pheno)
+```
+
+c. Rename the column labels by making them into lower-case font. You can do this using the `tolower()` function. Check to see if this worked.
+```{r}
+colnames(fly_pheno) = tolower(colnames(fly_pheno))
+head(fly_pheno)
+```
+
+d. The eye colors have been encoded as three-letter strings. This seems unnecessarily cryptic, so change the strings for white eyes back to "WHITE". 
+
+Depending on whether you set `stringsToFactors` as `TRUE` or `FALSE` when you imported the data, you will need to choose a different method to do this:
+
+- `TRUE`:  use the `levels()` command
+  - this will automatically change both the factors and the corresponding values in the column vector
+  - WARNING: if you use the `levels()` command on a column that is not already a factor, you will be setting levels, but you won't actually change the values in the column.
+  
+- `FALSE`: use the `which()` command
+  - find elements in the "eye_color" vector whose value is "WHI" (see Part II.d), and then reassign them as "WHITE"
+  - WARNING: if you try to use `which()` and the column is already a factor, then if "WHITE" is not already one of the factor levels, all of the elements you tried to set to "WHITE" will now contain NA's! (R will show you a warning if this happens)
+
+Check the structure of the data frame again and take a look at the first few lines of the file to make sure everything looks ok.
+```{r}
+# If you used stringsToFactors = TRUE
+
+# If you used stringsToFactors = FALSE
+fly_pheno[which(fly_pheno[, 2] == "WHI"), 2] = "WHITE"
+
+# check what happened
+head(fly_pheno)
+
+```
+
+e. If it isn't already, convert the "sex" column into a factor. Then, make a table that summarizes the number of flies of each sex that have red or white eyes.
+```{r}
+# make "sex" a factor if not already
+fly_pheno[,1] = factor(fly_pheno[,1])
+# check your work
+head(fly_pheno)
+# make a table
+table(fly_pheno)
+
+```
+
+f. Great! You now have a data frame that you like! Let's save the massaged data in the "data" directory. We will work with this dataset again in a future homework.
+
+  + First write it to a **comma-delimited** text file with the file extension ".csv". Set `row.names = FALSE`.
+  + Also save it as an **RDS** object in a file with the "rds" extension.
+  + Just be sure, check the contents of the "data" directory.
+```{r}
+# CSV file
+save(fly_pheno, file = "/Users/wellsburrell/Desktop/R/data/fly_pheno.CSV")
+# RDS file
+save(fly_pheno, file = "/Users/wellsburrell/Desktop/R/data/fly_pheno.RDS")
+# Check what's in the "data" directory
+list.files("data")
+```
+
+g. Now you are ready to knit your document to hand it in. 
+
++ Sometimes, if you've been working on something for a while, you might be executing some commands on variables that do not contain what you think they do (e.g. because you made mistakes in naming something, and/or assigned the wrong data to a particular variable and failed to correct it).
++ First, check the variables that you have in your current environment using `ls()`.
++ Next, to make sure everything is running the way you expect it to, remove all of the variables in your environment by running the command `rm(list = ls())` and check the result using `ls()`.
+
++ Finally, knit the file using the "Knit" button at the top of the editor window and review the html output that is created. 
+  + Are you getting any errors? If so, you will see a message indicating where things went wrong in the "R Markdown" pane (another tab in the window with the Console that opens when you try to knit). 
+  + If your file won't knit, go back and try to correct the mistakes you made above, then remove all your environment variables and try again.
+  + If your document still won't knit, feel free to reach out to us for help, or ask one of your classmates if they can detect what's wrong with your code.
+
+```{r}
+# check the objects in the current environment
+ls()
+# remove all of them
+rm(list = ls())
+# check to make sure they are all gone
+ls()
+```
+
+**Voilà! First homework exercise completed! Yay!!! You may now submit your final .Rmd file through Brightspace.**
