@@ -1,15 +1,15 @@
 ---
-title: Grammar of Graphics
+title: ggplot2 I: grammar of graphics
 parent: Data Visualization
 grand_parent: R Resources
 nav_order: 2
 ---
 
-# The Grammar of Graphics
+# ggplot2: Introduction to the Grammar of Graphics
 
-One great feature of R is the powerful and flexible [**ggplot2**](https://ggplot2.tidyverse.org/) package, implemented by Hadley Wickham, for producing elegant graphics. It uses a systematic framework called the **grammar of graphics**  that allows very fine-grained control over how your final product looks.
+If you want to create publication-quality, aesthetically pleasing figures, or even if you just need to create a complex plot with multiple layers of information for yourself, [**ggplot2**](https://ggplot2.tidyverse.org/) is your friend. It is a powerful and flexible package, implemented by Hadley Wickham, for producing elegant graphics. It uses a systematic framework called the **grammar of graphics**  that allows fine-grained control over how your final product looks.
 
-You will get lots of practice using ggplot during this course. Here, we just review the overall framework so you can get a feel for generating meaningful graphics using this framework.
+You will get lots of practice using ggplot2 during this course. Here, we just review the overall framework so you can get a feel for generating meaningful graphics using this framework.
 
 
 # Layers

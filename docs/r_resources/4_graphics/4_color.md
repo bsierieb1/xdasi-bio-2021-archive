@@ -81,6 +81,31 @@ Some color packages in R:
 + unikn - color schemes of the University of Konstanz (used in the Neth book below)
 + wesanderson - 16 palettes from Wes Anderson movies (!)
 
+---
+
+# Color Blindness
+
+[Color blindness](https://en.wikipedia.org/wiki/Color_blindness) is the decreased ability to see differences in color. It affects many people, and red-green blindness is the most widespread form. To make sure that your graphs are as widely accessible as possible (one of your reviewers may be color-blind, too), there are two things you can do:
+
+1. Choose colors that can be distinguished by the majority of color-blind people.
+2. Use other ways to make data points visually distinct - e.g. point shape, point size, add text labels or arrows pointing at important elements.
+
+When choosing colors that are friendly to color-blind people, you may do one of the following (arranged from lowest to largest amount of effort required):
+
+* Whenever possible, simply avoid using red and green together.
+* Try using different shades of different colors. For example, light green and dark red can be better distinguished than green and red of the same shade.
+* Stick to one favorite color palette that you know works well for the color-blind and always use it. For example, you could use `viridis` (see above) for continuous data or [this palette developed by Masataka Okabe and Kei Ito](https://jfly.uni-koeln.de/color/) for categorical data.
+![](Images/palette-Okabe-Ito-1.png){: width="60%"}
+* Simulate color blindness and keep adjusting the colors you use until they can be distinguished in simulated plots. [colorblindr](https://github.com/clauswilke/colorblindr) is an example of a package that can very easily simulate how ggplot2 plots look for color-blind people. The code would be as simple as this:
+```
+library(ggplot2)
+library(colorblindr)
+
+# create a ggplot
+fig <- ggplot(iris, aes(Sepal.Length, fill = Species)) + geom_density(alpha = 0.7)
+# generate four basic color-vision-deficiency simulations for the ggplot
+cvd_grid(fig)
+```
 
 ---
 

@@ -1,11 +1,11 @@
 ---
-title: ggplot2, the tidyverse way
+title: ggplot2 II: functions and resources
 parent: Data Visualization
 grand_parent: R Resources
 nav_order: 3
 ---
 
-# ggplot2, a.k.a Do it the tidyverse way!
+# ggplot2: 
 {: .no_toc }
 
 
@@ -15,7 +15,7 @@ nav_order: 3
 - TOC
 {:toc}
 
-If you want to create publication-quality, aesthetically pleasing figures, or even if you just need to create a complex plot with multiple layers of information for yourself, ggplot2 is your friend. While the ggplot2 syntax may seem scary to you at first, you will learn to appreciate its logic once you get a feel for what is what.
+While the ggplot2 syntax may seem scary to you at first, you will learn to appreciate its logic once you get a feel for what is what.
 
 ---
 
