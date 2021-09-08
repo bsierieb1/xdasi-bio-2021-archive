@@ -119,6 +119,16 @@ plot(x=iris$Sepal.Length,
      col=species_colors) # pass a vector of colors to set the color of each point individually
 ```
 
+You may also want to tweak some other things, e.g. axis labels. 
+
+```{r}
+plot(x=iris$Sepal.Length,
+     y=iris$Sepal.Width,
+     col=species_colors,
+     xlab='Sepal length, mm',
+     ylab='Sepal width, mm')
+```
+
 # Essentials of ggplot2
 
 The following brief overview is adapted from an STHDA tutorial you can find [**here**](http://www.sthda.com/english/wiki/ggplot2-essentials) that covers all the basic types of plots you can make with ggplot. 
@@ -148,6 +158,55 @@ ggplot(data = <data.frame>,
   geom_<type of geometry>()
 ```
 
+### Aesthetics
+
+If your data is **tidy**, then the columns of your data frame will contain the variables that you want to display. Each of these can be mapped to different **aesthetics** of the graph (e.g. axis, colors, shapes, etc.). A few of the examples below are based on Chapter 3 from ***R for Data Science***.
+
+There are **two ways** to specify aesthetics:
+
+  * **Mapping**: This maps specific types of **data** to different visual elements
+    + Mappings are included ***inside*** `aes()`.
+    + In the base layer of the graph, the mapping will be applied to all geometries.
+    + In another layer, the mapping will be applied only to a particular geometry.
+  * **Setting**: Manually set an aesthetic **independently** of data
+    + Settings are placed ***outside*** of an `aes()` directive.
+    
+Aesthetic elements include things such as:
+
++ x- and y- axes
++ Colors
++ The size of points (in mm)
++ The shape of points (a number; see below)
++ Transparency (range 0-1)
+
+### Geometries
+
+**Geometries** control the ***type of visual paradigm*** you want to use to display your data, for example:
+
++ geom_bar() - barchart
++ geom_histogram() - histogram
++ geom_dotplot() - dot plot, a.k.a. strip chart
++ geom_boxplot() - boxplot
++ geom_violin() - violin plot
++ geom_point() - scatterplot
+
+Geom functions also allow you to add additional features to a graph, for example:
+
++ geom_jitter() - spread points out (e.g. on strip charts) to make the data more visible
++ geom_vline() - add a vertical line (can also add other kinds of lines)
+
+Statistical features can also be layered onto graphs, e.g.:
+
++ geom_smooth() - a regression line (according to a global or local model)
++ stat_summary() - add some kind of statistical function to a graph
+  + This can also be done by adding `stat = "something"` inside another geometry (some examples below)
+
+### Themes
+
+[**Themes**](https://ggplot2.tidyverse.org/reference/theme.html) are used to customize the non-data components of your graphs, such as titles, labels, fonts, background, gridlines, and legends. The default appearance of ggplot graphs produces graphs with a gray background and white gridlines. This can be changed to almost any look and feel by customizing their themes, which can also be used to give plots a consistent look for presentation.
+
+In addition to setting `theme()` components manually, the [**ggthemes*](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/) package also provides a variety of defined themes that replicate the look and feel for different visual paradigms and applications.
+
 ## qplot() can automatically generate plots
 
 Let us recreate the Sepal.Length vs Sepal.Width scatterplot using `qplot()`.
@@ -160,7 +219,9 @@ head(iris)
 qplot(x=Sepal.Length,
       y=Sepal.Width,
       data=iris,
-      geom=c("point")) # this is the biggest difference from base R
+      xlab='Sepal length, mm',
+      ylab='Sepal width, mm',
+      geom=c("point")) # set geometry - this is the biggest difference from base R
 ```
 
 ## ggplot() is a function to build plots piece-by-piece
@@ -168,33 +229,84 @@ qplot(x=Sepal.Length,
 Let us recreate the Sepal.Length vs Sepal.Width scatterplot using `ggplot()`.
 
 ```{r}
-# a function to build the plot piece by piece
 ggplot(data=iris, 
-       mapping=aes(x=Sepal.Length,
+       mapping=aes(x=Sepal.Length,   # set aesthetics
                    y=Sepal.Width)) +
-  geom_point()
+  geom_point() +                     # set geometry
+  theme_grey() +                     # set theme (although this theme is default)
+  xlab('Sepal length, mm') +
+  ylab('Sepal width, mm')
 ```
 
 Again, you can set a color for all points or each point independently depending on which species it belongs to.
 
 ```{r}
-# pass a single value to the geometry function to color *all* points the same way
+# pass a single value to the parameter color inside the geometry function to color *all* points the same way
 ggplot(data=iris,
        mapping=aes(x=Sepal.Length,
                    y=Sepal.Width)) +
-  geom_point(color="red") # here
+  geom_point(color="red") + # here
+  xlab('Sepal length, mm') +
+  ylab('Sepal width, mm')
 
-# pass the name of the data.frame column by which to color points to the aesthetics
+# pass the name of the data.frame column by which to color points to the parameter color inside the aesthetics
 ggplot(data=iris, 
        mapping=aes(x=Sepal.Length,
                    y=Sepal.Width,
                    color=Species)) + # here
-  geom_point()
+  geom_point() +
+  xlab('Sepal length, mm') +
+  ylab('Sepal width, mm')
 
 ggplot(data=iris, 
        mapping=aes(x=Sepal.Length,
                    y=Sepal.Width,
                    color=Species)) +
-  geom_point(mapping=aes(color=Species)) # here also works because there is only one geometry on this graph
+  geom_point(mapping=aes(color=Species)) + # you can also create an aesthetics mapping inside geometries!
+  xlab('Sepal length, mm') +
+  ylab('Sepal width, mm')
+```
+
+# Histograms
+
+Histograms are good for showing the distribution of a **single quantitative variable**. Two or more distributions can be shown together on one histogram, though showing more than two or three gets really confusion. 
+
+## hist() in base R
+
+Base R has a special function called hist().
+
+```{r}
+hist(iris$Sepal.Length)
+```
+
+Keep in mind that `iris` contains data for three species, so the histogram above makes little biological sense because it is a mixture of measurements of three different species! There is no way to separate them inside `hist()`, so you may split the data.frame manually.
+
+```{r}
+virnica_rows = which(iris$Species=='virginica')
+iris_virginica = iris[virnica_rows,]
+
+hist(iris_virginica$Sepal.Length)
+```
+
+## qplot() and geom_histogram() in ggplot2
+
+`qplot()` provides an easy way to display the data for the three species overlayed.
+
+```{r}
+qplot(x=Sepal.Length,
+      data=iris,
+      fill=Species,
+      color=Species,
+      alpha=0.5) # make the bars semi-transparent
+```
+
+The same with `ggplot()`:
+
+```{r}
+ggplot(data=iris,
+       mapping=aes(x=Sepal.Length,
+                   fill=Species,
+                   color=Species))  +
+  geom_histogram(alpha=0.5)
 ```
 
