@@ -12,7 +12,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Before we begin plotting - output devices
+# Output devices
 
 To export any kind of plot, you need some sort of "canvas" to draw on. In the RStudio GUI, as a default, plots will be printed in a new window, or if you are using R Markdown they will appear inline. Still, even in these cases you may want to use devices to write your plot to a file.
 
@@ -68,7 +68,7 @@ There are also many graphical ***parameters*** that can be set in order to contr
 
 Learning to fine-tune the appearance of plots using the base graphics package can be very tedious and unrewarding. This is why we will transition to mainly using the **ggplot2** package to take our graphics to the next level. Nevertheless, we think it is important for you to know that these base functions exist and are available if you want to use them.
 
-## The Plot Function
+## The plot() function can automatically generate plots
 
 The generic function for plotting R objects is aptly called `plot()`. The default output
 of the function depends on the object it is passed.
@@ -89,12 +89,15 @@ head(iris)
 plot(iris)
 ```
 
+## The plot() function can be also programmed to generate simple scatter plots
+
 Rather than relying on the ability of `plot()` to automatically recognize the structure of your R object, you can use this function to create simple scatter plots by explicitly specifying `x` and `y` parameters.
 
 ```{r}
 plot(x=iris$Sepal.Length,
      y=iris$Sepal.Width)
 ```
+
 Let us color the points by species (`iris$Species`). Somewhat confusingly, the `plot()` help file (see `?plot`) does not describe any parameters to specify color. Instead, it says:
 `... Arguments to be passed to methods, such as graphical parameters (see par).`
 So, you should look up documentation for `par()` (`?par`), where you will find an extensive list of graphical parameters that you can pass to `plot()` and other similar functions. The parameter we need is `col`.
@@ -107,7 +110,7 @@ plot(x=iris$Sepal.Length,
 ```{r}
 species_colors = iris$Species # make a copy of the Species column
 levels(species_colors) # examine the number of levels
-levels(species_colors) = c("green","red","blue") # set color names as levels
+levels(species_colors) = c("red","green","blue") # set color names as levels
 species_colors = as.character(species_colors) # convert factor to character vector
 species_colors # check
 
@@ -118,20 +121,80 @@ plot(x=iris$Sepal.Length,
 
 # Essentials of ggplot2
 
-The concept behind ggplot2 divides plot into three different fundamental parts: **Plot = data + Aesthetics + Geometry**.
+The following brief overview is adapted from an STHDA tutorial you can find [**here**](http://www.sthda.com/english/wiki/ggplot2-essentials) that covers all the basic types of plots you can make with ggplot. 
 
-The principal components of every plot can be defined as follows:
+The concept behind ggplot2 divides plot into **three different fundamental** parts: 
 
-+ **data** is a data frame
-+ **Aesthetics** are used to indicate ***x*** and ***y*** variables. It can also be used to control the color, the size or the shape of points, the height of bars, etc…..
-+ **Geometry** defines the type of graphics (histogram, box plot, line plot, density plot, dot plot, ….)
-+ There are two major functions in ggplot2 package: qplot() and ggplot() functions.
+**Plot = Data + Aesthetics + Geometry**
+
+The principal elements of every plot can be defined as follows:
+
++ **Data** is a data frame (variables) to be plotted.
++ **Aesthetics**: the `aes()` function is used to indicate ***how*** to display the data: which categories or measurements to map to x and y coordinates; or color, size or shape of points, etc.
++ **Geometry** defines the ***type of graphics*** (histogram, box plot, line plot, density plot, dot plot, ….)
+
+There are **two major functions** in the ggplot2 package:
+
 + `qplot()` stands for quick plot, which can be used to produce easily simple plots.
 + `ggplot()` function is more flexible and robust than `qplot()` for building a plot piece by piece.
 
+Plots are constructed by **layering** geometries, additional aesthetics, and themes on top of the primary aesthetic mapping.
 
+The **basic syntax** is:
 
+```{r, eval=FALSE, echo=TRUE}
+ggplot(data = <data.frame>,
+       mapping = aes(x = <column of data.frame>, y = <column of data.frame>)) +
+  geom_<type of geometry>()
+```
 
+## qplot() can automatically generate plots
 
+Let us recreate the Sepal.Length vs Sepal.Width scatterplot using `qplot()`.
 
+```{r}
+library(ggplot2)
+head(iris)
+
+# quick plot with defaults
+qplot(x=Sepal.Length,
+      y=Sepal.Width,
+      data=iris,
+      geom=c("point")) # this is the biggest difference from base R
+```
+
+## ggplot() is a function to build plots piece-by-piece
+
+Let us recreate the Sepal.Length vs Sepal.Width scatterplot using `ggplot()`.
+
+```{r}
+# a function to build the plot piece by piece
+ggplot(data=iris, 
+       mapping=aes(x=Sepal.Length,
+                   y=Sepal.Width)) +
+  geom_point()
+```
+
+Again, you can set a color for all points or each point independently depending on which species it belongs to.
+
+```{r}
+# pass a single value to the geometry function to color *all* points the same way
+ggplot(data=iris,
+       mapping=aes(x=Sepal.Length,
+                   y=Sepal.Width)) +
+  geom_point(color="red") # here
+
+# pass the name of the data.frame column by which to color points to the aesthetics
+ggplot(data=iris, 
+       mapping=aes(x=Sepal.Length,
+                   y=Sepal.Width,
+                   color=Species)) + # here
+  geom_point()
+
+ggplot(data=iris, 
+       mapping=aes(x=Sepal.Length,
+                   y=Sepal.Width,
+                   color=Species)) +
+  geom_point(mapping=aes(color=Species)) # here also works because there is only one geometry on this graph
+```
 
