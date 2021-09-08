@@ -1,11 +1,11 @@
 ---
-title: ggplot2 II: functions and resources
+title: ggplot2 II, functions and resources
 parent: Data Visualization
 grand_parent: R Resources
 nav_order: 3
 ---
 
-# ggplot2: 
+# ggplot2: Functions and Resources
 {: .no_toc }
 
 
