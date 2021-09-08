@@ -1,5 +1,5 @@
 ---
-title: ggplot2 I: grammar of graphics
+title: ggplot2 I\: grammar of graphics
 parent: Data Visualization
 grand_parent: R Resources
 nav_order: 2
