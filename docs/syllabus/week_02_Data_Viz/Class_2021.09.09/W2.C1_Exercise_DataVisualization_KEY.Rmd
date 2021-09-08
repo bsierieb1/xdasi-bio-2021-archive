@@ -1,0 +1,137 @@
+---
+title: "Data Visualization"
+date: "September 9-10, 2021"
+output: 
+  html_document:
+    toc: TRUE
+    toc_depth: 2
+    toc_float: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Before we begin plotting - output devices
+
+To export any kind of plot, you need some sort of "canvas" to draw on. In the RStudio GUI, as a default, plots will be printed in a new window, or if you are using R Markdown they will appear inline. Still, even in these cases you may want to use devices to write your plot to a file.
+
+The kind of output that is produced is controlled by a ***device*** directive, which by default is set to `null device`. On a windows machine it is actually a device called `windows()`; on a Mac it is called `quartz()`.
+
++ You may choose the kind of output that is produced by redirecting the output to another type.
++ Different devices include: PDF, PostScript, bitmap, jpeg, png, and LaTeX.
++ These devices will not print to the GUI -- instead they will save a file in the working directory.
+
+```{r}
+#open a new window
+#windows() #on a pc
+quartz() #on a mac
+
+#current device
+dev.cur()
+
+```
+
+PDF output is really useful. Let us try to write a random plot to a pdf file.
+
+```{r, collapse=TRUE}
+#start pdf device
+pdf("mycoolplot.pdf") # you can specify many other parameters here, e.g. size, dpi, etc
+
+# make a random plot
+plot(1)
+
+#list of devices
+dev.list()
+dev.cur()
+```
+
+```{r, collapse=TRUE}
+#select a device
+dev.set(3)
+
+#end a device or close a file
+dev.off()
+dev.cur()
+
+dev.off()
+dev.cur()
+```
+
+# Essentials of base R graphics
+
+Here we introduce the basic elements of the [**graphics**](https://www.rdocumentation.org/packages/graphics/versions/3.6.2) package, which is part of the base R distribution. 
+
+The **graphics** package provides ***functions*** for creating all kinds of plots. Many of these can be used to conveniently get a quick idea of what your data look like. They are simple yet powerful.
+
+There are also many graphical ***parameters*** that can be set in order to control the appearance of points and lines, axis ticks, plot labels, text, and arrangement of plots when multiple plots are generated at the same time. Other packages will come with their own plotting functions, but generally they access the same range of parameters.
+
+Learning to fine-tune the appearance of plots using the base graphics package can be very tedious and unrewarding. This is why we will transition to mainly using the **ggplot2** package to take our graphics to the next level. Nevertheless, we think it is important for you to know that these base functions exist and are available if you want to use them.
+
+## The Plot Function
+
+The generic function for plotting R objects is aptly called `plot()`. The default output
+of the function depends on the object it is passed.
+
+`ldeaths` is an object of class `ts` (time series) that is provided in R.
+This dataset provides the number of deaths in UK from 1974-1979 due to lung disease.
+Since it is a numerical vector, the plot function plots a line.
+
+```{r}
+plot(ldeaths)
+```
+
+The built-in `iris` dataset contains measurements on sepals and petals of three different species of iris.
+Its class is `data.frame`. In this case, `plot()` shows all comparisons between the 5 columns in the data frame.
+
+```{r}
+head(iris)
+plot(iris)
+```
+
+Rather than relying on the ability of `plot()` to automatically recognize the structure of your R object, you can use this function to create simple scatter plots by explicitly specifying `x` and `y` parameters.
+
+```{r}
+plot(x=iris$Sepal.Length,
+     y=iris$Sepal.Width)
+```
+Let us color the points by species (`iris$Species`). Somewhat confusingly, the `plot()` help file (see `?plot`) does not describe any parameters to specify color. Instead, it says:
+`... Arguments to be passed to methods, such as graphical parameters (see par).`
+So, you should look up documentation for `par()` (`?par`), where you will find an extensive list of graphical parameters that you can pass to `plot()` and other similar functions. The parameter we need is `col`.
+
+```{r}
+plot(x=iris$Sepal.Length,
+     y=iris$Sepal.Width,
+     col='red') # pass a single value to color *all* points the same way
+```
+```{r}
+species_colors = iris$Species # make a copy of the Species column
+levels(species_colors) # examine the number of levels
+levels(species_colors) = c("green","red","blue") # set color names as levels
+species_colors = as.character(species_colors) # convert factor to character vector
+species_colors # check
+
+plot(x=iris$Sepal.Length,
+     y=iris$Sepal.Width,
+     col=species_colors) # pass a vector of colors to set the color of each point individually
+```
+
+# Essentials of ggplot2
+
+The concept behind ggplot2 divides plot into three different fundamental parts: **Plot = data + Aesthetics + Geometry**.
+
+The principal components of every plot can be defined as follows:
+
++ **data** is a data frame
++ **Aesthetics** are used to indicate ***x*** and ***y*** variables. It can also be used to control the color, the size or the shape of points, the height of bars, etc…..
++ **Geometry** defines the type of graphics (histogram, box plot, line plot, density plot, dot plot, ….)
++ There are two major functions in ggplot2 package: qplot() and ggplot() functions.
++ `qplot()` stands for quick plot, which can be used to produce easily simple plots.
++ `ggplot()` function is more flexible and robust than `qplot()` for building a plot piece by piece.
+
+
+
+
+
+
+
