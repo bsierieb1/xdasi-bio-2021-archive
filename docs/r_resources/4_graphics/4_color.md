@@ -97,6 +97,7 @@ When choosing colors that are friendly to color-blind people, you may do one of 
 * Stick to one favorite color palette that you know works well for the color-blind and always use it. For example, you could use `viridis` (see above) for continuous data or [this palette developed by Masataka Okabe and Kei Ito](https://jfly.uni-koeln.de/color/) for categorical data.
 ![](Images/palette-Okabe-Ito-1.png){: width="60%"}
 * Simulate color blindness and keep adjusting the colors you use until they can be distinguished in simulated plots. [colorblindr](https://github.com/clauswilke/colorblindr) is an example of a package that can very easily simulate how ggplot2 plots look for color-blind people. The code would be as simple as this:
+
 ```
 library(ggplot2)
 library(colorblindr)

@@ -1,5 +1,5 @@
 ---
-title: ggplot2 II, functions and resources
+title: ggplot2 Pt. II, functions and resources
 parent: Data Visualization
 grand_parent: R Resources
 nav_order: 3
