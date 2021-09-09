@@ -407,6 +407,7 @@ b. The style of the graph you just made is a default ggplot bar chart. To approx
 # a fancier plot
 
 # add the data and aesthetics here
+ggplot(avianMalaria, aes(x = treatment, fill = response)) + 
 
   # some bells and whistles
   geom_bar(position = position_dodge2(preserve="single")) +
@@ -497,4 +498,4 @@ ggplot(data = salmonSizeData, aes(x = lengthMm, y = massKg)) +
   stat_smooth(method=lm, se=FALSE, color="black", size=0.5)
 ```
 
-Now you're cooking with gas! Hand in your homework and go relax!
+***Now you're cooking with gas! Hand in your homework and go relax!***
