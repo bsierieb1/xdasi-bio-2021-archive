@@ -93,7 +93,7 @@ PDF output is really useful. Let us try to write a random plot to a pdf file.
 # ================================================== #
 # plot to PDF file in RMD (execute all at once)
 pdf("iris_plot.pdf")
-plot(iris$Petal.Length, iris$Petal.Width, col="purple")
+plot(iris$Petal.Length, iris$Petal.Width, col="green")
 dev.off()
 dev.cur()
 
@@ -102,6 +102,8 @@ dev.cur()
 
 pdf("iris_plot.pdf")
 plot(iris$Petal.Length, iris$Petal.Width, col="magenta")
+plot(iris$Petal.Length, iris$Petal.Width, col="blue")
+plot(iris$Petal.Length, iris$Petal.Width, col="green")
 dev.off()
 
 dev.cur()
@@ -166,12 +168,19 @@ So you need to look up `par` in the Help to get a list of these. You can set par
 x=iris$Sepal.Length
 y=iris$Sepal.Width
 
+plot(x, y,
+     pch = 23,
+     col = "purple",
+     cex = 0.5,
+     xlab = "Sepal length, mm",
+     ylab = "Sepal width, mm"
+     )
 
 # ================================================== #
 # add a regression line
 # this throws an error if try to use dataframe cols directly
 # this is because the function wants a matrix or vector object
-
+abline(lm(y ~ x))
 ```
 
 
@@ -182,7 +191,9 @@ We can use color to highlight different aspects of the data.
 ```{r, error=TRUE}
 # ================================================== #
 # uniform color
-
+plot(x=iris$Sepal.Length,
+     y=iris$Sepal.Width,
+     col="pink")
 ```
 
 We can also color the points by dataset.
@@ -192,12 +203,14 @@ We can also color the points by dataset.
 # default
 plot(x=iris$Sepal.Length,
      y=iris$Sepal.Width,
-
+     col=iris$Species
+)
      
 # use different colors
 plot(x=iris$Sepal.Length,
      y=iris$Sepal.Width,
-
+     col=c("purple","orange","magenta")
+)
 ```
 
 You can also specify color using a character vector of the same length as the factor vector in the dataframe, but this is more complicated!
@@ -219,6 +232,9 @@ plot(iris$Sepal.Length,
      y=iris$Sepal.Width,
      col=species_colors)
 
+plot(iris$Sepal.Length,
+     y=iris$Sepal.Width,
+     col=iris$Species)
 # ================================================== #
 # huh? we need to convert the factor vector to a character vector
 # why? these are not already part of the data frame (I don't get this behavior)
@@ -342,7 +358,12 @@ head(iris)
 
 # ================================================== #
 # quick plot with defaults
-
+qplot(x=Sepal.Length,
+      y=Sepal.Width,
+      data=iris,
+      geom=c("point"),
+      color=Species)
+     
 
 # ================================================== #
 # fancier plot
@@ -355,7 +376,13 @@ head(iris)
 Let us recreate the Sepal.Length vs Sepal.Width scatterplot using `ggplot()`.
 
 ```{r, error=TRUE}
-
+ggplot(data = iris,                        # data
+       mapping = aes(x = Sepal.Length,     # x-axis mapping
+                     y = Sepal.Width))  +  # y-axis mapping
+  geom_point() +                           # geom layer
+  xlab("Sepal length, mm") +
+  ylab("Sepal Width, mm")
+)
 ```
 
 Again, you can set a **color** for all points, or by groups (factors) in the dataset.
@@ -363,20 +390,42 @@ Again, you can set a **color** for all points, or by groups (factors) in the dat
 ```{r, error=TRUE}
 # ================================================== #
 # global aes mapping by factor group
-
+ggplot(data = iris,                        # data
+       mapping = aes(x = Sepal.Length,     # x-axis mapping
+                     y = Sepal.Width,      # y-axis mapping
+                     color=Species)) +     # map species to color
+  geom_point() +                           # geom layer
+  xlab("Sepal length, mm") +
+  ylab("Sepal Width, mm")
 
 # ================================================== #
 # mapping to data to aes can also go inside a geometry
-
+ggplot(data = iris,                        # data
+       mapping = aes(x = Sepal.Length,     # x-axis mapping
+                     y = Sepal.Width)) +    # y-axis mapping
+  geom_point(aes(color=Species)) +          # geom layer
+  xlab("Sepal length, mm") +
+  ylab("Sepal Width, mm")
 
 # ================================================== #
 # manual mapping of ALL data to the same color
 
 # can do this globally ...
-
+ggplot(data = iris,                        # data
+       mapping = aes(x = Sepal.Length,     # x-axis mapping
+                     y = Sepal.Width,
+                     color = "red")) + # y-axis mapping
+  geom_point() +                            # geom layer
+  xlab("Sepal length, mm") +
+  ylab("Sepal Width, mm")
 
 # ... or in the geom layer
-
+ggplot(data = iris,                        # data
+       mapping = aes(x = Sepal.Length,     # x-axis mapping
+                     y = Sepal.Width)) + # y-axis mapping
+  geom_point(color="red") +                            # geom layer
+  xlab("Sepal length, mm") +
+  ylab("Sepal Width, mm")
 ```
 
 
@@ -389,7 +438,7 @@ Histograms are good for showing the **distribution** of a **single quantitative 
 Base R has a special function called `hist()`. It's great for very quick visualization.
 
 ```{r, error=TRUE}
-
+hist(iris$Sepal.Length)
 ```
 
 Keep in mind that `iris` contains data for three species, so the histogram above makes little biological sense because it is a mixture of measurements of three different species! There is no way to separate them inside `hist()`, so you have to split the data.frame manually.
@@ -402,9 +451,12 @@ Plot labels can get kind of ugly, so it's nice to add labels if you're going to 
 
 # ================================================== #
 # do it in one go
-
+hist( iris[ which(iris$Species == "virginica")  , "Sepal.Length" ] )
 
 # prettier
+hist( iris[ which(iris$Species == "virginica")  , "Sepal.Length" ] ,
+      xlab = "Sepal length, mm",
+      main  = "Sepal length for Virginica")
 
 ```
 
@@ -414,12 +466,38 @@ Plot labels can get kind of ugly, so it's nice to add labels if you're going to 
 `qplot()` provides an easy way to display the data for the three species overlayed.
 
 ```{r, error=TRUE}
-
+qplot(x=Sepal.Length,
+      data=iris,
+      fill=Species,
+      color=Species,
+      alpha=0.2
+      )
 ```
 
 The same with `ggplot()`:
 
 ```{r, error=TRUE}
+qplot(x=Sepal.Length,
+      data=iris,
+      fill=Species,
+      color=Species,
+      alpha=0.2
+      )
+
+# alpha in global aes -- whoops! not ideal!
+ggplot(data = iris,
+       mapping = aes(x=Sepal.Length,
+                     fill=Species,
+                     color=Species,
+                     alpha=0.2)) +
+  geom_histogram()
+
+# alpha applied just to geom
+ggplot(data = iris,
+       mapping = aes(x=Sepal.Length,
+                     fill=Species,
+                     color=Species)) +
+  geom_histogram(alpha=0.2)
 
 ```
 

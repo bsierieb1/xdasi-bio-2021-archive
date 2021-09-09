@@ -167,10 +167,10 @@ x=iris$Sepal.Length
 y=iris$Sepal.Width
 
 plot(x, y,
-     pch = 15, # 23
-     col = "blue",
-     cex = 0.5,
-     xlab='Sepal length, mm',
+     pch = 15, # 23            # shape of data points
+     col = "blue",             # color of data points
+     cex = 0.5,                # size  of data points
+     xlab='Sepal length, mm',  # nicer axis labels
      ylab='Sepal width, mm')
 
 # ================================================== #
@@ -183,43 +183,70 @@ abline(lm(y ~ x))
 
 # Coloring by dataset
 
+Above we used the `col` parameter to change the color of *all* the datapoints.
 
-So, you should look up documentation for `par()` (`?par`), where you will find an extensive list of graphical parameters that you can pass to `plot()` and other similar functions. The parameter we need is `col`.
+Even better, we can also color the points by **factor groupings**. 
+
+## Map colors to factor columns in a data frame
+
+Below we color the points from the three *Species* according to the three *factors* defined for this data column. 
 
 ```{r}
 plot(x=iris$Sepal.Length,
      y=iris$Sepal.Width,
-     col='red') # pass a single value to color *all* points the same way
+     col=iris$Species)   # color the points by their species group/factor
 ```
 
-We can also color the points by dataset.
+## Map data with a different palette
+
+Don't like the default colors? Change the palette!
 
 ```{r}
 # ================================================== #
-# default
+# new palette with 3 weird colors
+# BEWARE: these will just get recycled if there are more factors than colors!
+palette(c("deepskyblue", "darkorchid1", "darkorange2"))
 plot(x=iris$Sepal.Length,
      y=iris$Sepal.Width,
      col=iris$Species)
 
-# use different colors
+# ================================================== #
+# change back to the (ugly) R default palette!
+palette("default")
+plot(x=iris$Sepal.Length,
+     y=iris$Sepal.Width,
+     col=iris$Species)
+```
+
+Note that R seems to know how to map `palette()` values onto factors automatically. *HOWEVER, if the number of factors exceeds the number of colors in the palette, colors will just get recycled! (You can try this with the iris dataset by removing one of the colors above and remaking the plot.)*
+
+What if instead we just tried to use a random vector of three colors? Points will just get randomly assigned to colors! *(Just like with the palette colors, these colors will get recycled until all of the points are colored; however there will be no relationship between factors and the color of each data point.)*
+
+Compare the graph below with the ones we just made above. Can you see the difference?
+
+```{r}
+# use 3 manually assigned colors
 plot(x=iris$Sepal.Length,
      y=iris$Sepal.Width,
      col=c("red","green","blue"))
 ```
 
-You can also specify color using a character vector of the same length as the factor vector in the dataframe, but this is more complicated!
+
+## Map data with a character column
+
+Abother way to color the data by groups/factors is using a *character vector* of the same length as the factor vector in the dataframe. This allows us to change the color mappings, but it is more complicated!
 
 ```{r}
 # ================================================== #
 # make a copy of the Species column and check the levels
-species_colors = iris$Species
-levels(species_colors) 
+species_colors = iris$Species  # a factor column
+levels(species_colors)         # also a factor vector
 
 # ================================================== #
 # set color names as levels
 levels(species_colors) = c("orange","purple","aquamarine")
 species_colors                # what is this vector?
-str(species_colors)           # is it already a factor?
+str(species_colors)           # is it still a factor?
 
 # try this
 plot(iris$Sepal.Length,
@@ -227,8 +254,10 @@ plot(iris$Sepal.Length,
      col=species_colors)
 
 # ================================================== #
-# huh? we need to convert the factor vector to a character vector
-# why? these are not already part of the data frame (I don't get this behavior)
+# huh? what happened? The colors were not applied!
+# we need to convert the factor vector to a character vector
+# why? these are not already part of the data frame
+# (I don't fully understand this)
 species_colors = as.character(species_colors)
 plot(x=iris$Sepal.Length,
      y=iris$Sepal.Width,
