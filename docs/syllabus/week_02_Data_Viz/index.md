@@ -1,7 +1,7 @@
 ---
 title: Week 2
 parent: Syllabus
-has_children: true
+has_children: false
 ---
 
 # Week 2: Data Wrangling & Visualization
@@ -48,7 +48,7 @@ Please complete the following and hand in through Brightspace:
 
 ### Class Notes
 
-**Plotting with R and ggplot2** - [RMD](Class_2021.09.09/W2.C1_Exercise_DataVisualization_v2.Rmd) - [HTML](W2.C1_Exercise_DataVisualization_V2.html)
+**Plotting with R and ggplot2** - [RMD](Class_2021.09.09/W2.C1_Exercise_DataVisualization_v2.Rmd) - [HTML](Class_2021.09.09/W2.C1_Exercise_DataVisualization_v2.html)
 
 
 </details>
