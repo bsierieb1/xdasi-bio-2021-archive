@@ -98,7 +98,7 @@ Well that's a good start, but where are the axis and category labels? And why do
 
 b. Let's fix these up per the figure. Adding the text annotations is a bit tricky, since the category labels are at a 45 degree angle. We also need to increase the bottom margin, or else the text will get truncated (you can check this for yourself below by commenting out the first `par()` command).
 
-Below, we've added all of these bells and whistles for you. Just **paste your barplot command** in the space provided, with one change: set the limits of the y-axis using `ylim = c(0.50))`, to keep the bars in range of the axis tick marks. 
+Below, we've added all of these bells and whistles for you. Just **paste your barplot command** in the space provided, with one change: set the limits of the y-axis using `ylim = c(0,50))`, to keep the bars in range of the axis tick marks. 
 
 Note that we also need to assign the plot to a variable so we can refer to it when we add the text annotations.
 
@@ -285,7 +285,7 @@ ggplot(data = salmonSizeData, mapping = aes(x = massKg)) +
   geom_histogram(fill = "firebrick", col = "black")
 ```
 
-Notice that you get an error about the number of bins - by default, the number of bins is set to 30, but you'll usually want to pick a better number for `bins` or set `binwidth`.
+Notice that you get a warning about the number of bins - by default, the number of bins is set to 30, but you'll usually want to pick a better number for `bins` or set `binwidth`.
 
 c. Now let's make the second plot look just like the one in the book. Paste your ggplot code from part (b) into the block below, with the following additions:
 
