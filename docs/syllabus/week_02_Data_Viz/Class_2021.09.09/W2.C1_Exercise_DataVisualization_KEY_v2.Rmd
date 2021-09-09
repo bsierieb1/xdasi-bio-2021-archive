@@ -10,17 +10,17 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
 ```
+
 
 # Output devices
 
-To export any kind of plot, you need some sort of "canvas" to draw on. In the RStudio GUI, as a default, plots will be printed in a new window, or if you are using R Markdown they will appear inline. Still, even in these cases you may want to use devices to write your plot to a file.
+To make any kind of plot, you need some sort of "canvas" to draw on. In the RStudio GUI, as a default, plots will be printed in the **Plots** window, or if you are using R Markdown they will appear inline. 
 
-The kind of output that is produced is controlled by a ***device*** directive, which by default is set to `null device`. On a windows machine it is actually a device called `windows()`; on a Mac it is called `quartz()`.
+The ***device*** directive controls the output stream, which by default is set to `null device`, meaning that they will appear directly on your screen. On a Windows machine it is actually a device called `windows()`; on a Mac it is called `quartz()`.
 
-+ You may choose the kind of output that is produced by redirecting the output to another type.
-+ Different devices include: PDF, PostScript, bitmap, jpeg, png, and LaTeX.
-+ These devices will not print to the GUI -- instead they will save a file in the working directory.
+In R, new plots will just overwrite old plots in the same device, unless you open a device to create a new canvas.
 
 ```{r}
 #open a new window
@@ -29,34 +29,84 @@ quartz() #on a mac
 
 #current device
 dev.cur()
+```
+
+In RStudio they are saved in your current session and you can scroll through them. The Plots menu allows you to pop them open in a new window, or save them to a file using the menu.
+
+Let's see what happens when we make a plot and redirect its output to a new device. First, let's use the built-in `iris` dataset, which contains measurements on sepals and petals of three different species of iris.
+Its class is `data.frame`.
+
+First, let's use this dataset to make a plot that just gets sent to the screen from within this .Rmd file. Notice that the plot appears inline.
+
+Then we will try different variants:
+
++ paste the code into the console (do it more than once)
++ start a new `quartz()` window in the console and write it there
+
+```{r}
+?iris
+head(iris)
+str(iris)
+
+# ================================================== #
+# 1. scatter plot of petal width vs. length (RMD)
+plot(iris$Petal.Length, iris$Petal.Width)
+
+# open new device first
+quartz()
+plot(iris$Petal.Length, iris$Petal.Width)
+dev.off()
+
+# repeat in console
+plot(iris$Petal.Length, iris$Petal.Width, col="orange")
+dev.cur()
+
+# ================================================== #
+# plot directly from console
+plot(iris$Petal.Length, iris$Petal.Width)
+
+# plot directly from console, with blue points
+plot(iris$Petal.Length, iris$Petal.Width, col="blue")
+
+# ================================================== #
+# plot directly from console
+plot(iris$Petal.Length, iris$Petal.Width, col="red")
+
+# plot directly from console, with blue points
+plot(iris$Petal.Length, iris$Petal.Width, col="green")
+dev.off()  # what happened to the plot?
 
 ```
+
+
+
+## Writing to files
+
+You can redirect your output to another type of device if you want to write your plot to a file.
+
++ Different devices include: PDF, PostScript, bitmap, jpeg, png, and LaTeX.
++ These devices will not print to the GUI -- instead they will save a file in the working directory.
 
 PDF output is really useful. Let us try to write a random plot to a pdf file.
 
 ```{r, collapse=TRUE}
-#start pdf device
-pdf("mycoolplot.pdf") # you can specify many other parameters here, e.g. size, dpi, etc
-
-# make a random plot
-plot(1)
-
-#list of devices
-dev.list()
-dev.cur()
-```
-
-```{r, collapse=TRUE}
-#select a device
-dev.set(3)
-
-#end a device or close a file
+# ================================================== #
+# plot to PDF file in RMD (execute all at once)
+pdf("iris_plot.pdf")
+plot(iris$Petal.Length, iris$Petal.Width, col="purple")
 dev.off()
 dev.cur()
 
+# ================================================== #
+# repeat in console
+
+pdf("iris_plot.pdf")
+plot(iris$Petal.Length, iris$Petal.Width, col="magenta")
 dev.off()
+
 dev.cur()
 ```
+
 
 # Essentials of base R graphics
 
@@ -68,7 +118,8 @@ There are also many graphical ***parameters*** that can be set in order to contr
 
 Learning to fine-tune the appearance of plots using the base graphics package can be very tedious and unrewarding. This is why we will transition to mainly using the **ggplot2** package to take our graphics to the next level. Nevertheless, we think it is important for you to know that these base functions exist and are available if you want to use them.
 
-## The plot() function can automatically generate plots
+
+## The `plot()` function: automatic plot
 
 The generic function for plotting R objects is aptly called `plot()`. The default output
 of the function depends on the object it is passed.
@@ -81,25 +132,58 @@ Since it is a numerical vector, the plot function plots a line.
 plot(ldeaths)
 ```
 
-The built-in `iris` dataset contains measurements on sepals and petals of three different species of iris.
-Its class is `data.frame`. In this case, `plot()` shows all comparisons between the 5 columns in the data frame.
+For the `iris` data frame, `plot()` shows all comparisons between the 5 columns in the data frame.
 
 ```{r}
 head(iris)
+str(iris)
 plot(iris)
 ```
 
-## The plot() function can be also programmed to generate simple scatter plots
 
-Rather than relying on the ability of `plot()` to automatically recognize the structure of your R object, you can use this function to create simple scatter plots by explicitly specifying `x` and `y` parameters.
+## The `plot()` function: scatter plot
+
+Rather than relying on the ability of `plot()` to automatically recognize the structure of your R object, you can use this function to create simple scatter plots by explicitly specifying `x` and `y` parameters. We did this above already.
 
 ```{r}
 plot(x=iris$Sepal.Length,
      y=iris$Sepal.Width)
 ```
 
-Let us color the points by species (`iris$Species`). Somewhat confusingly, the `plot()` help file (see `?plot`) does not describe any parameters to specify color. Instead, it says:
+
+# Customizing parameters
+
+Above, we also drew the points in different colors. You may also want to tweak some other things, like the shape and size of the points, and the axis labels, or overlay additional information, such as a regression line.
+
+Somewhat confusingly, the `plot()` help file (see `?plot`) does not describe any parameters to specify color. Instead, it says:
 `... Arguments to be passed to methods, such as graphical parameters (see par).`
+
+So you need to look up `par` in the Help to get a list of these. You can set parameters globally, or within a plot function. See [**QuickR: Graphical Parameters**](https://www.statmethods.net/advgraphs/parameters.html) by Datacamp for more info on these parameters.
+
+```{r}
+# ================================================== #
+# facy plot
+x=iris$Sepal.Length
+y=iris$Sepal.Width
+
+plot(x, y,
+     pch = 15, # 23
+     col = "blue",
+     cex = 0.5,
+     xlab='Sepal length, mm',
+     ylab='Sepal width, mm')
+
+# ================================================== #
+# add a regression line
+# this throws an error if try to use dataframe cols directly
+# this is because the function wants a matrix or vector object
+abline(lm(y ~ x))
+```
+
+
+# Coloring by dataset
+
+
 So, you should look up documentation for `par()` (`?par`), where you will find an extensive list of graphical parameters that you can pass to `plot()` and other similar functions. The parameter we need is `col`.
 
 ```{r}
@@ -107,31 +191,56 @@ plot(x=iris$Sepal.Length,
      y=iris$Sepal.Width,
      col='red') # pass a single value to color *all* points the same way
 ```
-```{r}
-species_colors = iris$Species # make a copy of the Species column
-levels(species_colors) # examine the number of levels
-levels(species_colors) = c("red","green","blue") # set color names as levels
-species_colors = as.character(species_colors) # convert factor to character vector
-species_colors # check
 
-plot(x=iris$Sepal.Length,
-     y=iris$Sepal.Width,
-     col=species_colors) # pass a vector of colors to set the color of each point individually
-```
-
-You may also want to tweak some other things, e.g. axis labels. 
+We can also color the points by dataset.
 
 ```{r}
+# ================================================== #
+# default
 plot(x=iris$Sepal.Length,
      y=iris$Sepal.Width,
-     col=species_colors,
-     xlab='Sepal length, mm',
-     ylab='Sepal width, mm')
+     col=iris$Species)
+
+# use different colors
+plot(x=iris$Sepal.Length,
+     y=iris$Sepal.Width,
+     col=c("red","green","blue"))
 ```
+
+You can also specify color using a character vector of the same length as the factor vector in the dataframe, but this is more complicated!
+
+```{r}
+# ================================================== #
+# make a copy of the Species column and check the levels
+species_colors = iris$Species
+levels(species_colors) 
+
+# ================================================== #
+# set color names as levels
+levels(species_colors) = c("orange","purple","aquamarine")
+species_colors                # what is this vector?
+str(species_colors)           # is it already a factor?
+
+# try this
+plot(iris$Sepal.Length,
+     y=iris$Sepal.Width,
+     col=species_colors)
+
+# ================================================== #
+# huh? we need to convert the factor vector to a character vector
+# why? these are not already part of the data frame (I don't get this behavior)
+species_colors = as.character(species_colors)
+plot(x=iris$Sepal.Length,
+     y=iris$Sepal.Width,
+     col=species_colors)
+```
+
 
 # Essentials of ggplot2
 
-The following brief overview is adapted from an STHDA tutorial you can find [**here**](http://www.sthda.com/english/wiki/ggplot2-essentials) that covers all the basic types of plots you can make with ggplot. 
+The following brief overview is adapted from an 
+[**STHDA tutorial**](http://www.sthda.com/english/wiki/ggplot2-essentials) 
+that covers all the basic types of plots you can make with ggplot. 
 
 The concept behind ggplot2 divides plot into **three different fundamental** parts: 
 
@@ -140,8 +249,10 @@ The concept behind ggplot2 divides plot into **three different fundamental** par
 The principal elements of every plot can be defined as follows:
 
 + **Data** is a data frame (variables) to be plotted.
-+ **Aesthetics**: the `aes()` function is used to indicate ***how*** to display the data: which categories or measurements to map to x and y coordinates; or color, size or shape of points, etc.
-+ **Geometry** defines the ***type of graphics*** (histogram, box plot, line plot, density plot, dot plot, ….)
++ **Aesthetics**: the `aes()` function is used to indicate ***how*** to display the data:
+  + which categories or measurements to map to x and y coordinates; or color, size or shape of points, etc.
++ **Geometry** defines the ***type of graphics*** 
+  + e.g. histogram, box plot, line plot, density plot, dot plot, etc.
 
 There are **two major functions** in the ggplot2 package:
 
@@ -158,18 +269,30 @@ ggplot(data = <data.frame>,
   geom_<type of geometry>()
 ```
 
-### Aesthetics
+Notice that as layers are added, a `+` symbol is added at the end of the previous layer. This signals that the plot is not finished. 
 
-If your data is **tidy**, then the columns of your data frame will contain the variables that you want to display. Each of these can be mapped to different **aesthetics** of the graph (e.g. axis, colors, shapes, etc.). A few of the examples below are based on Chapter 3 from ***R for Data Science***.
+***The `+` symbol must always appear at the end of a line.***
+
+
+## Aesthetics
+
+If your data is **tidy**, then the columns of your data frame will contain the variables that you want to display. Let's take a minute to review tidy data by reviewing the page on the course website. 
+
+Remember how we said that R is a **vectorized** language? Vectors are the basic units of all data structures in R.
+
+So, each **column** of a data frame can be **mapped** to different **aesthetics** of the graph (e.g. axis, colors, shapes, etc.). A few of the examples below are based on Chapter 3 from ***R for Data Science***.
+
+### Specifying aesthetics
 
 There are **two ways** to specify aesthetics:
 
-  * **Mapping**: This maps specific types of **data** to different visual elements
-    + Mappings are included ***inside*** `aes()`.
-    + In the base layer of the graph, the mapping will be applied to all geometries.
-    + In another layer, the mapping will be applied only to a particular geometry.
-  * **Setting**: Manually set an aesthetic **independently** of data
-    + Settings are placed ***outside*** of an `aes()` directive.
++ **Mapping**: This maps specific types of **data** to different visual elements
+  + Mappings are are always included ***inside*** of an `aes()` directive.
+    + In the **data** layer, mapping is applied to **all geometries**.
+    + In the **geom** layer (or other layers), the mapping will be applied only to a particular geometry or feature.
+
++ **Setting**: Manually set an aesthetic **independently** of data
+  + Settings are placed ***outside*** of an `aes()` directive.
     
 Aesthetic elements include things such as:
 
@@ -179,21 +302,21 @@ Aesthetic elements include things such as:
 + The shape of points (a number; see below)
 + Transparency (range 0-1)
 
-### Geometries
+## Geometries
 
 **Geometries** control the ***type of visual paradigm*** you want to use to display your data, for example:
 
-+ geom_bar() - barchart
++ geom_bar()       - barchart
 + geom_histogram() - histogram
-+ geom_dotplot() - dot plot, a.k.a. strip chart
-+ geom_boxplot() - boxplot
-+ geom_violin() - violin plot
-+ geom_point() - scatterplot
++ geom_dotplot()   - dot plot, a.k.a. strip chart
++ geom_boxplot()   - boxplot
++ geom_violin()    - violin plot
++ geom_point()     - scatterplot
 
 Geom functions also allow you to add additional features to a graph, for example:
 
 + geom_jitter() - spread points out (e.g. on strip charts) to make the data more visible
-+ geom_vline() - add a vertical line (can also add other kinds of lines)
++ geom_vline()  - add a vertical line (can also add other kinds of lines)
 
 Statistical features can also be layered onto graphs, e.g.:
 
@@ -201,92 +324,125 @@ Statistical features can also be layered onto graphs, e.g.:
 + stat_summary() - add some kind of statistical function to a graph
   + This can also be done by adding `stat = "something"` inside another geometry (some examples below)
 
+
 ### Themes
 
-[**Themes**](https://ggplot2.tidyverse.org/reference/theme.html) are used to customize the non-data components of your graphs, such as titles, labels, fonts, background, gridlines, and legends. The default appearance of ggplot graphs produces graphs with a gray background and white gridlines. This can be changed to almost any look and feel by customizing their themes, which can also be used to give plots a consistent look for presentation.
+[**Themes**](https://ggplot2.tidyverse.org/reference/theme.html) are used to customize the **non-data components** of your graphs, such as titles, labels, fonts, background, gridlines, and legends. 
 
-In addition to setting `theme()` components manually, the [**ggthemes*](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/) package also provides a variety of defined themes that replicate the look and feel for different visual paradigms and applications.
++ The **default** appearance of ggplot graphs produces graphs with a gray background and white gridlines. This can be changed to almost any look and feel by customizing their themes, which can also be used to give plots a consistent look for presentation.
 
-## qplot() can automatically generate plots
++ The [**ggthemes*](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/) package provides a variety of defined themes that replicate the look and feel for different visual paradigms and applications. 
 
-Let us recreate the Sepal.Length vs Sepal.Width scatterplot using `qplot()`.
++ `theme()` components can also be set manually.
+
+
+## Plotting functions
+
+### The `qplot()` uses simple syntax to generate plots
+
+The "quick plot" method uses simplified syntax resembling that of Base R. The biggest difference is that we explicitly add the **geometry**.
+
+Let us recreate the `Sepal.Length` vs `Sepal.Width` scatterplot using `qplot()`. We'll also color the points by group, and add some axis labels.
 
 ```{r}
 library(ggplot2)
 head(iris)
 
+# ================================================== #
 # quick plot with defaults
 qplot(x=Sepal.Length,
       y=Sepal.Width,
       data=iris,
+      geom=c("point"),
+      color=Species,
       xlab='Sepal length, mm',
-      ylab='Sepal width, mm',
-      geom=c("point")) # set geometry - this is the biggest difference from base R
+      ylab='Sepal width, mm')
 ```
 
-## ggplot() is a function to build plots piece-by-piece
+
+### The `ggplot()` function builds plots layer by layer
 
 Let us recreate the Sepal.Length vs Sepal.Width scatterplot using `ggplot()`.
 
 ```{r}
-ggplot(data=iris, 
-       mapping=aes(x=Sepal.Length,   # set aesthetics
+ggplot(data=iris,                    # specify the data frame
+       mapping=aes(x=Sepal.Length,   # add aesthetics
                    y=Sepal.Width)) +
-  geom_point() +                     # set geometry
-  theme_grey() +                     # set theme (although this theme is default)
-  xlab('Sepal length, mm') +
+  geom_point() +                     # add geometry
+  theme_grey() +                     # add a theme (this is actually the default theme)
+  xlab('Sepal length, mm') +         # add axis labels
   ylab('Sepal width, mm')
 ```
 
-Again, you can set a color for all points or each point independently depending on which species it belongs to.
+Again, you can set a **color** for all points, or by groups (factors) in the dataset.
 
 ```{r}
-# pass a single value to the parameter color inside the geometry function to color *all* points the same way
-ggplot(data=iris,
-       mapping=aes(x=Sepal.Length,
-                   y=Sepal.Width)) +
-  geom_point(color="red") + # here
-  xlab('Sepal length, mm') +
-  ylab('Sepal width, mm')
-
-# pass the name of the data.frame column by which to color points to the parameter color inside the aesthetics
+# ================================================== #
+# global aes mapping by factor group
 ggplot(data=iris, 
        mapping=aes(x=Sepal.Length,
                    y=Sepal.Width,
-                   color=Species)) + # here
+                   color=Species)) + # global color
   geom_point() +
   xlab('Sepal length, mm') +
   ylab('Sepal width, mm')
 
+# ================================================== #
+# mapping to data to aes can also go inside a geometry
 ggplot(data=iris, 
        mapping=aes(x=Sepal.Length,
-                   y=Sepal.Width,
-                   color=Species)) +
-  geom_point(mapping=aes(color=Species)) + # you can also create an aesthetics mapping inside geometries!
-  xlab('Sepal length, mm') +
-  ylab('Sepal width, mm')
+                   y=Sepal.Width)) +
+  geom_point(mapping=aes(color=Species)) # geom color
+
+# ================================================== #
+# manual mapping of ALL data to the same color
+
+# can do this globally ...
+ggplot(data=iris,
+       mapping=aes(x=Sepal.Length,
+                   y=Sepal.Width, color="red")) +
+  geom_point()
+
+# ... or in the geom layer
+ggplot(data=iris,
+       mapping=aes(x=Sepal.Length,
+                   y=Sepal.Width)) +
+  geom_point(color="red")
 ```
+
 
 # Histograms
 
-Histograms are good for showing the distribution of a **single quantitative variable**. Two or more distributions can be shown together on one histogram, though showing more than two or three gets really confusion. 
+Histograms are good for showing the **distribution** of a **single quantitative variable**. Two or more distributions can be shown together on one histogram, though showing more than two or three gets really confusing. 
 
-## hist() in base R
+## `hist()` in base R
 
-Base R has a special function called `hist()`.
+Base R has a special function called `hist()`. It's great for very quick visualization.
 
 ```{r}
 hist(iris$Sepal.Length)
 ```
 
-Keep in mind that `iris` contains data for three species, so the histogram above makes little biological sense because it is a mixture of measurements of three different species! There is no way to separate them inside `hist()`, so you may split the data.frame manually.
+Keep in mind that `iris` contains data for three species, so the histogram above makes little biological sense because it is a mixture of measurements of three different species! There is no way to separate them inside `hist()`, so you have to split the data.frame manually.
+
+Plot labels can get kind of ugly, so it's nice to add labels if you're going to share your plots with someone else.
 
 ```{r}
-virnica_rows = which(iris$Species=='virginica')
-iris_virginica = iris[virnica_rows,]
-
+# do it in steps
+virgnica_rows = which(iris$Species=='virginica')
+iris_virginica = iris[virgnica_rows,]
 hist(iris_virginica$Sepal.Length)
+
+# ================================================== #
+# do it in one go
+hist(iris[which(iris$Species=='virginica'), "Sepal.Length"])
+
+# prettier
+hist(iris[which(iris$Species=='virginica'), "Sepal.Length"],
+     xlab='Sepal length, mm',
+     main='Sepal length for Virginica')
 ```
+
 
 ## qplot() and geom_histogram() in ggplot2
 
@@ -296,8 +452,8 @@ hist(iris_virginica$Sepal.Length)
 qplot(x=Sepal.Length,
       data=iris,
       fill=Species,
-      color=Species,
-      alpha=0.5) # make the bars semi-transparent
+      color=Species,   # here color applies to the borders!
+      alpha=0.2)       # make the bars semi-transparent
 ```
 
 The same with `ggplot()`:
@@ -307,63 +463,31 @@ ggplot(data=iris,
        mapping=aes(x=Sepal.Length,
                    fill=Species,
                    color=Species))  +
-  geom_histogram(alpha=0.5)
+  geom_histogram(alpha=0.2)
 ```
 
-# Boxplots and violin plots
+There is an extension of ggplot2 that makes histograms look a little nicer (I'll find this and add to this worksheet later).
 
-Boxplots and violin plots are good for comparing numerical distributions for multiple categories. Specifically, boxplots (or box and whisker plots) allow you to compare the **median**, and quartiles of the data sets, while violin plots depict the density of data points.
 
-## boxplot() in base R
+# Bar plots: comparing 1D categorical data
 
-Base R has a built-in function `boxplot()`. Pay attention to the `~` notation in the argument passed to the parameter `formula`.
-
-```{r}
-boxplot(formula = iris$Sepal.Length ~ iris$Species,
-        xlab = "Species",
-        ylab = "Sepal length, mm")
-```
-
-## geom_boxplot() and geom_violin() in ggplot2
-
-Below we make boxplots and violinplots for the same data, and use the **ggpubr** package to arrange them in a figure.
-
-```{r}
-library(ggpubr)
-
-# boxplot only
-box = ggplot(iris, aes(x=Species, y=Sepal.Length, color=Species)) +
-  geom_boxplot()
-
-# violin plot only
-vln = ggplot(iris, aes(x=Species, y=Sepal.Length, fill=Species)) +
-  geom_violin()
-
-# both together
-bv = ggplot(iris, aes(x=Species, y=Sepal.Length, fill=Species)) +
-  geom_violin(trim=FALSE) +
-  geom_boxplot(width=0.1, fill="white")
-
-# arrange in the same figure
-figure = ggarrange(box, vln, bv,
-                   labels = c("A", "B", "C"))
-figure
-```
-
-# Bar plots
-
-Bar plots are among the most common plots and are useful for comparing data values.
-More complex bar plots can show the different factors that contribute to the value.
+Bar plots are among the most common plots and are useful for comparing counts among individuals or groups.
 
 ## barplot() in base R
 
 Base R has a built-in function `barplot()`.
 
 + The first argument to `barplot()` is `height`, which is expected to be a vector or a matrix.
-+ The arrangment of bars is given by the `beside` argument. The default value is `FALSE`.
-+ If `height` is a matrix, the default setting makes a stacked barplot.
++ The arrangement of bars is given by the `beside` argument, which is `FALSE` by default.
++ If `height` is a matrix, the default setting makes a **stacked** barplot.
++ Set `beside=TRUE` to make a **side-by-side** barplot.
+
+Again, there are a bunch of parameters that can be used to control other aspects of the plot's appearance.
+
+Let's make a barplot for a toy dataset where we compare gene expression levels for five different *Arabidopsis* genes under different nutrient conditions.
 
 ```{r}
+# ================================================== #
 # create sample data
 sampleData.df = data.frame(Control=sample(20,5),
                            Nitrogen=sample(20,5),
@@ -371,14 +495,17 @@ sampleData.df = data.frame(Control=sample(20,5),
 rownames(sampleData.df) = c("GeneA","GeneB","GeneC", "GeneD", "GeneE")
 sampleData.df # take a look
 
-# genes in Control condition
+# ================================================== #
+# genes in Control condition (a single vector)
 barplot(height=sampleData.df$Control,
         names.arg=row.names(sampleData.df))
 
+# ================================================== #
 # matrix with stacked bars
 barplot(height=as.matrix(sampleData.df))
 #barplot(height = sampleData.df) # this does not work!
 
+# ================================================== #
 # side-by-side bars in the rainbow palette, horizontal orientation
 barplot(height=as.matrix(sampleData.df),
         beside=TRUE,
@@ -386,49 +513,83 @@ barplot(height=as.matrix(sampleData.df),
         col=rainbow(4))
 ```
 
-Oops! What happened? `rainbow(4)` makes a palette that just recycles four different colors. Since we have 5 genes, and we want the colors to match across groups, we need the right number of colors. Let's fix this up, and also add a legend. We will place the legend somewhere on the graph by specifying x- and y-coordinates.
+Oops! What happened? `rainbow(4)` makes a palette that just recycles four different colors. Since we have 5 genes, and we want the colors to match across groups, we need the right number of colors. 
+
+Let's fix this up, and also add a legend. We will place the legend somewhere on the graph by specifying x- and y-coordinates.
 
 ```{r}
 barplot(height=as.matrix(sampleData.df),
         beside=TRUE,
         horiz=TRUE,
-        col=rainbow(5))
+        col=rainbow(5)) # use the right number of colors
+
+# add a legend
 legend(15, 10, legend = rownames(sampleData.df), fill = rainbow(5))
 ```
 
-## geom_bar() in ggplot2
-
-To use ggplot2, we will need to transform `sampleData.df`. To plot the numerical data grouped by both gene and condition attribute, we need to put each of these three "dimensions" into a different **column**. This means we need to **transform** our  data from a ***wide*** format to a ***long*** format:
-
-![Wide format](Images/tidy_wide.png){width=60%}
-![Ling format](Images/long.png){width=60%}
-
-To do this we can use the `stack()` command.
+Well, we are getting there. To fix this up so the legend doesn't cover up any of the data, we also need to set the limits of the plot.
 
 ```{r}
+barplot(height=as.matrix(sampleData.df),
+        beside=TRUE,
+        horiz=TRUE,
+        xlim = c(0,25),
+        col=rainbow(5)) # use the right number of colors
+
+# add a legend
+legend(20, 14, legend = rownames(sampleData.df), fill = rainbow(5))
+
+```
+
+
+## `geom_bar()` in ggplot2
+
+To make a barplot grouped by **Condition** in ggplot2, we will need to transform `sampleData.df` into a different format. Let's review what **tidy** data is first by looking at the **tidy data** page on the course website.
+
+Right now the data are in what's balled "wide" format. Each of the columns in the dataset actually represent **variables** of a global attribute, **Condition**.
+
+![Wide format](Images/tidy_wide.png){width=60%}
+
+To plot the numerical data grouped by both the **Gene** and **Condition** attributes, we need to put each of these three "dimensions" into its own **column**. 
+
+This means we need to **transform** our  data from a ***wide*** format to a ***long*** format:
+
+![Long format](Images/long.png){width=60%}
+
+To do this we can use the `stack()` command. There are other commands to do this in the `tidyverse` package, which we will learn about later.
+
+```{r}
+# ================================================== #
+# transform wide to long format
 sampleData.df.long = stack(sampleData.df)
 head(sampleData.df.long) # check
 
-colnames(sampleData.df.long)[2] = "Condition" # rename "ind" to "Condition"
+# ================================================== #
+# Let's rename "ind" to "Condition"
+colnames(sampleData.df.long)[2] = "Condition"
 
-sampleData.df.long$Gene = rep(rownames(sampleData.df),3) # create "Gene" column from the row names of sampleData.df
+# ================================================== #
+# Let's also add a "Gene" column
+# Since there are 5 genes and 3 conditions, we will just replicate the 5 gene names 3 times.
+sampleData.df.long$Gene = rep(rownames(sampleData.df),3)
 head(sampleData.df.long) # check
 ```
 
-Stacked bars:
+Now we can make our stacked and side-by-side bar plots.
+
 
 ```{r, out.width = "60%"}
+# ================================================== #
+# stacked
 ggplot(data=sampleData.df.long,
        aes(x=Condition,
            y=values,
            fill=Gene)) +
   geom_bar(stat="identity",
            color="black")
-```
 
-Bars side-by-side:
-
-```{r}
+# ================================================== #
+# side-by-side
 ggplot(data=sampleData.df.long,
        aes(x=Condition,
            y=values,
@@ -438,92 +599,5 @@ ggplot(data=sampleData.df.long,
            position=position_dodge())
 ```
 
-# Faceting
 
-Sometimes we want to show numerical data separated by category, or split them according to multiple categories. In other cases we just want to look at several plots side-by-side. For this, we can arrange plot in multiple **panels**.
-
-## mfrow() and mfcol() in base R
-
-+ mfrow – number of plots to be drawn in a window (also mfcol)
-
-The `mfrow()` argument in the `par()` function allows you to define the number of
-figure panels you want in the device, and how they are to be arranged in terms of rows and columns.
-
-Note that repeated calls to plotting functions will fill up the device according to the number of panels specified by `mfrow()`. If `plot()` is called more times than the number of plots specified, then a new window is opened with the same `mfrow()` options.
-
-```{r}
-# display four plots in a 2x2 grid
-par(mfrow=c(2,2))
-boxplot(iris$Sepal.Length ~ iris$Species,main="Sepal Length",xlab="Species",ylab="cm")
-boxplot(iris$Sepal.Width ~ iris$Species,main="Sepal Width",xlab="Species",ylab="cm")
-boxplot(iris$Petal.Length ~ iris$Species,main="Petal Length",xlab="Species",ylab="cm")
-boxplot(iris$Petal.Length ~ iris$Species,main="Petal Width",xlab="Species",ylab="cm")
-
-# reset display to one graph only
-par(mfrow=c(1,1))
-```
-
-## facet_wrap() and facet_grid() in ggplot2
-
-+ Facet plots, also called "lattice" or "trellis" plots, are a powerful tool for exploratory data analysis: you can rapidly compare patterns in different parts of the data and see whether they are the same or different. There are three types of faceting:
-
-+ facet_null() - a single plot (default)
-+ facet_wrap() - “wraps” a 1D ribbon of panels into 2D (useful if you have a large number of categories)
-+ facet_grid() - produces a 2D grid of panels defined by different variables, which form the rows and columns
-
-This figure from the book illustrates the differences between wrapping and making a grid:
-
-![](Images/facet.png){width=60%}
-
-+ `facet_wrap()` makes a long ribbon of panels (generated by any number of variables) and wraps it into 2d. This is useful if you have a single variable with many levels and want to arrange the plots in a more space efficient manner.
-+ facet_grid() lays out plots in a 2d grid
-
-Both of these can be specified with one or two variables defined by a **formula** (specified with a tilde symbol, `~`). The difference is in the specific **syntax**. 
-
-The output will be similar for one variable, but for two variables the axis labels will differ, and and `facet_grid()` will produce a more sensible representation of the data.
-
-* Syntax for `facet_wrap()`:
-  + `(~ a)` - spreads the values of ***a*** across panels
-facilitates comparisons of ***y*** position, because the vertical scales are aligned.
-  + `(~ a + b)` - spreads the combinations of values for both ***a***and ***b***
-
-For the **iris** dataset:
-
-```{r, out.width = "60%"}
-base.plot = ggplot(iris, aes(x=Petal.Length, y=Petal.Width, color=Species)) +
-  geom_point()
-base.plot
-  
-base.plot + facet_wrap(~ Species)
-base.plot + facet_wrap(~ Species, ncol=1)
-```
-
-* Syntax for `facet_grid()`:
-  + `(. ~ a)` - spreads the values of ***a*** across the columns. This direction
-facilitates comparisons of ***y*** position, because the vertical scales are aligned.
-  + `(b ~ .)` - spreads the values of ***b*** down the rows. This direction facilitates comparison of ***x*** position because the horizontal scales are aligned. This makes it particularly useful for comparing distributions.
-  + `(a ~ b)` - spreads ***a*** across columns and ***b*** down rows. You’ll usually want to put the variable with the greatest number of levels in the columns, to take advantage of the aspect ratio of your screen.
-
-We can easily split our plots by **Species** to produce the same output as `facet_wrap()`:
-
-```{r, out.width = "60%"}
-base.plot + facet_grid(. ~ Species)
-base.plot + facet_grid(Species ~ .)
-```
-
-However, since the **iris** dataset contains only **one categorical variable**, we would have to do something fancier to get good mileage out of `facet_grid()` for this example. 
-
-We can do this by *splitting some of the quantitative data into categories* (this is kind of a kluge)^[https://stackoverflow.com/questions/40350230/variable-hline-in-ggplot-with-facet]. Below we plot Sepal Length against Sepal Width (quantitative variables) split out by Petal type (Long vs. Short, Narrow vs. Wide):
-
-```{r}
-data=iris
-data$Petal.Width.Range=factor(ifelse(data$Petal.Width<1.3,"Narrow Petals","Wide Petals"))
-data$Petal.Length.Range=factor(ifelse(data$Petal.Length<4.35,"Short Petals","Long Petals"))
-ggplot(data, aes(x=Sepal.Length, y=Sepal.Width, color=Species)) + 
-  geom_point(alpha=0.5) +
-  facet_grid(Petal.Width.Range ~ Petal.Length.Range)
-```
-
-You should consult the ggplot2 book chapter for information on customization, such as controlling axis **scales**, or cutting continuous variables into bins in order to facet them.
-
-
+Next time, we will look at boxplots, violin plots, faceting, and placing multiple graphs on the same plot in the style of a figure in a publication.
