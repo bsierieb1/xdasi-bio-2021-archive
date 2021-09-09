@@ -38,12 +38,21 @@ Please complete the following and hand in through Brightspace:
 
 <!-- ########################################################################### -->
 
-<!-- # Class - Thursday, Sept. 9
+# Class - Thursday, Sept. 9
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
+## Data visualization
+
+### Introduction (class website)
+
+### Class Notes
+
+**Plotting with R and ggplot2** - [RMD](W2.C1_Exercise_DataVisualization_V2.Rmd) - [HTML](W2.C1_Exercise_DataVisualization_V2.html)
+
+
+</details>
 
 <!-- ########################################################################### -->
 

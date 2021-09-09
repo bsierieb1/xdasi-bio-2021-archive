@@ -162,7 +162,7 @@ So you need to look up `par` in the Help to get a list of these. You can set par
 
 ```{r}
 # ================================================== #
-# facy plot
+# fancy plot
 x=iris$Sepal.Length
 y=iris$Sepal.Width
 
