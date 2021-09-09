@@ -39,9 +39,9 @@ Finally, we need to **communicate** our results and conclusions in a clear and c
 
 Deciding what kind of plot to use will depend on the type of data you are trying to plot. A couple good websites are very useful for helping you identify the type of plot you want to make, based on what kind of data you have. They also have examples and code for different types of plots:
 
-+ [**Data to Viz**](https://www.data-to-viz.com/)
++ [**Data to Viz**](https://www.data-to-viz.com/){: target="blank"}
   + This site provides a very useful **decision tree** that illustrates how to choose different visualizations and provides example code for all of them.
-+ [**R Graph Gallery**](https://www.r-graph-gallery.com/index.html)
++ [**R Graph Gallery**](https://www.r-graph-gallery.com/index.html){: target="blank"}
   + Contains a lot of examples of different types of graphs, and provides tips for plotting with both base R and ggplot2.
 
 ---

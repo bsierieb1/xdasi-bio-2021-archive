@@ -40,7 +40,7 @@ There are several ways to refer to colors in R:
     - all named colors can also be accessed by their index number
   + **RGB** - e.g. rgb(red, green, blue, alpha), e.g. `rgb(0,0,255)` = blue
     - amount of red, green, and blue, ranging from 0-255, plus transparency
-  + **hexacecimal** - "#RRGGBB", e.g. `#0000FF` = blue
+  + **hexadecimal** - "#RRGGBB", e.g. `#0000FF` = blue
     - each pair of digits from 00-FF corresponds to the intensity of red, green, or blue
   + **HCL** - hue, chroma, luminescence - an alternative representation of color
 
