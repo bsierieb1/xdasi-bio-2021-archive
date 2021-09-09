@@ -57,11 +57,17 @@ Please complete the following and hand in through Brightspace:
 
 <!-- ########################################################################### -->
 
-<!-- # Recitation - Friday, Sept. 10
+# Recitation - Friday, Sept. 10
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
+## Data visualization
+
+### Class Notes
+
+**Plotting with R and ggplot2** - [TEST](Class_2021.09.09/W2.C1_Exercise_DataVisualization_v2.Rmd.zip) - [TEST](Class_2021.09.09/W2.C1_Exercise_DataVisualization_v2.html)
+
+</details>
 
 <!-- ########################################################################### -->
