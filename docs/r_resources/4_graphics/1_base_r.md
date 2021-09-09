@@ -82,7 +82,7 @@ To draw a plot, you need some sort of **canvas** to draw on. This is controlled 
 
 Each time you make a new graph in R, the last graph you made will be overwritten to the current canvas (though RStudio saves these for you so you can scroll through them). You can open a new canvas by opening a new null device (e.g. typing `quartz()` and then making a plot). Note that the window might open behind RStudio, so you may have to look for it on your desktop.
 
-```{r}
+```r
 # open a new window
 # windows()  #on a pc
 quartz()     #on a mac
