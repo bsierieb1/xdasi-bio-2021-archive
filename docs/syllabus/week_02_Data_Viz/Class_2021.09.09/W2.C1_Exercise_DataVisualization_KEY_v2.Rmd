@@ -16,90 +16,92 @@ library(ggplot2)
 
 # Output devices
 
-To make any kind of plot, you need some sort of "canvas" to draw on. In the RStudio GUI, as a default, plots will be printed in the **Plots** window, or if you are using R Markdown they will appear inline. 
+To make any kind of plot, you need some sort of "canvas" to draw on. The ***device*** directive controls the output stream, i.e. where your plot is drawn. This may be somewhere on your screen, or else some type of output file (e.g. PDF, PNG, Postcript, etc.)
 
-The ***device*** directive controls the output stream, which by default is set to `null device`, meaning that they will appear directly on your screen. On a Windows machine it is actually a device called `windows()`; on a Mac it is called `quartz()`.
+## Default device
 
-In R, new plots will just overwrite old plots in the same device, unless you open a device to create a new canvas.
+If you don't specify a particular device as the output destination, then by **default**, any plots you make will be displayed directly on your screen. This default output device is called the `null device`.
+
+Plots will be printed to your screen in one of three ways within RStudio:
+
++ in the **Plots** window
+  + if you execute a command from the console or an R script using the `null device`
++ **inline**, if the command is executed from within an R markdown
++ in a **new window** on your screen
+  + if you open a new screen device (see below)
+
+For these exercises, we will use the built-in `iris` dataset, which contains measurements on sepals and petals of three different species of iris. Its class is `data.frame`.
+
+Try issuing the following commands, first within this .Rmd file, and then from the console:
 
 ```{r}
-#open a new window
-#windows() #on a pc
-quartz() #on a mac
-
-#current device
-dev.cur()
+# plot iris petal length vs. width
+plot(iris$Petal.Length, iris$Petal.Width)
+plot(iris$Petal.Length, iris$Petal.Width, col="blue")
+plot(iris$Petal.Length, iris$Petal.Width, col="purple")
 ```
 
-In RStudio they are saved in your current session and you can scroll through them. The Plots menu allows you to pop them open in a new window, or save them to a file using the menu.
+You've just written three different plots to the **Plots** window. You can scroll through them using the left and right arrows, and you may pop them out into a new window or save them to a file (read on).
 
-Let's see what happens when we make a plot and redirect its output to a new device. First, let's use the built-in `iris` dataset, which contains measurements on sepals and petals of three different species of iris.
-Its class is `data.frame`.
+# Checking devices
 
-First, let's use this dataset to make a plot that just gets sent to the screen from within this .Rmd file. Notice that the plot appears inline.
-
-Then we will try different variants:
-
-+ paste the code into the console (do it more than once)
-+ start a new `quartz()` window in the console and write it there
+You can easily find out what your current device is, or list all the devices you have open, using the following commands. 
 
 ```{r}
-?iris
-head(iris)
-str(iris)
+dev.cur()   # current device (a.k.a. device 1)
+dev.list()  # list all open devices (only one should be listed right now)
+```
+
+# Opening a new device
+
+You can make a new canvas by opening a new output stream. 
+
+When you do this using `windows()` (on a PC), or `quartz()` (on a Mac), a new window should open somewhere on your desktop (sometimes it could appear in front of the RStudio, but sometimes it might open behind RStudio and then you'll have to look for it).
+
+Try the following commands from the **console** (nothing will happen if you do this from within this Markdown):
+
+```{r, eval=FALSE}
+# ================================================== #
+# open a new window
+# windows()  # on a pc
+quartz()     # on a mac
+dev.cur()    # now "quartz 2" instead of "null device 1"
 
 # ================================================== #
-# 1. scatter plot of petal width vs. length (RMD)
+# a scatter plot of petal width vs. length
+# should appear in the new window
 plot(iris$Petal.Length, iris$Petal.Width)
-
-# open new device first
-quartz()
-plot(iris$Petal.Length, iris$Petal.Width)
-dev.off()
-
-# repeat in console
-plot(iris$Petal.Length, iris$Petal.Width, col="orange")
-dev.cur()
-
-# ================================================== #
-# plot directly from console
-plot(iris$Petal.Length, iris$Petal.Width)
-
-# plot directly from console, with blue points
 plot(iris$Petal.Length, iris$Petal.Width, col="blue")
 
 # ================================================== #
-# plot directly from console
-plot(iris$Petal.Length, iris$Petal.Width, col="red")
+# close the device
+dev.off()  # window will disappear!
+dev.cur()  # back to the null device
 
-# plot directly from console, with blue points
-plot(iris$Petal.Length, iris$Petal.Width, col="green")
-dev.off()  # what happened to the plot?
-
+# plot again is directed to the Plots window
+plot(iris$Petal.Length, iris$Petal.Width)
 ```
 
+New plots will just overwrite old plots in the same device, unless you open a new device to create a new canvas (or you are working in an R Markdown file). Check that this happened above. 
 
+As noted above, in RStudio the behavior is different for the `null device` because it will show you all your plots in the Plots window.
 
 ## Writing to files
 
-You can redirect your output to another type of device if you want to write your plot to a file.
+You can also redirect your output to a file. Different file devices include: PDF, jpeg, png, PostScript, bitmap, and LaTeX.
 
-+ Different devices include: PDF, PostScript, bitmap, jpeg, png, and LaTeX.
-+ These devices will not print to the GUI -- instead they will save a file in the working directory.
-
-PDF output is really useful. Let us try to write a random plot to a pdf file.
+PDF output is really useful. Let us write a plot to a pdf file. You may do this either from within this .Rmd file, or on the console.
 
 ```{r, collapse=TRUE}
 # ================================================== #
 # plot to PDF file in RMD (execute all at once)
 pdf("iris_plot.pdf")
+dev.cur()
 plot(iris$Petal.Length, iris$Petal.Width, col="purple")
 dev.off()
-dev.cur()
 
 # ================================================== #
 # repeat in console
-
 pdf("iris_plot.pdf")
 plot(iris$Petal.Length, iris$Petal.Width, col="magenta")
 dev.off()
@@ -107,10 +109,24 @@ dev.off()
 dev.cur()
 ```
 
+Note that since you wrote the output to the same file name, only the second plot remains. You can make multi-page PDFs instead by sending both plots to the open PDF device before you close it:
+
+```{r}
+# ================================================== #
+# two plots in the same PDF file, each gets its own page
+pdf("iris_plot.pdf")
+dev.cur()
+plot(iris$Petal.Length, iris$Petal.Width, col="purple")
+plot(iris$Petal.Length, iris$Petal.Width, col="magenta")
+dev.off()
+```
+
 
 # Essentials of base R graphics
 
-Here we introduce the basic elements of the [**graphics**](https://www.rdocumentation.org/packages/graphics/versions/3.6.2) package, which is part of the base R distribution. 
+Here we introduce the basic elements of the <a href="https://www.rdocumentation.org/packages/graphics/versions/3.6.2"
+
+target="_blank">**graphics**</a> package, which is part of the base R distribution. 
 
 The **graphics** package provides ***functions*** for creating all kinds of plots. Many of these can be used to conveniently get a quick idea of what your data look like. They are simple yet powerful.
 
@@ -158,7 +174,9 @@ Above, we also drew the points in different colors. You may also want to tweak s
 Somewhat confusingly, the `plot()` help file (see `?plot`) does not describe any parameters to specify color. Instead, it says:
 `... Arguments to be passed to methods, such as graphical parameters (see par).`
 
-So you need to look up `par` in the Help to get a list of these. You can set parameters globally, or within a plot function. See [**QuickR: Graphical Parameters**](https://www.statmethods.net/advgraphs/parameters.html) by Datacamp for more info on these parameters.
+So you need to look up `par` in the Help to get a list of these. You can set parameters globally, or within a plot function. See <a href="https://www.statmethods.net/advgraphs/parameters.html" 
+
+target="_blank">**QuickR: Graphical Parameters**</a> by Datacamp for more info on these parameters.
 
 ```{r}
 # ================================================== #
@@ -197,6 +215,7 @@ plot(x=iris$Sepal.Length,
      col=iris$Species)   # color the points by their species group/factor
 ```
 
+
 ## Map data with a different palette
 
 Don't like the default colors? Change the palette!
@@ -218,9 +237,13 @@ plot(x=iris$Sepal.Length,
      col=iris$Species)
 ```
 
-Note that R seems to know how to map `palette()` values onto factors automatically. *HOWEVER, if the number of factors exceeds the number of colors in the palette, colors will just get recycled! (You can try this with the iris dataset by removing one of the colors above and remaking the plot.)*
+Note that R seems to know how to map `palette()` values onto factors automatically. 
 
-What if instead we just tried to use a random vector of three colors? Points will just get randomly assigned to colors! *(Just like with the palette colors, these colors will get recycled until all of the points are colored; however there will be no relationship between factors and the color of each data point.)*
+  + *HOWEVER, if the number of factors exceeds the number of colors in the palette, colors will just get recycled! (You can try this with the iris dataset by removing one of the colors above and remaking the plot.)*
+
+What if instead we just tried to use a random vector of three colors? Points will just get randomly assigned to colors! 
+
+  + *Just like with the palette colors, these colors will get recycled until all of the points are colored; however there will be no relationship between factors and the color of each data point.*
 
 Compare the graph below with the ones we just made above. Can you see the difference?
 
@@ -230,6 +253,11 @@ plot(x=iris$Sepal.Length,
      y=iris$Sepal.Width,
      col=c("red","green","blue"))
 ```
+
+For more on palettes, see the <a href="https://kriscgun.github.io/xdasi-bio-2021/r_resources/4_graphics/4_color.html#palettes"
+
+target="_blank">**Palettes**</a> 
+section of the course website ("R Resources=>Data Visualization=> Working with Color").
 
 
 ## Map data with a character column
@@ -245,19 +273,25 @@ levels(species_colors)         # also a factor vector
 # ================================================== #
 # set color names as levels
 levels(species_colors) = c("orange","purple","aquamarine")
-species_colors                # what is this vector?
-str(species_colors)           # is it still a factor?
+
+# what is this vector? is it still a factor?
+head(species_colors)
+tail(species_colors)
+str(species_colors)
 
 # try this
 plot(iris$Sepal.Length,
      y=iris$Sepal.Width,
      col=species_colors)
+```
 
+Huh? what happened? The colors were not applied!
+
+We need to convert the factor vector to a character vector first. Why? perhaps because the vector is not part of the same data frame, or because the factors don't match? (I don't fully understand this.)
+
+```{r}
 # ================================================== #
-# huh? what happened? The colors were not applied!
-# we need to convert the factor vector to a character vector
-# why? these are not already part of the data frame
-# (I don't fully understand this)
+# convert to character vector and replot
 species_colors = as.character(species_colors)
 plot(x=iris$Sepal.Length,
      y=iris$Sepal.Width,
@@ -267,9 +301,10 @@ plot(x=iris$Sepal.Length,
 
 # Essentials of ggplot2
 
-The following brief overview is adapted from an 
-[**STHDA tutorial**](http://www.sthda.com/english/wiki/ggplot2-essentials) 
-that covers all the basic types of plots you can make with ggplot. 
+The following brief overview is adapted from an <a href="http://www.sthda.com/english/wiki/ggplot2-essentials" 
+
+target="_blank">**STHDA tutorial**</a>
+that covers all the basic types of plots you can make with ggplot. Also see the **ggplot2** pages on the course website ("R Resources=>Data Visualization=>ggplot2")
 
 The concept behind ggplot2 divides plot into **three different fundamental** parts: 
 
@@ -282,6 +317,8 @@ The principal elements of every plot can be defined as follows:
   + which categories or measurements to map to x and y coordinates; or color, size or shape of points, etc.
 + **Geometry** defines the ***type of graphics*** 
   + e.g. histogram, box plot, line plot, density plot, dot plot, etc.
+
+## Plotting functions
 
 There are **two major functions** in the ggplot2 package:
 
@@ -335,32 +372,36 @@ Aesthetic elements include things such as:
 
 **Geometries** control the ***type of visual paradigm*** you want to use to display your data, for example:
 
-+ geom_bar()       - barchart
-+ geom_histogram() - histogram
-+ geom_dotplot()   - dot plot, a.k.a. strip chart
-+ geom_boxplot()   - boxplot
-+ geom_violin()    - violin plot
-+ geom_point()     - scatterplot
++ `geom_bar()`       - barchart
++ `geom_histogram()` - histogram
++ `geom_dotplot()`   - dot plot, a.k.a. strip chart
++ `geom_boxplot()`   - boxplot
++ `geom_violin()`    - violin plot
++ `geom_point()`     - scatterplot
 
 Geom functions also allow you to add additional features to a graph, for example:
 
-+ geom_jitter() - spread points out (e.g. on strip charts) to make the data more visible
-+ geom_vline()  - add a vertical line (can also add other kinds of lines)
++ `geom_jitter()` - spread points out (e.g. on strip charts) to make the data more visible
++ `geom_vline()`  - add a vertical line (can also add other kinds of lines)
 
 Statistical features can also be layered onto graphs, e.g.:
 
-+ geom_smooth() - a regression line (according to a global or local model)
-+ stat_summary() - add some kind of statistical function to a graph
++ `geom_smooth()` - a regression line (according to a global or local model)
++ `stat_summary()` - add some kind of statistical function to a graph
   + This can also be done by adding `stat = "something"` inside another geometry (some examples below)
 
 
 ### Themes
 
-[**Themes**](https://ggplot2.tidyverse.org/reference/theme.html) are used to customize the **non-data components** of your graphs, such as titles, labels, fonts, background, gridlines, and legends. 
+<a href="https://ggplot2.tidyverse.org/reference/theme.html"
+
+target="_blank">**Themes**</a>
+are used to customize the **non-data components** of your graphs, such as titles, labels, fonts, background, gridlines, and legends. 
 
 + The **default** appearance of ggplot graphs produces graphs with a gray background and white gridlines. This can be changed to almost any look and feel by customizing their themes, which can also be used to give plots a consistent look for presentation.
 
-+ The [**ggthemes*](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/) package provides a variety of defined themes that replicate the look and feel for different visual paradigms and applications. 
++ The <a href="https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/" target="_blank">**ggthemes**</a>
+package provides a variety of defined themes that replicate the look and feel for different visual paradigms and applications. 
 
 + `theme()` components can also be set manually.
 
@@ -456,16 +497,19 @@ Keep in mind that `iris` contains data for three species, so the histogram above
 
 Plot labels can get kind of ugly, so it's nice to add labels if you're going to share your plots with someone else.
 
-```{r}
+```{r, collapse=TRUE}
+# ================================================== #
 # do it in steps
-virgnica_rows = which(iris$Species=='virginica')
-iris_virginica = iris[virgnica_rows,]
-hist(iris_virginica$Sepal.Length)
+
+# virgnica_rows = which(iris$Species=='virginica')
+# iris_virginica = iris[virgnica_rows,]
+# hist(iris_virginica$Sepal.Length)
 
 # ================================================== #
 # do it in one go
 hist(iris[which(iris$Species=='virginica'), "Sepal.Length"])
 
+# ================================================== #
 # prettier
 hist(iris[which(iris$Species=='virginica'), "Sepal.Length"],
      xlab='Sepal length, mm',
@@ -473,7 +517,7 @@ hist(iris[which(iris$Species=='virginica'), "Sepal.Length"],
 ```
 
 
-## qplot() and geom_histogram() in ggplot2
+## `qplot()` and `geom_histogram()` in ggplot2
 
 `qplot()` provides an easy way to display the data for the three species overlayed.
 
@@ -491,8 +535,32 @@ The same with `ggplot()`:
 ggplot(data=iris,
        mapping=aes(x=Sepal.Length,
                    fill=Species,
+                   color=Species,
+                   alpha=0.2))  +
+  geom_histogram()
+```
+
+Notice that both of these plots do something weird: they include the transparency parameter, `alpha`, in the figure legend. This is because both of these functions are trying to "map" data to an aesthetic, so they automatically include this in the legend!
+
+However, transparency has no meaningful relationship with the data - it's only there to improve the appearance of the histogram. 
+
+To fix this, we need to move the `alpha` parameter to the **geom** layer:
+
+```{r}
+ggplot(data=iris,
+       mapping=aes(x=Sepal.Length,
+                   fill=Species,
                    color=Species))  +
   geom_histogram(alpha=0.2)
+```
+
+Sometimes it's really important to include the aesthetic mapping in the data layer. In this case, however, we could also move the `fill` and `color` parameters to the **geom** layer. Since it's still a mapping of data to an aesthetic, we still need to wrap it inside an `aes` clause:
+
+```{r}
+ggplot(data=iris,
+       mapping=aes(x=Sepal.Length))  +
+  geom_histogram(aes(fill=Species, color=Species),
+                 alpha=0.2)
 ```
 
 There is an extension of ggplot2 that makes histograms look a little nicer (I'll find this and add to this worksheet later).
@@ -553,7 +621,9 @@ barplot(height=as.matrix(sampleData.df),
         col=rainbow(5)) # use the right number of colors
 
 # add a legend
-legend(15, 10, legend = rownames(sampleData.df), fill = rainbow(5))
+legend(15, 10, # horizontal and vertical position
+       legend = rownames(sampleData.df), 
+       fill = rainbow(5))
 ```
 
 Well, we are getting there. To fix this up so the legend doesn't cover up any of the data, we also need to set the limits of the plot.
@@ -562,28 +632,32 @@ Well, we are getting there. To fix this up so the legend doesn't cover up any of
 barplot(height=as.matrix(sampleData.df),
         beside=TRUE,
         horiz=TRUE,
-        xlim = c(0,25),
+        xlim = c(0,26),
         col=rainbow(5)) # use the right number of colors
 
-# add a legend
-legend(20, 14, legend = rownames(sampleData.df), fill = rainbow(5))
+# add a legend with colors
+legend(21, 14, 
+       legend = rownames(sampleData.df), 
+       fill = rainbow(5))
 
 ```
 
 
 ## `geom_bar()` in ggplot2
 
-To make a barplot grouped by **Condition** in ggplot2, we will need to transform `sampleData.df` into a different format. Let's review what **tidy** data is first by looking at the **tidy data** page on the course website.
+To make a barplot grouped by **Condition** in ggplot2, we will need to transform `sampleData.df` into a different format. 
+
+Let's review what **tidy** data is first by looking at the
+<a href="https://kriscgun.github.io/xdasi-bio-2021/best_practices/tidy_data.html" 
+
+target="_blank">**Tidy Data**</a>
+page on the course website (see "Best Practices=>Tidy Data").
 
 Right now the data are in what's balled "wide" format. Each of the columns in the dataset actually represent **variables** of a global attribute, **Condition**.
 
-![Wide format](Images/tidy_wide.png){width=60%}
-
 To plot the numerical data grouped by both the **Gene** and **Condition** attributes, we need to put each of these three "dimensions" into its own **column**. 
 
-This means we need to **transform** our  data from a ***wide*** format to a ***long*** format:
-
-![Long format](Images/long.png){width=60%}
+This means we need to **transform** our  data from a ***wide*** format to a ***long*** format (an example of this is illustrated on the **Tidy Data** page).
 
 To do this we can use the `stack()` command. There are other commands to do this in the `tidyverse` package, which we will learn about later.
 
