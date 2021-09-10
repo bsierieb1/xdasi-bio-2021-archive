@@ -643,7 +643,7 @@ legend(21, 14,
 ```
 
 
-## `geom_bar()` in ggplot2
+## Barplots in ggplot2
 
 To make a barplot grouped by **Condition** in ggplot2, we will need to transform `sampleData.df` into a different format. 
 
@@ -680,7 +680,6 @@ head(sampleData.df.long) # check
 
 Now we can make our stacked and side-by-side bar plots.
 
-
 ```{r, out.width = "60%"}
 # ================================================== #
 # stacked
@@ -688,18 +687,22 @@ ggplot(data=sampleData.df.long,
        aes(x=Condition,
            y=values,
            fill=Gene)) +
-  geom_bar(stat="identity",
-           color="black")
-
+  # geom_bar(stat="identity") # this works, but ...
+    geom_col()                # this is simpler
+  
 # ================================================== #
 # side-by-side
 ggplot(data=sampleData.df.long,
        aes(x=Condition,
            y=values,
            fill=Gene)) +
-  geom_bar(stat="identity",
-           color="black",
-           position=position_dodge())
+
+  # geom_bar(stat="identity",
+  #          color="black",
+  #          position=position_dodge())
+  
+geom_col(position = "dodge",  # still simpler than geom_bar()
+         color="black")
 ```
 
 
