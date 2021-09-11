@@ -566,11 +566,11 @@ ggplot(data=iris,
 There is an extension of ggplot2 that makes histograms look a little nicer (I'll find this and add to this worksheet later).
 
 
-# Bar plots: comparing 1D categorical data
+# Bar plots
 
 Bar plots are among the most common plots and are useful for comparing counts among individuals or groups.
 
-## barplot() in base R
+## `barplot()` in base R
 
 Base R has a built-in function `barplot()`.
 
@@ -586,25 +586,32 @@ Let's make a barplot for a toy dataset where we compare gene expression levels f
 ```{r}
 # ================================================== #
 # create sample data
-sampleData.df = data.frame(Control=sample(20,5),
-                           Nitrogen=sample(20,5),
-                           Phospate=sample(20,5))
-rownames(sampleData.df) = c("GeneA","GeneB","GeneC", "GeneD", "GeneE")
-sampleData.df # take a look
+Control = sample(x=10,
+                 size=5) # draw 5 values from a 1:x sequence of integers
+Nitrogen = rnorm(n=5,
+                 mean=5,
+                 sd=2) # draw 5 values from a normal distribution with a given mean and SD
+Phospate = runif(n=5,
+                 min=1,
+                 max=10) # draw 5 values from a uniform distribution with a given range
+
+sampleData = cbind(Control,Nitrogen,Phospate)
+rownames(sampleData) = c("GeneA","GeneB","GeneC", "GeneD", "GeneE")
+sampleData # take a look
 
 # ================================================== #
 # genes in Control condition (a single vector)
-barplot(height=sampleData.df$Control,
-        names.arg=row.names(sampleData.df))
+barplot(height=Control)
+# or
+barplot(height=sampleData[,"Control"])
 
 # ================================================== #
 # matrix with stacked bars
-barplot(height=as.matrix(sampleData.df))
-#barplot(height = sampleData.df) # this does not work!
+barplot(height=sampleData)
 
 # ================================================== #
 # side-by-side bars in the rainbow palette, horizontal orientation
-barplot(height=as.matrix(sampleData.df),
+barplot(height=sampleData,
         beside=TRUE,
         horiz=TRUE,
         col=rainbow(4))
@@ -615,31 +622,32 @@ Oops! What happened? `rainbow(4)` makes a palette that just recycles four differ
 Let's fix this up, and also add a legend. We will place the legend somewhere on the graph by specifying x- and y-coordinates.
 
 ```{r}
-barplot(height=as.matrix(sampleData.df),
+barplot(height=sampleData,
         beside=TRUE,
         horiz=TRUE,
         col=rainbow(5)) # use the right number of colors
 
 # add a legend
-legend(15, 10, # horizontal and vertical position
-       legend = rownames(sampleData.df), 
+legend(x=5,
+       y=5, # horizontal and vertical position
+       legend = rownames(sampleData), 
        fill = rainbow(5))
 ```
 
 Well, we are getting there. To fix this up so the legend doesn't cover up any of the data, we also need to set the limits of the plot.
 
 ```{r}
-barplot(height=as.matrix(sampleData.df),
+barplot(height=sampleData,
         beside=TRUE,
         horiz=TRUE,
-        xlim = c(0,26),
+        xlim = c(0,12),
         col=rainbow(5)) # use the right number of colors
 
 # add a legend with colors
-legend(21, 14, 
-       legend = rownames(sampleData.df), 
+legend(x=9.5,
+       y=15, 
+       legend = rownames(sampleData), 
        fill = rainbow(5))
-
 ```
 
 
@@ -664,7 +672,7 @@ To do this we can use the `stack()` command. There are other commands to do this
 ```{r}
 # ================================================== #
 # transform wide to long format
-sampleData.df.long = stack(sampleData.df)
+sampleData.df.long = stack(data.frame(sampleData))
 head(sampleData.df.long) # check
 
 # ================================================== #
@@ -674,7 +682,7 @@ colnames(sampleData.df.long)[2] = "Condition"
 # ================================================== #
 # Let's also add a "Gene" column
 # Since there are 5 genes and 3 conditions, we will just replicate the 5 gene names 3 times.
-sampleData.df.long$Gene = rep(rownames(sampleData.df),3)
+sampleData.df.long$Gene = rep(rownames(sampleData),3)
 head(sampleData.df.long) # check
 ```
 
