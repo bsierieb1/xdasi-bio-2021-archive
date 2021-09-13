@@ -25,9 +25,9 @@ has_children: false
 <details closed markdown="block">
   <summary>Details</summary>
 
-+ [**Class notes**](Class1/XDASI_SummaryStats.html)
++ [**Class notes**](Class_1/XDASI_SummaryStats.html)
 
-+ [**Class exercise and dataset**](Class1/mouse_genes.zip)
++ [**Class exercise and dataset**](Class_1/mouse_genes.zip)
 
 </details>
 
