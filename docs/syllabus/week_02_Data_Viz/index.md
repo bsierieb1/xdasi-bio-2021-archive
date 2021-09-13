@@ -44,14 +44,11 @@ Please complete the following and hand in through Brightspace:
 
 ## Data visualization
 
-### Introduction (class website)
++ **Class notes** (class website)
 
-### Class Notes
-
-**Plotting with R and ggplot2** - [RMD](Class_2021.09.09/W2.C1_Exercise_DataVisualization_v2.Rmd){: target="blank"} - [HTML](Class_2021.09.09/W2.C1_Exercise_DataVisualization_v2.html){: target="blank"}
++ **Class exercise** - [RMD](Class_2021.09.09/W2.C1_Exercise_DataVisualization_v2.Rmd){: target="blank"} - [HTML](Class_2021.09.09/W2.C1_Exercise_DataVisualization_v2.html){: target="blank"}
 + Answer key: [RMD zipped](Class_2021.09.09/W2.C1_Exercise_DataVisualization_KEY_v2.Rmd.zip){: target="blank"} - [HTML](Class_2021.09.09/W2.C1_Exercise_DataVisualization_KEY_v2.html){: target="blank"}
   + Note that the key was reorganized a little bit to make the presentation clearer.
-
 
 </details>
 
@@ -64,11 +61,9 @@ Please complete the following and hand in through Brightspace:
 <details closed markdown="block">
   <summary>Details</summary>
 
-## Data visualization
+## Data visualization, continued
 
-### Class Notes
-
-**Plotting with R and ggplot2, continued** - [RMD zipped](Recitation_2021.09.10/W2.R1_Exercise_DataVisualization.Rmd.zip){: target="blank"}
++ **Class exercise** - [RMD zipped](Recitation_2021.09.10/W2.R1_Exercise_DataVisualization.Rmd.zip){: target="blank"}
 + Answer key: [RMD zipped](Recitation_2021.09.10/W2.R1_Exercise_DataVisualization_KEY.Rmd.zip){: target="blank"} - [HTML](Recitation_2021.09.10/W2.R1_Exercise_DataVisualization_KEY.html){: target="blank"}
   + Note that the key was reorganized a little bit to make the presentation clearer.
 

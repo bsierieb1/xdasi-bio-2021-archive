@@ -4,7 +4,7 @@ parent: Syllabus
 has_children: false
 ---
 
-# Week 3: Title
+# Week 3: Descriptive Statistics
 {: .no_toc }
 
 <details closed markdown="block">
@@ -22,12 +22,14 @@ has_children: false
 
 # Class - Monday, Sept. 13
 
+### Descriptive Statistics
+
 <details closed markdown="block">
   <summary>Details</summary>
 
-+ [**Class notes**](Class_1/XDASI_SummaryStats.html){: target="blank"}
++ [**Class notes**](Class_2021.09.13/W3.C1_Notes_SummaryStats.html){: target="blank"}
 
-+ [**Class exercise and dataset**](Class_1/mouse_genes.zip){: target="blank"}
++ [**Class exercise and dataset**](Class_2021.09.13/W3.C1_Exercise_mouse_genes/mouse_genes.zip){: target="blank"}
 
 </details>
 
