@@ -1,0 +1,197 @@
+---
+title: "Mouse genes"
+author: "Kris Gunsalus"
+date: "9/12/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+This dataset contains protein coding genes from the mouse genome along with their chromosomal coordinates and GC content. 
+
+*Note: Non-standard chromosomes and ~1000 genes 200kb and longer have been removed to make the data easier to work with*
+
+
+## 0. Load required libraries (ggplot and dplyr)
+```{r}
+library(ggplot2)
+````
+
+
+## 1.Import the "mousegenes.csv" file into an object called 'genes'
+```{r}
+mgenes = read.csv("mouse_genes.csv", stringsAsFactors = FALSE)
+str(mgenes)
+```
+
+
+## 2. Add a column called 'Length' containing gene lengths. To make it easier to read, convert the lengths to kilobases, and round to the nearest integer.
+
+```{r}
+lengths = round((abs(mgenes$Start-mgenes$End) + 1)/1000, digits = 1)
+mgenes$Gene_Length_kb = lengths
+tail(mgenes)
+```
+
+
+## 3. Use ggplot to make a histogram of gene lengths.
+
++ make the bars a lighter color, add a black border to them, and add some transparency
++ try different bin widths (something between 1 and 10 looks good to me)
++ align the bars to the right of x=0 using `boundary = 0, closed = "left"`
+  + this sets the left-most edge of the bars at x=0, and 
+  + includes the left boundary in the bin (default is "right")
++ add axis labels
+
+After you are happy with the graph, store it in an object called "mgenes_hist" and take a look at it.
+
+```{r}
+mgenes_hist = ggplot(mgenes, aes(x=Gene_Length_kb)) + 
+  geom_histogram(col="black",fill="lightblue", alpha=0.5, 
+                 boundary = 0, closed = "left", binwidth = 5) + 
+  xlab("Mouse genes (kb)") +
+  ylab("Frequency")
+mgenes_hist
+```
+
+
+## 4. Add some vertical lines to the  "genes_hist" graph using `geom_vline()`:
+
++ a dashed red line showing the the mean length (add color plus `linetype="dashed"`)
++ a solid red line showing the median length
+
+Now take a look at the graph again. Do these data look skewed?
+
+```{r}
+mgenes_hist = mgenes_hist +
+  geom_vline(aes(xintercept = mean(Gene_Length_kb)),
+             color="blue", linetype="dashed") +
+    geom_vline(aes(xintercept = median(Gene_Length_kb)),
+             color="blue")
+mgenes_hist
+```
+
+
+## 5. Add text labels to the lines calling them "mean" and "median" using the `annotate()` command. The syntax is `annotate("text",y=<value>,x=<value>,label="something",color="some_color")`.
+
+```{r, eval=FALSE}
+mgenes_hist = mgenes_hist +
+  geom_text(aes(x=median(Gene_Length_kb), y=3000, label="Median"),
+            color="blue", angle=90, vjust = 1.5) +
+  geom_text(aes(x=mean(Gene_Length_kb), y=3000, label="Mean"),
+            color="blue", angle=90, vjust = 1.5)
+mgenes_hist
+```
+
+
+## 6. Use the `summary()` and `IQR()` function to find the IQR of gene lengths, and make a boxplot of gene lengths.
+
+```{r}
+summary(mgenes$Gene_Length_kb)
+IQR(mgenes$Gene_Length_kb)
+boxplot(mgenes$Gene_Length_kb)
+```
+
+
+## 7. Remove the outliers and recalculate the mean and the median of gene lengths again.
+
+```{r}
+x = summary(mgenes$Gene_Length_kb)
+min_len = x["1st Qu."] - 1.5*IQR(mgenes$Gene_Length_kb) # just the min val here
+max_len = x[5] + 1.5*IQR(mgenes$Gene_Length_kb)
+c(min_len,max_len)
+
+# base R
+trimmed = mgenes[ which(mgenes$Gene_Length_kb >= min_len  &
+           mgenes$Gene_Length_kb <= max_len), "Gene_Length_kb" ]
+str(trimmed)
+mean(trimmed)
+median(trimmed)
+
+# use dplyr
+library(dplyr)
+trimmed = mgenes %>% 
+  filter(mgenes$Gene_Length_kb >= min_len  &
+           mgenes$Gene_Length_kb <= max_len) %>% 
+  select(Gene_Length_kb)
+
+str(trimmed)
+mean(trimmed$Gene_Length_kb)
+median(trimmed$Gene_Length_kb)
+
+```
+
+
+## 8. Add the same kind of mean and median vlines for the data without outliers to "mgenes_hist", using a reddish color
+```{r}
+mgenes_hist +
+  geom_histogram(data = trimmed, aes(x=Gene_Length_kb),
+                 col="black",fill="salmon", alpha=0.2, 
+                  binwidth = 5) +
+  geom_vline(data = trimmed, aes(xintercept = mean(Gene_Length_kb)),
+             color="red", linetype="dashed") +
+  geom_vline(data = trimmed, aes(xintercept = median(Gene_Length_kb)),
+             color="red")
+```
+
+
+## 9. Look at the variation in gene lengths among chromosomes by generating a ggplot containing separate boxplots for each chromosome. Add some horizontal lines showing the limits of the IQR for all genes together.
+
+```{r}
+ggplot( data=mgenes, (aes(x=Chr, y=Gene_Length_kb, color=Chr)) ) + 
+  geom_boxplot() +
+
+  geom_hline(data = mgenes, aes(yintercept = summary(mgenes$Gene_Length_kb)[5]),
+             color="black", linetype="dashed") +
+  geom_hline(data = mgenes, aes(yintercept = summary(mgenes$Gene_Length_kb)[2]),
+             color="black", linetype="dashed")
+```
+
+
+## 10. Make a bar chart of the total number of genes on each chromosome. Sort them from low to high.
+
+```{r}
+# dplyr
+genes_per_chr = mgenes %>% group_by(Chr) %>% 
+  summarise(max_gene_length = max(Gene_Length_kb)) %>% 
+  arrange(max_gene_length)
+head(genes_per_chr)
+
+ggplot( data=genes_per_chr, (aes(x=Chr, y=max_gene_length, fill=Chr)) ) + 
+  geom_col()
+```
+
+## 11. Make a bar chart of the total number of genes on each chromosome. Sort them from low to high.
+
+```{r}
+# by chr length
+chr_length = mgenes %>% group_by(Chr) %>% 
+  summarise(chr_size = max(End)) %>% 
+  mutate(name=factor(Chr, levels=Chr))
+
+ggplot( data=chr_length, (aes(x=reorder(Chr,chr_size), 
+                              y=chr_size, color=Chr)) ) + 
+  geom_point() +
+  xlab("Chromosome") + 
+  ylab("Chromosome size")
+```
+
+
+## 12. Calculate the standard deviation for gene lengths and gene GC-content, then calculaate the coefficient of variation to compare the variation in gene lengths with the variation in gene GC-content. Which one is more variable?
+
+```{r}
+# sd
+sd(mgenes$Gene_Length_kb)
+sd(mgenes$GC_Percent)
+
+# cv
+cv_gene_length = sd(mgenes$Gene_Length_kb) / mean(mgenes$Gene_Length_kb) * 100
+cv_gc = sd(mgenes$GC_Percent) / mean(mgenes$GC_Percent) * 100
+cv_gene_length
+cv_gc
+summary(mgenes$GC_Percent)
+```
+
