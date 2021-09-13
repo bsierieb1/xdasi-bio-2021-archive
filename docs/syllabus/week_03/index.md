@@ -2,7 +2,6 @@
 title: Week 3
 parent: Syllabus
 has_children: false
-nav_exclude: true
 ---
 
 # Week 3: Title
