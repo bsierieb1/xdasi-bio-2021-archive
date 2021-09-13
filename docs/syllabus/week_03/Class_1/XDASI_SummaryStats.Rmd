@@ -182,7 +182,7 @@ $$s^2 = \frac{\sum({x_i - \bar{X})^2}}{n-1}$$
 
 The figure shows the difference in the amount of data captured by the **IQR** vs. the **standard deviation**:
 
-![Measures of dispersion for a normal distribution (_from Wikipedia_)](Images/1200px-boxplot_vs_PDF.png){width=45%}
+![Measures of dispersion for a normal distribution (_from Wikipedia_)](Images/IQR_normal.png){width=45%}
 
 * Top panel: boxplot showing IQR and limit of outliers.
   + The "whiskers" on the plot extend 1.5 times the IQR below the first quartile and above the third quartile.

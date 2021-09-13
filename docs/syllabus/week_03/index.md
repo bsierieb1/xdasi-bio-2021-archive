@@ -21,12 +21,16 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- # Class - Monday, Sept. 13
+# Class - Monday, Sept. 13
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
++ [**Class notes**](Class1/XDASI_SummaryStats.html)
+
++ [**Class exercise and dataset**](Class1/mouse_genes.zip)
+
+</details>
 
 <!-- ########################################################################### -->
 
