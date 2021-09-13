@@ -30,6 +30,7 @@ has_children: false
 + [**Class notes**](Class_2021.09.13/W3.C1_Notes_SummaryStats.html){: target="blank"}
 
 + [**Class exercise and dataset**](Class_2021.09.13/W3.C1_Exercise_mouse_genes/mouse_genes.zip){: target="blank"}
+  + [**Exercise KEY**](Class_2021.09.13/W3.C1_Exercise_mouse_genes/mouse_genes_KEY.zip)
 
 </details>
 
