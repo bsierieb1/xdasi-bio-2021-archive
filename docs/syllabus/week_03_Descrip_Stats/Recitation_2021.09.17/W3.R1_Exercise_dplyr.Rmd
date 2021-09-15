@@ -1,0 +1,66 @@
+---
+title: "Data Manipulation using `dplyr`"
+date: "September 17, 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+# Our World in Data: the COVID19 pandemic
+
+[Our World in Data](https://ourworldindata.org/) publishes data, visualizations, and analyses of issues of global importance, such as poverty, climate change, and disease. Today, we will a data set on COVID19 compiled by them. It contains profiles of 207 countries or territories. The data include the **daily** number of cases, deaths, vaccinations etc., and they are accompanied by some useful country stats, e.g. their population. We downloaded the data set (version 44) [from kaggle](https://www.kaggle.com/tunguz/data-on-covid19-coronavirus) but only kept a few selected columns.
+
+## Look at the data
+
+First, import and examine the data.
+```{r}
+covid <- read.csv("owid-covid-data_filtered.csv")
+head(covid)
+tail(covid)
+str(covid)
+```
+
+## Set an ambitious goal
+
+**Determine whether European countries that have the highest total number of COVID19 cases normalized to population size also have the highest number of COVID19-related deaths.**
+
+## Split it into steps
+
+First, describe each step in words.
+```
+1. 
+2. 
+...
+
+```
+
+Next, write `dplyr` code for each individual step.
+```{r}
+# step 1
+
+# step 2
+
+# ...
+
+```
+
+## Combine the steps into a pipeline
+
+Join all the individual steps with `%>%`, feed the input data.frame into the pipeline, and assign the output tibble to a variable.
+```{r}
+
+```
+
+Finally, plot the data on a bar graph. Make sure that the bars representing number of cases and number of deaths for each country are plotted side-by-side.
+```{r}
+# force the levels of "location" to maintain the same order as in the output tibble (otherwise, countries will be sorted alphabetically)
+
+# make the plot
+
+```
+
