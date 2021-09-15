@@ -1,0 +1,171 @@
+---
+title: "Central limit theorem exercise: NYC street trees"
+date: "9/16/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+# Every tree in NYC streets is accounted for!
+
+NYC Parks & Recreation conducted a street tree census in 2015. With the help of volunteers and various partner organizations, trees were surveyed in the streets of all five boroughs, a total of more than half a million trees! The data collected include species, stem diameter and perception of health, as well as location in relation to curb, presence of guards etc. The data are [publicly available](https://data.cityofnewyork.us/Environment/2015-Street-Tree-Census-Tree-Data/uvpi-gqnh) and they can also be viewed [on this interactive map](https://tree-map.nycgovparks.org/). Here, we will be working with a smaller subset of the data which includes selected information for trees in Manhattan and the Bronx.
+
+## Take a look at the data
+
+First, import the data and examine their structure.
+```{r}
+trees <- read.csv("trees_filtered.csv")
+str(trees)
+```
+
+## Do trees have the same size in different boroughs?
+
+Such a data set is quite rare because every single street tree has been described, meaning that **we actually know the "real" population parameters**. Since we have access to these data, let us see how tree diameters (measured in inches) are distributed and whether there is any difference between the trees in Manhattan and the Bronx.
+
+1. Use `geom_histogram()` to examine the distribution of tree diameter in each borough. Overlay the histograms corresponding to the two boroughs.
+2. Describe the data distribution for each borough. Does it resemble a normal distribution? In which way do the two distributions differ?
+
+*Hint: set `position = "identity"` and `alpha = 0.5` to make sure that the histograms are overlaid (and partially transparent) and not stacked on top of each other. Also, you may want to play around with `binwidth` and try changing x axis limits (`+ xlim(c(lower,upper))`) until you feel that the data display is the most informative.*
+```{r}
+ggplot(data = trees,
+       mapping = aes(x = diameter,
+                     fill = borough)) + 
+  geom_histogram(position = "identity",
+                 alpha = 0.5,
+                 binwidth = 1) + 
+  xlim(c(0,50))
+```
+
+## A realistic scenario: small samples of trees
+
+However, in most situations, you do not know and you can never find out the "real" population parameters. So, you try to estimate them by sampling from the population and examining the samples. Let us simulate your walking with the ruler around the city measuring a certain number of randomly selected trees.
+
+To help you generate such a simulation, we wrote a custom R function. It takes a vector of data, the desired number of samples, and the sample size as an **input**, and produces multiple sets of randomly sampled elements as an **output**.
+```{r}
+# simply execute this entire chunk to be able to use the function later
+repeated_sampling <- function(input_vector, n_samples, sample_size) {
+  # create empty output data.frame
+  output_df <- data.frame()
+  # repeat n_samples times
+  for (i in 1:n_samples) {
+    # randomly sample sample_size elements from input_vector
+    sampled_values <- sample(x = input_vector,
+                             size = sample_size) 
+    # column-bind the sampled values and the number of iterations
+    output_df_i <- cbind(rep(i,sample_size),
+                         sampled_values)
+    # append to the output data.frame
+    output_df <- rbind(output_df,
+                       output_df_i)
+  }
+  # rename columns in the output data.frame
+  colnames(output_df) <- c("iteration","values")
+  # convert iteration to factor (helps with plotting later)
+  output_df$iteration <- factor(output_df$iteration)
+  
+  return(output_df)
+}
+```
+
+Use this function to simulate random sampling:
+
+1. Subset `trees` to create a vector that contains tree diameter of all trees in the Bronx.
+2. Use `repeated_sampling()` to simulate collecting **10** samples. In each sample, measure the diameter of **15** trees.
+3. Plot the distribution of data points in each of the **10** samples using `geom_jitter()`.
+4. Describe the data distributions in different samples of the Bronx trees. Do they resemble the population distribution? Do they resemble a normal distribution?
+
+```{r}
+# subset diameter of all trees in the Bronx
+bronx_rows <- which(trees$borough=="Bronx")
+trees_diameter_bronx <- trees[bronx_rows,"diameter"]
+
+# collect 10 samples of 15 trees from the Bronx
+# you may provide arguments to the parameters of our custom function the same way you would fo it with any built-in function
+repeated_sampling_bronx <- repeated_sampling(input_vector = trees_diameter_bronx,
+                                             sample_size = 15,
+                                             n_samples = 10)
+
+# look at the output
+head(repeated_sampling_bronx)
+tail(repeated_sampling_bronx)
+
+# plot the distribution of data points in each of the 10 samples
+ggplot(data = repeated_sampling_bronx,
+       mapping = aes(x = iteration,
+                     y = values,
+                     color = iteration)) + 
+  geom_jitter(height = 0,
+              width = 0.1) +
+  coord_flip()
+```
+
+## CLT and "return to normal"
+
+Now, let us apply CLT to our samples of tree.
+
+To help you, we repurposed our custom function above to take a vector of data, the desired number of samples, and the sample size as an **input**, and produce a vector containing the mean of each random sample as an **output**.
+```{r}
+# simply execute this entire chunk to be able to use the function later
+repeated_sampling_means <- function(input_vector,sample_size,n_samples) {
+  # create empty output vector
+  output_vector <- c()
+  # repeat n_samples times
+  for (i in 1:n_samples) {
+    # randomly sample sample_size elements from input_vector
+    sampled_values <- sample(x = input_vector,
+                             size = sample_size)
+    # calculate the mean of the sample
+    sampled_values_mean <- mean(sampled_values)
+    # append to the output vector
+    output_vector <- c(output_vector,
+                       sampled_values_mean)
+  }
+  
+  return(output_vector)
+}
+```
+
+Use this function to simulate random sampling:
+
+1. You have previously subsetted `trees` to create a vector that contains diameter of all trees in the Bronx. Now, do the same for Manhattan.
+2. Use `repeated_sampling_means()` to simulate collecting **100** samples. In each sample, you measure the diameter of **15** trees. Do this for the Bronx and Manhattan separately.
+3. Combine the Bronx and Manhattan sample means in a data.frame. Arrange them as **long data**.
+4. Plot the distribution of sample means in each borough using `geom_histogram()`.
+5. Describe the mean distributions. Do they resemble the corresponding population distributions? Do they resemble a normal distribution? Do you see the same difference between the two mean distributions as between the two population distributions?
+
+```{r}
+# subset diameter of all trees in Manhattan
+mnhtn_rows <- which(trees$borough=="Manhattan")
+trees_diameter_mnhtn <- trees[mnhtn_rows,"diameter"]
+
+# collect 100 samples of 15 trees from each borough
+repeated_sampling_means_bronx <- repeated_sampling_means(input_vector = trees_diameter_bronx,
+                                                         sample_size = 15,
+                                                         n_samples = 100)
+
+repeated_sampling_means_mnhtn <- repeated_sampling_means(input_vector = trees_diameter_mnhtn,
+                                                         sample_size = 15,
+                                                         n_samples = 100)
+
+# combine the Bronx and Manhattan data using the long format
+repeated_sampling_means_df <- data.frame("sampling_means"=c(repeated_sampling_means_bronx,repeated_sampling_means_mnhtn),
+           "borough"=c(rep("Bronx",100),rep("Manhattan",100)))
+
+# plot the distribution of sample means in each borough
+ggplot(data = repeated_sampling_means_df,
+       mapping = aes(x = sampling_means,
+                     fill = borough)) +
+  geom_histogram(position="identity",
+                 alpha=0.5,
+                 binwidth=1)
+```
+
+
+
+
+
+
+
