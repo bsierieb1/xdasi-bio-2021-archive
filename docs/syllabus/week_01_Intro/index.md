@@ -78,7 +78,7 @@ We will use three main resources for the course:
   + RStudio Session Management
   + See [R Resources](https://kriscgun.github.io/xdasi-bio-2021/r_resources/){: target="blank"} pages for links to additional learning resources
 
-+ [R Markdown slides](Class_2021.09.02/W1.C1_Slides_R_Markdown_Intro.html){: target="blank"}
++ [R Markdown slides](Class1/W1.C1_Slides_R_Markdown_Intro.html){: target="blank"}
   + See the [R Markdowns](https://kriscgun.github.io/xdasi-bio-2021/r_resources/1_r_rstudio/5_r_markdown.html){: target="blank"} page for cheatsheets, quick guides, and other resources
 
 ---
@@ -89,8 +89,8 @@ We will use three main resources for the course:
 
 ## R coding: Basics and Tutorial
 
-+ **Class exercise** - [HTML](Class_2021.09.02/W1.C1_Exercise_RDataStructures.html){: target="blank"} - [RMD](https://kriscgun.github.io/xdasi-bio-2021/syllabus/week_01_Intro/Class_2021.09.02/W1.C1_Exercise_RDataStructures.Rmd)
-+ Answer key - [HTML](Class_2021.09.02/W1.C1_Exercise_RDataStructures_KEY.html){: target="blank"} - [RMD](https://kriscgun.github.io/xdasi-bio-2021/syllabus/week_01_Intro/Class_2021.09.02/W1.C1_Exercise_RDataStructures_KEY.Rmd)
++ **Class exercise** - [HTML](Class1/W1.C1_Exercise_RDataStructures.html){: target="blank"} - [RMD](https://kriscgun.github.io/xdasi-bio-2021/syllabus/week_01_Intro/Class1/W1.C1_Exercise_RDataStructures.Rmd)
++ Answer key - [HTML](Class1/W1.C1_Exercise_RDataStructures_KEY.html){: target="blank"} - [RMD](https://kriscgun.github.io/xdasi-bio-2021/syllabus/week_01_Intro/Class1/W1.C1_Exercise_RDataStructures_KEY.Rmd)
   + Note that the section on indexing matrices was reorganized a little bit to make the presentation clearer.
 
 </details>

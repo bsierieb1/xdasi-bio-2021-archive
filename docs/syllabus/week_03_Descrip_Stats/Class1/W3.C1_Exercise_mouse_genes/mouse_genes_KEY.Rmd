@@ -1,0 +1,310 @@
+---
+title: "Mouse genes"
+author: "Kris Gunsalus"
+date: "9/12/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+This dataset contains protein coding genes from the mouse genome along with their chromosomal coordinates and GC content. 
+
+*Note: Non-standard chromosomes and ~1000 genes 200kb and longer have been removed to make the data easier to work with*
+
+
+## 0. Load required libraries (ggplot and dplyr)
+
+```{r}
+library(ggplot2)
+# install.packages("dplyr") # only do this once
+library(dplyr)
+```
+
+
+## 1. Load the data
+
+Import the "mousegenes.csv" file into an object called 'mgenes' and take a look at it.
+
+```{r}
+mgenes = read.csv("mouse_genes.csv", stringsAsFactors = FALSE)
+str(mgenes)
+```
+
+
+## 2. Compute gene lengths
+
+Add a column called 'Gene_Length_kb' containing gene lengths. 
+
++ To make it easier to read, convert the lengths to kilobases, and round to the nearest integer. 
++ Take a look at the resulting data frame.
+
+```{r}
+lengths = round((abs(mgenes$Start-mgenes$End) + 1)/1000, digits = 1)
+mgenes$Gene_Length_kb = lengths
+tail(mgenes)
+```
+
+
+## 3. Histogram of gene lengths
+
+Use ggplot to make a histogram of gene lengths.
+
++ make the bars a lighter color, add a black border to them, and add some transparency
++ try different bin widths (something between 1 and 10 looks good to me)
++ align the bars to the right of x=0 using `boundary = 0, closed = "left"`
+  + this sets the left-most edge of the bars at x=0, and 
+  + includes the left boundary in the bin (default is "right")
++ add axis labels
+
+After you are happy with the graph, store it in an object called "mgenes_hist" and take a look at it.
+
+```{r}
+mgenes_hist = ggplot(mgenes, aes(x=Gene_Length_kb)) + 
+  geom_histogram(col="black",fill="lightblue", alpha=0.5, 
+                 boundary = 0, closed = "left", binwidth = 5) + 
+  xlab("Mouse genes (kb)") +
+  ylab("Frequency")
+mgenes_hist
+```
+
+
+## 4. Mean and median 
+
+Compute the mean and median of the distribution. Then, add some vertical lines to the  "genes_hist" graph using `geom_vline()`:
+
++ a dashed **blue** line showing the the mean length (add color plus `linetype="dashed"`)
++ a solid blue line showing the median length
+
+Now take a look at the graph again. Do these data look skewed?
+
+```{r}
+mean(mgenes$Gene_Length_kb)
+median(mgenes$Gene_Length_kb)
+
+mgenes_hist = mgenes_hist +
+  geom_vline(aes(xintercept = mean(Gene_Length_kb)),
+             color="blue", linetype="dashed") +
+    geom_vline(aes(xintercept = median(Gene_Length_kb)),
+             color="blue")
+mgenes_hist
+```
+
+
+## 5. Label mean and median lines
+
+Add text labels to the lines calling them "mean" and "median" using `geom_text()`. Below we've added all the fancy bits for you!
+
+```{r}
+mgenes_hist = mgenes_hist +  # original plot
+  
+  geom_text(aes(x= median(Gene_Length_kb) , # add this
+                y=3000, label="Median"),
+            color="blue", angle=90, vjust = 1.5) +
+  
+  geom_text(aes(x= mean(Gene_Length_kb),    # add this
+                y=3000, label="Mean"),
+            color="blue", angle=90, vjust = 1.5)
+
+mgenes_hist
+
+```
+
+
+## 6. IQR and boxplot of gene lengths
+
+Use the `summary()` and `IQR()` function to find the IQR of gene lengths, and make a boxplot of gene lengths (use base R or ggplot, as you like).
+
+```{r}
+summary(mgenes$Gene_Length_kb)
+IQR(mgenes$Gene_Length_kb)
+
+# ========================================================================= #
+# base R
+boxplot(mgenes$Gene_Length_kb)
+
+# ggplot
+ggplot(data = mgenes, mapping = aes(y=Gene_Length_kb)) +
+  geom_boxplot()
+```
+
+
+## 7. Remove outliers
+
+a. Trim the dataset to remove outliers that fall beyond the whiskers in the boxplot.
+
++ Use `summary()` to get a vector of stats for the distribution and call it something short for convenience.
++ Then compute the min and max values you want to trim off.
++ Use these to make a small dataframe that contains only the data between these values.
+
+```{r}
+# x is now a vector of stats for the distribution with named elements
+x = summary(mgenes$Gene_Length_kb)
+
+# calculate the highest and lowest values that are not outliers
+# hint: where do the whiskers typically end on a boxplot?
+min_len = x["1st Qu."] - 1.5*IQR(mgenes$Gene_Length_kb)
+max_len = x[5]         + 1.5*IQR(mgenes$Gene_Length_kb)
+c(min_len,max_len)
+
+# ========================================================================= #
+# get trimmed data using base R
+trimmed = mgenes[ which(mgenes$Gene_Length_kb >= min_len &  # filter rows
+                  mgenes$Gene_Length_kb <= max_len), 
+           "Gene_Length_kb" ]                               # select column
+str(trimmed)
+is(trimmed)
+
+# OR, get trimmed data use dplyr
+#library(dplyr)
+trimmed = mgenes %>%  # data frame
+  
+  filter(mgenes$Gene_Length_kb >= min_len  &     # filter by rows
+         mgenes$Gene_Length_kb <= max_len) %>% 
+  
+  select(Gene_Length_kb)                         # select specific columns
+
+# take a look at the result
+str(trimmed)
+is(trimmed)
+```
+
+
+
+## 8. Mean and median of trimmed data
+
+a. Recompute the mean and median for the trimmed data and compare to the original values. How did the mean and median change? Which one changed more, and why?
+
+```{r}
+# compare trimmed estimates to previous values
+mean(mgenes$Gene_Length_kb)
+mean(trimmed$Gene_Length_kb)
+
+median(mgenes$Gene_Length_kb)
+median(trimmed$Gene_Length_kb)
+```
+
+b. To visualize the changes, add the same kind of mean and median vlines for the "trimmed" data to "mgenes_hist", using a reddish color.
+
++ Note that here, we are **overlaying a different dataset** onto the original plot
++ We do this by specifying the second dataset within the `geom` layer, and adding the `aes` mapping to that new dataset.
+
+```{r}
+# add trimmed estimates to our histogram
+
+mgenes_hist +  # uses the "mgenes" data frame
+  
+  # uses the "trimmed" data frame
+  geom_histogram(data = trimmed, aes(x=Gene_Length_kb),
+                 col="black",fill="salmon", alpha=0.2, 
+                  binwidth = 5) +
+  
+  # also using "trimmed" data frame
+  geom_vline(data = trimmed, aes(xintercept = mean(Gene_Length_kb)),
+             color="red", linetype="dashed") +
+  geom_vline(data = trimmed, aes(xintercept = median(Gene_Length_kb)),
+             color="red")
+```
+
+
+## 9. Variation in gene lengths by chromosome
+
+Look at the variation in gene lengths among chromosomes by generating a ggplot containing separate boxplots for each chromosome. 
+
+Add some horizontal lines showing the limits of the IQR for all genes together.
+
+```{r}
+ggplot( data=mgenes, (aes(x=Chr, y=Gene_Length_kb, color=Chr)) ) + 
+  geom_boxplot() +
+
+  # 1st and 3rd quartiles of combined data
+  geom_hline(data = mgenes, aes(yintercept = summary(mgenes$Gene_Length_kb)[5]),
+             color="black", linetype="dashed") +
+  geom_hline(data = mgenes, aes(yintercept = summary(mgenes$Gene_Length_kb)[2]),
+             color="black", linetype="dashed")
+```
+
+
+## 10. Genes per chromosome
+
+Make a bar plot of the total number of genes on each chromosome.
+
+```{r}
+# dplyr
+genes_per_chr = mgenes %>% count(Chr)
+head(genes_per_chr)
+
+ggplot( data=genes_per_chr, (aes(x=Chr, y=n, fill=Chr)) ) + 
+  geom_col() +
+  labs(x="Chromosome", y="Total genes per chromosome") +
+  
+  # rotate axis tick labels to make them legible 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+Which chromosome has the fewest genes? Is this consistent with your background knowledge?
+
+
+## 11. Chromosome size
+
+We don't actually have this information in our table, but let's use the largest gene `End` coordinate for each chromosome as a proxy for chromosome length.
+
++ Make a **dot plot** of the approximate size of each chromosome. 
++ Then do this again, but sort the bars from smallest to largest.
+
+Since chromosomes are really big, report the size in megabases (Mb).
+
+```{r}
+# approximate chr lengths
+# dplyr
+chr_length = mgenes %>%            # original data frame
+  group_by(Chr) %>%                # group by chromosome
+  summarise(chr_size = max(End))   # get upper coordinate limit for each chr
+
+str(chr_length)                    # a new data frame with 2 columns
+
+# ========================================================================= #
+# dot plot, default (alphabetical) order of chromosomes
+ggplot( data=chr_length, (aes(x=Chr, 
+                              y=chr_size/1000000, col=Chr)) ) + 
+  geom_point() +
+  xlab("Chromosome") + 
+  ylab("Chromosome size (est., in Mb)") +
+
+  # rotate axis tick labels to make them legible 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+# ========================================================================= #
+# dot plot, sorted by chromosome size
+ggplot( data=chr_length, (aes(x=reorder(Chr,chr_size), 
+                              y=chr_size/1000000, col=Chr)) ) + 
+  geom_point() +
+  xlab("Chromosome") +                     # could also use lab(x= , y= )
+  ylab("Chromosome size (est., in Mb)") +
+
+  # rotate axis tick labels to make them legible 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+Which is the smallest chromosome? Is the chromosome with the fewest genes also the smallest? What do you think is going on?
+
+
+## 12. SD and CV
+
+Calculate the standard deviation for gene lengths and gene GC-content, then calculate the coefficient of variation to compare the variation in gene lengths with the variation in gene GC-content. Which one is more variable?
+
+```{r}
+# sd
+sd(mgenes$Gene_Length_kb)
+sd(mgenes$GC_Percent)
+
+# cv = ( sd / mean ) * 100
+cv_gene_length = sd(mgenes$Gene_Length_kb) / mean(mgenes$Gene_Length_kb) * 100
+cv_gc = sd(mgenes$GC_Percent) / mean(mgenes$GC_Percent) * 100
+cv_gene_length
+cv_gc
+summary(mgenes$GC_Percent)
+```
+
