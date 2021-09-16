@@ -60,8 +60,8 @@ has_children: false
   <summary>Details</summary>
 
 + [**Class exercise and data set**](Recitation/W3.R1_Exercise_dplyr.Rmd.zip)
-<!-- + Answer key: [RMD+DATA zipped](Recitation/W3.R1_Exercise_dplyr_KEY.Rmd.zip) - [HTML](Recitation/W3.R1_Exercise_dplyr_KEY.html){: target="blank"}
-  + Note that the key was reorganized a little bit to make the presentation clearer. -->
+<!-- # + Answer key: [RMD+DATA zipped](Recitation/W3.R1_Exercise_dplyr_KEY.Rmd.zip) - [HTML](Recitation/W3.R1_Exercise_dplyr_KEY.html){: target="blank"}
+  + Note that the key was reorganized a little bit to make the presentation clearer. # -->
 
 </details>
 
