@@ -866,8 +866,25 @@ We expect that a **95% CI of the mean** will contain the true population mean 95
 
 Recall that:
 
-+ The sampling distribution of the sample mean is **normally distributed**, and 
-+ 95% of the probability density of any normal distribution falls within **around 2 SD** of the mean.
++ The **sampling distribution of the sample mean** is **normally distributed**, and 
++ 95% of the probability density of any normal distribution falls within 2 SD of the mean.
+
+Therefore, our estimator of the population mean, $\bar{X}$, should be contained within two standard deviations of the true mean around 95% of the time (even though every once in a while it will be rather far off because we are taking random samples). 
+
++ Technically, the 95% CI specifies that 95% of random intervals $\overline{X} \pm 1.96 * SEM$ will contain the true population mean. 
+
++ Since $SEM = s_x/\sqrt{N}$, combining these gives us: $95\%\ CI = \overline{X} \pm 1.96s_x/\sqrt{N}$.
+
+*Note that since our sample estimate is a random variable, the edges of the interval are also random. Any particular CI either does or does not contain the true population mean, and around 5% of randomly sampled intervals will not contain the mean.*
+
+
+#### dqpr functions in R
+
+All we need to know to find the range of the 95% CI for the population mean is the sample mean, SD, sample size, and the correct $z$-score to plug into the formula.
+
+To compute the CI, we need to use R functions for working with probability distributions. 
+
+The **cumulative probability density function** `pnorm()` function finds the total **area** under the normal curve from $-\infty$ up to some number of SD's away from the mean.
 
 <div align=center>
 
@@ -875,21 +892,24 @@ Recall that:
 
 </div>
 
-+ Therefore, our **random variable, $\bar{X}$,** should be contained within two standard deviations of the true mean around 95% of the time (even though every once in a while it will be rather far off because we are taking random samples). 
+So, if we subtract the area bounded by $-\infty$ and $-2\sigma$ from the area bounded by $-\infty$ and $+2\sigma$, we will find that 95% of the data actually does fall within this range.
 
-  + *Note that since our sample estimate is a random variable, the edges of the interval are also random. Any particular CI either does or does not contain the true population mean, and around 5% of randomly sampled intervals will not contain the mean.*
+For a **standard normal** distribution, the SD = 1, and the *z-score* gives the number of SD's away from the mean.
 
-Technically, the 95% CI specifies that 95% of random intervals $\overline{X} \pm \sim 1.96 * SEM$ will contain the true population mean. 
+```{r}
+pnorm(2) - pnorm(-2)       # z-score=2 is approximately 95%
+pnorm(1.96) - pnorm(-1.96) # this is closer to 95%
+```
 
-+ Since $SEM = s_x/\sqrt{N}$, combining these gives us: $95\%\ CI = \overline{X} \pm \sim 1.96s_x/\sqrt{N}$.
+Conversely, we use the **quantile function** `qnorm()` to find the correct z-score for the limits of the 95% interval.
 
-So, with the sample mean, SD, and sample size in hand, we are almost ready to find the limits of the 95% CI.
+Since we want to split the remaining 5% between the two tails (2.5% at the bottom and 2.5% at the top), what we want is the value of `qnorm()` at the 97.5th percentile, which will be something very close to 1.96: 
 
-#### The quantile function
+```{r}
+qnorm(0.975)
+```
 
-There is one additional piece of information that will help us: the precise **z-score** (number of SDs away from the mean) that provides the exact boundary for the central 95% of the data (so we don't have to use an approximation of 1.96). 
-
-We will use the **quantile** function to find this number.
+Now we can plug this back into our equation for the 95% CI to get the ranges of the CI's for different sample sizes.
 
 <!-- ======================================================================= -->
 <div class="bluebox">
@@ -901,11 +921,11 @@ $\Rightarrow\ $ _**Calculate the 95% CI for 4 samples ranging in size from 10-10
   <summary>Answer</summary>
 
 ```{r}
-# use qnorm to find the z-score for the 95% CI (2.5 - 97.5 percentile range)
+# We will use z=1.96 for the 95% CI.
 # Since normal is symmetric, we can add and subtract this to get the CI.
-Q <- qnorm(0.975)  # 1.959964...
+Q <- qnorm(0.975)
 
-# compute the mean, SEM, and CI of our samples
+# mean, SEM, and CI of our samples
 for ( i in c(10, 100,1000,10000) ) {
   
   sample <- (runif(i, min=0, max=1)) # random sample from uniform dist
@@ -932,7 +952,6 @@ $\Rightarrow\ $ _**What do we observe from these comparisons?**_
   <summary>Answer</summary>
 
 + We observe that the 95% CI decreases as the sample size increases. If we repeat each of these 100 times, then 95 out of the 100 intervals will contain the true population mean.
-+ This is because the SEM also gets smaller as the sample size increases.
 
 </details>
 </div>
