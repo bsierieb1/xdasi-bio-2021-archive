@@ -241,7 +241,8 @@ Each time we take a new sample, there will be some random variation in the sampl
 
 Let's take another look at how much the average height of our class varied over the last four years. We will use a density plot rather than a histogram to make the patterns come out better.
 
-```{r class.source="fold-hide", echo=F}
+
+```{r class.source="fold-hide", fig.width=5, fig.asp=.7}
 # ================================================================ #
 ggplot(height_long, aes(x=Height_mm, fill=Sample, color=Sample)) +
   geom_density(alpha=0.2) +
@@ -266,7 +267,8 @@ x <- replicate(1000, {
 hist(x)
 ```
 
-```{r class.source = 'fold-hide', message=FALSE}
+
+```{r class.source = 'fold-hide', message=FALSE, fig.width=5, fig.asp=.7}
 x = replicate(10000, {
   rsample = rnorm(sample_size, mean = sample_mean, sd = sample_sd)
   mean(rsample)
@@ -278,6 +280,7 @@ ggplot(mean_height, aes(x=Mean_Height)) +
   labs(title = "Distribution of 10,000 sample means", x="Mean height (mm)")
 
 ```
+
 
 Now the average value of all of these sample means looks pretty spot on! 
 
@@ -383,9 +386,70 @@ $$\sigma_{\bar{X}} = \frac{\sigma}{\sqrt{N}}$$
 
 When the sample includes the entire population, then we know the population mean precisely. In practice, however, we usually do not have access to the entire population. 
 
-Instead, we can use the **sample standard deviation**, $s$, as an **estimate** for the population parameter $\sigma$. This also allows us to approximate the SEM using the SD of the sample:
+Instead, we can use the **sample standard deviation**, $s$, as an **estimate** for the population parameter $\sigma$:
 
 $$ SE_{\bar{X}} = \frac{s}{\sqrt{N}} \approx \frac{\sigma}{\sqrt{N}} $$
+
+This also allows us to approximate the SD of the sampling distribution of $\bar{X}$ (the SEM) using the SD of a single sample.
+
+
+### Illustration
+
+Let's compare the mean and SD of two sampling distributions of different sample sizes.
+
+```{r class.source = 'fold-hide', message=FALSE, warning=FALSE, fig.width=5, fig.asp=.7}
+
+# distribution of x-bar for sample of size 20
+x20 = replicate(10000, {
+  rsample = rnorm(n=20, mean=169, sd=14)
+  mean(rsample)
+  })
+mean_height20 = data.frame(Mean_Height = x20)
+
+# distribution of x-bar for sample of size 100
+x100 = replicate(10000, {
+  rsample = rnorm(n=100, mean=169, sd=14)
+  mean(rsample)
+  })
+mean_height100 = data.frame(Mean_Height = x100)
+
+# plot for x20
+hist20 = ggplot(mean_height20, aes(x=Mean_Height)) +
+  geom_histogram(fill="lightblue", color="darkgray") +
+  geom_vline(aes(xintercept=mean(Mean_Height))) +
+  labs(title = "Sample size: 20", x="Mean height (mm)") +
+  xlim(c(154,184))
+
+# plot for x100
+hist100 = ggplot(mean_height100, aes(x=Mean_Height)) +
+  geom_histogram(fill="lightblue", color="darkgray") +
+  geom_vline(aes(xintercept=mean(Mean_Height))) +
+  labs(title = "Sample size: 100", x="Mean height (mm)") +
+  xlim(c(154,184))
+
+composite_hist = ggarrange(hist20, hist100, nrow=1, ncol=2)
+annotate_figure(composite_hist, 
+  top = text_grob("Sampling distribution of the sample mean (10,000 samples)", 
+  face = "bold", size = 12))
+```
+
+Now let's compare the SD of each sampling distribution to the SEM computed from a single sample:
+
+```{r collapse=TRUE}
+# sd of x20 vs. sem from a single sample of size 20
+x = rnorm(20, 169, 14)
+sem20 = sd(x)/sqrt(20)
+sd(x20)
+sem20
+
+# sd of x100 vs. sem from a single sample of size 100
+y = rnorm(100, 169, 14)
+sem100 = sd(x)/sqrt(100)
+sd(x100)
+sem100
+```
+
+These are not exactly the same because they are different random samples, but they are pretty close! And using either method, we can clearly see that the SEM is much smaller for the larger sample size.
 
 <!-- ======================================================================= -->
 
@@ -447,14 +511,16 @@ $\Rightarrow$ ***Q: How do you think the sample mean affects the range of a conf
 <!-- ======================================================================= -->
 
 
-### 95% CI
+### 95% CI of the mean
 
-Since the sampling distribution of the sample mean approximates a normal distribution, this means that the **95% CI is approximately equal to the sample mean plus or minus two times the SEM**.
+Since the sampling distribution of the sample mean approximates a normal distribution, we can easily deduce that the **95% CI is approximately equal to the sample mean plus or minus two times the SEM**:
 
-To be more precise, the 95% CI is within 1.96 times the standard error error of the mean:
+$$95\% CI \approx \bar{X} \pm 2*SE_\bar{X}$$
+To be more precise, we can use a $z$-score of 1.96 instead of 2 for the limits of the range, which is a bit closer to demarcating 95% of the data.
+
+For a 95%CI, we expect the true population mean to fall somewhere within this range:
 
 $$ \bar{X} - 1.96 * SE_\bar{X} < \mu < \bar{X} + 1.96 * SE_\bar{X} $$
-
 
 <!-- ======================================================================= -->
 <div class="qbox">
@@ -476,7 +542,7 @@ $\Rightarrow$ ***Q: How many 95% CI's computed from 100 random samples of height
 <details closed markdown="block">
   <summary>Answer</summary>
 
-+ The 95% CI for 95 of the 100 samples will contain the true population mean.
++ We expect the 95% CI for 95 of the 100 samples to contain the true population mean.
 
 </details>
 </div>
@@ -503,15 +569,18 @@ Correspondingly, if the 95% CI does not contain the mean for the null hypothesis
 
 ### What is the Central Limit Theorem?
 
-The CLT is one of the most ***fundamental concepts in statistics*** and encapsulates the issues discussed above.Briefly, it says that, ***As the sample size increases, any sample statistic will converge on the true population parameter, and its distribution will be approximately normal.***
+The CLT is one of the most ***fundamental concepts in statistics*** and encapsulates the issues discussed above.
+
+Briefly, it says that, ***As the sample size increases, any sample statistic will converge on the true population parameter, and its distribution will be approximately normal.***
 
 + Most commonly, the CLT is applied to the ***sampling distribution of the sample mean***.
 
 The CLT highlights two important properties of **independent and identically distributed (iid)** random variables:
 
-1. The **variation** in the distribution of a sample statistic will be ***inversely proportional*** to the **sample size** $N$. 
++ The **variation** in the distribution of a sample statistic will be ***inversely proportional*** to the **sample size** $N$. 
   + This means that our ***confidence*** in that value will increase because the variation among the sample estimates will get smaller.
-2. Moreover, the distribution of the sample statistic will follow a **normal distribution** centered around the population mean.
+
++ Moreover, the distribution of the sample statistic will follow a **normal distribution** centered around the population mean.
   + In other words, repeated estimates of your sample statistic will show a normal distribution, ***even if the underlying data distribution is not normal***.
 
 Since the SEM decreases as the square root of the sample size, ***in the limit*** our uncertainty in the sample mean $\bar{X}$ will go to zero as $N$ goes to infinity (and therefore $\bar{X}$ will exactly equal the true population mean $\mu$):
@@ -875,21 +944,40 @@ Recall that:
 
 </div>
 
-+ Therefore, our **random variable, $\bar{X}$,** should be contained within two standard deviations of the true mean around 95% of the time (even though every once in a while it will be rather far off because we are taking random samples). 
++ Therefore, our **random variable, $\bar{X}$,** should be contained within around two standard deviations of the true mean 95% of the time (even though every once in a while it will be rather far off because we are taking random samples). 
 
   + *Note that since our sample estimate is a random variable, the edges of the interval are also random. Any particular CI either does or does not contain the true population mean, and around 5% of randomly sampled intervals will not contain the mean.*
 
-Technically, the 95% CI specifies that 95% of random intervals $\overline{X} \pm \sim 1.96 * SEM$ will contain the true population mean. 
+The 95% CI specifies that we expect 95% of random intervals $\overline{X} \pm \sim 1.96 * SEM$ to contain the true population mean. Since $SEM = s_x/\sqrt{N}$, combining these gives us: 
 
-+ Since $SEM = s_x/\sqrt{N}$, combining these gives us: $95\%\ CI = \overline{X} \pm \sim 1.96s_x/\sqrt{N}$.
+$$95\%\ CI \approx \overline{X} \pm 1.96\frac{s_x}{\sqrt{N}}$$
 
 So, with the sample mean, SD, and sample size in hand, we are almost ready to find the limits of the 95% CI.
 
 #### The quantile function
 
-There is one additional piece of information that will help us: the precise **z-score** (number of SDs away from the mean) that provides the exact boundary for the central 95% of the data (so we don't have to use an approximation of 1.96). 
+There is one additional piece of information that will help us: the precise **z-score** (number of SDs away from the mean) that provides the exact boundary for the central 95% of the data (since even 1.96 is an approximation!)
 
-We will use the **quantile** function to find this number.
+Another way to represent the 95%CI is to write it as $100(1-\alpha)$%CI, where $\alpha$ = 0.05, or the 5% of the data we want to exclude.
+
+Since we want to split the remaining 5% between the two tails (2.5% at the bottom and 2.5% at the top), we want to find the $z$-score corresponding to the 97.5th percentile, or $1-\alpha/2$, which we can add or subtract from the mean to get the CI.
+
+So the 95% CI becomes:
+
+$$ (1-\alpha)\%\ CI = \bar{X} \pm z_{1-(\alpha/2)}*\frac{\sigma}{\sqrt{N}}$$
+
+where $z_{1-(\alpha/2)}$ is the $z$-quantile function at probability $1-(\alpha/2)$.
+
+For a 95% CI, $\alpha = 0.05$. So, to find the correct z-score for the limits of the 95% interval, we want to find the $z$-score for the 97.5th percentile.
+
+To do this, we will use the **quantile function** `qnorm()`. What we want is the value of `qnorm()` at the 97.5th percentile, which will be something very close to 1.96: 
+
+```{r}
+qnorm(0.975)
+```
+
+Now we can plug this back into our equation for the 95% CI to get the ranges of the CI's for different sample sizes.
+
 
 <!-- ======================================================================= -->
 <div class="bluebox">

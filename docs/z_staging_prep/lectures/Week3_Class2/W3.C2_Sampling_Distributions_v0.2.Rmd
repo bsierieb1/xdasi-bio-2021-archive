@@ -354,8 +354,11 @@ $$\bar{X} \sim \mathcal{N}(\mu,\frac{\sigma^2}{N})$$
 
 In words, this equation says that: **"The sample mean X bar follows a normal distribution with mean mu and variance equal to sigma squared divided by the sample size N."**
 
-+ This means that if you take a whole bunch of random samples from a population, then the distribution of the sample means will look pretty much like a bell curve. 
-+ Moreover, since the variation in $\bar{X}$ is inversely proportional to $N$, the amount of uncertainty in your estimator will shrink as the sample size gets bigger.
+What are the implications of this?
+
++ If you take a whole bunch of random samples from a population, then the distribution of the sample means will look pretty much like a bell curve. 
+
++ The amount of uncertainty in your estimator will shrink as the sample size gets bigger, since the variation in $\bar{X}$ between samples is inversely proportional to $N$.
 
 This point is worth repeating: ***"The uncertainty in $\bar{X}$ decreases with increasing sample size."***
 
@@ -383,9 +386,67 @@ $$\sigma_{\bar{X}} = \frac{\sigma}{\sqrt{N}}$$
 
 When the sample includes the entire population, then we know the population mean precisely. In practice, however, we usually do not have access to the entire population. 
 
-Instead, we can use the **sample standard deviation**, $s$, as an **estimate** for the population parameter $\sigma$. This also allows us to approximate the SEM using the SD of the sample:
+Instead, we can use the **sample standard deviation**, $s$, as an **estimate** for the population parameter $\sigma$:
 
 $$ SE_{\bar{X}} = \frac{s}{\sqrt{N}} \approx \frac{\sigma}{\sqrt{N}} $$
+
+This also allows us to approximate the SD of the sampling distribution of $\bar{X}$ (the SEM) using the SD of a single sample.
+
+### Illustration
+
+Let's compare the mean and SD of two sampling distributions of different sample sizes.
+
+```{r class.source = 'fold-hide', message=FALSE, fig.width=5, fig.asp=.7}
+
+# distribution of x-bar for sample of size 20
+x20 = replicate(10000, {
+  rsample = rnorm(n=20, mean=169, sd=14)
+  mean(rsample)
+  })
+mean_height20 = data.frame(Mean_Height = x20)
+
+# distribution of x-bar for sample of size 100
+x100 = replicate(10000, {
+  rsample = rnorm(n=100, mean=169, sd=14)
+  mean(rsample)
+  })
+mean_height100 = data.frame(Mean_Height = x100)
+
+# plot for x20
+hist20 = ggplot(mean_height20, aes(x=Mean_Height)) +
+  geom_histogram(fill="lightblue", color="darkgray") +
+  geom_vline(aes(xintercept=mean(Mean_Height))) +
+  labs(title = "Sample size: 20", x="Mean height (mm)")
+
+# plot for x100
+hist100 = ggplot(mean_height100, aes(x=Mean_Height)) +
+  geom_histogram(fill="lightblue", color="darkgray") +
+  geom_vline(aes(xintercept=mean(Mean_Height))) +
+  labs(title = "Sample size: 100", x="Mean height (mm)")
+
+composite_hist = ggarrange(hist20, hist100, nrow=1, ncol=2)
+annotate_figure(composite_hist, 
+  top = text_grob("Sampling distribution of the sample mean (10,000 samples)", 
+  face = "bold", size = 12))
+```
+
+Now let's compare the SD of each sampling distribution to the SEM computed from a single sample:
+
+```{r collapse=TRUE}
+# sd of x20 vs. sem from a single sample of size 20
+x = rnorm(20, 169, 14)
+sem20 = sd(x)/sqrt(20)
+sd(x20)
+sem20
+
+# sd of x100 vs. sem from a single sample of size 100
+y = rnorm(100, 169, 14)
+sem100 = sd(x)/sqrt(100)
+sd(x100)
+sem100
+```
+
+These are not exactly the same because they are different random samples, but they are pretty close!
 
 <!-- ======================================================================= -->
 
