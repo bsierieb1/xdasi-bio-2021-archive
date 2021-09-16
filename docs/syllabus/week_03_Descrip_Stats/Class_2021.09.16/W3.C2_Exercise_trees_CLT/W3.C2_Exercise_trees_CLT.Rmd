@@ -143,6 +143,13 @@ Use this function to simulate random sampling:
 ```
 
 
+## SEM and 95% confidence intervals
+
+See if you can compute the SEM from the sampling distributions of the means and compare these to the estimate you would get using a single sample. Then, compute the 95%CI for your estimates of the population means.
+
+```{r}
+
+```
 
 
 

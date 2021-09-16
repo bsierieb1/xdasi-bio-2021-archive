@@ -30,22 +30,21 @@ has_children: false
 + [**Class notes**](Class_2021.09.13/W3.C1_Notes_SummaryStats.html){: target="blank"}
 
 + [**Class exercise and dataset**](Class_2021.09.13/W3.C1_Exercise_mouse_genes/mouse_genes.zip){: target="blank"}
-  + [**Exercise KEY**](Class_2021.09.13/W3.C1_Exercise_mouse_genes/mouse_genes_KEY.zip)
+  + **Exercise KEY** - [zipped RMD](Class_2021.09.13/W3.C1_Exercise_mouse_genes/mouse_genes_KEY.zip) - [HTML](Class_2021.09.13/W3.C1_Exercise_mouse_genes/mouse_genes_KEY.html)
 
 </details>
 
 <!-- ########################################################################### -->
 
-<!-- ########################################################################### -->
-
-<!-- # Class - Thursday, Sept. 16
+# Class - Thursday, Sept. 16
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
++ [**Lecture Notes**](http://shiny.bio.nyu.edu/bs167/week_3_lecture_2/){: target="blank"}
++ **Class Exercise** - [zipped RMD](W3.C2_Exercise_trees_CLT/W3.C2_Exercise_trees_CLT.zip)
 
-<!-- ########################################################################### -->
+</details>
 
 <!-- ########################################################################### -->
 
