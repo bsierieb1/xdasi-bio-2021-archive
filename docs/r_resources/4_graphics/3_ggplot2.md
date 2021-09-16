@@ -51,22 +51,33 @@ We will go through lots of examples in the course.
 
 Many add-ons to ggplot have been developed, some of which are listed below. We will learn more about a few of these during the course.
 
-+ **Mode blog: 12 Extensions to ggplot2 for More Powerful R Visualizations**](https://mode.com/blog/r-ggplot-extension-packages/){: target="blank"}
+## Some useful packages
+
++ [**ggpubr**](https://rpkgs.datanovia.com/ggpubr/){: target="blank"} - publication-ready plots
+  + contains the incredibly useful `ggarrange()` function for arranging and annotating multiple plots in a single figure
+  + also see cowplot, patchwork, grid, and gridExtra
++ ggsignif, ggstatsplot - display statistical significance and other quantities on your plots
++ ggdistribute - overlay information about a distribution's intervals on unimodal distributions
++ ggcorrplot - chart correlation matrices
++ ggdendro - flexible dendrogram manipulation
++ ggridges - ridgeline plots (helpful for showing changes in distributions over time)
++ ggthemes - extended themes to control the look and feel of graphs, including colorblind palette
++ ggradar - radar / spider charts
++ gggenomes - a grammar of graphics for comparative genomics
++ ggmap - spatial data and models
++ ggrepel - greater control over how text looks in plots (and keep text labels away from each other)
++ GGally - reduce the complexity of combining geometric objects with transformed data
+  + includes ggpairs for fancy plot matrices
++ interactive graphics
   + gganimate - animate ggplot2 visualizations
-  + ggdendro - flexible dendrogram manipulation
-  + ggthemes - extended themes to control the look and feel of graphs, including colorblind palette
-  + [**ggpubr**](https://rpkgs.datanovia.com/ggpubr/){: target="blank"} - publication-ready plots
-    + contains the incredibly useful `ggarrange()` function for arranging and annotating multiple plots in a single figure
-    + also see
-  + [Plotly](https://plotly.com/r/){: target="blank"} - graphing library for interactive and dynamic plots
-  + patchwork - combine and arrange multiple plots
-  + ggridges - ridgeline plots (helpful for showing changes in distributions over time)
-  + ggmap - spatial data and models
-  + ggrepel - greater control over how text looks in plots
-  + ggradar - radar / spider charts
-  + ggcorrplot - chart correlation matrices
-  + GGally - "functions to reduce the complexity of combining geometric objects with transformed data"; includes ggpairs for fancy plot matrices
   + ggiraph - interactive charts with html and javascript integration
+  + [Plotly](https://plotly.com/r/){: target="blank"} - graphing library for interactive and dynamic plots
+
+## Some lists of extensions
+
++ [**ggplot Extensions gallery**](https://exts.ggplot2.tidyverse.org/gallery/){: target="blank"} - start here!
++ [**opensource: top 46**](https://awesomeopensource.com/projects/ggplot-extension){: target="blank"} - a list of 46 ggplot extension open source projects on GitHub
++ [**Mode blog: 12 Extensions to ggplot2 for More Powerful R Visualizations**](https://mode.com/blog/r-ggplot-extension-packages/){: target="blank"}
 + A seemingly random [gallery](https://yutannihilation.github.io/allYourFigureAreBelongToUs/){: target="blank"} of ggplot extensions
 
 ---
