@@ -22,7 +22,7 @@ has_children: false
 
 # Class - Monday, Sept. 13
 
-## Descriptive Statistics
+### Descriptive Statistics
 
 <details closed markdown="block">
   <summary>Details</summary>
@@ -38,7 +38,7 @@ has_children: false
 
 # Class - Thursday, Sept. 16
 
-## Distribution Estimates and Sampling
+### Distribution Estimates and Sampling
 
 <details closed markdown="block">
   <summary>Details</summary>
@@ -54,7 +54,7 @@ has_children: false
 
 # Recitation - Friday, Sept. 17
 
-## Data Manipulation
+### Data Manipulation
 
 <details closed markdown="block">
   <summary>Details</summary>

@@ -87,7 +87,7 @@ We will use three main resources for the course:
 
 ---
 
-## R coding: Basics and Tutorial
+### R coding: Basics and Tutorial
 
 + **Class exercise** - [HTML](Class1/W1.C1_Exercise_RDataStructures.html){: target="blank"} - [RMD](https://kriscgun.github.io/xdasi-bio-2021/syllabus/week_01_Intro/Class1/W1.C1_Exercise_RDataStructures.Rmd)
 + Answer key - [HTML](Class1/W1.C1_Exercise_RDataStructures_KEY.html){: target="blank"} - [RMD](https://kriscgun.github.io/xdasi-bio-2021/syllabus/week_01_Intro/Class1/W1.C1_Exercise_RDataStructures_KEY.Rmd)

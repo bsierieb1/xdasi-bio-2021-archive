@@ -39,10 +39,10 @@ Please complete the following and hand in through Brightspace:
 
 # Class - Thursday, Sept. 9
 
+### Data visualization
+
 <details closed markdown="block">
   <summary>Details</summary>
-
-## Data visualization
 
 + **Class notes** (class website)
 + **Class exercise** - [RMD](Class1/W2.C1_Exercise_DataVisualization_v2.Rmd){: target="blank"} - [HTML](Class1/W2.C1_Exercise_DataVisualization_v2.html){: target="blank"}
@@ -57,10 +57,10 @@ Please complete the following and hand in through Brightspace:
 
 # Recitation - Friday, Sept. 10
 
+### Data visualization, continued
+
 <details closed markdown="block">
   <summary>Details</summary>
-
-## Data visualization, continued
 
 + [**Class exercise**](Recitation/W2.R1_Exercise_DataVisualization.Rmd.zip)
 + Answer key: [RMD zipped](Recitation/W2.R1_Exercise_DataVisualization_KEY.Rmd.zip) - [HTML](Recitation/W2.R1_Exercise_DataVisualization_KEY.html){: target="blank"}
