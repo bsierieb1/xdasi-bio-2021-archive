@@ -366,7 +366,7 @@ This point is worth repeating: ***"The uncertainty in $\bar{X}$ decreases with i
 
 <!-- ======================================================================= -->
 
-## IV. Standard Error of the Mean (SEM)
+## IV. Standard Error of the Mean
 
 The **standard deviation of a sample statistic** is called its **standard error**. 
 
@@ -510,9 +510,11 @@ $\Rightarrow$ ***Q: How do you think the sample mean affects the range of a conf
 
 ### 95% CI
 
-Since the sampling distribution of the sample mean approximates a normal distribution, this means that the **95% CI is approximately equal to the sample mean plus or minus two times the SEM**.
+Since the sampling distribution of the sample mean approximates a normal distribution, we can easily deduce that the **95% CI is approximately equal to the sample mean plus or minus two times the SEM**:
 
-To be more precise, the 95% CI is within 1.96 times the standard error error of the mean:
+
+
+To be a little more precise, we expect the true population mean to fall the 95% CI is within 1.96 times the standard error error of the mean:
 
 $$ \bar{X} - 1.96 * SE_\bar{X} < \mu < \bar{X} + 1.96 * SE_\bar{X} $$
 
@@ -524,7 +526,7 @@ $\Rightarrow$ ***Q: Why does it make sense that the 95% CI spans $\pm$ 2 times t
 <details closed markdown="block">
   <summary>Answer</summary>
 
-+ Because the central bulk of a normal distribution is within two SD of the mean.
++ Because 95% of a normal distribution is contained within two SD of the mean.
 
 </details>
 </div>
@@ -542,6 +544,8 @@ $\Rightarrow$ ***Q: How many 95% CI's computed from 100 random samples of height
 </details>
 </div>
 <!-- ======================================================================= -->
+
+Another way to write the formula for the CI is 
 
 
 ### The SE and CI depend on sample size
