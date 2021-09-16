@@ -42,7 +42,7 @@ has_children: false
   <summary>Details</summary>
 
 + [**Lecture Notes**](http://shiny.bio.nyu.edu/bs167/W3C2/){: target="blank"}
-+ **Class Exercise** - [zipped RMD](W3.C2_Exercise_trees_CLT/W3.C2_Exercise_trees_CLT.zip)
++ **Class Exercise** - [zipped RMD](Class_2021.09.16/W3.C2_Exercise_trees_CLT/W3.C2_Exercise_trees_CLT.zip)
 
 </details>
 
