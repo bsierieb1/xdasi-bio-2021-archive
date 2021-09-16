@@ -41,7 +41,7 @@ has_children: false
 <details closed markdown="block">
   <summary>Details</summary>
 
-+ [**Lecture Notes**](http://shiny.bio.nyu.edu/bs167/week_3_lecture_2/){: target="blank"}
++ [**Lecture Notes**](http://shiny.bio.nyu.edu/bs167/W3C2/){: target="blank"}
 + **Class Exercise** - [zipped RMD](W3.C2_Exercise_trees_CLT/W3.C2_Exercise_trees_CLT.zip)
 
 </details>
