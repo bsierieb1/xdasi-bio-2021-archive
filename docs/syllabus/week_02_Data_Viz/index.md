@@ -4,7 +4,7 @@ parent: Syllabus
 has_children: false
 ---
 
-# Week 2: Data Wrangling & Visualization
+# Week 2: Data Visualization
 {: .no_toc }
 
 <details closed markdown="block">

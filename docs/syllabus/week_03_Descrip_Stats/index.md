@@ -4,7 +4,7 @@ parent: Syllabus
 has_children: false
 ---
 
-# Week 3: Descriptive Statistics
+# Week 3: Descriptive Statistics and Data Wrangling
 {: .no_toc }
 
 <details closed markdown="block">
