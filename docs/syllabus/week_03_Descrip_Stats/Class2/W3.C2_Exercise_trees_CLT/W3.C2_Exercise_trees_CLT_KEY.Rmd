@@ -186,8 +186,8 @@ mean_b1 = mean(sample_b1)
 mean_m1 = mean(sample_m1)
 sem_b1  = sd(sample_b1)/sqrt(15)
 sem_m1  = sd(sample_m1)/sqrt(15)
-ci95_b1 = c(round(mean_b1 - Q*sem_b1,2), round(mean_b1 + Q*sem_b1,2))
-ci95_m1 = c(round(mean_m1 - Q*sem_m1,2), round(mean_m1 + Q*sem_m1,2))
+ci95_b1 = c(mean_b1 - Q*sem_b1, mean_b1 + Q*sem_b1)
+ci95_m1 = c(mean_m1 - Q*sem_m1, mean_m1 + Q*sem_m1)
 
 # we can simply print these out ... (easy)
 # ... or put them all together (a bigger pain but done below for clarity)
@@ -200,11 +200,13 @@ mean_sem_trees = round(mean_sem_trees,2)
 stats_trees = data.frame(mean_sem_trees,
                          c( paste0(round(ci95_bronx[1],2),"-",round(ci95_bronx[2],2)),
                             paste0(round(ci95_man[1],2),"-",round(ci95_man[2],2))),
-                         c( paste0(round(ci95_b1[1],2),"-",round(ci95_b1[2],2)), 
+                         c( paste0(round(ci95_b1[1],2),"-",round(ci95_b1[2],2)),
                             paste0(round(ci95_m1[1],2),"-",round(ci95_m1[2],2))) )
 colnames(stats_trees) = c("mean_D","mean_S",
                           "SEM_D","SEM_S",
-                          "CI_D","CI_S")
+                          "CI95_D","CI95_S")
 rownames(stats_trees) = c("Bronx","Manhattan")
 stats_trees
 ```
+
+These will vary each time you repeat the sampling, but overall values computed from the distribution and the single sample should look pretty close! 

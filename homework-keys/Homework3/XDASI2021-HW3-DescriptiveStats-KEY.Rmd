@@ -52,7 +52,8 @@ list.files("data/")
 at least one way to complete different tasks, but you should feel free to use any 
 syntax that you prefer. Just comment out any lines that you decide not to use.**
 
-## High-fat Diet Study
+<!-- ======================================================================= -->
+# High-fat Diet Study
 
 A **study[^1]** raises groups of mice on two different diets:
 
@@ -63,16 +64,16 @@ They then measure differences in weight gain, glucose intolerance, and insulin r
 Our scientific question is:
 **Are the HF mice a good model for Type II diabetes?**
 
-In a future homework, we will see how statistical inference can help us discern if there is 
+In a future exercise, we will see how statistical inference can help us discern if there is 
 any meaningful difference between them. Here, we will just use this dataset to illustrate 
 sampling, descriptive statistics, and the Central Limit Theorem. 
 
-### Load the dataset
+
+## I. Preprocessing and ata exploration
+
+### I.1. Load the dataset
 
 Load the data in `mice_pheno.csv` and take a look at it.
-
-***Note:*** I put all my data files into a sub-directory called "data", so when 
-I load the files I use the syntax "data/filename" instead of just "filename".
 
 ```{r}
 # load the dataset
@@ -84,14 +85,20 @@ head(mice.pheno)
 summary(mice.pheno)
 ```
 
-### Clean the data
+### I.2. Clean the data
 
-It's always a good idea to check the integrity of your data files before you start working on them. Do the data look the way you expect them to? Does it have all the expected rows and columns? Are there any "funny" values? 
+It's always a good idea to check the integrity of your data files before you start working on them. 
 
-For example, if your file has passed through Excel, sometimes certain strings get converted to dates automatically. This happens with some *C. elegans* gene names, and is very annoying. This can be avoided by explicitly importing some data as text (whereas the default behavior is to try to guess).
++ Do the data look the way you expect them to? 
++ Does it have all the expected rows and columns? 
++ Are there any "funny" values? 
+  + If you don't explicitly specify the type of data to be imported, R will use its best guess. This can sometimes produce surprising results!
+  + For example, if your file has passed through Excel, sometimes certain strings may have gotten converted to dates automatically. This happens with some *C. elegans* gene names (and probably others), and is very annoying! Auto-conversion can be avoided by explicitly exporting some data as text.
+  + Another thing that can happen is that a column could be misinterpreted as a logical, as we saw in the last homework (where only females were included, encoded simply as "F").
 
-**One common problem is that some values will be missing from the data**, which can cause a lot of problems
-later. Missing values are designated by `NA` and are treated as a null value by R (instead of 0).
+#### Missing data
+
+**One common problem is that some values will be missing from the data**, which can cause a lot of problems later. Missing values are designated by `NA` and are treated as a null value by R (instead of 0).
 
 The full mouse dataset contains some rows with missing data. How can we tell?
 
@@ -106,9 +113,7 @@ mice.pheno[which(is.na(mice.pheno$Bodyweight)),]
 mice.pheno %>% subset(is.na(Bodyweight))
 ```
 
-### Filter data
-
-We can remove rows with missing data using `complete.cases()` (there are a couple of other ways to do this also). Clean the data frame by throwing away those `NA` rows.
+We can remove rows with missing data using `complete.cases()` (there are a couple of other ways to do this also). Choose your preferred method and clean the data frame by throwing away those `NA` rows.
 
 ```{r}
 # Option 1
@@ -118,9 +123,82 @@ mice.pheno = mice.pheno[complete.cases(mice.pheno),]
 mice.pheno = mice.pheno %>% subset(complete.cases(mice.pheno))
 ```
 
-The full dataset contains data on both male and female mice. Let's just look at the male mice for now.
+#### Recode factor names
+
+While we're at it, let's change the factors to something less cryptic.
+
++ Rename the Diet factors as "Chow" and "High-fat".
++ Rename the Sex factors as "Female" and "Male".
 
 ```{r}
+## Fix up "diet" labels
+levels(mice.pheno$Diet) = c("Chow","High-fat") 
+levels(mice.pheno$Sex) = c("Female","Male") 
+```
+
+
+### I.3. Visualize the data
+
+First, let's visualize the data. We have two factors: Diet and Sex, so we want to visualize both of these at the same time.
+
++ Draw a violin plot of Bodyweight that separates the data by Diet.
++ Superimpose narrow boxplots in white on top of the violins.
++ Also, use `facetwrap( ~ Sex)` to draw side-by side plots for females and males.
++ Since the labels seem really small by default, fix up the text annotations to make the graph more legible.
+
+For help on tweaking the appearance of the graphs, you may want to consult one of these references:
+
++ [Cookbook for R: Graphs](http://www.cookbook-r.com/Graphs/){: target="blank}
++ [R Graphics Cookbook](https://r-graphics.org/){: target="blank"}
++ [Data Visualization with ggplot: Labels](https://viz-ggplot2.rsquaredacademy.com/ggplot2-labels.html){: target="blank"}
+
+```{r fig.height=4, fig.width=6, warning=FALSE}
+
+## Violin plot by sex and diet
+ggplot(mice.pheno, aes(x=Diet, y=Bodyweight, fill=Diet)) +
+  geom_violin(color="black", width=0.5) +
+  geom_boxplot(fill="white", color="black", width=0.1) +
+  facet_wrap(~ Sex) +
+  theme( text = element_text( size = 24 ),
+         axis.title = element_text( face = "bold" ))
+```
+
+
+### 3. Filter data
+
+Well it looks like the mice fed the high-fat diet are heavier, but how much? Male and female mice seem to have different weights on average, so we will want to answer this question for each of them separately.
+
++ Find the difference in the mean weight for males and females on the HF vs. control diet, and convert this to percentage weight gain.
+
+```{r}
+# means by sex and diet
+female_chow_mean = mean(mice.pheno[which(mice.pheno$Sex == "Female" &
+                                      mice.pheno$Diet == "Chow"),"Bodyweight"])
+female_hf_mean   = mean(mice.pheno[which(mice.pheno$Sex == "Female" &
+                                      mice.pheno$Diet == "High-fat"),"Bodyweight"])
+male_chow_mean = mean(mice.pheno[which(mice.pheno$Sex == "Male" &
+                                         mice.pheno$Diet == "Chow"),"Bodyweight"])
+male_hf_mean   = mean(mice.pheno[which(mice.pheno$Sex == "Male" &
+                                         mice.pheno$Diet == "High-fat"),"Bodyweight"]  )
+
+# differences
+female_diff = female_hf_mean - female_chow_mean
+male_diff   = male_hf_mean - male_chow_mean
+female_diff
+male_diff
+
+# percent differences
+(female_diff/female_chow_mean)*100
+(male_diff/male_chow_mean)*100
+```
+
+
+```{r}
+# make two data.frames containing just the "chow" or just the "hf" mice.
+chow = mmw %>% filter(Diet == "chow")
+hf = mmw %>% filter(Diet == "hf")
+
+
 ## make a df of just the male mice -- remove Sex column
 # "mmw" => male mouse weights
 
@@ -135,73 +213,18 @@ str(mmw)
 head(mmw)
 ```
 
-### Examine the data
-
-First, let's visualize these two populations using **ggplot** to draw a **histogram** and a **violin** plot of the male mouse weights, using the data in the `mmw` dataframe.
-
-***You may use the code from the "ggplot2" tutotial that we went over together in class as a template for these plots.***
-
-For the histogram:
-
-+ Break out the data by "Diet", so you will have two overlapping distributions.
-+ Make the bars somewhat transparent so that you can see the overlap better.
-+ Overlay the two group means using vertical dashed lines.
-
-For the box-plot: 
-
-+ Break out the data by "Diet".
-+ Superimpose a narrow boxplot colored in white on top of it.
-
-Once you are happy with the look of the individual plots, use `ggarrange()` from the **ggpubr** package to draw a figure of them together, labeled "A" and "B".
-
-```{r fig.height=4, fig.width=6, warning=FALSE}
-## Histogram
-
-# first, make a small data frame with the means of the two groups
-mean.bw = mmw %>% group_by(Diet) %>% 
-  summarize(avg = mean(Bodyweight), .groups = 'drop')
-str(mean.bw)
-
-# make a histogram of the distributions
-# use the `mean.bw` dataframe as the data for the geom_vline() aesthetic mapping
-a = ggplot(mmw, aes(x=Bodyweight, fill=Diet, color=Diet)) +
-  geom_histogram(position="identity", alpha=0.5, binwidth=1) +
-  geom_vline(data=mean.bw, 
-             aes(xintercept=avg, color=Diet),
-             linetype="dashed") + xlim(c(19,45)) 
-
-## Violin plot
-b = ggplot(mmw, aes(x=Diet, y=Bodyweight, fill=Diet, color=Diet)) +
-  geom_violin(color="black", width=0.5) +
-  geom_boxplot(fill="white", color="black", width=0.1)
-
-## Display the plots together with `ggarrange()`
-ggarrange(a,b, labels=c("A","B"), common.legend=TRUE, nrow=1)
-```
-
-What's the mean difference between the weights of the mice that were fed the two diets?
-
-```{r}
-# make two data.frames containing just the "chow" or just the "hf" mice.
-chow = mmw %>% filter(Diet == "chow")
-hf = mmw %>% filter(Diet == "hf")
-
-# mean difference between the two populations 
-pop.diff = mean(hf$Bodyweight) - mean(chow$Bodyweight)
-pop.diff
-```
-
-Based on the entire "population" of mice at our disposal, it looks like the "hf" mice are around 10% heavier than the control mice on average!
 
 ## Random sampling
 
-Let's see what happens when we take random samples from these populations.
+Let's see what happens when we take random samples from these populations. Let's just consider males for now.
 
-+ Sample 12 individuals from the "chow" group and the same number from the "hf" group.
++ Sample 12 male individuals from the "chow" group and the same number from the "hf" group.
 + Then, take the difference in the means between the two groups.
 
 ```{r}
-# sample 12 of each
+# subset the data
+
+# sample 12 males from each diet
 s.ctl = chow %>% sample_n(12)
 s.trt = hf %>% sample_n(12)
 
