@@ -24,20 +24,20 @@ knitr::opts_chunk$set(echo = TRUE, error = TRUE)
 # (do this when you are ready to check if your code will knit without errors)
 library(dplyr)
 library(ggplot2)
-library(ggpubr)
 ```
 
 ## Before you begin
 
-**Download the datasets** provided for this homework and put them inside your current
-working directory.
+**Download the dataset** provided for this homework and put it in the same directory
+as this .Rmd file.
 
 RStudio automatically sets the base directory to the current **R Project** directory.
 It's probably easier for you to organize your work if you start a new R project
 for this homework. Then, anytime you want to work on this or revisit it, you only
 need to open this project.
 
-Let's check to see we are in the right place and your data files are present:
+Check to see what your current working directory is and list the files in it to make
+sure your data file is present.
 
 ```{r}
 getwd()
@@ -48,20 +48,19 @@ list.files() # this directory
 list.files("data/")
 ```
 
-***Note:*** **There is usually more than one way to do things. Below we will suggest 
-at least one way to complete different tasks, but you should feel free to use any 
-syntax that you prefer. Just comment out any lines that you decide not to use.**
+***Note: There is usually more than one way to complete a task. Below we will suggest options you can use, but you should feel free to use any syntax that you prefer.***
 
 <!-- ======================================================================= -->
+
 # High-fat Diet Study
 
-A **study[^1]** raises groups of mice on two different diets:
+A **study[^1]** raised groups of mice on two different diets:
 
 - Regular chow (11% fat)
 - High-fat chow (58% fat)
 
-They then measure differences in weight gain, glucose intolerance, and insulin resistance. 
-Our scientific question is:
+They then measured differences in weight gain, glucose intolerance, and insulin resistance. 
+The scientific question is:
 **Are the HF mice a good model for Type II diabetes?**
 
 In a future exercise, we will see how statistical inference can help us discern if there is 
@@ -69,7 +68,7 @@ any meaningful difference between them. Here, we will just use this dataset to i
 sampling, descriptive statistics, and the Central Limit Theorem. 
 
 
-## I. Preprocessing and ata exploration
+# I. Preprocessing and data exploration
 
 ### I.1. Load the dataset
 
@@ -84,6 +83,18 @@ str(mice.pheno)
 head(mice.pheno)
 summary(mice.pheno)
 ```
+The `summary()` function is nice, but it doesn't give you the full breakdown of the number of male and female animals in each treatment group.
+
+Let's check this using dplyr to group and summarize the data. Recall that the keyboard shortcut for the pipe (`%>%`) operator is cmd-shift-m or ctl-shift-m.
+
++ Use `group_by()` to separate the data by Sex and Diet
++ Use the `summarise()` function to count up the number in each group
+  + The argument to do this is `n()`
+
+```{r}
+mice.pheno %>% group_by(Sex, Diet) %>% summarise(n())
+```
+
 
 ### I.2. Clean the data
 
@@ -123,30 +134,29 @@ mice.pheno = mice.pheno[complete.cases(mice.pheno),]
 mice.pheno = mice.pheno %>% subset(complete.cases(mice.pheno))
 ```
 
-#### Recode factor names
-
-While we're at it, let's change the factors to something less cryptic.
-
-+ Rename the Diet factors as "Chow" and "High-fat".
-+ Rename the Sex factors as "Female" and "Male".
+Now use dplyr again to check the number of male and female animals remaining in each treatment group.
 
 ```{r}
-## Fix up "diet" labels
-levels(mice.pheno$Diet) = c("Chow","High-fat") 
-levels(mice.pheno$Sex) = c("Female","Male") 
+mice.pheno %>% group_by(Sex, Diet) %>% summarise(n())
+```
+
+How many data points were removed, and from which group?
+
+```{r}
+# your answer here
 ```
 
 
 ### I.3. Visualize the data
 
-First, let's visualize the data. We have two factors: Diet and Sex, so we want to visualize both of these at the same time.
+Let's take an initial look at the data using a violin plot. We have two factors: Diet and Sex, so we want to visualize both of these at the same time.
 
-+ Draw a violin plot of Bodyweight that separates the data by Diet.
++ Draw a violin plot of Bodyweight that separates the data by Diet (don't worry about M vs F just yet).
 + Superimpose narrow boxplots in white on top of the violins.
-+ Also, use `facetwrap( ~ Sex)` to draw side-by side plots for females and males.
-+ Since the labels seem really small by default, fix up the text annotations to make the graph more legible.
+  + Use the `width` parameter to adjust the width (you may also want to make the violins a little narrow while you're at it).
++ Finally, use `facetwrap( ~ Sex)` to draw side-by side plots for females and males.
 
-For help on tweaking the appearance of the graphs, you may want to consult one of these references:
+If you don't like the look of the labels, it is pretty easy to modify the text annotations. A simple adjustment has been included below to increase the font size a little bit (this can be useful when your plots get shrunk down the the size of a postage stamp in your cool Nature article). For help on tweaking the appearance of the graphs, you may want to consult one of these references:
 
 + [Cookbook for R: Graphs](http://www.cookbook-r.com/Graphs/){: target="blank}
 + [R Graphics Cookbook](https://r-graphics.org/){: target="blank"}
@@ -159,216 +169,334 @@ ggplot(mice.pheno, aes(x=Diet, y=Bodyweight, fill=Diet)) +
   geom_violin(color="black", width=0.5) +
   geom_boxplot(fill="white", color="black", width=0.1) +
   facet_wrap(~ Sex) +
-  theme( text = element_text( size = 24 ),
+  
+  # adjust text appearance
+  theme( text = element_text( size = 14 ),
          axis.title = element_text( face = "bold" ))
 ```
 
+### I.4 Sample statistics
 
-### 3. Filter data
+Well it looks like the mice fed the high-fat diet are heavier, but how much? Are these differences meaningful?
 
-Well it looks like the mice fed the high-fat diet are heavier, but how much? Male and female mice seem to have different weights on average, so we will want to answer this question for each of them separately.
+#### Full dataset
 
-+ Find the difference in the mean weight for males and females on the HF vs. control diet, and convert this to percentage weight gain.
+Considering that we can't do this experiment on all mice on the planet, let's use these data to compute the mean, standard error, and confidence intervals for these sample data. First, do this by hand on the full dataset.
 
 ```{r}
-# means by sex and diet
-female_chow_mean = mean(mice.pheno[which(mice.pheno$Sex == "Female" &
-                                      mice.pheno$Diet == "Chow"),"Bodyweight"])
-female_hf_mean   = mean(mice.pheno[which(mice.pheno$Sex == "Female" &
-                                      mice.pheno$Diet == "High-fat"),"Bodyweight"])
-male_chow_mean = mean(mice.pheno[which(mice.pheno$Sex == "Male" &
-                                         mice.pheno$Diet == "Chow"),"Bodyweight"])
-male_hf_mean   = mean(mice.pheno[which(mice.pheno$Sex == "Male" &
-                                         mice.pheno$Diet == "High-fat"),"Bodyweight"]  )
+# mean bodyweight
+mean_bw = mean(mice.pheno$Bodyweight)
+mean_bw
 
-# differences
-female_diff = female_hf_mean - female_chow_mean
-male_diff   = male_hf_mean - male_chow_mean
-female_diff
-male_diff
+# sem
+sem_bw = sd(mice.pheno$Bodyweight) / sqrt(length(mice.pheno$Bodyweight))
+sem_bw
 
-# percent differences
-(female_diff/female_chow_mean)*100
-(male_diff/male_chow_mean)*100
+# 95% CI
+Q = qnorm(0.975)
+c(mean_bw - Q*sem_bw, mean_bw + Q*sem_bw)
+```
+
+Describe in words what the 95% CI tells you.
+
+```{r}
+
 ```
 
 
+#### By subgroup
+
+Ok that was kind of tedious, and what we really want is a summary for each of the four subsets in the data.
+
+Fortunately, there is a package called `gmodels` that provides a function to compute the mean, SE, and CI at a specified level for you! The function is aptly named `ci()`. It takes a vector of data and returns a 4-element vector. 
+
+Try out this function on the `mice.pheno$Bodyweight`.
+
++ Note that you can refer to indiviual elements of the vector by index number or element name.
++ For example, `ci(mice.pheno$Bodyweight)[2]` and `ci(mice.pheno$Bodyweight)["Std. Error"]` will both give you the SEM for bodyweight. Make sure you experiment with these.
+
 ```{r}
-# make two data.frames containing just the "chow" or just the "hf" mice.
-chow = mmw %>% filter(Diet == "chow")
-hf = mmw %>% filter(Diet == "hf")
+# use ci() compute summary stats for bodyweight for the combined data
 
-
-## make a df of just the male mice -- remove Sex column
-# "mmw" => male mouse weights
-
-# Option 1
-mmw = mice.pheno[mice.pheno$Sex == "M",c("Diet","Bodyweight")]
-
-# Option 2
-mmw = mice.pheno %>% filter(Sex == "M") %>% select(Diet, Bodyweight)
-
-# check the data frame
-str(mmw)
-head(mmw)
 ```
 
 
-## Random sampling
+Now let's use dplyr to make a data frame containing all of the relevant statistics. You will use the same method you used in recitation on the COVID data:
 
-Let's see what happens when we take random samples from these populations. Let's just consider males for now.
+  + First, pipe `mice.pheno` to `group_by()` and group by Sex and Diet.
+  + Then, pipe to `summarise()` or `summarize()` (these are synonyms using British or American spelling).
+  + Inside `summarise()`, create four columns and fill them with the corresponding values:
+    + mean_weight
+    + SEM
+    + CI_lower
+    + CI_upper
 
-+ Sample 12 male individuals from the "chow" group and the same number from the "hf" group.
-+ Then, take the difference in the means between the two groups.
+Note that after piping through `group_by()`, subsequent functions will be applied to each group individually. You don't have to do anything special beyond just calling the function.
+
+So far, so good! However you'll notice that the numbers are all really long. *Optional: if you feel like it, fix up the numeric columns of the data frame by rounding them to the nearest two digits (you probably didn't measure the weights to 5 significant digits anyway!)*
+
+```{r warning=FALSE, message=FALSE}
+# install gmodels
+#install.packages("gmodels")
+library(gmodels)
+
+# make a summary table
+summary_stats = 
+  mice.pheno %>% 
+  group_by(Sex, Diet) %>% 
+  summarise(mean_weight = mean(Bodyweight), 
+            SEM = round(ci(Bodyweight)["Std. Error"],2),
+            CI_lower = ci(Bodyweight)[2],
+            CI_upper = ci(Bodyweight)[1] )
+summary_stats[3:6] = round(summary_stats[3:6], 2)
+summary_stats
+```
+
+### I.5. Average weight gain
+
+Find the difference in the mean weight for males vs. females on the HF vs. control diet. Then, convert this to percentage weight gain for each sex.
+
++ It will probably help you to extract just the `mean_weight` for each combination of sex and diet. You can do this starting with either `mice.pheno` or `summary_stats`.
++ Note that the result of piping a data frame is still a data frame. You can use the `pull()` function at the end to convert the results to a simple vector.
+
+```{r}
+# extract subsets - you can use either filter or subset with pull
+fc = mice.pheno %>% 
+  filter(Sex == "F" & Diet == "chow") %>% 
+  summarize(mean_weight = mean(Bodyweight)) %>%  
+  pull("mean_weight")
+fh = mice.pheno %>% 
+  filter(Sex == "F" & Diet == "hf") %>% 
+  summarize(mean_weight = mean(Bodyweight)) %>%  
+  pull("mean_weight")
+
+mc = summary_stats %>% subset(Sex == "M" & Diet == "chow") %>%  pull("mean_weight")
+mh = summary_stats %>% subset(Sex == "M" & Diet == "hf") %>%  pull("mean_weight")
+
+# average weight gain by sex
+fh - fc
+mh - mc
+
+# percent weight gain
+# two ways to display the results
+c( ((fh - fc)/fc)*100 , ((mh - mc)/mc)*100 )
+data.frame( F_pct_gain = as.numeric(((fh - fc)/fc)*100),
+            M_pct_gain = as.numeric(((mh - mc)/mc)*100) )
+```
+
+
+What do you conclude from these observations? Do you think males and females put on a significantly different proportion of their body weight on a high-fat diet?
+
+```{r}
+# your answer here
+```
+
+
+# II. Random sampling
+
+What if we only measured weight on different diets for male 12 mice? Since the original dataset is pretty big, let's now treat it as the "population" and see how our data look when we draw random samples of 12 mice from it.
+
+### II.1 Subset the data
+
++ First, create two subset of the data containing just the bodyweights for males on each diet.
 
 ```{r}
 # subset the data
-
-# sample 12 males from each diet
-s.ctl = chow %>% sample_n(12)
-s.trt = hf %>% sample_n(12)
-
-# how different are the mean weights in the two samples?
-obs.diff = mean(s.trt$Bodyweight) - mean(s.ctl$Bodyweight)
-obs.diff
+chow = mice.pheno[which(mice.pheno$Sex == "M" & mice.pheno$Diet == "chow"),"Bodyweight"]
+hf   = mice.pheno[which(mice.pheno$Sex == "M" & mice.pheno$Diet == "hf"),"Bodyweight"]
 ```
 
-Try re-running this code a bunch of times. How do the differences between samples vary? How close are these to the mean difference between the two populations of mice?
+
+### II.2 Random samples and difference in the means
+
++ Check out the documentation for `sample()` and use it to randomly sample 12 male individuals from each group *with replacement*.
++ Then, take the difference in the means between the two groups.
++ Compute the difference in means for males on the two diets using the full dataset.
+
+```{r}
+# sample 12 males from each diet
+s.ctl = sample(chow, 12, replace=TRUE)
+s.trt = sample(hf, 12, replace=TRUE)
+
+# how different are the mean weights in the two samples?
+obs.diff = mean(s.trt) - mean(s.ctl)
+obs.diff
+
+# mean difference from full dataset
+mean(hf) - mean(chow)
+```
+
+Try re-running this code a bunch of times. How do the differences between samples vary? How do they compare with the mean difference between the groups that you got from the full dataset?
+
+```{r}
+# your answer here
+```
+
 
 Ultimately, we want to know if the observed differences are meaningful. Would we expect to see a difference as big as this between two random samples of control mice, just by chance? 
 
-In a future homework we will answer this question using two different statisical methods. Today we will just get a feel for the sampling distribution of the sample mean, the SEM, and the 95% CI.
+In a future exercise we will answer this question using different statistical methods. Today we will just get a feel for the sampling distribution of the sample mean, the SEM, and the 95% CI when we have only a relatively small sample size.
 
 
-### Sampling distribution of a random variable
+### II.3 Sampling distribution of a random variable
 
 For this example, we have a large sample of 200+ control mice that we can use as a proxy for the two populations, but most of the time we won't have access to the full population. 
 
-Since we have access to the entire population, we can simulate many possible outcomes of sampling from the control population. First, let's take a handful of random samples from this population, compute the means, and see what happens.
+Since we do have access to the entire "population" here, we can simulate many possible outcomes of taking smaller samples from the control population (which may be more realistic in practice). 
 
-+ Use the `replicate()`, `mean()`, and `sample()` functions together to take 6 samples of 12 mice from the control population and look at the means (do not assign the output to any variable here, just take a look at the sample means). 
+First, let's take a handful of random samples from this population, compute the means, and see what happens.
+
++ Use the `replicate()`, `mean()`, and `sample()` functions together in one line to take 6 samples of 12 mice from the control population and look at the means (do not assign the output to any variable here, just take a look at the sample means). 
 
 ```{r}
 # take 6 samples of 12 mice from the control population and look at the means
-replicate(6, mean(sample(chow$Bodyweight, 12)) )
+replicate(6, mean(sample(chow, 12)) )
 ```
 
 Naturally, each time we take a different sample, we get a different mean. Note that since we are taking random samples, the mean is also a **random variable**!
 
-What happens if we take a bunch of samples from the control population, compute the mean of each sample $\bar{X}$, and look at the **distribution of the sample means**? 
+What happens if we take a whole bunch of samples from the control population, compute the mean of each sample $\bar{X}$, and look at the **distribution of the sample means**? 
 
-```{r warning=FALSE, fig.width=6, fig.height=4}
++ Let's do this, visualize the results, and print out some simple stats. We've already done part of the job for you, just fill in the missing bits below.
+
+```{r warning=FALSE}
+# ============================================================================ #
+# simulate 100 random samples of size 12 drawn from the male control population
+# and store the means of all the samples
 sample.size = 12
-n.samples = 100
+n.samples = 1000
 resample = data.frame(sample.mean = replicate(n.samples, 
-                                              mean(sample(chow$Bodyweight, sample.size))) )
-str(resample)
-head(resample)
+                                              mean(sample(chow, sample.size))) )
+#str(resample)
+#head(resample)
 
-# histogram of sample means from the `resample` data frame. Pick whatever color scheme you like.
+# ============================================================================ #
+# Use ggplot to draw a histogram of the distribution in the `resample` data frame, and
+# superimpose a vertical line showing the mean
+
+# histogram of sample means from the `resample` data frame
 ggplot(resample, aes(x=sample.mean)) + 
-  geom_histogram(fill="lightblue", color="black", binwidth = 1) + # pick a color scheme
+  geom_histogram(fill="lightblue", color="black", 
+                 boundary=0, binwidth = 0.2) + # pick a color scheme
   
   # map `sample.mean` to the vertical line (copy syntax from previous histograms above)
   geom_vline(aes(xintercept=mean(sample.mean)),
-             linetype="dashed") + xlim(c(19,45))
+             linetype="dashed")
 
-```
-
-We can see that this distribution looks kind of like a bell curve -- in fact, it approximates a normal distribution. And we can empirically derive the mean and standard deviation for the distribution:
-
-```{r}
-# look at the results:
-pop.mean = round(mean(chow$Bodyweight),2)
+# ============================================================================ #
+# print some summary stats
+pop.mean = round(mean(chow),2)
 sample.dist.mean = round(mean(resample$sample.mean),2)
-print(paste("Chow pop mean = ", pop.mean))
-print(paste("Chow sample distribution mean = ",sample.dist.mean))
-print(paste("Difference = ", round(sample.dist.mean - pop.mean, 2)))
+cat(paste("Chow population mean = ", pop.mean, "\n",
+          "Chow sample distribution mean = ", sample.dist.mean, "\n",
+          "Difference (sample mean - population mean) = ", round(sample.dist.mean - pop.mean, 2), "\n",
+          "SD of sample distribution: ", round(sd(resample$sample.mean),2), sep="") )
 
-print(paste("SD of control sample distribution: ", round(sd(resample$sample.mean),2), sep=""))
 ```
 
-But wait! We've already learned that we don't need 100 or 1,000 samples in order to estimate the variation of a population from a single sample. Why is this? Because we also know two key pieces of information:
+Re-run this code a few times to see how much the results vary.
+
+### Standard error of the mean
+
+The *standard deviation of the sampling distribution of the sample mean* (what a mouthful!!!) is the SD of the distribution in the `resample` dataframe. This is an empirical value of the **standard error of the mean (SEM)** derived from a bunch of samples of size 12.
+
+But wait! We've already learned that we don't need 100 or 1,000 samples in order to estimate the SEM for a particular sample size. Why is this? Because we also know two key pieces of information:
 
 1. The mean of any sampling distribution approximates a normal distribution.
 2. The variation in this distribution is a function of the sample size. 
 
-The *standard deviation of the sampling distribution of the sample mean* (what a mouthful!!!) is the SD of the distribution in the `resample` dataframe. This is the **empirical** value of the **standard error of the mean (SEM)**. 
-
-Howevr, the SEM is usually computed directly from a single random sample, using just two values -- the SD of the sample, and the sample size. Recall that the SEM computed using data from a single random sample is:
+The SEM is usually computed directly from a single random sample, using just two values -- the SD of the sample, and the sample size. Recall that the SEM computed using data from a single random sample is:
 
 $$ SEM = \frac{s}{\sqrt{n}}$$
 
 Below we will write a function that takes a random sample from a population and returns the SEM for it.
 
 + The function takes two parameters:
-  + sample.df = A data frame with the population data we want to sample from
+  + pop.data = A vector containing the data we want to sample from
   + sample.size = A sample size, set to 12 by default (so, if you don't specify a size, it will use 12)
   
-When we call the function, we pass the name of a dataframe to it, which is placed into a temporary container called `sample.df` inside the function. This allows us to call the same function for different populations.
+When we call the function, we pass a vector to it, which is placed into a temporary container called `pop.data` inside the function. This allows us to call the same function for different populations.
 
 ```{r}
 # ============================================================================ #
 # A function to compute the SEM based on a single sample from a population
-sem = function(sample.df, sample.size=12){
+sem = function(pop.data, sample.size=12){
   
-  # take a new sample of 12 mouse bodyweights from the chow population
-  # random.sample should be a **vector of bodyweights**
-  random.sample = sample(sample.df$Bodyweight, sample.size, replace = FALSE)
+  # take a new sample of 12 from the given population
+  # here, random.sample is a **vector of bodyweights**
+  random.sample = sample(pop.data, sample.size, replace = FALSE)
   
   # formula for the SEM of a random sample
   return( round(sd(random.sample)/sqrt(sample.size), 2) )
 }
 # ============================================================================ #
+```
+
+
+Now we can call this function and compare the SEM we compute from individual samples with the SD we got from the distribution of 1000 sample means taken from the male control ("chow") population.
+```{r collapse=TRUE}
+# repeat sampling from the given population 10 times (with default sample size = 12)
+print("SEM of individual samples:")
+replicate(10,sem(chow))
 
 # take the SD of all the sample means in the `resample` distribution
 # this is the **empirical SD** of the sampling distribution of the sample means!
-print(paste("SD of distribution of 'chow' sample means: ", 
+print(paste("SD of 1000 'chow' sample means: ", 
             round(sd(resample$sample.mean),2), sep=""))
 
-# repeat sampling from the chow population 10 times (with default sample size = 12)
-print("SEM of individual samples:")
-replicate(10,sem(chow))
 ```
 
-As you can see, the SEM also has a sampling distribution just like the sampling distribution of the sample mean, since it is derived from random samples. Sometimes it is pretty close to the SD of the sampling distribution, and sometimes it is pretty far away.
+And we can also plot these data to visualize how much they vary:
+```{r}
+# ============================================================================ #
+# plot the distribution of the SEM for 1000 samples of size 12
+sem_dist = data.frame(sem = replicate(1000,sem(chow)))
+ggplot(sem_dist, aes(x=sem)) + 
+  geom_histogram(fill="lightblue", color="black", 
+                 boundary=0, binwidth = 0.05) + # pick a color scheme
+  
+  # map `sample.mean` to the vertical line (copy syntax from previous histograms above)
+  geom_vline(aes(xintercept=mean(sem)),
+             linetype="dashed")
+
+```
+
+As you can see, **the SEM also has a sampling distribution** just like the sampling distribution of the sample mean, since it is derived from random samples. The SEM is also a random variable!
 
 
-## Confidence intervals
+### III.4 Confidence intervals
+
+The SEM is intimately related to the confidence interval. Since the SEM varies from sample to sample, so too will the width of the 95%CI. The CI is a random variable too!
 
 To quantify our uncertainty in our sample estimate for the population mean, we will compute a 95% confidence interval for a bunch of random samples. Remember from class that we can estimate the 95% confidence interval for a sample as:
 
 $$ CI_{95} = \bar{X}-1.96*SEM \le \mu \le \bar{X}+1.96*SEM$$
 
-First, let's calculate the bounds of the 95% CI for a single sample of 12 mice from the chow population.
+First, let's calculate the bounds of the 95% CI *by hand* for a single sample of 12 mice from the chow population, using the standard deviation of the sample and the sample size.
 
 ```{r}
-# the sample
+# create a sample of 12 bodyweights from the chow population
 sample.size = 12
+ctl = sample(chow, sample.size, replace = FALSE)
 
-# create a sample of bodyweights from the chow population (this should be a numerical vector)
-ctl = sample(chow$Bodyweight, sample.size, replace = FALSE)
-
-# compute SEM
+# compute SEM and 95% CI
 sem = sd(ctl)/sqrt(length(ctl))
-
-# compute bounds
-print("95% CI for an individual sample:")
-c(mean(ctl) - 1.96*sem, mean(ctl) + 1.96*sem)
+cat("95% CI for an individual sample:\n",c(mean(ctl) - Q*sem, mean(ctl) + Q*sem))
 ```
 
-What if we repeat this for 100 random samples? To compute each SEM, we will use the actual population SD, $\sigma$, since in this example we already know it, and use it to compute a 95% CI for each sample.
+What if we repeat this for 100 random samples?
 
-The, we will draw a plot showing whether each confidence interval ***does or does not*** contain the true sample mean for the control ("chow") population. On the plot, we will show the population mean $\mu$ for both the chow and the high-fat diet mice. 
+Let's do this and draw a plot showing whether each confidence interval ***does or does not*** contain the true sample mean for the control ("chow") population. On the plot, we will show the "population" mean $\mu$ for both the chow and the high-fat diet mice, based on the full `mice.pheno` dataset.
 
 ```{r fig.width=5, fig.height=7, collapse=TRUE}
 n.samples = 100   # number of random samples
 N = 12   # sample size
-Q = 1.96 # sigma for +/- 47.5% of a normal distribution
+Q = qnorm(0.975)  # sigma for +/- 47.5% of a normal distribution
 
 # set up a plot showing a vertical line with the true mean for each population
-chowPop = chow$Bodyweight
-hfPop = hf$Bodyweight
+# rename chow and hf to reflect that we are using these as the population
+chowPop = chow
+hfPop = hf
 plot(mean(chowPop)+c(-7,7),c(1,1),type="n",
      xlab="weight",ylab="interval",ylim=c(1,n.samples))
 abline(v=mean(chowPop))
@@ -387,11 +515,28 @@ for (i in 1:n.samples) {
 }
 ```
 
-Re-run the above code block a bunch of times. Around what proportion of these confidence intervals do NOT contain the true population mean? Where does your high-fat diet sample fall within these?
+Re-run the above code block a bunch of times. 
 
-## Hypothesis testing
+Around what proportion of these confidence intervals do NOT contain the true population mean? How much does this number seem to vary?
+```{r}
+# your answer here
+```
 
-Next time we will quantify the probability that a sample of high-fat mice comes from a different distribution than the "chow" distribution we have constructed here -- that is, can we reject the null hypothesis that the high-fat diet has no significant effect on our mice? 
+
+How much does the width of the 95% CI's seem to vary?
+```{r}
+# your answer here
+```
+
+About how often do your CI's contain the mean for the high-fat diet population? What do you think this might mean?
+```{r}
+# your answer here
+```
+
+
+# IV. Postscript: Hypothesis testing
+
+In a later exercise, we will quantify the probability that a sample of high-fat mice comes from a different distribution than the "chow" distribution we have constructed here -- that is, can we reject the null hypothesis that the high-fat diet has no significant effect on our mice? 
 
 First we will derive a $p$-value for this empirically by comparing sample distributions taken from both populations, and then we will use a standard statistical test, the $t$-test, to compute a $p$-value from multiple individual samples.
 
