@@ -13,7 +13,7 @@ library(ggplot2)
 
 # Our World in Data: the COVID19 pandemic
 
-[Our World in Data](https://ourworldindata.org/) publishes data, visualizations, and analyses of issues of global importance, such as poverty, climate change, and disease. Today, we will a data set on COVID19 compiled by them. It contains profiles of 207 countries or territories. The data include the **daily** number of cases, deaths, vaccinations etc., and they are accompanied by some useful country stats, e.g. their population. We downloaded the data set (version 44) [from kaggle](https://www.kaggle.com/tunguz/data-on-covid19-coronavirus) but only kept a few selected columns.
+[Our World in Data](https://ourworldindata.org/) publishes data, visualizations, and analyses of issues of global importance, such as poverty, climate change, and disease. Today, we will analyze a data set on COVID19 compiled by them. It contains profiles of 207 countries or territories. The data include the **daily** number of cases, deaths, vaccinations etc., and they are accompanied by some useful country stats, e.g. their population. We downloaded the data set (version 44) [from kaggle](https://www.kaggle.com/tunguz/data-on-covid19-coronavirus) but only kept a few selected columns.
 
 ## Look at the data
 
@@ -34,102 +34,123 @@ str(covid)
 First, describe each step in words.
 ```
 1. Subset countries located in Europe.
-2. Normalize the number of cases and the number of deaths to the population size.
-3. For each country, sum up normalized new cases and normalized new deaths across all recorded days.
+2. For each country, sum up new cases and deaths across all recorded days to get their total numbers.
+3. Normalize the number of cases and deaths to the population size.
 4. Sort the data by the normalized total number of cases and plot them.
 ```
 
 Next, write `dplyr` code for each individual step.
 ```{r}
-# subset countries located in Europe
+# 1.1. subset countries located in Europe
 covid_europe <- filter(covid,
-                       continent=="Europe")
+                       continent == "Europe")
 
 head(covid_europe)
 
-# the same, but using piping
+# 1.2. the same, but using piping
 covid_europe <-
   covid %>%
-  filter(continent=="Europe")
+  filter(continent == "Europe") # no need to have covid inside parenthesis because it has already been piped into the function
 
 head(covid_europe)
 
-# normalize cases and deaths to the population size
-covid_europe_norm <-
-  covid_europe %>% 
-  mutate(new_cases_per_thousand=1000*new_cases/population,
-         new_deaths_per_100k=100000*new_deaths/population)
-
-head(covid_europe_norm)
-covid_europe_norm[100:105,]
-
-# group by country
-covid_europe_norm_grouped <-
-  covid_europe_norm %>%
+# 2.1. group by country - the data won't change but this step is necessary before performing any sort of calculations that need to be done for each group separately
+covid_europe_grouped <-
+  covid_europe %>%
   group_by(location)
 
-head(covid_europe_norm_grouped)
+head(covid_europe_grouped) # the data are now a tibble (think of it as an enhanced data.frame) - note the new attribute "Groups"
 
-# sum cases and deaths across days
-covid_europe_norm_grouped_totals <-
-  covid_europe_norm_grouped %>%
-  summarize(total_cases_per_thousand=sum(new_cases_per_thousand,na.rm=TRUE),
-            total_deaths_per_100k=sum(new_deaths_per_100k,na.rm=TRUE))
+# 2.2. sum up cases and deaths across days for each country (=for each group)
+covid_europe_grouped_totals <-
+  covid_europe_grouped %>%
+  summarize(total_cases = sum(new_cases, na.rm = TRUE), # na.rm=TRUE makes sum ignore NA values
+            total_deaths = sum(new_deaths, na.rm = TRUE), # na.rm=TRUE makes sum ignore NA values
+            population = mean(population)) # could have been max or min - population is likely the same for each day
 
-head(covid_europe_norm_grouped_totals)
+head(covid_europe_grouped_totals)
 
-# sort in descending order
-covid_europe_norm_grouped_totals_sorted <-
-  covid_europe_norm_grouped_totals %>%
-  arrange(desc(total_cases_per_thousand))
+# 3. normalize cases and deaths to the population size
+covid_europe_grouped_totals_norm <-
+  covid_europe_grouped_totals %>% 
+  mutate(total_cases_per_thousand = 1000*total_cases/population,
+         total_deaths_per_100k = 100000*total_deaths/population) # we arbitrarily normalize by 100k instead of 1k people to make the number of cases and death easily comparable when plotted on the same scale
 
-head(covid_europe_norm_grouped_totals_sorted)
+head(covid_europe_grouped_totals_norm)
 
-# transform into the long format
-covid_europe_norm_grouped_totals_sorted_long <-
-  covid_europe_norm_grouped_totals_sorted %>%
-  gather(key="metric",
-         value="value",
+# 4.1. sort in descending order
+covid_europe_grouped_totals_norm_sorted <-
+  covid_europe_grouped_totals_norm %>%
+  arrange(desc(total_cases_per_thousand)) # use desc() to sort in descending order
+
+head(covid_europe_grouped_totals_norm_sorted)
+
+# 4.2. only keep those columns that are relevant
+covid_europe_grouped_totals_norm_sorted_selected <-
+  covid_europe_grouped_totals_norm_sorted %>%
+  select(location, total_cases_per_thousand, total_deaths_per_100k)
+
+head(covid_europe_grouped_totals_norm_sorted_selected)
+
+# 4.3. transform the data into the long format
+covid_europe_grouped_totals_norm_sorted_selected_long <-
+  covid_europe_grouped_totals_norm_sorted_selected %>%
+  gather(key = "metric",
+         value = "value",
          "total_cases_per_thousand",
-         "total_deaths_per_100k")
+         "total_deaths_per_100k") # gather() is actually from the package tidyr, but it is compatible with dplyr
 
-head(covid_europe_norm_grouped_totals_sorted_long)
-tail(covid_europe_norm_grouped_totals_sorted_long)
+head(covid_europe_grouped_totals_norm_sorted_selected_long)
+tail(covid_europe_grouped_totals_norm_sorted_selected_long)
+
+# 4.4. convert "location" to a factor and force its levels to maintain the same order as in the sorted data frame (otherwise, countries will be sorted alphabetically by ggplot2)
+covid_europe_grouped_totals_norm_sorted_selected_long$location <- 
+  factor(covid_europe_grouped_totals_norm_sorted_selected_long$location,
+         levels = unique(covid_europe_grouped_totals_norm_sorted_selected_long$location)) # we use unique() here because each country name is repeated twice in the tibble, and level names must be unique. this trick works here but won't necessarily work elsewhere
 ```
 
-## Combine the steps into a pipeline
-
-Join all the individual steps with `%>%`, feed the input data.frame into the pipeline, and assign the output tibble to a variable.
+Finally, plot the data on a `ggplot2` bar graph. Make sure that the bars representing number of cases and number of deaths for each country are plotted side-by-side.
 ```{r}
-covid_europe_summary <- 
-  covid %>%
-  filter(continent=="Europe") %>%
-  mutate(new_cases_per_thousand=1000*new_cases/population,
-         new_deaths_per_100k=100000*new_deaths/population) %>%
-  group_by(location) %>%
-  summarize(total_cases_per_thousand=sum(new_cases_per_thousand,na.rm=TRUE),
-            total_deaths_per_100k=sum(new_deaths_per_100k,na.rm=TRUE)) %>%
-  arrange(desc(total_cases_per_thousand)) %>%
-  gather(key="metric",
-         value="value",
-         "total_cases_per_thousand",
-         "total_deaths_per_100k")
-
-covid_europe_summary
-```
-
-Finally, plot the data on a bar graph. Make sure that the bars representing number of cases and number of deaths for each country are plotted side-by-side.
-```{r}
-# force the levels of "location" to maintain the same order as in covid_europe_summary (otherwise, countries will be sorted alphabetically)
-covid_europe_summary$location <- factor(covid_europe_summary$location,
-                                        levels=unique(covid_europe_summary$location)) # we use unique() here because each country name is repeated twice in the tibble, and level names must be unique
-
-# make the plot
-ggplot(data = covid_europe_summary,
+ggplot(data = covid_europe_grouped_totals_norm_sorted_selected_long,
        mapping = aes(x = location,
                      y = value,
                      fill = metric)) +
-  geom_col(position="dodge") +
+  geom_col(position = "dodge") +
+  coord_flip()
+```
+
+
+## Combine all `dplyr` steps into a single pipeline
+
+Join all the individual steps with `%>%`, feed the input data.frame into the pipeline, and assign the output tibble to a variable.
+```{r}
+covid_dplyr <- 
+  covid %>%
+  filter(continent == "Europe") %>%
+  group_by(location) %>% 
+  summarize(total_cases = sum(new_cases, na.rm = TRUE),
+            total_deaths = sum(new_deaths, na.rm = TRUE),
+            population = mean(population)) %>% 
+  mutate(total_cases_per_thousand = 1000*total_cases/population,
+         total_deaths_per_100k = 100000*total_deaths/population) %>% 
+  arrange(desc(total_cases_per_thousand)) %>%
+  select(location, total_cases_per_thousand, total_deaths_per_100k) %>%
+  gather(key = "metric",
+         value = "value",
+         "total_cases_per_thousand",
+         "total_deaths_per_100k") %>%
+  mutate(location = factor(location, levels = unique(location)))
+
+covid_dplyr
+```
+
+Plot the data again to make sure the plot looks the same.
+```{r}
+ggplot(data = covid_dplyr,
+       mapping = aes(x = location,
+                     y = value,
+                     fill = metric)) +
+  geom_col(position = "dodge") +
   coord_flip()
 ```
 
