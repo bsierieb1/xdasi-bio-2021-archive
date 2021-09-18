@@ -1,0 +1,540 @@
+---
+title: "Homework 2: Graphics, Part I"
+subtitle: "XDASI 2021"
+author: "Graeme Vissers"
+date: "Due date: 9/16/2021"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    toc_depth: 3
+    highlight: pygments
+---
+
+# Plotting with Base R and ggplot2
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+In these exercises, we will reproduce plots from W&S Chapter 2 using both Base R and ggplot2. This will give us a taste of the syntax for making plots with both packages, and how they compare with each other.
+
+Start an R Project for this week's homework, put this `.Rmd` file in it, then download and unpack the data files in the `WS_Ch2_data.zip` file provided on the course website. They should unpack into a directory called `data`, which you should place in the same directory as your R Project.
+
+_**Remember, if you are not sure about command syntax, you can always look it up using the Help menu.**_
+
+# I. Categorical Data
+
+In this exercise, we will reproduce the frequency table (Table 2.2-1) and figure (Figure 2.2-1) from Example 2.2A in W&S, which summarizes the activities of people at the time they were attacked and killed by tigers near Chitwan National Park in Nepal between 1979 and 2006.
+
+## I.1) Frequency table
+
+a. Load the data in the `Ex2.2A_tigers.csv` file into a data frame called `tigers.df` and take a look at it. 
+  
+  + Make sure to specify the correct directory structure when you read in the file. 
+  + Does the file have headers? Potential "factor" columns?
+
+```{r, collapse=TRUE, error=FALSE}
+# ============================================================================ ## 
+# load the file
+tigers.df = read.csv("./data/Ex2.2A_tigers.csv", stringsAsFactors = TRUE)
+
+# ============================================================================ ## 
+# take a look at it
+head(tigers.df)
+
+```
+
+b. i) First, create a **frequency table** containing the counts for each category, arranged in descending order (you may choose to do these operations sequentially, or all in one line):
+  
+  + Make a `table()` of counts for each activity called `tiger.table`.
+    + Hint: use just the "activity" column vector here (what happens if you don't?)
+  + Use `sort()` to get the table in `decreasing` order of frequency.
+  + Make this into a data frame called `tiger.table.df`.
+  
+  ii) Next, rename the columns in the data frame as "Activity" and "Frequency". Take a look at the result to check your work.
+
+  iii) Finally, save this table as a new file  in the `data` folder called `tiger_attack_freq.csv`. Make sure to include column names but not row names. Check the docs on how to specify the right column names.
+
+```{r, collapse=TRUE, error=FALSE}
+# ============================================================================ #
+# make a frequency table
+tiger.table = table(tigers.df$activity)
+
+# Option 1: in sequential steps (check your work as you go along) ---------- #
+# tiger.table = 
+# ...
+# tiger.table.df = 
+
+# Option 2: all at once ---------------------------------------------------- #
+tiger.table.df = data.frame(sort(tiger.table, decreasing = TRUE))
+
+# ============================================================================ #
+# change the column names
+colnames(tiger.table.df) = c("Activity", "Frequency") 
+
+# check data structures
+head(tiger.table.df)
+
+# ============================================================================ #
+# write the table to a file
+write.table(tiger.table.df, "./data/tiger_attack_freq.csv", row.names = FALSE, col.names = c("Activity", "Frequency"))
+
+```
+
+
+## I.2) Bar chart (1-dimensional categorical data)
+
+Let's reproduce Figure 2.2-1. If you still have `tiger.table.df` in your environment, you can use that directly, otherwise load the `.csv` file you saved above into a data frame with the same name.
+
+### I.2.A) Bar chart with base R
+
+a. Make a `barplot()` of the "Frequency" column, setting `col = "firebrick"`.
+
+```{r, error=FALSE}
+barplot(tiger.table.df$Frequency, col = "firebrick")
+
+```
+
+Well that's a good start, but where are the axis and category labels? And why does the first bar exceed the range of the y-axis?
+
+
+b. Let's fix these up per the figure. Adding the text annotations is a bit tricky, since the category labels are at a 45 degree angle. We also need to increase the bottom margin, or else the text will get truncated (you can check this for yourself below by commenting out the first `par()` command).
+
+Below, we've added all of these bells and whistles for you. Just **paste your barplot command** in the space provided, with one change: set the limits of the y-axis using `ylim = c(0,50))`, to keep the bars in range of the axis tick marks. 
+
+Note that we also need to assign the plot to a variable so we can refer to it when we add the text annotations.
+
+```{r, collapse=TRUE, error=FALSE}
+# ============================================================================ #
+# 0. open a handle for writing to a PDF file 
+#    (skip for part b; we will add this in part c)
+pdf("tigers_freq_plot.pdf") #Able to write the plot as a pdf in the current directory
+
+# ============================================================================ #
+# 1. increase bottom canvas margin
+par(mar=c(7, 4.1, 4.1, 2.1))  # default is par(mar=c(5.1, 4.1, 4.1, 2.1))
+
+# ============================================================================ #
+# 2. make a barplot: paste your code here, adding y-axis limits)
+tiger.barplot = barplot(tiger.table.df$Frequency, col = "firebrick", ylim = c(0, 50))
+barplot(tiger.table.df$Frequency, col = "firebrick", ylim = c(0, 50))
+
+# ============================================================================ #
+# 3. add text annotations
+#    set text at a 45 degree angle and position it relative to the x-axis
+text(x = tiger.barplot + 0.25, y = -2,       # x, y positions
+     tiger.table.df$Activity,                # Activity factor
+     srt = 45, pos = 2,                      # angle and position
+     xpd = TRUE )                            # allow text outside plotting area     
+
+# ============================================================================ #
+# 4. add axis labels
+#    Arguments: text, bold font, side (1=x-axis,2=y-axis), position
+mtext ("Activity", font=2, side=1, line=5.5)
+mtext ("Frequency (number of people)", font=2, side=2, line=2.5)
+
+# ============================================================================ #
+# 5. restore default margins (otherwise changes are persistent)
+par(mar=c(5.1, 4.1, 4.1, 2.1))
+#par("mar")  # check margins
+
+# ============================================================================ #
+# 6. close the device
+#    
+dev.off() #closes device
+
+```
+
+Nice! Lookin' good!
+
+c. How would you save this to a PDF file? Easy peasy! Just surround the code in the block above with `pdf("tigers_freq_plot.pdf")` and `dev.off()`. Do this now. Don't forget to add some comments!
+
+*Note: since you are now opening a new "device", you no longer need to restore the default margins manually, since the overrides will only apply to that device - but it doesn't hurt anything if you do. You could also set the dimensions and aspect ratio of the output, but this is good enough for us for now.*
+
+
+### I.2.B) Bar chart with ggplot2
+
+That was kind of tedious, wasn't it! Let's redo the bar chart using ggplot2. We can do all of the fancy stuff in one go.
+
+Below, add the **data**, **aesthetics**, and **geom** layers to the skeleton framework provided:
+
++ Add the `data =` and `aes(x = , y = )` arguments with the appropriate variables.
++ Add the `geom_bar()` argument, setting `fill = "firebrick"` and adding `stat = "identity"` inside the parentheses (don't worry about why you need this for now).
++ Assign the plot to an object called `my.ggplot` (you'll see why below).
++ Take a look at the object you have created.
+
+```{r, error=FALSE}
+# ============================================================================ #
+# add data, aes, and geom 
+my.ggplot = ggplot(data = tiger.table.df,
+                   mapping = aes(x = Activity, y = Frequency)) +
+  geom_bar(fill = "firebrick", stat = "identity") +
+  
+  # bells and whistles
+  labs(x = "Activity", y = "Frequency (number of people)") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  ylim(c(0,50))
+
+# ============================================================================ #
+# show it
+my.ggplot
+```
+
+Voilà! It's magic!
+
+
+### I.2.C) Saving plots to files
+
+a. To write this ggplot graph to a file, all you have to do is use the `ggsave()` command with a file name and the name of the object you want to print! It will try to guess the type of file you want from the suffix you give it. Try this below.
+
+*Note: If no object is specified, this function will just use the the last plot you made.*
+
+```{r, error=FALSE}
+# save the ggplot object to a PNG file
+ggsave("myggplot_tigerfrequency.png", plot = my.ggplot)
+
+```
+
+
+b. With a named plot, you could also just use the base R methods to save the file by opening a device, printing the object using the `print()` command, and then closing the device. Try this below.
+
+```{r, collapse=TRUE, error=FALSE}
+# open a device for writing to a file (pick PDF or PNG)
+png("baseR_tigerfrequency.png")
+
+# print the graph object
+print(my.ggplot)
+
+# close the device
+dev.off()
+
+```
+
+Note that the PNG file has lower resolution using this method. You could probably fix this by adding a bunch of extra parameters, but why bother when you can use ggplot?
+
+
+# II. Numerical data
+
+## II.1) Histogram (frequency distribution)
+
+Let's reproduce the histogram shown on the left in Figure 2.2-5, which shows the frequency distribution of body mass for 228 female sockeye salmon from Pick Creek, Alaska in 1996, using the data in the corresponding `.csv` file.
+
+Read the file into a data frame called `salmonSizeData` and take a look at it.
+
+```{r, collapse=TRUE, error=FALSE}
+# load the data
+salmonSizeData <- read.csv("./data/Fig2.2-5_SalmonBodySize.csv")
+
+# take a look
+head(salmonSizeData)
+```
+
+## II.1.A) Histogram in base R
+
+Histograms are really easy to make in base R, and it's really convenient to use them for data exploration. Use the single code block provided to complete parts a-c below.
+
+a. First, make a histogram of the `massKg` column.
+
++ Use the same "firebrick" color as before, and label the x-axis with the same label as the figure in the book.
+
+
+b. Next, remake the same plot, but make the following additions:
+
++ Use the `breaks` parameter to specify the *total number of breaks* you would need in order to set the bin size (interval width) to 0.1.
++ Set the x-axis range from 1-4 using `xlim`, and the y-axis range from 0-30 using `ylim`. *[Hint: the range should be a two-element vector]*
++ Add a nicer main title for the whole plot, e.g. "Salmon Size Distribution"
+
+
+c. To visualize the difference between these two plots, let's draw them side-by-side using the `par()` and setting `mfrow()` to one row and two columns. Add this to the code block below.
+
+```{r, error=FALSE}
+# ============================================================================ #
+# c. Make two side-by-side graphs (skip until you get to part c)
+par(mfrow = c(1, 2))
+
+# ============================================================================ #
+# a. Draw a histogram showing frequency data for body mass (base R)
+hist(salmonSizeData$massKg,
+     col = "firebrick",
+     xlab = "Body mass (kg)")
+
+
+# ============================================================================ #
+# b. Replot with bin size (interval width) = 0.1
+range_diff = range(salmonSizeData$massKg)[2] - range(salmonSizeData$massKg)[1]
+hist(salmonSizeData$massKg,
+     col = "firebrick",
+     xlab = "Body mass (kg)",
+     main = "Salmon Size Distribution",
+     xlim = c(1, 4),
+     ylim = c(0, 30),
+     breaks =  range_diff/ 0.1
+     )
+
+
+```
+
+
+## II.1.B) Histogram in ggplot2
+
+Now let's reproduce these plots using ggplot2. Complete parts a and b using the single code block provided.
+
+a. First, make a histogram using `qplot()`.
+
++ For the first argument, use the mass column from the data frame (this is your "aesthetic mapping", i.e. the data vector you want to show)
++ For `data`, use the data frame
++ We will set the colors manually by adding: `col=I("black"), fill=I("firebrick")`
+  + *I don't know why the `I()` function is required, but it is!*
+
+
+b. Then make the same plot one using `ggplot()`. The syntax is different, but you will still be using the data frame as the data, the mass column as the aesthetic mapping, and the histogram as the geometry.
+
++ To get the right coloring scheme, you'll need to use both the `fill` and `col` parameters.
+  + HOWEVER, because you are not mapping any DATA to these aesthetics, you need to set these manually, and put them inside the `geom` layer. Play around with these until you get them right. 
+  + *Note that for ggplot, you do NOT use the `I()` function; why? I don't know*
+
+```{r, error=FALSE}
+# ============================================================================ #
+# a. quick plot (shortcut), with no special formatting
+qplot(massKg,
+      data = salmonSizeData,
+      col = I("black"), fill = I("firebrick")
+      )
+
+# ============================================================================ #
+# b. body mass histogram with ggplot
+ggplot(data = salmonSizeData,
+       mapping = aes(x = massKg)) +
+  geom_histogram(fill = "firebrick",
+                 col = "black")
+
+```
+
+Notice that you get an error about the number of bins - by default, the number of bins is set to 30, but you'll usually want to pick a better number for `bins` or set `binwidth`.
+
+c. Now let's make the second plot look just like the one in the book. Paste your ggplot code from part (b) into the block below, with the following additions:
+
++ Inside the `geom` layer:
+  + set `binwidth=0.1`
+  + add `boundary = 0, closed = "left"` (for correct placement of bars)
+
+We've added some extra stuff for you to make the plot look as close as possible to the one in the figure:
+
++ an `xlim` layer (increases x-axis range with extra tick marks)
++ a `theme_classic()` layer
++ axis titles
+
+```{r, error=FALSE}
+# ============================================================================ #
+# fancy plot matching the book
+ggplot(data = salmonSizeData,
+       mapping = aes(x = massKg)) +
+  geom_histogram(fill = "firebrick",
+                 col = "black",
+                 binwidth = 0.1,
+                 boundary = 0,
+                 closed = "left") +
+
+# add data+aes+geom layers with additions specified above (don't forget the + sign!)
+
+  
+  # extra bells and whistles
+  labs(x = "Body mass (kg)", y = "Frequency") +
+  xlim(1,4) + 
+  theme_classic() +
+  theme(axis.title.x = element_text(face="bold"),
+        axis.title.y = element_text(face="bold"))
+```
+
+
+# III. Associations between variables
+
+## III.1) Two categorical variables
+
+In this exercise, we will reproduce Figure 2.3-1 and Figure 2.3-2 from Example 2.3A in the textbook. The data describe the incidence in malaria in wild birds subjected to reproductive stress by removing eggs from the nest. 
+
+We will first produce a side-by-side bar chart, and then a mosaic plot.
+
+## III.1.A) Load data and make a table
+
+a. Before we start plotting, let's load the data in the corresponding `.csv` file and check the result. Since some of the data we are interested in should not be interpreted as a factor, make sure you don't make character columns into factors by accident.
+
+```{r, error=FALSE}
+# load and check data file
+avianMalaria <- read.csv("./data/Ex2.3A_malaria.csv", stringsAsFactors = FALSE)
+  
+```
+
+b. Next, let's use `table()` to make a contingency table of response vs. treatment called `avianMalaria.table`. We then add **marginal** totals, i.e. total counts across each row and column (we have done this for you below).
+
+```{r, error=FALSE}
+# ============================================================================ #
+# Make a contingency table
+avianMalaria.table = table(avianMalaria$treatment, avianMalaria$response)
+
+# ============================================================================ #
+# add "marginal" totals
+addmargins(avianMalaria.table, margin = c(1,2), FUN = sum, quiet = TRUE)
+```
+
+
+## III.1.B) Bar chart with Base R
+
+a. The default is to make a stacked bar chart. Do this first, using the table you just made. Then modify the code to make a side-by-side plot.
+
+```{r, error=FALSE}
+# ============================================================================ #
+# stacked
+barplot(avianMalaria.table)
+
+# ============================================================================ #
+# side-by-side
+barplot(avianMalaria.table, beside = TRUE)
+
+```
+
+
+b. You can make the latter plot look approximately like the one in the book by adding the extra lines below. This adds some space between the bars, some color, and a legend.
+
+To do this, paste your barplot command below [make sure to replace `)` with a comma]:
+
+```{r, error=FALSE}
+# ============================================================================ #
+# a prettier plot
+
+# add your barplot command here
+barplot(avianMalaria.table, beside = TRUE,
+        
+        # some bells and whistles
+        ylab = "Frequency",
+        space = c(0.2,0.2,0.8,0.2),
+        col = c("firebrick","goldenrod1"),
+        border=FALSE,
+        legend.text=TRUE
+)
+```
+
+
+## III.1.C) Grouped bar chart with ggplot
+
+a. Now use ggplot to make a side-by-side bar chart. Note that the default is still to stack bars, so you'll need another parameter to change this behavior.
+
++ **Aesthetics**: map the "treatment" variable to `x` and use `fill` for the "response" variable
++ **Geom**: use `position` to control the placement of bars
+
+```{r, error=FALSE}
+# simple side-by-side plot with default colors
+ggplot(data = avianMalaria,
+       mapping = aes(x = treatment, fill = response)) +
+  geom_bar(position = position_dodge2(preserve="single"))
+```
+
+b. The style of the graph you just made is a default ggplot bar chart. To approximate the figure in the book, add the **data** and **aes** layers from above to the command we've filled in for you below.
+
+```{r, error=FALSE}
+# ============================================================================ #
+# a fancier plot
+
+# add the data and aesthetics here
+ggplot(data = avianMalaria,
+       mapping = aes(x = treatment, fill = response)) +
+
+  # some bells and whistles
+  geom_bar(position = position_dodge2(preserve="single")) +
+  scale_fill_manual(values=c("firebrick", "goldenrod1")) +
+  labs(x = "Treatment", y = "Frequency") +
+  scale_y_continuous(breaks = seq(from = 0, to = 25, by = 5)) + # y-axis
+  theme_classic() +
+  theme(legend.title = element_blank())
+```
+
+
+## III.1.D) Mosaic plot with base R
+
+Here we will approximate the mosaic plot in Figure 2.2-2. Mosaic plots seem to be easier in base R than in ggplot, so we're just going to stick with this. Check out `ggmosaic()` if you want to try making a mosaic plot with ggplot. 
+
+a. First, make a basic `mosaciplot()` using the malaria table.
+
+```{r, error=FALSE}
+mosaicplot(avianMalaria.table)
+
+```
+
+Why doesn't this look the same as in the figure? It seems that the axes are flipped!
+
+b. To make the plot look the way we want, we need to use the transpose function `t()` to flip the table, and then plot it. Try this below.
+
+```{r, error=FALSE}
+# mosaic plot with transposed table
+mosaicplot(t(avianMalaria.table))
+```
+
+c. That looks a bit better ... add this command to the code below to make the final figure.
+
+```{r, error=FALSE}
+# ============================================================================ #
+# a prettier plot
+
+# paste your code here [don't forget to replace `)` with a comma]
+
+mosaicplot(t(avianMalaria.table),
+            # fancy formatting
+            col = c("firebrick", "goldenrod1"), 
+            sub = "Treatment", 
+            ylab = "Relative frequency",
+            border=FALSE,
+            main = "" )
+```
+
+
+## III.2) Two numerical variables
+
+Are the length and mass of sockeye salmon correlated? Let's go back to our salmon dataset and see.
+
+### III.2.A) Base R plot
+
+Use the `plot()` command to make a scatterplot.
+
++ Place the size on the x-axis and the mass on the y-axis.
++ Color the points in "firebrick", and some axis labels as well.
+
+```{r, error=FALSE}
+# ============================================================================ #
+# Make a scatterplot of length and mass
+plot(x = salmonSizeData$lengthMm,
+     y = salmonSizeData$massKg,
+     col = "firebrick",
+     xlab = "Length (mm)",
+     ylab = "Mass (kg)")
+
+# ============================================================================ #
+# add the best-fit regression line for these data
+# (execute the entire code block at once to see the result)
+abline(lm(massKg ~ lengthMm, data = salmonSizeData))
+```
+
+
+### III.2.B) ggplot2
+
+Scatterplots use the `geom_point()` geometry. Map the salmon data onto the x- and y-axes as above.
+
++ Inside the `geom` layer, you can manually set the `size` and `col` (color) of the points; use `shape=1` to get hollow points
++ Add axis labels as above
++ To add a simple regression line, add a `stat` layer: `stat_smooth(method=lm, se=FALSE, color="black", size=0.5)`
++ Add `theme_classic()` to get a white background
+
+```{r, error=FALSE}
+# scatterplot of length and mass with regression line
+ggplot(data = salmonSizeData,
+       mapping = aes(x = lengthMm, y = massKg)) +
+  geom_point(shape = 1, col = "firebrick", size = 4) +
+  stat_smooth(method=lm, se=FALSE, color="black", size=0.5) +
+  theme_classic() +
+  labs(x = "Length (mm)", y = "Mass (kg)")
+
+```
+
+***Now you're cooking with gas! Hand in your homework and go relax!***
