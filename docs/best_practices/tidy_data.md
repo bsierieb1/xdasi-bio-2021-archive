@@ -76,7 +76,10 @@ To make the data tidy, we want to **pivot**  the columns labeled `1999` and `200
 
 ![A tidy data table](images/tidy-9.png){: width="90%"}
 
-This creates a longer table that is easier to extract data summaries from using standard R tools.
+This creates a longer table that is easier to extract data summaries from using standard R tools. A more abstract representation of the same idea is shown below:
+
+![Long format](images/long.png){width=60%}
+
 
 ### Pivot wider
 {: .no_toc}
