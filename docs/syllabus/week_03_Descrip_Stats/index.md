@@ -43,7 +43,9 @@ has_children: false
 <details closed markdown="block">
   <summary>Details</summary>
 
-+ [**Interactive class notes**](http://shiny.bio.nyu.edu/bs167/W3C2/){: target="blank"}
++ **Class Notes**
+  + [Interactive](http://shiny.bio.nyu.edu/bs167/W3C2/){: target="blank"}
+  + [Static](Class2/W3.C2_Notes_Sampling_Distributions_static.html){: target="blank"}
 + [**Class exercise and data set**](Class2/W3.C2_Exercise_trees_CLT/W3.C2_Exercise_trees_CLT.zip)
 + Answer key: [RMD+DATA zipped](Class2/W3.C2_Exercise_trees_CLT/W3.C2_Exercise_trees_CLT_KEY.zip) - [HTML](Class2/W3.C2_Exercise_trees_CLT/W3.C2_Exercise_trees_CLT_KEY.html){: target="blank"}
   + Note that the key was supplemented with an additional section.
