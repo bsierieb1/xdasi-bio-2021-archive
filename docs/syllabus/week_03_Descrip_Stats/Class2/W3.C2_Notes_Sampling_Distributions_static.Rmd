@@ -570,8 +570,6 @@ Correspondingly, if the 95% CI does not contain the mean for the null hypothesis
 
 ## V. The Central Limit Theorem
 
-### What is the Central Limit Theorem?
-
 The CLT is one of the most ***fundamental concepts in statistics*** and encapsulates the issues discussed above.
 
 Briefly, it says that, ***As the sample size increases, any sample statistic will converge on the true population parameter, and its distribution will be approximately normal.***
@@ -585,12 +583,16 @@ The CLT highlights two important properties of **independent and identically dis
 
 + Moreover, the distribution of the sample statistic will follow a **normal distribution** centered around the population mean.
   + In other words, repeated estimates of your sample statistic will show a normal distribution, ***even if the underlying data distribution is not normal***.
++ *Side note: It turns out that the normal distribution has **maximum entropy**. This means that any individual sample gives no additional information about any of the other samples, i.e. they are uncorrelated, as you would expect for i.i.d. random variables.*
 
 Since the SEM decreases as the square root of the sample size, ***in the limit*** our uncertainty in the sample mean $\bar{X}$ will go to zero as $N$ goes to infinity (and therefore $\bar{X}$ will exactly equal the true population mean $\mu$):
 
 $$\lim_{N \rightarrow \infty}SEM = \lim_{N \rightarrow \infty}\frac{\sigma}{\sqrt{N}} = 0$$
 
-+ *Side note:* It turns out that the normal distribution has ***maximum entropy***. This means that any individual sample gives no additional information about any of the other samples, i.e. they are uncorrelated, as you would expect for i.i.d. random variables.
+### Law of large numbers
+
+This property that the standard error of the mean approaches zero as the sample size increases is known in statistics books as tje **law of large numbers** or the **law of averages**.
+
 
 <!-- ======================================================================= -->
 
