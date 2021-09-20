@@ -1,0 +1,232 @@
+---
+title: 'In-Class Exercises: Distributions'
+subtitle: XDASI 2021
+author: "Kris Gunsalus"
+date: "9/20/2021"
+output: html_document
+---
+
+
+## Normal Distribution
+
+Several relatively recent GWAS studies have determined that 80% of height is heritable, and that many loci contribute to height variation.
+
+Let's look at the heights of 1000 fathers and their adult sons (in inches). This dataset can be loaded from the "UsingR" package by John Verzani. 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# install and load package
+# load.packages("UsingR")  # do this only once
+library(UsingR)
+```
+
+Load the dataset and take a look at it.
+
+```{r}
+data(father.son)
+head(father.son)
+```
+
+### Histogram
+
+Put the data in long form and make a histogram.
+
+```{r}
+fs.long = stack(father.son)
+
+ggplot(data = fs.long, aes(x=values, fill=ind)) +
+  geom_histogram(position="identity",
+                 alpha = 0.5,
+                 binwidth = 1)
+```
+
+## QQ Plot
+
+Make a normal QQ plot of the full dataset. Do these data look approximately normally distributed?
+
+```{r}
+# all
+qqnorm(fs.long$values)
+qqline(fs.long$values)
+
+# subsets
+# f.height = fs.long[which(fs.long$ind == "fheight"),"values"]
+# s.height = fs.long[which(fs.long$ind == "sheight"),"values"]
+# qqnorm(f.height)
+# qqline(f.height)
+# qqnorm(s.height)
+# qqline(s.height)
+```
+
+Take a look at the QQplot. What units are the quantiles in on the x- and y-axes? What do they represent?
+
+## Random sampling
+
+Assuming the 1000 measurements we have are representative of the population, take a random sample of 100 heights and make a new QQ plot. Does your random sample look normal too?
+
+```{r}
+f.sample = sample(fs.long$values, 100)
+qqnorm(f.sample)
+qqline(f.sample)
+```
+
+Sometimes we will want to resample from a finite dataset to simulate taking a bunch of random samples from a larger population. In such cases we often want to sample "with replacement" to get a more representative sample. Can you think of a reason why this could make a difference?
+
+Try this out below, setting `replace=TRUE`. Do your results look much different here?
+
+```{r}
+f.sample = sample(fs.long$values, 100, replace=TRUE)
+qqnorm(f.sample)
+qqline(f.sample)
+```
+
+## Summary statistics
+
+What are the mean and sd of the combined data?
+
+```{r}
+mean.fs = mean(fs.long$values)
+sd.fs   = sd(fs.long$values)
+c(mean.fs, sd.fs)
+```
+
+## CDF and quantile functions
+
+Use R's dqpr functions to find the boundaries for the IQR of the combined data, based on an idealized normal distribution with the same mean and sd as the actual dataset.
+
+```{r}
+iqr.lower = qnorm(0.25, mean.fs, sd.fs)
+iqr.upper = qnorm(0.75, mean.fs, sd.fs)
+c(iqr.lower,iqr.upper)
+```
+
+Assuming that the idealized distribution is a close approximation of the larger population, what proportion of men in the population are expected to be shorter than 65 inches?
+
+```{r}
+pnorm(65, mean.fs, sd.fs)
+```
+
+What proportion of the men are expected to measure between over 75 inches?
+
+```{r}
+pnorm(75, mean.fs, sd.fs, lower.tail = FALSE)
+1 - pnorm(75, mean.fs, sd.fs)
+```
+
+What proportion of the men are expected to measure between 65 and 75 inches?
+
+```{r}
+pnorm(75, mean.fs, sd.fs) - pnorm(65, mean.fs, sd.fs)
+```
+
+Do these sum to 100% of the total population?
+
+```{r}
+pnorm(65, mean.fs, sd.fs) +                                # under 65
+  pnorm(75, mean.fs, sd.fs) - pnorm(65, mean.fs, sd.fs) +  # between 65-75
+  pnorm(75, mean.fs, sd.fs, lower.tail = FALSE)            # over 75
+
+```
+
+What height corresponds to the lowest 10% of heights? The highest 10%?
+
+```{r}
+qnorm(0.1, mean.fs, sd.fs)
+qnorm(0.9, mean.fs, sd.fs)
+```
+
+## ECDF
+
+R contains a function to compute an **empirical CDF (ECDF)** called `ecdf()`. Use this to plot the ECDF for this dataset.
+
+```{r}
+fs.ecdf = ecdf(fs.long$values)
+plot(fs.ecdf)
+
+summary(fs.ecdf)
+
+# what is it?
+class(fs.ecdf)  # a function!
+
+quantile(fs.ecdf)
+quantile(fs.ecdf)[3]  # 50% quantile
+
+# proportion below a certain value
+fs.ecdf(c(60,65,70,75))
+fs.ecdf(mean(fs.long$values))  # what should this be?
+```
+
+
+# Simulation
+
+It's often useful to simulate data to explore possibilities. Let's do this below for some normally distributed data.
+
+```{r}
+# set a seed
+set.seed(9-18-1963)
+
+# simulate a standard normal distribution
+n = 100
+z = rnorm(n, mean=0, sd=1)  # take 100 samples from std normal (with replacement!)
+mean(z)                     # check
+var(z)
+```
+
+
+Let's compare the ECDF and the theoretical ECDF.
+
+```{r}
+x = seq(-3, 3, length = n)
+ecdf.z.fun = ecdf(z)
+
+class(ecdf.z.fun)  # it's a function
+
+ecdf.z.fun(0)  # what should this be?
+```
+
+
+Now let's plot it:
+
+```{r}
+# We can plot it 
+plot(x, ecdf.z.fun(x), lwd=2, col="red", type="l", ylab="CDF", main="ECDF")
+lines(x, pnorm(x), lwd=2)
+legend("topleft", legend=c("Empirical", "Actual"), lwd=2, 
+       col=c("red","black"))
+```
+
+We can do something similar with the PDF:
+
+```{r}
+# make a histogram object, but don't plot it
+hist.obj = hist(z, breaks=30, plot=FALSE) 
+class(hist.obj) # a list
+
+hist.obj$breaks    # breakpoints used
+
+hist.obj$density   # estimated probabilities
+```
+
+Now we can make the plot with the ideal distribution overlaid:
+
+```{r}
+# We can plot it
+plot(hist.obj, col="lightblue", freq=FALSE, main="Histogram")
+lines(x, dnorm(x), lwd=2)
+legend("topleft", legend=c("Histogram", "Actual"), lwd=2, 
+       col=c("lightblue","black"))
+```
+
+## Setting seeds
+
+Note that if you re-run this code several times with a new sample each time, the results can vary quite a bit. You can make your simulations come out the same every time using `set.seed(<some integer>)`. Try adding this before you generate your random sample and see what happens.
+
+## Compare empirical height distributions with ideal distributions
+
+Now that you've seen how to simulate a normally distributed sample and compare it to an ideal one, repeat the simulation exercise above on the height dataset.
+
+```{r}
+
+```
+

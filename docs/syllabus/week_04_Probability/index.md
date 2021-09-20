@@ -2,7 +2,7 @@
 title: Week 4
 parent: Syllabus
 has_children: false
-nav_exclude: true
+nav_exclude: false
 ---
 
 # Week 4: Title
@@ -21,12 +21,13 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- # Class - Monday, Sept. 20
+# Class - Monday, Sept. 20
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
++ [**Class notes**](XDASI_Probability_Distributions_Part1.html)
+</details>
 
 <!-- ########################################################################### -->
 
