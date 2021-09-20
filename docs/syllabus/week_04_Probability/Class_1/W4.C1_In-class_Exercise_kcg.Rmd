@@ -13,7 +13,7 @@ Several relatively recent GWAS studies have determined that 80% of height is her
 
 Let's look at the heights of 1000 fathers and their adult sons (in inches). This dataset can be loaded from the "UsingR" package by John Verzani. 
 
-```{r setup, include=FALSE, error=TRUE}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 # install and load package
@@ -24,11 +24,8 @@ library(UsingR)
 Load the dataset and take a look at it.
 
 ```{r}
-# add the dataset to your environment
 data(father.son)
-
-# inspect it
-
+head(father.son)
 ```
 
 ### Histogram
@@ -36,19 +33,30 @@ data(father.son)
 Put the data in long form and make a histogram.
 
 ```{r}
-# long form
+fs.long = stack(father.son)
 
-# plot
-
+ggplot(data = fs.long, aes(x=values, fill=ind)) +
+  geom_histogram(position="identity",
+                 alpha = 0.5,
+                 binwidth = 1)
 ```
 
 ## QQ Plot
 
-Using the example in the class notes, make a normal QQ plot of the full dataset. Do these data look approximately normally distributed?
+Make a normal QQ plot of the full dataset. Do these data look approximately normally distributed?
 
 ```{r}
-# qqplot and qqline
+# all
+qqnorm(fs.long$values)
+qqline(fs.long$values)
 
+# subsets
+# f.height = fs.long[which(fs.long$ind == "fheight"),"values"]
+# s.height = fs.long[which(fs.long$ind == "sheight"),"values"]
+# qqnorm(f.height)
+# qqline(f.height)
+# qqnorm(s.height)
+# qqline(s.height)
 ```
 
 Take a look at the QQplot. What units are the quantiles in on the x- and y-axes? What do they represent?
@@ -58,10 +66,9 @@ Take a look at the QQplot. What units are the quantiles in on the x- and y-axes?
 Assuming the 1000 measurements we have are representative of the population, take a random sample of 100 heights and make a new QQ plot. Does your random sample look normal too?
 
 ```{r}
-# random sample of 100 heights
-
-# qqplot and qqline
-
+f.sample = sample(fs.long$values, 100)
+qqnorm(f.sample)
+qqline(f.sample)
 ```
 
 Sometimes we will want to resample from a finite dataset to simulate taking a bunch of random samples from a larger population. In such cases we often want to sample "with replacement" to get a more representative sample. Can you think of a reason why this could make a difference?
@@ -69,10 +76,9 @@ Sometimes we will want to resample from a finite dataset to simulate taking a bu
 Try this out below, setting `replace=TRUE`. Do your results look much different here?
 
 ```{r}
-# sample with replacement
-
-# qqplot and qqline
-
+f.sample = sample(fs.long$values, 100, replace=TRUE)
+qqnorm(f.sample)
+qqline(f.sample)
 ```
 
 ## Summary statistics
@@ -80,8 +86,9 @@ Try this out below, setting `replace=TRUE`. Do your results look much different 
 What are the mean and sd of the combined data?
 
 ```{r}
-#  mean and sd of heights
-
+mean.fs = mean(fs.long$values)
+sd.fs   = sd(fs.long$values)
+c(mean.fs, sd.fs)
 ```
 
 ## CDF and quantile functions
@@ -89,49 +96,51 @@ What are the mean and sd of the combined data?
 Use R's dqpr functions to find the boundaries for the IQR of the combined data, based on an idealized normal distribution with the same mean and sd as the actual dataset.
 
 ```{r}
-# IQR lower and upper for heights
-
+iqr.lower = qnorm(0.25, mean.fs, sd.fs)
+iqr.upper = qnorm(0.75, mean.fs, sd.fs)
+c(iqr.lower,iqr.upper)
 ```
 
 Assuming that the idealized distribution is a close approximation of the larger population, what proportion of men in the population are expected to be shorter than 65 inches?
 
 ```{r}
-# total probability < 65
-
+pnorm(65, mean.fs, sd.fs)
 ```
 
 What proportion of the men are expected to measure between over 75 inches?
 
 ```{r}
-# total probability > 75
-
+pnorm(75, mean.fs, sd.fs, lower.tail = FALSE)
+1 - pnorm(75, mean.fs, sd.fs)
 ```
 
 What proportion of the men are expected to measure between 65 and 75 inches?
 
 ```{r}
-# total probability 65-75
-
+pnorm(75, mean.fs, sd.fs) - pnorm(65, mean.fs, sd.fs)
 ```
 
 Do these sum to 100% of the total population?
 
 ```{r}
+pnorm(65, mean.fs, sd.fs) +                                # under 65
+  pnorm(75, mean.fs, sd.fs) - pnorm(65, mean.fs, sd.fs) +  # between 65-75
+  pnorm(75, mean.fs, sd.fs, lower.tail = FALSE)            # over 75
 
 ```
 
 What height corresponds to the lowest 10% of heights? The highest 10%?
 
 ```{r}
-# 10% and 90% quantiles
-
+qnorm(0.1, mean.fs, sd.fs)
+qnorm(0.9, mean.fs, sd.fs)
 ```
 
 ## ECDF
 
 R contains a function to compute an **empirical CDF (ECDF)** called `ecdf()`. Use this to plot the ECDF for this dataset.
 
-```{r error=TRUE}
+```{r}
 fs.ecdf = ecdf(fs.long$values)
 plot(fs.ecdf)
 
