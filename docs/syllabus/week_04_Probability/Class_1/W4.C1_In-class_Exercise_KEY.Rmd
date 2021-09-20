@@ -1,13 +1,17 @@
 ---
-title: 'In-Class Exercises: Distributions'
+title: 'In-Class Exercises: Distributions and dqpr Functions in R'
 subtitle: XDASI 2021
 author: "Kris Gunsalus"
 date: "9/20/2021"
-output: html_document
+output: 
+  html_document:
+    toc: yes
+    toc_float: yes
+    toc_depth: 4
+    highlight: pygments
 ---
 
-
-## Normal Distribution
+# Distribution of height in the human population
 
 Several relatively recent GWAS studies have determined that 80% of height is heritable, and that many loci contribute to height variation.
 
@@ -28,7 +32,7 @@ data(father.son)
 head(father.son)
 ```
 
-### Histogram
+## Histogram
 
 Put the data in long form and make a histogram.
 
@@ -43,34 +47,44 @@ ggplot(data = fs.long, aes(x=values, fill=ind)) +
 
 ## QQ Plot
 
-Make a normal QQ plot of the full dataset. Do these data look approximately normally distributed?
+Make a normal QQ plot of the full dataset. 
 
-```{r}
+```{r fig.width=8, fig.asp=0.6}
 par(mfrow = c(1,3))
 # all
 qqnorm(fs.long$values)
 qqline(fs.long$values)
 
-# fathers and sons separately
+# we can also look at fathers and sons separately
 qqnorm(father.son$fheight)
 qqline(father.son$fheight)
 qqnorm(father.son$sheight)
 qqline(father.son$sheight)
 ```
 
-Take a look at the QQplot. What units are the quantiles in on the x- and y-axes? What do they represent?
+Take a look at the QQplot. What units are the quantiles in on the x- and y-axes, and what do they represent? Do these data look approximately normally distributed?
+
 
 ## Random sampling
 
 Assuming the 1000 measurements we have are representative of the population, take a random sample of 100 heights and make a new QQ plot. Does your random sample look normal too?
 
 ```{r}
+# sample 100 random individuals
 f.sample = sample(fs.long$values, 100)
 qqnorm(f.sample)
 qqline(f.sample)
 ```
 
-Sometimes we will want to resample from a finite dataset to simulate taking a bunch of random samples from a larger population. In such cases we often want to sample "with replacement" to get a more representative sample. Can you think of a reason why this could make a difference?
+Sometimes we will want to resample from a finite dataset to simulate taking a bunch of random samples from a larger population. In such cases we often want to sample ***"with replacement"*** to get a more representative sample. Can you think of a reason why this could make a difference?
+
+```{r}
+# If the random sample is large relative to the "population" from which it is 
+# being drawn, sampling without replacement will not give a random sample, 
+# because the available pool of options will shrink with each new draw and 
+# therefore each trial will not be independent.
+```
+
 
 Try this out below, setting `replace=TRUE`. Do your results look much different here?
 
@@ -78,7 +92,10 @@ Try this out below, setting `replace=TRUE`. Do your results look much different 
 f.sample = sample(fs.long$values, 100, replace=TRUE)
 qqnorm(f.sample)
 qqline(f.sample)
+
+# results are very similar in this case.
 ```
+
 
 ## Summary statistics
 
@@ -90,9 +107,10 @@ sd.fs   = sd(fs.long$values)
 c(mean.fs, sd.fs)
 ```
 
+
 ## CDF and quantile functions
 
-Use R's dqpr functions to find the boundaries for the IQR of the combined data, based on an idealized normal distribution with the same mean and sd as the actual dataset.
+Use R's **dqpr** functions to find the boundaries for the IQR of the combined data, based on an idealized normal distribution with the same mean and sd as the actual dataset.
 
 ```{r}
 iqr.lower = qnorm(0.25, mean.fs, sd.fs)
@@ -135,9 +153,12 @@ qnorm(0.1, mean.fs, sd.fs)
 qnorm(0.9, mean.fs, sd.fs)
 ```
 
+
 ## ECDF
 
-R contains a function to compute an **empirical CDF (ECDF)** called `ecdf()`. Use this to plot the ECDF for this dataset.
+R contains a function to compute an **empirical CDF (ECDF)** called `ecdf()`. It takes a vector of measurements and returns an `ecdf` **object** that can itself be run as a function on a new dataset.
+
+Use this function to plot the ECDF for this dataset.
 
 ```{r}
 fs.ecdf = ecdf(fs.long$values)
@@ -146,12 +167,13 @@ plot(fs.ecdf)
 summary(fs.ecdf)
 
 # what is it?
-class(fs.ecdf)  # a function!
+class(fs.ecdf)        # a function!
 
-quantile(fs.ecdf)
+# output is very similar to that of `summary()`
+quantile(fs.ecdf) 
 quantile(fs.ecdf)[3]  # 50% quantile
 
-# proportion below a certain value
+# proportion of data below a certain value
 fs.ecdf(c(60,65,70,75))
 fs.ecdf(mean(fs.long$values))  # what should this be?
 ```
@@ -161,23 +183,33 @@ fs.ecdf(mean(fs.long$values))  # what should this be?
 
 It's often useful to simulate data to explore possibilities. Let's do this below for some normally distributed data.
 
+## Setting seeds
+
+Note that if you write some code involving random numbers and then re-run it several times to generate a new sample each time, the results can vary quite a bit. 
+
+You can make your simulations come out the same every time using `set.seed(<some integer>)`. Try adding this before you generate your random sample and see what happens in comparison with not using a seed.
+
 ```{r}
-# set a seed
+# set a seed (or not)
 set.seed(9-18-1963)
 
 # simulate a standard normal distribution
-n = 100
-z = rnorm(n, mean=0, sd=1)  # take 100 samples from std normal (with replacement!)
-mean(z)                     # check
-var(z)
+n = 100                            # number of trials
+z.scores = rnorm(n, mean=0, sd=1)  # 100 samples from std normal
+                                   # (with replacement!)
+
+mean(z.scores)                            # check the results
+var(z.scores)
 ```
 
 
-Let's compare the ECDF and the theoretical ECDF.
+Let's compare the ECDF and the theoretical ECDF. To do this, we first compute the cumulative probabilities for our random sample of z-scores. 
+
+We assign the result to a variable, which can also be run as a function later on a new dataset.
 
 ```{r}
-x = seq(-3, 3, length = n)
-ecdf.z.fun = ecdf(z)
+# generate empirical ecdf for the sample from the standard normal (above)
+ecdf.z.fun = ecdf(z.scores)
 
 class(ecdf.z.fun)  # it's a function
 
@@ -185,21 +217,38 @@ ecdf.z.fun(0)  # what should this be?
 ```
 
 
-Now let's plot it:
+## Line plot of eCDF and ideal CDF
+
+To do this, we will first create a sequence of numbers to use on the x-axis. For a standard normal, these will be in units of standard deviations, be we could also do this for actual measurements like heights (we will also try this below).
+
+We then run the function we created above (using our random sample of z-scores) on a new set of values contained in the `x.seq` vector. This will generate an empirical CDF across the range of numbers specified in `x.seq`, which follows the same eCDF as the original data we fed it.
+
+We will also superimpose a curve representing the ideal CDF for a standard normal distribution. We will use the same set of values in `x.seq` to generate the total probabilities for the ideal CDF.
 
 ```{r}
-# We can plot it 
-plot(x, ecdf.z.fun(x), lwd=2, col="red", type="l", ylab="CDF", main="ECDF")
-lines(x, pnorm(x), lwd=2)
+# sequence of numbers for the x-axis
+x.seq = seq(-3, 3, length = n)
+
+# plot x=sequence of z-scores (x.seq) vs. 
+#      y=total probs for each value (run ecdf.z.fun on new set of values)
+plot(x.seq, ecdf.z.fun(x.seq), 
+     type="l", lwd=2, col="red", 
+     ylab="CDF", main="ECDF")
+# superimpose line for ideal std normal
+# (x=z-scores vs. y=ideal CDF values)
+lines(x.seq, pnorm(x.seq), lwd=2)
 legend("topleft", legend=c("Empirical", "Actual"), lwd=2, 
        col=c("red","black"))
 ```
+
+
+## Histogram of sampling distribution and ideal PDF
 
 We can do something similar with the PDF:
 
 ```{r}
 # make a histogram object, but don't plot it
-hist.obj = hist(z, breaks=30, plot=FALSE) 
+hist.obj = hist(z.scores, breaks=30, plot=FALSE) 
 class(hist.obj) # a list
 
 hist.obj$breaks    # breakpoints used
@@ -212,85 +261,16 @@ Now we can make the plot with the ideal distribution overlaid:
 ```{r}
 # We can plot it
 plot(hist.obj, col="lightblue", freq=FALSE, main="Histogram")
-lines(x, dnorm(x), lwd=2)
+lines(x.seq, dnorm(x.seq), lwd=2)
 legend("topleft", legend=c("Histogram", "Actual"), lwd=2, 
        col=c("lightblue","black"))
 ```
 
-## Setting seeds
 
-Note that if you re-run this code several times with a new sample each time, the results can vary quite a bit. You can make your simulations come out the same every time using `set.seed(<some integer>)`. Try adding this before you generate your random sample and see what happens.
-
-
-## Compare empirical height distributions with ideal distributions
+# Comparison of empirical and ideal height distributions
 
 Now that you've seen how to simulate a normally distributed sample and compare it to an ideal one, see if you can similar graphs using the height dataset at your own pace after class.
 
-### PDF Histograms
-
-```{r}
-# histograms and PDFs
-
-## first, let us analyze the father data
-
-# determine the mean of the real distribution
-father_mean = mean(father.son$fheight)
-# determine the SD of the real distribution
-father_sd = sd(father.son$fheight)
-# create a sequence of equally spaced numbers between the lowest and the highest real value
-father_range = seq(from = min(father.son$fheight),
-                   to = max(father.son$fheight),
-                   by = 0.1) # arbitrary number - the smaller the spacing, the smoother the curve will look on the plot
-# simulate an ideal distribution with the same range, mean and SD as the real distribution
-father_norm_distribution = dnorm(x = father_range,
-                                 mean = father_mean,
-                                 sd = father_sd)
-
-# plot
-hist(x = father.son$fheight,
-     col = "lightblue",
-     freq = FALSE,
-     main = "Father height")
-lines(x = father_range,
-      y = father_norm_distribution,
-      lwd = 2)
-legend("topleft",
-       legend = c("Histogram","Actual"),
-       lwd = 2, 
-       col = c("lightblue","black"))
-
-
-
-## do the same for the son data
-
-# determine the mean of the real distribution
-son_mean = mean(father.son$sheight)
-# determine the SD of the real distribution
-son_sd = sd(father.son$sheight)
-# create a sequence of equally spaced numbers between the lowest and the highest real value
-son_range = seq(from = min(father.son$sheight),
-                   to = max(father.son$sheight),
-                   by = 0.1) # arbitrary number - the smaller the spacing, the smoother the curve will look on the plot
-# simulate an ideal distribution with the same range, mean and SD as the real distribution
-son_norm_distribution = dnorm(x = son_range,
-                                 mean = son_mean,
-                                 sd = son_sd)
-
-# plot
-hist(x = father.son$sheight,
-     col = "lightblue",
-     freq = FALSE,
-     main = "Son height")
-lines(x = son_range,
-      y = son_norm_distribution,
-      lwd = 2)
-legend("topleft",
-       legend = c("Histogram","Actual"),
-       lwd = 2, 
-       col = c("lightblue","black"))
-
-
-```
 
 ## Empirical vs. ideal CDFs
 
@@ -299,27 +279,26 @@ legend("topleft",
 
 # generate a sequence of x-values using father range
 # length needs to match that of the number of height measurements
+# so we subtract 1 from the denominator
 step = ((max(father.son$fheight) - min(father.son$fheight))/
           (length(father.son$fheight) - 1))
-x = seq(from = min(father.son$fheight),
-        to = max(father.son$fheight),
-        by = step)
+x.seq = seq(from = min(father.son$fheight),
+            to = max(father.son$fheight),
+            by = step)
   
-# ecdf
+# generate ecdf using father height data
 f.ecdf = ecdf(father.son$fheight)
 
-# plot the sequence along the x-axis, and 
-# y = the ecdf function applied to new data in sequence x
-plot(x, f.ecdf(x), 
+# plot the x.seq sequence along the x-axis, and 
+# y = the ecdf function applied to new data in sequence x.seq
+plot(x.seq, f.ecdf(x.seq), 
      lwd=2, col="red", type="l", 
      ylab="CDF", main="ECDF for father heights")
 # add ideal line (x=sequence, y=CDF)
-lines(x, pnorm(x,mean=mean(father.son$fheight), 
+lines(x.seq, pnorm(x.seq,mean=mean(father.son$fheight), 
       sd=sd(father.son$fheight)), lwd=2)
 legend("topleft", legend=c("Empirical", "Actual"), lwd=2, 
        col=c("red","black"))
-
-
 ```
 
 ```{r}
@@ -337,17 +316,86 @@ x = seq(from = min(father.son$sheight),
 s.ecdf = ecdf(father.son$sheight)
 
 # plot the sequence along the x-axis, and 
-# y = the ecdf function applied to new data in sequence x
-plot(x, s.ecdf(x), 
+# y = the ecdf function applied to new data in sequence x.seq
+plot(x.seq, s.ecdf(x.seq), 
      lwd=2, col="red", type="l", 
      ylab="CDF", main="ECDF for son heights")
 # add ideal line (x=sequence, y=CDF)
-lines(x, pnorm(x,mean=mean(father.son$sheight), 
+lines(x.seq, pnorm(x.seq,mean=mean(father.son$sheight), 
       sd=sd(father.son$sheight)), lwd=2)
 legend("topleft", legend=c("Empirical", "Actual"), lwd=2, 
        col=c("red","black"))
 
 
 ```
+
+
+## Empirical vs. ideal PDFs
+
+```{r}
+## first, let us analyze the father data
+
+# determine the mean of the real distribution
+father_mean = mean(father.son$fheight)
+# determine the SD of the real distribution
+father_sd = sd(father.son$fheight)
+
+# create a sequence of equally spaced numbers between 
+# the lowest and the highest real value
+father_range = seq(from = min(father.son$fheight),
+                   to = max(father.son$fheight),
+                   by = 0.1)  # an arbitrary number - the smaller the spacing,
+                              # the smoother the curve will look on the plot
+
+# simulate an ideal distribution with the same range, mean and SD as the real distribution
+father_norm_distribution = dnorm(x    = father_range,
+                                 mean = father_mean,
+                                 sd   = father_sd)
+
+# plot
+hist(x = father.son$fheight,
+     col = "lightblue",
+     freq = FALSE,
+     main = "Father height")
+lines(x = father_range,
+      y = father_norm_distribution,
+      lwd = 2)
+legend("topleft",
+       legend = c("Histogram","Actual"),
+       lwd = 2, 
+       col = c("lightblue","black"))
 ```
 
+```{r}
+## do the same for the son data
+
+# determine the mean of the real distribution
+son_mean = mean(father.son$sheight)
+# determine the SD of the real distribution
+son_sd = sd(father.son$sheight)
+
+# create a sequence of equally spaced numbers between the lowest and the highest real value
+son_range = seq(from = min(father.son$sheight),
+                   to = max(father.son$sheight),
+                   by = 0.1)
+
+# simulate an ideal distribution with the same range, mean and SD as the real distribution
+son_norm_distribution = dnorm(x    = son_range,
+                              mean = son_mean,
+                              sd   = son_sd)
+
+# plot
+hist(x = father.son$sheight,
+     col = "lightblue",
+     freq = FALSE,
+     main = "Son height")
+lines(x = son_range,
+      y = son_norm_distribution,
+      lwd = 2)
+legend("topleft",
+       legend = c("Histogram","Actual"),
+       lwd = 2, 
+       col = c("lightblue","black"))
+```
+
+Et voilà !!!
