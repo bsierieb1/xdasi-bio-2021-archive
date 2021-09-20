@@ -228,6 +228,64 @@ Note that if you re-run this code several times with a new sample each time, the
 Now that you've seen how to simulate a normally distributed sample and compare it to an ideal one, see if you can similar graphs using the height dataset at your own pace after class.
 
 ```{r}
+## first, let us analyze the father data
+
+# determine the mean of the real distribution
+father_mean = mean(father.son$fheight)
+# determine the SD of the real distribution
+father_sd = sd(father.son$fheight)
+# create a sequence of equally spaced numbers between the lowest and the highest real value
+father_range = seq(from = min(father.son$fheight),
+                   to = max(father.son$fheight),
+                   by = 0.1) # arbitrary number - the smaller the spacing, the smoother the curve will look on the plot
+# simulate an ideal distribution with the same range, mean and SD as the real distribution
+father_norm_distribution = dnorm(x = father_range,
+                                 mean = father_mean,
+                                 sd = father_sd)
+
+# plot
+hist(x = father.son$fheight,
+     col = "lightblue",
+     freq = FALSE,
+     main = "Father height")
+lines(x = father_range,
+      y = father_norm_distribution,
+      lwd = 2)
+legend("topleft",
+       legend = c("Histogram","Actual"),
+       lwd = 2, 
+       col = c("lightblue","black"))
+
+
+
+## do the same for the son data
+
+# determine the mean of the real distribution
+son_mean = mean(father.son$sheight)
+# determine the SD of the real distribution
+son_sd = sd(father.son$sheight)
+# create a sequence of equally spaced numbers between the lowest and the highest real value
+son_range = seq(from = min(father.son$sheight),
+                   to = max(father.son$sheight),
+                   by = 0.1) # arbitrary number - the smaller the spacing, the smoother the curve will look on the plot
+# simulate an ideal distribution with the same range, mean and SD as the real distribution
+son_norm_distribution = dnorm(x = son_range,
+                                 mean = son_mean,
+                                 sd = son_sd)
+
+# plot
+hist(x = father.son$sheight,
+     col = "lightblue",
+     freq = FALSE,
+     main = "Son height")
+lines(x = son_range,
+      y = son_norm_distribution,
+      lwd = 2)
+legend("topleft",
+       legend = c("Histogram","Actual"),
+       lwd = 2, 
+       col = c("lightblue","black"))
+
 
 ```
 
