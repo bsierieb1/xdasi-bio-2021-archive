@@ -26,8 +26,8 @@ nav_exclude: false
 <details closed markdown="block">
   <summary>Details</summary>
 
-+ [**Class notes**](XDASI_Probability_Distributions_Part1.html)
-+ **In-class exercise** - [zipped .Rmd](W4.C1_In-class_Exercise.zip)
++ [**Class notes**](Class_1/XDASI_Probability_Distributions_Part1.html)
++ **In-class exercise** - [zipped .Rmd](Class_1/W4.C1_In-class_Exercise.zip)
 </details>
 
 <!-- ########################################################################### -->
