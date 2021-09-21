@@ -1,0 +1,184 @@
+---
+title: "Empirical Cumulative Functions"
+date: "September 23, 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+```
+
+# The basmati rice genome
+
+[Purugganan lab](https://plantevolgen.org/) at NYU, in collaboration with Oxford Nanopore Technologies and the New York Genome Center, have sequenced and assembled the genome of an iconic variety of rice grown in the Indian subcontinent - [the basmati rice](https://en.wikipedia.org/wiki/Basmati). The paper was published in [Genome Biology](https://doi.org/10.1186/s13059-020-1938-2), and the accompanying data were deposited in [Zenodo](https://doi.org/10.5281/zenodo.3355330). We will explore some of the basic assembly statistics and compare them to the values reported in the paper.
+
+[**Please download the genome file we will be working with today from here**](https://drive.google.com/file/d/1G3pP27gwQBGVfQLNoJxIfzsg1C_zokmj/view?usp=sharing).
+
+## Import the genome
+
+We will be working with a polished but unscaffolded version of the genome assembly of the Pakistani variety Basmati 334. Genome assemblies are usually stored in FASTA format. Here is what it looks like:
+
+```
+>header_1
+ATCGATCTAGCGATCGAGCTATATATATCCCGCGTAG
+>header_2
+TAGCGATAGCGGGCATCGATTCAACGCTAGCTGATGC
+```
+
+Note: sequences (but not headers) may be split across multiple lines, but this is **not** the case in the file we will be working with. In our file, each header and each sequence is **a single line of text**.
+
+In a perfect genome assembly (e.g. that of *C. elegans*), the number of sequences will equal the number of chromosomes. However, chromosome-level assemblies are still somewhat rare, and genomes are usually assembled as a larger number of disconnected fragments. These fragments are called "contigs" because they represent contiguous assemblies of shorter sequences.
+
+Let us import the Basmati genome file and examine the number of contigs. FASTA files are text files but they are not really organized as tables. Therefore, we will be using the function `readLines()` instead of the more familiar `read.table()` or `read.csv()` (although you may be able to use those, too). `readLines()` reads a text file line-by-line and returns a character vector where each element is a line from the file.
+```{r}
+genome <- readLines("Basmati334.basmati.not_scaffolded_singleline.fa")
+
+str(genome)
+
+# use substr() to only display the first 10 characters of each element, because your laptop will likely freeze otherwise (most sequences are very long)
+substr(head(genome),
+       start = 1,
+       stop = 10) 
+```
+
+## ePDF: How long are the contigs?
+
+Let us create a data.frame with contig names in the first column and contig lengths in the second column. First, extract the contig names.
+```{r}
+# contig names are the odd elements of the genome vector
+# how would you extract all the odd elements?
+contig_names <- genome[c(TRUE,FALSE)] # but there are other ways, too
+head(contig_names)
+
+# get rid of ">"
+contig_names_split <- strsplit(contig_names,
+                               split = ">") # split each element by ">"
+head(contig_names_split)
+class(contig_names_split)
+
+contig_names_split_unlisted <- unlist(contig_names_split) # convert list to vector
+head(contig_names_split_unlisted)
+class(contig_names_split_unlisted)
+
+contig_names_split_unlisted_cleaned <- contig_names_split_unlisted[c(FALSE,TRUE)] # only keep even elements
+head(contig_names_split_unlisted_cleaned)
+```
+
+Now, extract contig sequences and calculate their length.
+```{r}
+# sequences are the even elements of the genome vector
+sequences <- genome[c(FALSE,TRUE)]
+
+# calculate the length (the number of characters) of each sequences
+sequences_length <- nchar(sequences)
+head(sequences_length)
+```
+
+Create a data.frame with contig names in the first column and contig lengths in the second column.
+```{r}
+basmati <- data.frame("contig_name" = contig_names_split_unlisted_cleaned,
+                      "contig_length" = sequences_length)
+
+head(basmati)
+```
+
+How are the contig lengths distributed? Plot a histogram and a horizontal distribution of individual data points in one plot using `ggplot2`.
+```{r}
+ggplot(data = basmati,
+       mapping = aes(x = contig_length)) +
+  geom_histogram() +
+  geom_jitter(mapping = aes(y = -20),
+              height = 10,
+              width = 0)
+```
+
+This is essentially an empirical probability density function (ePDF).
+
+## eCDF: How along are the top XX% of the contigs?
+
+Let us calculate "by hand" an empirical cumulative density function (eCDF) of the contig lengths and plot it. The X axis will be the same as above. The main difference is that the Y axis must now contain the **cumulative** fraction of contigs as we are moving left-to-right (i.e. from smallest to largest contig length).
+```{r}
+# sort contigs by length and add a column containing the cumulative fraction of contigs (in our case 1/188, 2/188, 3/188, etc.) using dplyr
+basmati_ecdf <-
+  basmati %>%
+  arrange(contig_length) %>%
+  mutate(cumulative_fraction_contigs = (1:n()) / n() )
+
+# plot using geom_point
+ggplot(data = basmati_ecdf,
+       mapping = aes(x = contig_length,
+                     y = cumulative_fraction_contigs)) +
+  geom_point()
+
+# compare to the built-in function ecdf() to make sure that we got it right
+plot(ecdf(basmati_ecdf$contig_length))
+```
+
+How long are the top 50% of the contigs? (The desired answer is something like "longer than XXX kb"). First, draw a line on the plot corresponding to the 50% of contigs and determine **by eye** where approximately it intersects the eCDF. Then, look at the table we generated and determine the exact number. Plot this number as a vertical line.
+```{r}
+# copy the ggplot code from the previous chunk
+# and add a horizontal line drawn at 50%
+ggplot(data = basmati_ecdf,
+       mapping = aes(x = contig_length,
+                     y = cumulative_fraction_contigs)) +
+  geom_point() +
+  geom_hline(yintercept = 0.5)
+
+# print basmati_ecdf and determine what is the shortest contig in the top 50%
+basmati_ecdf
+
+# does this relate to any distribution metric that you are familiar with?
+median(basmati_ecdf$contig_length)
+
+# copy the ggplot code above
+# and add a vertical line drawn at the value you just determined 
+ggplot(data = basmati_ecdf,
+       mapping = aes(x = contig_length,
+                     y = cumulative_fraction_contigs)) +
+  geom_point() +
+  geom_hline(yintercept = 0.5) +
+  geom_vline(xintercept = median(basmati_ecdf$contig_length))
+```
+
+## The N statistics
+
+In genome biology, the most common way to report the contiguity of an assembly is not the median contig length, but the N statistics, e.g. N50, N90 etc. According to [Wikipedia](https://en.wikipedia.org/wiki/N50,_L50,_and_related_statistics#Definition), "given a set of contigs, the N50 is defined as the sequence length of the shortest contig at 50% of the total genome length." Do not worry if this sounds somewhat confusing. It will become much clearer once we visualize it below.
+
+In fact, the idea of N statistics is inspired by the concept of eCDF. The main difference is that instead of a cumulative **fraction** of contigs (in our case, 1/188, 2/188, 3/188 etc.), we plot a cumulative **length** of contigs. Let us calculate the cumulative length and plot it.
+```{r}
+# add a column containing the cumulative length of contigs normalized to the total length of the assembly
+# hint: use the function cumsum()
+basmati_ecdf_n <-
+  basmati_ecdf %>%
+  mutate(cumulative_length_contigs = cumsum(contig_length) / sum(contig_length) )
+
+# plot the empirical cumulative length function
+ggplot(data = basmati_ecdf_n,
+       mapping = aes(x = contig_length,
+                     y = cumulative_length_contigs)) +
+  geom_point()
+```
+
+How long are the contigs that contain top 50% of all bases? Add a horizontal line at y=0.5 and determine where it will intersect the function.
+```{r}
+# copy the ggplot code from the previous chunk
+# and draw a horizontal line at 50%
+ggplot(data = basmati_ecdf_n,
+       mapping = aes(x = contig_length,
+                     y = cumulative_length_contigs)) +
+  geom_point() +
+  geom_hline(yintercept = 0.5)
+```
+
+Determine the exact length of the first contig above the 50% line by looking at the table.
+```{r}
+basmati_ecdf_n
+
+# 6316586, or 6.32 Mb
+```
+
+Is this the same value as the N50 reported in the abstract of the [paper](https://doi.org/10.1186/s13059-020-1938-2)?
+
+Why do genome biologists prefer N statistics to eCDF metrics, such as median?
