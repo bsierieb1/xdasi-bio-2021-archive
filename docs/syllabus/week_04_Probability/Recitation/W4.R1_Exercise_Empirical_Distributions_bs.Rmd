@@ -1,6 +1,6 @@
 ---
-title: "Empirical Cumulative Functions"
-date: "September 23, 2021"
+title: "Empirical Probability Distributions"
+date: "September 24, 2021"
 output: html_document
 ---
 
