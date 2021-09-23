@@ -1,0 +1,50 @@
+---
+title: 'In-class exercise: Conditional Bayes'
+subtitle: "XDASI Fall 2021"
+date: "9/23/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+The following exercise is from Whitlock & Schluter Q36, 37.
+
+Some people are hypersensitive to the smell of asparagus, and can even detect a strong odor in the urine of a person who has recently eaten asparagus. This trait turns out to have a simple genetic basis:
+
++ An individual with one or two copies of the $A$ allele at the gene ($AA$ or $Aa$ genotypes) can smell asparagus in urine, whereas a person with two copies of the alternative $a$ allele ($aa$ genotypes) cannot (Online Mendelian Inheritance in Man 2019). 
+
+Assume that men and women in the population have the same allele frequencies at the asparagus-smelling gene and that marriage and child production are independent of the genotype at the gene. In the human population, 5% of alleles are $A$ and 95% are $a$. 
+
+- (a) What is the probability that a randomly sampled individual from the population has two copies of the a allele (that is, that it has an aa genotype)? 
+
+```{r}
+# your answer here
+```
+
+
+- (b) What is the probability that both members of a randomly sampled married couple (man and woman) are aa at the asparagus-smelling gene? 
+
+```{r}
+# your answer here
+```
+
+- (c) What is the probability that both members of a randomly sampled married couple (man and woman) are heterozygotes at this locus (meaning that each person has one allele A and one allele a)? 
+
+```{r}
+# your answer here
+```
+
+- (d) Consider the type of couple described in (c). What is the probability that the first child of such a couple also has one A allele and one a allele (is a heterozygote)? Remember that the child must receive exactly one allele from each parent. 
+
+```{r}
+# your answer here
+```
+
+- (e) If a randomly sampled child has the aa genotype, what is the probability that both its parents were also aa?
+
+```{r}
+# your answer here
+```

@@ -1,0 +1,68 @@
+---
+title: "Monty Hall"
+author: "Kris Gunsalus"
+date: "9/22/2021"
+output: 
+  html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#library(dplyr)
+#library(ggplot2)
+library(tidyverse)
+```
+
+## Simulation of Monty Hall game^[1]
+
+### Single run of the game
+
+```{r}
+classic_monty <- function() {
+  
+  prize <- sample(1:3,1)     # Assign the prize
+  choice <- sample(1:3,1)    # Pick a door
+
+  # Monty picks a door (not your choice, and not where the prize is)
+  monty <- sample(c(1:3)[-c(choice,prize)], 1)
+  
+  # if the prize is not under your door, you win if you switch
+  # if the prize IS under your door, you win if you stick
+  return(win = ifelse(prize!=choice, "Switch", "Stick"))
+}
+```
+
+
+### Replicate runs
+
+```{r}
+#n <- 2^(1:16)  # 2, 4, 8, 16, ... 65536
+n = c(1,seq(10,1000,by=10))
+runs <- data.frame(n=numeric(), switch=numeric(), stay=numeric())
+for (trials in n) {
+  run <- table(replicate(trials, classic_monty()))
+  runs <- runs %>%  add_row(n=trials, switch=(sum(run["Switch"]))/trials, stay=(sum(run["Stick"]))/trials)
+}
+# Handle zero-occurrence trials
+runs[is.na(runs)]<-0
+```
+
+### Look at the results
+
+```{r}
+head(runs)
+```
+
+
+### Plot the results
+
+```{r}
+#ggplot(data = runs, aes(x=log(n, base=2), y=switch)) +
+ggplot(data = runs, aes(x=n), y=switch) +
+  geom_line(aes(y=switch), color="blue") +
+  geom_line(aes(y=stay), color="red") +
+  ylim(c(0,1)) +
+  labs(x="number of trials", y="proportion of wins")
+```
+
+[^1]: simulation code pilfered from [R-bloggers](https://www.r-bloggers.com/2020/07/the-monty-hall-problem-2/)

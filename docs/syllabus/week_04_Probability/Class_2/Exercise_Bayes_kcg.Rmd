@@ -1,0 +1,195 @@
+---
+title: 'In-class exercise: Conditional Bayes'
+subtitle: "XDASI Fall 2021"
+date: "9/23/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+The following exercise is from Whitlock & Schluter Q36, 37.
+
+Some people are hypersensitive to the smell of asparagus, and can even detect a strong odor in the urine of a person who has recently eaten asparagus. This trait turns out to have a simple genetic basis:
+
++ An individual with one or two copies of the $A$ allele at the gene ($AA$ or $Aa$ genotypes) can smell asparagus in urine, whereas a person with two copies of the alternative $a$ allele ($aa$ genotypes) cannot (Online Mendelian Inheritance in Man 2019). 
+
+Assume that men and women in the population have the same allele frequencies at the asparagus-smelling gene and that marriage and child production are independent of the genotype at the gene. In the human population, 5% of alleles are $A$ and 95% are $a$:
+
++ $Freq(A) = 0.05$
++ $Freq(a) = 0.95$
+
+**A) What is the probability that a randomly sampled individual from the population has two copies of the $a$ allele (that is, that it has an $aa$ genotype), assuming random mating?**
+
+```{r}
+Pr = list()  # set up a data structure to hold allele data
+
+# allele frequencies in the population
+Pr$a = 0.95
+Pr$A = 0.05
+
+# expected frequency of aa homozyotes in the population
+# Pr[aa] = Pr[a] * Pr[a] = (0.95)(0.95) = 0.9025.
+Pr$aa = Pr$a * Pr$a
+Pr$aa
+```
+
+
+**B) What is the probability that both members of a randomly sampled married couple (man and woman) are $aa$ at the asparagus-smelling gene?** 
+
+```{r}
+# joint probability that both parents are homozygous for aa
+# Pr[both aa] = Pr[aa] Pr[aa] = (0.9025)(0.9025) = 0.8145.
+Pr$aa_aa = Pr$aa * Pr$aa
+Pr$aa_aa
+```
+
+
+**C) What is the probability that both members of a randomly sampled married couple (man and woman) are $Aa$ heterozygotes at this locus?**
+
+```{r}
+# probability of being a heterozygote: M(A)F(a) + M(a)F(A)
+
+# Pr[Aa] = Pr[A] Pr[a] + Pr[a] Pr[A] = 2(0.95)(0.05) = 0.095. 
+Pr$Aa = ( Pr$A * Pr$a ) + ( Pr$a * Pr$A )
+Pr$Aa
+
+# probability that both parents are heterozygous
+
+# Pr[both Aa] = Pr[Aa] Pr[Aa] = (0.095)(0.095) = 0.009025.
+Pr$Aa_Aa = Pr$Aa * Pr$Aa
+Pr$Aa_Aa        
+```
+
+
+**D) Consider the type of couple described in (C). What is the probability that the first child of such a couple is also an $Aa$ heterozygote? Remember that the child must receive exactly one allele from each parent.**
+
+```{r}
+# if both parents are Aa, than we can draw a table
+knitr::kable(data.frame(A=c("AA","aA"),
+                        a=c("Aa","aa"),
+                        row.names = c("A","a")))
+```
+
+```{r}
+# 4 possible combinations, of which 2 are “Aa” offspring: A is from mother and a is from father, or vice-versa. 
+# Pr[child is Aa | both parents Aa] = 2(0.5)(0.5) = 0.5.
+Pr$C.Aa = 0.5^2 + 0.5^2
+Pr$C.Aa
+```
+
+So, $$P(C.Aa | M.Aa,F.Aa) = 0.5$$
+
+
+***E) If a randomly sampled child has the $aa$ genotype, what is the probability that both its parents were also $aa$?***
+
+<!-- ======================================================================= -->
+<!-- <div class="qbox"> -->
+<!-- $\Rightarrow$ ***Question: ?*** -->
+
+<!-- <details closed markdown="block"> -->
+<!--   <summary>Answer</summary> -->
+
+<!-- + Answer. -->
+
+<!-- </details> -->
+<!-- </div> -->
+<!-- ======================================================================= -->
+
+Let's use Bayes theorem to frame the problem:
+
+$$P(M.aa,F.aa | C.aa) = \frac{P(C.aa | M.aa,F.aa)*P(M.aa,F.aa)}{P(C.aa)}$$
+
+Using the Law of Total Probability:
+
+$$\begin{aligned}
+
+P(C.aa) =& \ P(C.aa | M.aa,F.aa) \ \ * P(M.aa,F.aa) \ \ + \\
+         & \ P(C.aa | M.Aa,F.aa) \ * P(M.Aa,F.aa) \ + \\
+         & \ P(C.aa | M.aa,F.Aa) \ * P(M.aa,F.Aa) \ + \\
+         & \ P(C.aa | M.Aa,F.Aa) * P(M.Aa,F.Aa) \\
+        =& \ (1)(0.9025)(0.9025) + (0.5)(0.095)(0.9025) + (0.5)(0.9025)(0.095) + (0.25)(0.095)(0.095) \\
+        =& \ 0.9025.
+
+\end{aligned}$$ 
+
+<!-- ======================================================================= -->
+<!-- <div class="qbox"> -->
+<!-- $\Rightarrow$ ***Question: ?*** -->
+
+<!-- <details closed markdown="block"> -->
+<!--   <summary>Answer</summary> -->
+
+<!-- + Answer. -->
+
+<!-- </details> -->
+<!-- </div> -->
+<!-- ======================================================================= -->
+
+Since all other parental combinations will have zero probability of obtaining offspring with the $aa$ genotype.
+
+Let's first recall some basics:
+
+```{r}
+# allele frequencies
+Pr$a = 0.95
+Pr$A = 0.05
+
+# single parents
+Pr$aa = Pr$a * Pr$a
+Pr$Aa = ( Pr$A * Pr$a ) + ( Pr$a * Pr$A )
+Pr$aa
+Pr$Aa
+
+# both parents aa
+Pr$aa_aa = Pr$aa * Pr$aa
+Pr$aa_aa
+
+# both parents aA
+Pr$Aa_Aa = Pr$Aa * Pr$Aa
+Pr$Aa_Aa 
+
+# one parent aa, other Aa
+Pr$Aa_aa = Pr$Aa * Pr$aa
+Pr$Aa_aa
+```
+
+Now we are ready to compute the total probability:
+
+```{r}
+# probabilities of child genotype based on Punnett square
+Pr$Caa_MaaFaa = 1
+Pr$Caa_MaaFAa = 0.5
+Pr$Caa_MAaFaa = 0.5
+Pr$Caa_MAaFAa = 0.25
+
+Pr$Caa = Pr$Caa_MaaFaa * Pr$aa * Pr$aa +
+         Pr$Caa_MaaFAa * Pr$aa * Pr$Aa + 
+         Pr$Caa_MAaFaa * Pr$Aa * Pr$aa +
+         Pr$Caa_MAaFAa * Pr$Aa * Pr$Aa
+Pr$Caa
+```
+
+Finally:
+
+<!-- ======================================================================= -->
+<!-- <div class="qbox"> -->
+<!-- $\Rightarrow$ ***Question: ?*** -->
+
+<!-- <details closed markdown="block"> -->
+<!--   <summary>Answer</summary> -->
+
+<!-- + Answer. -->
+
+<!-- </details> -->
+<!-- </div> -->
+<!-- ======================================================================= -->
+
+$$P(M.aa,F.aa | C.aa) = \frac{P(C.aa | M.aa,F.aa)*P(M.aa,F.aa)}{P(C.aa)} = \frac{1 * (0.9025)^2}{0.9025} = 0.9025$$
+
+```{r}
+Pr$MaaFaa_Caa = ( Pr$Caa_MaaFaa * Pr$aa * Pr$aa ) / Pr$Caa
+Pr$MaaFaa_Caa
+```

@@ -5,7 +5,7 @@ has_children: false
 nav_exclude: false
 ---
 
-# Week 4: Probability Distributions
+# Week 4: Title
 {: .no_toc }
 
 <details closed markdown="block">
@@ -23,27 +23,30 @@ nav_exclude: false
 
 # Class - Monday, Sept. 20
 
-### Probability Distributions, Part I
-
 <details closed markdown="block">
   <summary>Details</summary>
 
-+ [**Class notes**](Class1/W4.C1_Notes_Probability_Distributions_Part1.html){: target="blank"}
-+ [**Class exercise**](Class1/W4.C1_In-class_Exercise.zip)
++ [**Class notes**](Class_1/XDASI_Probability_Distributions_Part1.html)
++ **In-class exercise** - [zipped .Rmd](Class_1/W4.C1_In-class_Exercise.zip)
 </details>
 
 <!-- ########################################################################### -->
 
 <!-- ########################################################################### -->
 
-<!-- # Class - Thursday, Sept. 23
-
-### Probability Distributions, Part II
+# Class - Thursday, Sept. 23
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
++ **Class notes**
+  + [**Introduction to Classical Probability**](Class_2/XDASI_Intro_Probability.html)
+  + [**Conditional Probability and Bayes Theorem**](Class_2/XDASI_Conditional-Prob_Bayes.html)
+
++ **Monty Hall simulation** - [zipped .Rmd](Class_2/Monty_Hall_simulation.zip)
++ **In-class exercise** - [zipped .Rmd](Class_2/W4.C2_Exercise_Bayes.zip)
+
+</details>
 
 <!-- ########################################################################### -->
 
@@ -51,14 +54,8 @@ nav_exclude: false
 
 <!-- # Recitation - Friday, Sept. 24
 
-### Empirical Probability Distributions
-
 <details closed markdown="block">
   <summary>Details</summary>
-
-+ **Class exercise and data set** [RMD zipped](Recitation/W4.R1_Exercise_Empirical_Distributions.Rmd.zip) - [DATA](https://drive.google.com/file/d/1G3pP27gwQBGVfQLNoJxIfzsg1C_zokmj/view?usp=sharing){: target="blank"}
-+ Answer key: [RMD zipped](Recitation/W4.R1_Exercise_Empirical_Distributions_KEY.Rmd.zip) - [HTML](Recitation/W4.R1_Exercise_Empirical_Distributions_KEY.html){: target="blank"}
-  + Note that the key was reorganized to incorporate changes introduced during the class.
 
 </details> -->
 
