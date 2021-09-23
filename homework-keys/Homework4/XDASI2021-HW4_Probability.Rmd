@@ -1,0 +1,216 @@
+---
+title: 'Homework 4: Probability'
+subtitle: "XDASI Fall 2021"
+author: "Sir Ronald Fisher [YOUR NAME HERE]"
+date: "Due: 9/30/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error = TRUE)
+library(ggplot2)
+# remove "error = TRUE" to make knitr halt on errors
+# (do this when you are ready to check if your code will knit without errors)
+```
+
+## 1. Probability density and cumulative probability
+
+You are screening for genetic interactions between genes in yeast that cause deleterious fitness effects. To establish a baseline for your experiments, you measure the probability density of colony diameters (in mm) of a population of WT yeast. Fortunately, you have an automated image recognition system that allows you to do this for a large number of individual colonies!
+
+a. Simulate a sample of 1000 measured colonies with an average diameter of 1mm and a standard deviation of 0.1mm and store it in a variable. What are the actual mean and SD?
+
+```{r}
+yeast.sample = rnorm(1000, 1, 0.1)
+y.mean = mean(yeast.sample)
+y.sd = sd(yeast.sample)
+c(y.mean,y.sd)
+```
+
+b. Draw a boxplot and a histogram of the sampled data. Overlay an "ideal" normal line on top of your histogram with the same parameters.
+
+```{r}
+boxplot(yeast.sample)
+
+hist(yeast.sample)
+
+
+yeast.sample.df = data.frame(control = yeast.sample)
+
+ggplot(yeast.sample.df, aes(x=control)) +
+  geom_histogram(aes(y = ..density..), 
+                 color = "black", fill = "skyblue", alpha=0.5) +
+  geom_line(aes(y = ..density..), 
+            stat = 'density', col="blue") +
+  stat_function(fun = dnorm,
+                args = list(mean = y.mean,
+                            sd = y.sd),
+                col = "black")
+```
+
+```{r}
+mean=100; sd=15
+lb=80; ub=120
+
+x <- seq(-4,4,length=100)*sd + mean
+hx <- dnorm(x,mean,sd)
+
+plot(x, hx, type="n", xlab="IQ Values", ylab="",
+  main="Normal Distribution", axes=FALSE)
+
+i <- x >= lb & x <= ub
+lines(x, hx)
+polygon(c(lb,x[i],ub), c(0,hx[i],0), col="red")
+
+area <- pnorm(ub, mean, sd) - pnorm(lb, mean, sd)
+result <- paste("P(",lb,"< IQ <",ub,") =",
+   signif(area, digits=3))
+mtext(result,3)
+axis(1, at=seq(40, 160, 20), pos=0)
+```
+
+
+
+Compute the proportion of the population you expect to 
+
+
+a. Are the events “diameter is between 4 and 6” and “diameter is between 8 and 12” mutually exclusive? Explain. 
+
+```{r}
+# your answer here
+```
+
+b. Use the `pnorm` function to compute the total probability that a randomly chosen colony diameter is between 4 and 6 or between 8 and 12.
+```{r}
+pnorm(6, mean= , sd=)
+```
+
+c. What is the probability that a randomly chosen colony diameter is greater than or equal to 10? 
+```{r}
+0.14 + 0.02
+```
+
+d. What is the probability that a randomly chosen colony diameter is between 8 and 10? 
+```{r}
+0.48-0.14
+```
+
+e. What is the probability that a randomly chosen colony diameter is NOT between 4 and 12? 
+```{r}
+2*0.02
+1 - 2*0.48
+```
+
+
+### 1. Co-occurrence of infection: Venn diagams
+
+Among women voluntarily tested for sexually transmitted diseases in one university (modified from Tábora et al. 2005):
+
++ 18% tested positive for human papilloma virus (HPV) only,
++ 2% tested positive for Chlamydia only, and
++ 3% tested positive for both HPV and Chlamydia. 
+
+Use the following steps to calculate the probability that a woman from this population who gets tested would test positive for either HPV or Chlamydia.
+
+a. Write the goal of the question using probability notation (e.g. P(something) or Pr[something]). 
+
+<!-- Your answer here -->
+*What is P(HPV OR Chlamydia)?*
+
+b. Write the general addition rule, as applied to this example.
+
+<!-- Your answer here -->
+*P(HPV OR Chlamydia) = P(HPV) + P(Chlamydia) - P(HPV AND Chlamydia)*
+
+c. First, calculate the total frequency of HPV and of Chlamydia in the population.
+```{r}
+# probabilities
+p.hpv = 0.18
+p.chl = 0.02
+p.hpv.chl = 0.03
+
+p.hpv.tot = p.hpv + p.hpv.chl
+p.chl.tot = p.chl + p.hpv.chl
+p.hpv.tot
+p.chl.tot
+```
+
+d. Calculate the probability that a randomly sampled woman would test positive for at least one of these, using the total probabilities and the joint probability.
+
+```{r cars}
+
+# P(HPV OR Chlamydia)
+p.hpv.tot + p.chl.tot - p.hpv.chl
+
+# this is the same as adding up the original numbers
+p.hpv + p.chl + p.hpv.chl
+```
+
+e. Is the occurrence of these infections independent? Explain.
+```{r}
+# Independence: P(HPV AND Chlamidia) = P(HPV) * P(Chlamydia)
+indep.test = p.hpv.tot * p.chl.tot
+indep.test
+indep.test == p.hpv.chl
+```
+
+
+### 2. Allele frequencies: Addition and multiplication rules
+
+Many gene loci have a major allele and a number of minor alleles in the population. Let's say there are 5 alleles for a particular locus, that individuals mate randomly with respect to the genotype at this locus, and that allele frequences for A1-A5 are 0.82, 0.06, 0.05, 0.04, and 0.03 respectively.
+
+For each of the questions below, write out the probability equations (e.g. Pr[Ai] or P(Ai) for each term) and then compute the answers numerically.
+
+a. What is the probability that any single allele chosen at random from the population is either A4 or A5? Write out the probability statement as a comment below and then computer the answer.
+```{r}
+# Allele frequencies
+A1 = 0.82
+A2 = 0.06
+A3 = 0.05
+A4 = 0.04
+A5 = 0.03
+
+# Probability of either A4 or A5 = ?
+
+# P(A4 OR A5) = P(A4) + P(A5)
+A4 + A5
+```
+
+b. What is the probability that an individual carries two A2 alleles?
+```{r}
+# P(A2 AND A2) = P(A2)*P(A2)
+A2*A2
+```
+
+c. What is the probability that someone does NOT carry two A2 alleles?
+```{r}
+#P(not (A2 AND A2) = 1 - P(A2 AND A2)
+1 - A2^2
+```
+
+d. What is the probability that someone is heterozygous for A1 and A3?
+```{r}
+# P(A1 AND A3) = 2 * P(A1)*P(A3)
+2*A1*A3
+```
+
+e. What is the probability that *neither* of two random individuals in the population would carry two A1 alleles?
+```{r}
+# P(2 individuals are NOT A1;A1) = (1 - P(A1;A1))^2
+(1-A1*A1)^2
+```
+
+f. What is the probability that 3 random individuals carry no A4 or A5 alleles at all? (Remember that each individual carries two alleles.) 
+```{r}
+# P(A4 or A5) = P(A4) + P(A5)
+# P(NOT (A4 or A5)) = 1 - P(A4 or A5)
+# P(3 are not A4 or A5) = ( 1 - P(A4 or A5) )^3
+p4or5 = A4 + A5
+pNOT4or5 = 1 - p4or5
+pNOT4or5^6 # 3 invididuals * 2 alleles each
+```
+
+
+
+---

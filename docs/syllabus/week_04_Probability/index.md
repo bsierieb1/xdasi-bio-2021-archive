@@ -26,9 +26,9 @@ nav_exclude: false
 <details closed markdown="block">
   <summary>Details</summary>
 
-+ [**Class notes**](Class_1/XDASI_Probability_Distributions_Part1.html){:target="blank"}
-+ **In-class exercise** - [zipped .Rmd](Class_1/W4.C1_In-class_Exercise.zip)
-  + **Key** - [zipped .Rmd](Class_1/W4.C1_In-class_Exercise_KEY.zip)
++ [**Class notes**](Class1/W4.C1_Notes_Probability_Distributions_Part1.html){:target="blank"}
++ **In-class exercise** - [zipped .Rmd](Class1/W4.C1_In-class_Exercise.zip)
+  + **Key** - [zipped .Rmd](Class1/W4.C1_In-class_Exercise_KEY.zip)
 
 </details>
 
@@ -42,11 +42,11 @@ nav_exclude: false
   <summary>Details</summary>
 
 + **Class notes**
-  + [**Introduction to Classical Probability**](Class_2/XDASI_Intro_Probability.html){:target="blank"}
-  + [**Conditional Probability and Bayes Theorem**](Class_2/XDASI_Conditional-Prob_Bayes.html){:target="blank"}
+  + [**Classical Probability**](Class2/W4.C2_Intro_Probability.html){:target="blank"}
+  + [**Conditional Probability and Bayes Theorem**](Class2/W4.C2_Conditional-Prob_Bayes.html){:target="blank"}
 
-+ **Monty Hall simulation** - [zipped .Rmd](Class_2/Monty_Hall_simulation.zip)
-+ **In-class exercise** - [zipped .Rmd](Class_2/W4.C2_Exercise_Bayes.zip)
++ **Monty Hall simulation** - [zipped .Rmd](Class2/Monty_Hall_simulation.zip)
++ **In-class exercise** - [zipped .Rmd](Class2/W4.C2_Exercise_Bayes.zip)
 
 </details>
 
