@@ -157,7 +157,6 @@ When two events are independent, we know that $P(A \cap B) = P(A)*P(B)$, and so 
 
 $$P(A|B) = \frac{P(A \cap B)}{P(A)} = P(B)$$
 
-$$$$
 
 ---
 
