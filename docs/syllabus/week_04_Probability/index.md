@@ -5,7 +5,7 @@ has_children: false
 nav_exclude: false
 ---
 
-# Week 4: Title
+# Week 4: Probability
 {: .no_toc }
 
 <details closed markdown="block">
@@ -26,8 +26,10 @@ nav_exclude: false
 <details closed markdown="block">
   <summary>Details</summary>
 
-+ [**Class notes**](Class_1/XDASI_Probability_Distributions_Part1.html)
++ [**Class notes**](Class_1/XDASI_Probability_Distributions_Part1.html){:target="blank"}
 + **In-class exercise** - [zipped .Rmd](Class_1/W4.C1_In-class_Exercise.zip)
+  + **Key** - [zipped .Rmd](Class_1/W4.C1_In-class_Exercise_KEY.zip)
+
 </details>
 
 <!-- ########################################################################### -->
@@ -40,8 +42,8 @@ nav_exclude: false
   <summary>Details</summary>
 
 + **Class notes**
-  + [**Introduction to Classical Probability**](Class_2/XDASI_Intro_Probability.html)
-  + [**Conditional Probability and Bayes Theorem**](Class_2/XDASI_Conditional-Prob_Bayes.html)
+  + [**Introduction to Classical Probability**](Class_2/XDASI_Intro_Probability.html){:target="blank"}
+  + [**Conditional Probability and Bayes Theorem**](Class_2/XDASI_Conditional-Prob_Bayes.html){:target="blank"}
 
 + **Monty Hall simulation** - [zipped .Rmd](Class_2/Monty_Hall_simulation.zip)
 + **In-class exercise** - [zipped .Rmd](Class_2/W4.C2_Exercise_Bayes.zip)
