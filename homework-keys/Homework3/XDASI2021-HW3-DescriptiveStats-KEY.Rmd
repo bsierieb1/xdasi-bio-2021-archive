@@ -1,7 +1,7 @@
 ---
 title: "HW3: Describing Data and Estimating with Uncertainty"
 subtitle: "XDASI Fall 2021"
-author: "Elizabeth Blackburn [YOUR NAME HERE]"
+author: "ANSWER KEY"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
@@ -41,7 +41,7 @@ sure your data file is present.
 + If you put your data file in a sub-directory, also list all the files in that directory (I like to collect all my data files in a subdir called "data/").
 sure your data file is present.
 
-```{r}
+```{r eval=FALSE}
 getwd()
 list.files()
 list.files("data/")
@@ -147,7 +147,13 @@ mice.pheno %>% group_by(Sex, Diet) %>% summarise(n_animals = n())
 How many data points were removed, and from which group?
 
 ```{r}
-# your answer here
+# from "missing data" section above
+
+# 434	M	hf	NA	
+# 654	M	hf	NA	
+# 745	M	chow	NA	
+# 834	M	hf	NA	
+# 835	M	hf	NA	
 ```
 
 
@@ -204,7 +210,9 @@ c(mean_bw - Q*sem_bw, mean_bw + Q*sem_bw)
 Describe in words what the 95% CI tells you.
 
 ```{r}
-# your answer here
+# the 95%CI is an estimated interval within which we expect to see the true 
+# population mean ~95% of the time (i.e. we expect 19/20 95%CI's to contain 
+# the true population mean) 
 ```
 
 
@@ -252,7 +260,7 @@ summary_stats = mice.pheno %>%
   summarise(mean_weight = mean(Bodyweight), 
             SEM = round(ci(Bodyweight)["Std. Error"],2),
             CI_lower = ci(Bodyweight)[2],
-            CI_upper = ci(Bodyweight)[1] )
+            CI_upper = ci(Bodyweight)[3] )
 summary_stats[3:6] = round(summary_stats[3:6], 2)
 summary_stats
 ```
@@ -293,7 +301,7 @@ data.frame( F_pct_gain = as.numeric(((fh - fc)/fc)*100),
 What do you conclude from these observations? Do you think males and females put on a significantly different proportion of their body weight on a high-fat diet?
 
 ```{r}
-# your answer here
+# it's hard to tell at this point whether these apparent differences are significant or just due to sample variation ... 
 ```
 
 
@@ -334,7 +342,7 @@ mean(hf) - mean(chow)
 Try re-running this code a bunch of times. How do the differences between samples vary? How do they compare with the mean difference between the groups that you got from the full dataset?
 
 ```{r}
-# your answer here
+# there is quite a lot of variation in these small samples!
 ```
 
 
@@ -517,16 +525,19 @@ abline(v=mean(chowPop))
 abline(v=mean(hfPop), lty="dashed")
 
 # display the 95% CI for a bunch of random samples
+#ci_range = c() # initialize empty vector
 for (i in 1:n.samples) {
-  chow.sample = sample(chowPop,N) # take a random sample
-  se = sd(chow.sample)/sqrt(N)           # compute SEM
+  chow.sample = sample(chowPop,N)          # take a random sample
+  se = sd(chow.sample)/sqrt(N)             # compute SEM
   interval = c(mean(chow.sample)-Q*se, mean(chow.sample)+Q*se) # compute 95% CI
+#  ci_range[i] = interval[2] - interval[1]  # record size of ci interval
   
   # draw the 95% CI -- color it green if it contains the true population mean, or red if not
   covered = mean(chowPop) <= interval[2] & mean(chowPop) >= interval[1]
   color = ifelse(covered,"forestgreen","red")
   lines(interval, c(i,i), col=color)
 }
+#summary(ci_range)  # display summary of the distribution of CI ranges
 # ============================================================================ #
 ```
 
@@ -534,18 +545,23 @@ Re-run the above code block a bunch of times.
 
 Around what proportion of these confidence intervals do NOT contain the true population mean? How much does this number seem to vary?
 ```{r}
-# your answer here
+# around 5%, but often a few percent more (between 5-10%)
 ```
 
 
 How much does the width of the 95% CI's seem to vary?
 ```{r}
-# your answer here
+# using additions to the loop above to record the size of the CI interval
+# (commented out above)
+
+#  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 1.624   3.949   4.770   4.793   5.393   7.929 
 ```
 
 About how often do your CI's contain the mean for the high-fat diet population? What do you think this might mean?
 ```{r}
-# your answer here
+# a little less that 95% of the time; there might be something wrong with our model 
+# for the 95%CI with this small sample size
 ```
 
 

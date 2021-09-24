@@ -33,8 +33,12 @@ b. Draw a boxplot and a histogram of the sampled data. Overlay an "ideal" normal
 ```{r}
 boxplot(yeast.sample)
 
-hist(yeast.sample)
+hist(yeast.sample, prob=TRUE)
+lines(density(yeast.sample), col="darkblue", lwd=2)
+curve(dnorm(x, mean=y.mean, sd=y.sd), 
+      lwd=2, add=TRUE, yaxt="n")
 
+# =========
 
 yeast.sample.df = data.frame(control = yeast.sample)
 
@@ -47,32 +51,22 @@ ggplot(yeast.sample.df, aes(x=control)) +
                 args = list(mean = y.mean,
                             sd = y.sd),
                 col = "black")
-```
 
-```{r}
-mean=100; sd=15
-lb=80; ub=120
 
-x <- seq(-4,4,length=100)*sd + mean
-hx <- dnorm(x,mean,sd)
-
-plot(x, hx, type="n", xlab="IQ Values", ylab="",
-  main="Normal Distribution", axes=FALSE)
-
-i <- x >= lb & x <= ub
-lines(x, hx)
-polygon(c(lb,x[i],ub), c(0,hx[i],0), col="red")
-
-area <- pnorm(ub, mean, sd) - pnorm(lb, mean, sd)
-result <- paste("P(",lb,"< IQ <",ub,") =",
-   signif(area, digits=3))
-mtext(result,3)
-axis(1, at=seq(40, 160, 20), pos=0)
+ggplot(yeast.sample.df, aes(x=control)) +
+  geom_histogram(aes(y = stat(density)), 
+                 color = "black", fill = "skyblue", alpha=0.5) +
+  geom_line(aes(y = stat(density)), 
+            stat = 'density', col="blue") +
+  stat_function(fun = dnorm,
+                args = list(mean = y.mean,
+                            sd = y.sd),
+                col = "black")
 ```
 
 
+b.
 
-Compute the proportion of the population you expect to 
 
 
 a. Are the events “diameter is between 4 and 6” and “diameter is between 8 and 12” mutually exclusive? Explain. 
