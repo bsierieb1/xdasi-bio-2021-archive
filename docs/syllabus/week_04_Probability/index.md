@@ -23,6 +23,8 @@ nav_exclude: false
 
 # Class - Monday, Sept. 20
 
+### Intro to Probability and Distributions
+
 <details closed markdown="block">
   <summary>Details</summary>
 
@@ -37,6 +39,8 @@ nav_exclude: false
 <!-- ########################################################################### -->
 
 # Class - Thursday, Sept. 23
+
+### Set Theory, Conditional Probability, Bayes’ Theorem
 
 <details closed markdown="block">
   <summary>Details</summary>
@@ -54,11 +58,15 @@ nav_exclude: false
 
 <!-- ########################################################################### -->
 
-<!-- # Recitation - Friday, Sept. 24
+# Recitation - Friday, Sept. 24
+
+### Empirical Probability Distributions
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
++ **Class exercise and data set** [zipped .Rmd](Recitation/W4.R1_Exercise_Empirical_Distributions.Rmd.zip) - [DATA](https://drive.google.com/file/d/1G3pP27gwQBGVfQLNoJxIfzsg1C_zokmj/view?usp=sharing){: target="blank"}
+
+</details>
 
 <!-- ########################################################################### -->
