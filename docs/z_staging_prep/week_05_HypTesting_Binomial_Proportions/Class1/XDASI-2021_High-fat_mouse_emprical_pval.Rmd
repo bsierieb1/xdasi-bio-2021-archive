@@ -1,0 +1,510 @@
+---
+title: "Empirical p-values: High-fat diet mouse study"
+subtitle: "XDASI Fall 2021 In-class exercise"
+date: "9/27/2021"
+output:
+  html_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+```
+
+## The Problem
+
+A study raises groups of mice on two different diets:
+- Regular chow (11% fat)
+- High-fat chow (58% fat)
+
+They then measure differences in weight gain, glucose intolerance, and insulin resistance.
+
+Our scientific question is:
+**Are the HF mice a good model for Type II diabetes?**
+
+We will see how statistical inference can help 
+
+## The Dataset
+
+The high-fat diet-fed mouse: a model for studying mechanisms and treatment of impaired glucose tolerance and Type II diabetes.
+MS Winzell and B Ahren, _Diabetes_ 2004; 53:S215-219
+
+Let's look at a sample of 24 mice from this study.
+```{r}
+# load the dataset and take a look at it
+fmw = read.csv("femaleMiceWeights.csv")
+fmw
+str(fmw)
+
+# separate the two sets of mice
+#ctl = filter(fmw, Diet == "chow") %>% select(Bodyweight) %>% unlist
+#trt = filter(fmw, Diet == "hf") %>% select(Bodyweight) %>% unlist
+
+# base R method:
+ctl = fmw[fmw$Diet == "chow","Bodyweight"]
+trt = fmw[fmw$Diet == "hf","Bodyweight"]
+
+# take a look at these
+#ctl
+#trt
+
+# how different are these samples? 
+# let's look at the difference of the means
+obs.diff = mean(trt) - mean(ctl)
+obs.diff
+```
+
+These look pretty different. The HF mice are over 10% heavier!
+
+Let's also visualize these data by plotting them with ggplot:
+```{r}
+# make a histogram with ggplot
+
+# so that we can also visualize the means, let's make a small df
+fmw.means = data.frame("Diet" = levels(fmw$Diet),
+                       "MeanWeight" = c(mean(ctl),mean(trt)))
+fmw.means
+
+# color by group, semi-transparent fill
+fmw.plot = ggplot(fmw, aes(x=Bodyweight, fill=Diet, color=Diet)) +
+  geom_histogram(position="identity", alpha=0.5)
+
+# draw the plot with the mean lines
+fmw.plot + 
+  geom_vline(data=fmw.means, 
+             aes(xintercept=MeanWeight, color=Diet),
+             binwidth = 1,
+             linetype="dashed") + xlim(c(15,40))
+```
+
+## The Null Distribution
+
+How can we tell if the observed difference is meaningful?
+
+Would we expect to see a difference as big as this between two random samples taken from two different samples of control mice, just by chance?
+
+Most of the time, we don't have access to the full population. But for this example, we have a large sample of 200+ control mice that we can use as a proxy for the parent population of "normal" mice.
+
+### Random sampling
+
+Let's take a bunch of random samples from this population, compute the means, and see what happens.
+
+```{r, collapse=TRUE}
+# look at the parent population
+fmw.pop = read.csv("femaleControlsPopulation.csv")
+str(fmw.pop)
+
+# take a few samples of 12 mice from the population
+# and look at the means
+mean(sample(fmw.pop$Bodyweight, 12))
+mean(sample(fmw.pop$Bodyweight, 12))
+mean(sample(fmw.pop$Bodyweight, 12))
+mean(sample(fmw.pop$Bodyweight, 12))
+mean(sample(fmw.pop$Bodyweight, 12))
+```
+
+Naturally, each time we take a different sample, we get a different mean. Since we are taking random samples, the mean is a random variable.
+
+How often would we get as big a difference as the one we observed between the control and high-fat mice, just by chance? This is where statistical inference can help us answer our scientific question.
+
+Since we have access to the entire population, we can simulate many possible outcomes of taking 12 random samples from the control population.
+
+### Null hypothesis
+
+If the difference between the `ctl` and `trt` samples were just due to chance, then they could easily have come from the same population. This is our null hypothesis.
+
+Let's test this idea by taking a bunch of random samples from the control population and pretending that some of them are `trt` samples. This would be like a blind placebo experiment, in which we expect to see no effect from the high-fat diet.
+
+If we do this many times, and take the difference between the means of two samples, this will give us an idea about how likely the observed difference is under the null hypothesis.
+
+```{r}
+# compare the means of two random samples
+# we can repeat this over and over again as many times as we want
+ctl = sample(fmw.pop$Bodyweight, 12)
+trt = sample(fmw.pop$Bodyweight, 12)
+null.diff = mean(trt) - mean(ctl)
+null.diff
+```
+
+The null distribution is all possible realizations of the difference in group means under the null hypothesis.
+
+Knowing this distribution allows us to describe the proportion of expected values over any interval.
+
+Let's simulate 10,000 realizations of differences in the sample means and record all the differences we see under the null hypothesis:
+
+```{r}
+# number of simulations
+n = 10000
+
+# initialize an empty vector
+null.dist = vector("numeric",length=length(n))
+
+# let's use a loop to run 10,000 simulations under the null
+for (i in 1:n) {
+  ctl = sample(fmw.pop$Bodyweight, 12)
+  trt = sample(fmw.pop$Bodyweight, 12)
+  null.dist[i] = mean(trt) - mean(ctl)
+}
+```
+
+Let's take a look at the distribution of our random variable:
+```{r}
+# what's the range of the values we got?
+min(null.dist)
+max(null.dist)
+
+# make a histogram
+hist(null.dist)
+```
+
+
+### Empirical $p$-value
+
+Now we can figure out how likely it is to see a value as big as the one we saw under the null hypothesis. This will provide statistical support for our observation.
+
+We will do this by computing the proportion of times we see a difference at least as big as our observed value. 
+
+```{r}
+# sum over the total gives the expected proportion 
+# BIGGER than the observed difference
+sum(null.dist > obs.diff)/n
+
+# this is the same as the mean number of times we see this happen
+mean(null.dist > obs.diff)
+
+# we could also compute the absolute difference in magnitude
+# (a bigger difference in either direction)
+mean(abs(null.dist) > obs.diff)
+
+# we can draw this on our histogram
+hist(null.dist)
+abline(v=obs.diff, col="red", lwd=2)
+```
+
+This is a $p$-value! It is the probability that an outcome from the null distribution is bigger than the difference we observed (when the null hypothesis is true).
+
+Now we can say that 12 mice is a big enough sample, and that it's very unlikely that we would see treated mice this much heavier by chance (only ~1% of the time).
+
+We could report this as a significant difference ... but this is just one of the many possible outcomes of two random samples! A better way to represent this would be to use confidence intervals (coming up next).
+
+## Distributions and population parameters
+
+In this case, we were able to run the simulations above because we had data from the whole population. Usually this will not be the case, and we will need to make mathematical approximations using estimators based on the data at hand without knowing the true population parameters.
+
+As we have seen before, knowing the form for a cumulative distribution allows us to compute the proportion of the data within any particular interval:
+
+$$ F(a) = P(x \le a)$$
+$$ F(b) - F(a) = P(a \le x \le b)$$
+
+So, if we know the distribution of the population, we can answer questions like, "What's the probability that a random outcome drawn from the population will be bigger than (or smaller than) a certain number?"
+
+For a normal distribution, we only need two numbers to fully describe the data: the mean (average) and the variance (average squared distance of each data point to the mean).
+
+Therefore, for any data that approximates a normal distribution, we can determine the proportion of data in any interval. For example, we know that around 95% of the data is wtihin two standard deviations of the mean, etc.
+
+A standard normal distribution is very convenient for expressing these kinds of differences in terms of $z$-scores:
+
+$$ Z = \frac{X_i - \bar{X}}{s_X}; \ \ Z \sim \mathcal{N}(0,1)$$
+
+### Central Limit Theorem
+
+As we learned from the CLT, the sampling distribution of the sample means approximates a normal distribution with mean = $\mu$ and variance = $\frac{\sigma}{N}$:
+
+$$\bar{X} \sim \mathcal{N}(\mu,\frac{\sigma^2}{N})$$
+
+We also saw emprically the variation in $\bar{X}$ is inversely proportional to the sample size, $N$.
+
+In practice, we don't usually know the true amount of variation in a population, but we can use the variation among our samples to approximate the population variance if our sample size is large enough (typically around 30). 
+
+Sine we can use our sample $s$ to approximate $\sigma$ when the sample size is pretty big, this gives us a way to estimate the standard deviation of the sample mean, or the standard error, as:
+
+$$ SEM = \frac{\sigma}{\sqrt{N}} \approx \frac{s}{\sqrt{N}} $$
+
+We can make this into a standard normal of $\bar{X}$ as follows:
+
+$$ Z = \frac{\bar{X}}{SEM} = \sqrt{N}\frac{\bar{X}}{\sigma}\ \ ; \ \  Z \sim \mathcal{N}(0,1)$$
+
+### Comparing two samples
+
+When we are interested in comparing two populations, we would like to know if $\mu_X - \mu_Y = 0$.
+
+When we only have samples, we can compare the sample averages:
+
+$$\bar{X} = \frac{1}{M}\sum_{i=1}^M{X_i} \ \ ; \ \ \bar{Y} = \frac{1}{N}\sum_{i=1}^N{Y_i}$$
+
+But we also need to take into account the variation in our samples. We know from the CLT that these follow normal distributions as follows:
+
+$$\bar{X} \sim \mathcal{N}(\mu,\frac{\sigma^2}{M}) \ \ ; \ \ \bar{Y} \sim \mathcal{N}(\mu,\frac{\sigma^2}{N})$$
+
+Statistical theory also tells us a few useful things that we can use to help us here:
++ Since these are both normally distributed random variables, the difference between these is also a normally distributed random variable.
++ The variance of the difference for two independent variables is equal to the sum of their individual variances.
+
+Under the null hypothesis, we expect that $\bar{Y} - \bar{X} = 0$. And since we know the variation in these random variables (the SEM), we can expect that the difference in means divided by their joint variance follows a standard normal $Z$ distribution!
+
+$$ \frac{\bar{Y} - \bar{X}}{\sqrt{\frac{\sigma^2_x}{M} + \frac{\sigma^2_y}{N}}} \sim \mathcal{N}(0,1)$$
+
+### Testing the CLT for the high-fat null sample distribution
+
+Now let's go back to our mouse study. If the null hypothesis is true, this means the difference in the sample means is equal to zero, and should follow a normal distribution.
+
+```{r}
+# number of simulations
+n = 10000
+size = 12
+
+# initialize an empty vector
+null.dist = vector("numeric",length=length(n))
+
+# let's use a loop to run 10,000 simulations under the null
+for (i in 1:n) {
+  ctl = sample(fmw.pop$Bodyweight, size)
+  trt = sample(fmw.pop$Bodyweight, size)
+  null.dist[i] = mean(trt) - mean(ctl)
+}
+hist(null.dist, freq = FALSE, ylim=c(0,0.3))
+null.density = density(null.dist)
+lines(null.density, col="red")
+xfit<-seq(-5,5,length=50)
+yfit<-dnorm(xfit,mean=mean(null.dist),sd=sd(null.dist))
+lines(xfit, yfit, col="blue", lwd=2)
+```
+
+Looks pretty good! We can also make a QQ plot:
+```{r}
+qqnorm(null.dist)
+qqline(null.dist)
+```
+
+Again, looks pretty good! So we can use the normal approximation with our sample estimates to compute $p$-values without access to the normal population.
+
+### Small sample sizes
+
+But what if our sample size is really small, and we can only do a few replicates? Let's see what happens:
+
+```{r}
+# number of simulations
+n = 100
+size = 3
+
+# initialize an empty vector
+null.dist = vector("numeric",length=length(n))
+
+# let's use a loop to run 10,000 simulations under the null
+for (i in 1:n) {
+  ctl = sample(fmw.pop$Bodyweight, 3)
+  trt = sample(fmw.pop$Bodyweight, 3)
+  null.dist[i] = mean(trt) - mean(ctl)
+}
+qqnorm(null.dist)
+qqline(null.dist)
+```
+
+If we look at this a bunch of times, sometimes the normal approximation looks pretty good, but often it doesn't work as well.
+
+### The $t$-distribution
+
+When a random variable is sampled from a population with a normal distribution with mean 0, but the sample size is NOT big enough so that $s \approx \sigma$, the distribution is not necessarily normal for the following quantity:
+
+$$T = \sqrt{N}\frac{\bar{X}}{s}$$
+
+Since this is the **ratio** of two random variables, it is not necessarily normal. We call this the Student's $t$-distribution, since it was published by William Sealey Gosset of the Guinness brewing company under the pseudonym "Student".
+
+### _p_-values with _t_-statistics
+
+Now we can go back to our mouse data and use the $t$-distribution to help us decide if these two groups are actually different:
+
+$$T = \frac{\bar{Y} - \bar{X}}{\sqrt{\frac{s^2_x}{M} + \frac{s^2_y}{N}}}$$
+
+```{r}
+ctl = fmw[fmw$Diet == "chow","Bodyweight"]
+trt = fmw[fmw$Diet == "hf","Bodyweight"]
+
+# the sample size
+M = length(ctl)
+N = length(trt)
+
+# observed difference between groups
+obs.diff = mean(trt) - mean(ctl)
+
+# standard error
+se.diff = sqrt( var(trt)/M + sqrt(var(ctl)/N) )
+
+# t-statistic
+tstat = obs.diff / se.diff
+tstat
+```
+
+Since we know from the CLT that the parent null distribution is approximated by a normal distribution with mean=0 and SD=1, we can now estimate the proportion of the null population that would be expected to show a difference at least this big, given just the sample data at hand.
+
+This will be our $p$-value:
+
+```{r}
+# the proportion expected to be bigger than obs.diff
+# this is the one-tailed p-value
+pval.1tailed = 1 - pnorm(tstat)
+pval.1tailed
+
+# the proportion expected to be bigger in absolute magnitude
+# is the two-tailed p-value (twice the one-tailed value)
+pval.2tailed = pnorm(-tstat) + (1 - pnorm(tstat))
+pval.2tailed = 2 * pval.1tailed    # this is the same
+pval.2tailed
+```
+
+Let's test this with the population data. We can repeat the sampling we did before, but instead use the sampling distribution of the $t$-statistic, which we expect to be normally distributed based on the CLT.
+
+```{r}
+# number of simulations
+n = 10000
+M = 12
+N = 12
+
+# initialize an empty vector
+null.dist = vector("numeric",length=length(n))
+
+# let's use a loop to run 10,000 simulations under the null
+for (i in 1:n) {
+  ctl = sample(fmw.pop$Bodyweight, M)
+  trt = sample(fmw.pop$Bodyweight, N)
+  se.diff = sqrt( var(trt)/M + sqrt(var(ctl)/N) )
+  null.dist[i] = ( mean(trt) - mean(ctl) ) / se.diff
+}
+
+# does this look like a standard normal distribution?
+par(mfrow=c(1,2))
+
+hist(null.dist, freq = FALSE)
+xfit<-seq(-5,5,length=100)
+yfit<-dnorm(xfit,mean=mean(null.dist),sd=sd(null.dist))
+lines(xfit, yfit, col="blue", lwd=2)
+
+qqnorm(null.dist)
+qqline(null.dist, col="red")
+abline(0,1, col="blue", lwd = 2)
+```
+
+Looks pretty good! The CLT gives us a pretty good approximation here, so our $p$-value is a pretty good estimate of the true $p$-value.
+
+What happens if our sample size is a lot smaller? Let's run the same simulation, but using a sample size of 3:
+
+```{r}
+# number of simulations
+n = 10000
+M = 3
+N = 3
+
+# initialize an empty vector
+null.dist = vector("numeric",length=length(n))
+
+# let's use a loop to run 10,000 simulations under the null
+for (i in 1:n) {
+  ctl = sample(fmw.pop$Bodyweight, M)
+  trt = sample(fmw.pop$Bodyweight, N)
+  se.diff = sqrt( var(trt)/M + sqrt(var(ctl)/N) )
+  null.dist[i] = ( mean(trt) - mean(ctl) ) / se.diff
+}
+
+# does this look like a standard normal distribution?
+par(mfrow=c(1,2))
+
+hist(null.dist, freq = FALSE, ylim = c(0,0.4))
+null.density = density(null.dist)
+lines(null.density, col="red")
+xfit<-seq(-5,5,length=50)
+yfit<-dnorm(xfit)
+lines(xfit, yfit, col="blue", lwd=2)
+
+qqnorm(null.dist)
+qqline(null.dist, col="red")
+abline(0,1, col="blue", lwd = 2)
+```
+
+Now the sampling distribution of $t$ doesn't look like a very good approximation of the normal! We can run this a few times -- notice that each time, the actual distribution has somewhat longer tails than the normal distribution.
+
+# $t$-test in R
+
+Fortunately, we can do all of this using a function in R rather than computing everything manually. Whew!
+
+```{r}
+# recover observed data from our controls vs. high-fat diet
+ctl = filter(fmw, Diet == "chow") %>% select(Bodyweight) %>% unlist
+trt = filter(fmw, Diet == "hf") %>% select(Bodyweight) %>% unlist
+
+# compute a t-test
+ttest.obs = t.test(trt,ctl)
+ttest.obs
+```
+
+Note that the $p$-value here is a little bigger because we are not assuming that the CLT applies -- instead we use the $t$-distribution approximation, which has bigger tails.
+
+The $t$-distribution is a pretty good approximation when the populations from which the data are sampled are roughly normally distributed. We can sort of test this assumption by looking at QQ plots of our samples, even though our sample size is rather small.
+
+```{r}
+par(mfrow=c(1,2))
+qqnorm(ctl)
+qqline(ctl)
+qqnorm(trt)
+qqline(trt)
+```
+
+Since these look sort of ok, this means that using the $t$-distribution approximation is probably ok in this case.
+
+### Confidence intervals
+
+Notice that the output for the $t$-test above also gave us a confidence interval. As we saw above, we can get a $p$-value for one pair of samples from our control and treatment populations. 
+
+But different samples may give us different estimates. Let's compare the true population mean to the sample mean for N=30:
+
+```{r}
+set.seed(1)
+chow.pop = unlist(fmw.pop) #filter(fmw.pop) %>% select(Bodyweight) %>% unlist
+mean.pop = mean(fmw.pop$Bodyweight)
+mean.pop
+
+N=30
+chow = sample(chow.pop,N)
+mean.chow = mean(chow)
+mean.chow
+```
+
+Because we do not normally have access to the full population, we want to create an interval based on the data points we are reasonably confident will cover the true parameter for the population mean (which is unknown).
+
+We will use the CLT to construct a normlly distributed random variable with mean=0 and sd=1:
+
+```{r}
+sem = sd(chow)/sqrt(N)
+sem
+
+# a standard normal variable
+z = ( mean.chow - mean.pop ) / sem
+z
+
+# central 95% of a standard normal (approx)
+pnorm(1.96) - pnorm(-1.96)
+```
+
+Since our z is normally distributed, we can rearrange our equations and get a 95% CI: a range that we know will contain the true population mean 95% of the time for $Q = 1.96$:
+
+$$-1.96 < (mean.chow - mean.pop)/sem < 1.96$$
+
+More generally, we can say:
+$$-Q < (mean.chow - mean.pop)/sem < -Q$$
+
+This gives us a confidence interval for the difference in the means:
+
+$$ -Q*sem < mean.chow - \mu < Q*sem$$
+
+```{r}
+Q = qnorm(1-0.05/2)
+CI = c(mean.chow - Q*sem, mean.chow + Q*sem)
+CI
+
+# does the true mean really fall within this interval?
+CI[1] < mean.pop & CI[2] > mean.pop
+```
+
+Now we can plot the CI when we repeat this a bunch of times. The following document from _**Data Analysis for the Life Sciences**_ shows what happens when we do this: [Confidence Intervals](http://genomicsclass.github.io/book/pages/confidence_intervals.html)
+
