@@ -1,0 +1,98 @@
+---
+title: 'In-class exercises: Permutations, Combinations, Binomial Proportions'
+subtitle: "XDASI Fall 2021"
+date: "9/30/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error = FALSE)
+```
+
+## Practice problems
+
+### 1. Nucleic acids: Sampling, permutations and combinations
+
+a. Restriction enzymes recognize specific sequences in DNA and cut the DNA within or near those sites. How many possible restriction sites of length 6 are there?
+```{r}
+
+```
+
+b. At what frequency would you expect to find a binding site for a particular restriction enzyme that recognizes a 6 bp sequence? _Note: Restriction enzymes usually recognize a palindromic sequence, so you don't need to worry about looking on both strands._
+```{r}
+
+```
+
+c. What is the average length of a fragment produced by a 6-cutter?
+```{r}
+
+```
+
+d. The EcoR1 enzyme cuts the sequence "GAATTC". How many different sequences could be made out of this set of nucleotides (assume that you treat each A and T as distinct individuals)?
+```{r}
+
+```
+
+d. You are interested in synthesizing a bunch of random oligonucleotides for a SELEX experiment. How many possible oligos of length 22 are there?
+```{r}
+
+```
+
+
+e. How many ways could you make a sequence of 6 nt by grabbing them at random from a bag of 12 nucleotides (assuming each base is treated as a distinct unique entity, and you can only pick each nt once)? This is an example of "random sampling without replacement".
+```{r}
+
+```
+
+f. How many combinations of 6nt are there in a set of 12 random nucleotides? (That is, pick any group of 6 nt, where each one is treated as unique, and you don't care about the sequence in which you pick them.)
+```{r}
+
+```
+
+g. How are your answers in parts e and f related?
+
+```{r eval=FALSE}
+
+```
+
+
+### 4. Wnt signaling: Binomial proportions
+
+Proliferation of embryonic stem cells is important for early development and is promoted by Wnt signaling, which promotes cell cycle progression through the transcriptional activator beta-catenin. In a study of the developing mouse, it was found that only 11% of cells in a region of the brain that is rich in neuronal progenitors was responsive to Wnt (even though Wnt is required for stem cell expansion).
+
+***Note: You may find the `choose()` function to be useful for parts of this question.***
+
+a. If you were to perform FACS on cells from this region that are labeled with a fluorescent antibody against the Wnt receptor, what is the probability of observing the following outcomes among a sample of 6 cells? Below, let's call Wnt-responsive cells = W and Wnt-insensitive cells = I.
+
+```{r}
+W = 0.11
+I = 0.89
+
+# 1. A sequence of WWIIII
+
+# 2. A sequence of IIWWII
+
+# 3. A string of WWWWWW
+
+# 4. At least one W cell out of 6
+
+```
+
+b. How many ways are there to get four Wnt-insensitive cells out of 6 total? (This is the same as the number of ways to get two W cells out of 6.)
+```{r}
+
+```
+
+c. What is the total probability of getting exactly 4 I cells and 2 W cells in your sample, taking into account all the different ways that this outcome can be obtained?
+```{r}
+
+```
+
+d. What would be the probability of getting 2 or less W cells in a sample? (Consider the probability of getting either 0, 1, or 2 W cells.)
+```{r}
+
+```
+
+---

@@ -1,0 +1,217 @@
+---
+title: 'Homework 4: Probability'
+subtitle: "XDASI Fall 2021"
+author: "Sir Ronald Fisher [YOUR NAME HERE]"
+date: "Due: 9/30/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error = TRUE)
+library(ggplot2)
+library(gmodels)
+# remove "error = TRUE" to make knitr halt on errors
+# (do this when you are ready to check if your code will knit without errors)
+```
+
+## 1. Probability density and cumulative probability
+
+You are screening for genetic interactions between genes in yeast that cause deleterious fitness effects. To establish a baseline for your experiments, you decide to first estimate the probability density of colony diameters (in mm) for a population of WT yeast grown in controlled conditions (48 hours at 37°C). Fortunately, you have an automated image recognition system that allows you to do this for a large number of individual colonies!
+
+a. Simulate a sample of 1000 measured colonies with an average diameter of 1mm and a standard deviation of 0.1mm and store it in a variable. Set a seed to make your work reproducible. 
+
+What are the actual mean and SD? What about the IQR? Draw a boxplot to get a feel for the sample distribution.
+
+```{r}
+# your answer here
+```
+
+b. What are the SEM and 95%CI for this sample? How are these summary statistics computed, and what do they mean?
+
+```{r}
+# Option 1: compute by hand
+
+
+# Option 2: using gmodels package
+
+
+# Explanation
+
+```
+
+
+c. Draw a histogram of the sampled data, and make a qqplot to confirm that the sample really comes from a normal distribution.
+
+*Extra credit: See if you can overlay some additional information on the histogram, such as vertical lines showing some statistics, a smoothened density line for your sample distribution, and/or an "ideal" normal curve with the same parameters.*
+
+```{r}
+# Histograms
+
+# Option 1: base R
+
+# Option 2: ggplot
+
+
+# qqplot
+
+```
+
+
+Use the R functions for the CDF (`pnorm()`) and inverse CDF (`qnorm()`) to answer the questions below.
+
+d. What is the total probability that a randomly sampled colony from the parent population measures between 0.93 and 1.07 mm?
+
+```{r}
+# your answer here
+```
+
+
+e. What is the proportion of data that are <1 or >1 standard deviations away from the mean?
+
+```{r}
+# your answer here
+```
+
+
+f. What diameters correspond to the 10% and 90% quantiles?
+
+```{r}
+# your answer here
+```
+
+
+
+## 2. Co-occurrence of infection
+
+Among women voluntarily tested for sexually transmitted diseases in one university (modified from Tábora et al. 2005):
+
++ 18% tested positive for human papilloma virus (HPV) only,
++ 2% tested positive for Chlamydia only, and
++ 3% tested positive for both HPV and Chlamydia. 
+
+a. What is the total frequency of each STD in the population?
+
+```{r}
+# given probabilities
+p.hpv = 0.18
+p.chl = 0.02
+p.hpv.chl = 0.03
+
+# your answer here
+```
+
+
+For the next 3 questions, use set notation to write out the question in terms of set operations (as a comment) and then compute the answer. You may write probabilities using the following syntax, e.g.:
+
++ P(A) * P(B)
++ P(A) + P(B)
++ P(A AND B)
++ P(A OR B)
++ P(A | B)
++ etc.
+
+b. What is the probability that a woman will test positive for Chlamydia, given that she is positive for HPV?
+
+```{r}
+# notation
+
+# computation
+
+```
+
+
+b. What is the probability that a woman who tests positive for Chlamydia will also test positive HPV?
+
+```{r}
+# notation
+
+# computation
+
+```
+
+
+c. What is the total probability that a woman from this population who gets tested would test positive for either HPV and/or Chlamydia?
+
+```{r}
+# notation
+
+# computation
+
+```
+
+
+d. Is the occurrence of these infections independent? Explain.
+
+```{r}
+# your answer here
+```
+
+
+## 3. Allele frequencies
+
+Many gene loci have a major allele and a number of minor alleles in the population. Let's say there are 5 alleles for a particular locus, that individuals mate randomly with respect to the genotype at this locus, and that allele frequencies for A1-A5 are 0.82, 0.06, 0.05, 0.04, and 0.03 respectively.
+
+For each of the questions below, write out the probability equations (e.g. P(Ai) for each term) and then compute the answers numerically.
+
+a. What is the probability that any single allele chosen at random from the population is either A2 or A5? Write out the probability statement as a comment below and then computer the answer.
+
+```{r}
+# Allele frequencies
+A1 = 0.82
+A2 = 0.06
+A3 = 0.05
+A4 = 0.04
+A5 = 0.03
+
+# notation
+
+# computation
+
+```
+
+b. What is the probability that an individual carries two A3 alleles?
+
+```{r}
+# notation
+
+# computation
+
+```
+
+c. What is the probability that someone does NOT carry two A3 alleles?
+
+```{r}
+# notation
+
+# computation
+
+```
+
+d. What is the probability that someone is heterozygous for A1 and A4?
+
+```{r}
+# notation
+
+# computation
+
+```
+
+e. What is the probability that *neither* of two random individuals in the population would carry two A1 alleles?
+
+```{r}
+# notation
+
+# computation
+
+```
+
+f. ***Extra credit:*** What is the probability that 3 random individuals carry no A3 or A4 alleles at all? (Remember that each individual carries two alleles.) 
+
+```{r}
+# notation
+
+# computation
+
+```
