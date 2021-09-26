@@ -1,7 +1,7 @@
 ---
 title: "HW3: Describing Data and Estimating with Uncertainty"
 subtitle: "XDASI Fall 2021"
-author: "ANSWER KEY"
+author: "Elizabeth Blackburn [YOUR NAME HERE]"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
@@ -39,12 +39,11 @@ need to open this project.
 + Check to see what your current working directory is and list the files in it to make
 sure your data file is present.
 + If you put your data file in a sub-directory, also list all the files in that directory (I like to collect all my data files in a subdir called "data/").
-sure your data file is present.
 
-```{r eval=FALSE}
+```{r}
+# check current dir and list files
 getwd()
-list.files()
-list.files("data/")
+dir("/Users/ozanimir/Documents/NYU Files/Statistics in Biology/Week 4 Directory")
 ```
 
 ***Note: There is usually more than one way to complete a task. Below we will suggest options you can use, but you should feel free to use any syntax that you prefer.***
@@ -76,27 +75,44 @@ Load the data in `mice_pheno.csv` and take a look at it.
 
 ```{r}
 # load the dataset
-mice.pheno = read.csv("data/mice_pheno.csv", stringsAsFactors = TRUE)
+mice_pheno = read.csv("mice_pheno.csv", header=TRUE)
 
 # take a look at its structure and contents
-str(mice.pheno)
-head(mice.pheno)
-summary(mice.pheno)
+mice_pheno
+summary(mice_pheno)
 ```
 
 The `summary()` function is nice, but it doesn't give you the full breakdown of the number of male and female animals in each treatment group.
 
 Let's check this using dplyr to group and summarize the data. Recall that the keyboard shortcut for the pipe (`%>%`) operator is cmd-shift-m or ctl-shift-m.
 
-+ Use `group_by()` to separate the data by Sex and Diet
-+ Use the `summarise()` function to count up the number in each group (or `summarize()`; these are synonyms using British or American spelling)
++ Use `group_by()` to separate the data by Sex and Diet.
++ Use the `summarise()` function to count up the number in each group (or `summarize()`; these are synonyms using British or American spelling).
   + The argument to do this is `n()`
   + Call the new column "n_animals"
-
+  
 *Hint: You did something very similar in recitation last week.*
 
 ```{r}
-mice.pheno %>% group_by(Sex, Diet) %>% summarise(n_animals = n())
+# summarize the data by sex and diet
+diet_chow = filter(mice_pheno,
+                       Diet == "chow")
+diet_hf = filter(mice_pheno,
+                       Diet == "hf")
+
+diet_chow_grouped = diet_chow %>% 
+  group_by(Sex)
+diet_hf_grouped = diet_hf %>% 
+  group_by(Sex)
+  
+diet_chow_grouped_count = diet_chow_grouped %>% 
+  summarize(n_animals = n())
+diet_hf_grouped_count = diet_hf_grouped %>% 
+  summarize(n_animals = n())
+
+diet_chow_grouped_count
+diet_hf_grouped_count
+
 ```
 
 
@@ -117,43 +133,53 @@ It's always a good idea to check the integrity of your data files before you sta
 
 The full mouse dataset contains some rows with missing data. How can we tell?
 
-+ Otion 1: Use `which` and `is.na()` to find out which rows are missing bodyweight measurements.
++ Option 1: Use `which` and `is.na()` to find out which rows are missing bodyweight measurements.
 + Option 2: Use `subset()` and `is.na()` to do the same thing.
 
 ```{r}
-# Option 1
-mice.pheno[which(is.na(mice.pheno$Bodyweight)),]
-
-# Option 2
-mice.pheno %>% subset(is.na(Bodyweight))
+# find rows with missing values
+missing_values = which(is.na(mice_pheno$Bodyweight)==TRUE)
+missing_values
 ```
 
 We can remove rows with missing data using `complete.cases()` (there are a couple of other ways to do this also). Choose your preferred method and clean the data frame by throwing away those `NA` rows.
 
 ```{r}
-# Option 1
-mice.pheno = mice.pheno[complete.cases(mice.pheno),]
-
-# Option 2
-mice.pheno = mice.pheno %>% subset(complete.cases(mice.pheno))
+# remove rows with missing values
+mice_pheno_clean = mice_pheno[complete.cases(mice_pheno),]
+mice_pheno_clean
 ```
 
 Now use dplyr again to check the number of male and female animals remaining in each treatment group.
 
 ```{r}
-mice.pheno %>% group_by(Sex, Diet) %>% summarise(n_animals = n())
+# check remaining number of animals in each group
+diet_chow_clean = filter(mice_pheno_clean,
+                       Diet == "chow")
+diet_hf_clean = filter(mice_pheno_clean,
+                       Diet == "hf")
+
+diet_chow_clean_grouped = diet_chow_clean %>% 
+  group_by(Sex)
+diet_hf_clean_grouped = diet_hf_clean %>% 
+  group_by(Sex)
+  
+diet_chow_clean_grouped_count = diet_chow_clean_grouped %>% 
+  summarize(n_animals = n())
+diet_hf_clean_grouped_count = diet_hf_clean_grouped %>% 
+  summarize(n_animals = n())
+
+diet_chow_clean_grouped_count
+diet_hf_clean_grouped_count
 ```
 
 How many data points were removed, and from which group?
 
 ```{r}
-# from "missing data" section above
-
-# 434	M	hf	NA	
-# 654	M	hf	NA	
-# 745	M	chow	NA	
-# 834	M	hf	NA	
-# 835	M	hf	NA	
+# your answer here
+# 5 data points were removed in total;
+# 1 data point was removed from the male mice group that received the chow diet;
+# 4 data points were removed from the male mice group that received the high fat diet
 ```
 
 
@@ -175,10 +201,16 @@ If you don't like the look of the labels, it is pretty easy to modify the text a
 ```{r fig.height=4, fig.width=6, warning=FALSE}
 
 ## Violin plot by sex and diet
-ggplot(mice.pheno, aes(x=Diet, y=Bodyweight, fill=Diet)) +
-  geom_violin(color="black", width=0.5) +
-  geom_boxplot(fill="white", color="black", width=0.1) +
-  facet_wrap(~ Sex) +
+clean_total_data = rbind(diet_chow_clean_grouped,diet_hf_clean_grouped)
+clean_total_data
+
+ggplot(data = clean_total_data,
+       mapping = aes(x = Diet,
+                     y = Bodyweight,
+                     fill = Diet)) +
+  geom_violin() +  # violin
+  geom_boxplot(width = 0.3, fill = "white") +  # box
+  facet_wrap(~Sex) +  # facet wrap
   
   # adjust text appearance
   theme( text = element_text( size = 14 ),
@@ -195,24 +227,29 @@ Considering that we can't do this experiment on all mice on the planet, let's us
 
 ```{r}
 # mean bodyweight
-mean_bw = mean(mice.pheno$Bodyweight)
-mean_bw
+mean_bodyweight = mean(clean_total_data$Bodyweight)
+mean_bodyweight
 
 # sem
-sem_bw = sd(mice.pheno$Bodyweight) / sqrt(length(mice.pheno$Bodyweight))
-sem_bw
+sem_mice_pheno = sd(clean_total_data$Bodyweight)/sqrt(length(clean_total_data$Bodyweight))
+sem_mice_pheno
 
 # 95% CI
-Q = qnorm(0.975)
-c(mean_bw - Q*sem_bw, mean_bw + Q*sem_bw)
+error = (qt(0.975, df = 840) * sem_mice_pheno / sqrt(840))
+min_boundary = mean_bodyweight - error
+max_boundary = mean_bodyweight + error
+min_boundary
+max_boundary
+
+# 95% CI is 28.83243 < x < 28.86167
+
 ```
 
 Describe in words what the 95% CI tells you.
 
 ```{r}
-# the 95%CI is an estimated interval within which we expect to see the true 
-# population mean ~95% of the time (i.e. we expect 19/20 95%CI's to contain 
-# the true population mean) 
+# your answer here
+# The 95% CI helps us identify, with the given sample size and sample distribution, where the sample mean will likely fall 95% of the time. 
 ```
 
 
@@ -229,13 +266,12 @@ Try out this function on the `mice.pheno$Bodyweight` data.
 
 ```{r warning=FALSE}
 # install and load gmodels
-#install.packages("gmodels")  # do this once
+install.packages("gmodels", repos = "http://cran.us.r-project.org")  # do this once
 library(gmodels)
 
 # use ci() compute summary stats for bodyweight for the combined data
-ci(mice.pheno$Bodyweight)
-ci(mice.pheno$Bodyweight)[3]
-ci(mice.pheno$Bodyweight)["CI upper"]
+confidence_interval_total = ci(clean_total_data$Bodyweight, confidence=0.95)
+confidence_interval_total
 ```
 
 
@@ -255,14 +291,27 @@ So far, so good! However you'll notice that the numbers are all really long. *Op
 
 ```{r warning=FALSE, message=FALSE}
 # make a summary table
-summary_stats = mice.pheno %>% 
-  group_by(Sex, Diet) %>% 
-  summarise(mean_weight = mean(Bodyweight), 
-            SEM = round(ci(Bodyweight)["Std. Error"],2),
-            CI_lower = ci(Bodyweight)[2],
-            CI_upper = ci(Bodyweight)[3] )
-summary_stats[3:6] = round(summary_stats[3:6], 2)
-summary_stats
+
+summary_stats_chow = filter(mice_pheno_clean,
+                       Diet == "chow") %>% 
+                group_by(Sex)  %>% 
+                summarize(mean_weight = mean(Bodyweight),
+                          SEM = sd(Bodyweight, na.rm = TRUE),
+                          CI_lower = ci(Bodyweight, confidence = 0.025, alpha = 0.975),
+                          CI_higher = ci(Bodyweight, confidence = 0.975, alpha = 0.025))
+
+summary_stats_hf = filter(mice_pheno_clean,
+                       Diet == "hf") %>% 
+                group_by(Sex)  %>% 
+                summarize(mean_weight = mean(Bodyweight),
+                          SEM = sd(Bodyweight, na.rm = TRUE),
+                          CI_lower = ci(Bodyweight, confidence = 0.025, alpha = 0.975),
+                          CI_higher = ci(Bodyweight, confidence = 0.975, alpha = 0.025))
+  
+
+
+summary_stats_chow
+summary_stats_hf
 ```
 
 ### I.5. Average weight gain
@@ -274,34 +323,39 @@ Find the difference in the mean weight for males vs. females on the HF vs. contr
 
 ```{r}
 # extract subsets - you can use either filter or subset with pull
-fc = mice.pheno %>% 
-  filter(Sex == "F" & Diet == "chow") %>% 
-  summarize(mean_weight = mean(Bodyweight)) %>%  
-  pull("mean_weight")
-fh = mice.pheno %>% 
-  filter(Sex == "F" & Diet == "hf") %>% 
-  summarize(mean_weight = mean(Bodyweight)) %>%  
-  pull("mean_weight")
-
-mc = summary_stats %>% subset(Sex == "M" & Diet == "chow") %>%  pull("mean_weight")
-mh = summary_stats %>% subset(Sex == "M" & Diet == "hf") %>%  pull("mean_weight")
+fc = filter(mice_pheno_clean,
+            Diet == "chow", Sex == "F")
+fh = filter(mice_pheno_clean,
+            Diet == "hf", Sex == "F")
+mc = filter(mice_pheno_clean,
+            Diet == "chow", Sex == "M")  
+mh = filter(mice_pheno_clean,
+            Diet == "hf", Sex == "M")
 
 # average weight gain by sex
-fh - fc
-mh - mc
+fc_mean = mean(fc$Bodyweight)
+fh_mean = mean(fh$Bodyweight)
+mc_mean = mean(mc$Bodyweight)
+mh_mean = mean(mh$Bodyweight)
 
+male_gain = mh_mean - mc_mean
+female_gain = fh_mean - fc_mean
+  
 # percent weight gain
-# two ways to display the results
-c( ((fh - fc)/fc)*100 , ((mh - mc)/mc)*100 )
-data.frame( F_pct_gain = as.numeric(((fh - fc)/fc)*100),
-            M_pct_gain = as.numeric(((mh - mc)/mc)*100) )
+percent_male_gain = (male_gain / mc_mean) * 100
+percent_female_gain = (female_gain / fc_mean) * 100
+
+percent_male_gain
+percent_female_gain
+
 ```
 
 
 What do you conclude from these observations? Do you think males and females put on a significantly different proportion of their body weight on a high-fat diet?
 
 ```{r}
-# it's hard to tell at this point whether these apparent differences are significant or just due to sample variation ... 
+# your answer here
+# Males have not gained significantly more weight because the difference in weight gain between different groups is only 1 standard deviations apart. 
 ```
 
 
@@ -315,8 +369,10 @@ What if we only measured weight on different diets for male 12 mice? Since the o
 
 ```{r}
 # subset the data
-chow = mice.pheno[which(mice.pheno$Sex == "M" & mice.pheno$Diet == "chow"),"Bodyweight"]
-hf   = mice.pheno[which(mice.pheno$Sex == "M" & mice.pheno$Diet == "hf"),"Bodyweight"]
+chow = filter(mice_pheno_clean,
+              Sex == "M", Diet == "chow")
+hf   = filter(mice_pheno_clean,
+              Sex == "M", Diet == "hf")
 ```
 
 
@@ -328,21 +384,23 @@ hf   = mice.pheno[which(mice.pheno$Sex == "M" & mice.pheno$Diet == "hf"),"Bodywe
 
 ```{r}
 # sample 12 males from each diet
-s.ctl = sample(chow, 12)  # control = "chow" group
-s.trt = sample(hf, 12)    # treatment = "hf" group
+s.ctl = sample(chow$Bodyweight,12)  # control = "chow" group
+s.trt = sample(hf$Bodyweight,12)  # treatment = "hf" group
 
 # how different are the mean weights in the two samples?
 obs.diff = mean(s.trt) - mean(s.ctl)
 obs.diff
 
 # mean difference from full dataset
-mean(hf) - mean(chow)
+obs.diff.full = mean(hf$Bodyweight) - mean(chow$Bodyweight)
+obs.diff.full
 ```
 
 Try re-running this code a bunch of times. How do the differences between samples vary? How do they compare with the mean difference between the groups that you got from the full dataset?
 
 ```{r}
-# there is quite a lot of variation in these small samples!
+# your answer here
+# Most often, the differences between the mean of the sample and the mean of the entire data are either equal, or the sample mean tends to be less than the entire male population's mean. This suggests that the mean difference for male population's bodyweight is distributed asymmetrically with the majority of the differences aligning towards the bottom half of the range, so skewed to the right. 
 ```
 
 
@@ -363,7 +421,7 @@ First, let's take a handful of random samples from this population, compute the 
 
 ```{r}
 # take 6 samples of 12 mice from the control "chow" population and look at the means
-replicate(6, mean(sample(chow, 12)) )
+replicate(6,mean(sample(chow$Bodyweight,12)))
 ```
 
 Naturally, each time we take a different sample, we get a different mean. Note that since we are taking random samples, the mean is also a **random variable**!
@@ -378,34 +436,41 @@ What happens if we take a whole bunch of samples from the control population, co
 # ============================================================================ #
 # simulate 1000 random samples of size 12 drawn from the male control population
 # and store the means of all the samples
+# (the same thing you did above, but substitute the variable names as given)
 sample.size = 12
 n.samples = 1000
-resample = data.frame(sample.mean = replicate(n.samples, 
-                                              mean(sample(chow, sample.size))) )
-#str(resample)
-#head(resample)
+resample = data.frame(sample.mean =  
+                        replicate(1000,                    # number of samples
+                                  mean(sample(chow$Bodyweight,12))) )  # sample and take the mean
+str(resample)
+head(resample)
 
 # ============================================================================ #
 # Use ggplot to draw a histogram of the distribution in the `resample` data frame, and
 # superimpose a vertical line showing the mean
 
-# histogram of sample means from the `resample` data frame
-ggplot(resample, aes(x=sample.mean)) + 
-  geom_histogram(fill="lightblue", color="black", 
-                 boundary=0, binwidth = 0.2) + # pick a color scheme
+# ggplot histogram of sample means from the `resample` data frame
+ggplot(data = resample, aes(x = sample.mean, fill = sample.mean)) + 
+    # pick a color scheme, set binwidth
+  geom_histogram(binwidth = 0.3,
+                 color = "black",
+                 fill = "purple"
+                 )
+  # map `sample.mean` to the vertical line (copy syntax from previous histograms above)
   
-  # map the mean of `sample.mean` to the vertical line (copy syntax from previous histograms above)
-  geom_vline(aes(xintercept=mean(sample.mean)),
-             linetype="dashed")
 
 # ============================================================================ #
 # print some summary stats
 pop.mean = round(mean(chow),2)
 sample.dist.mean = round(mean(resample$sample.mean),2)
-cat(paste("Chow population mean = ", pop.mean, "\n",
-          "Chow sample distribution mean = ", sample.dist.mean, "\n",
-          "Difference (sample mean - population mean) = ", round(sample.dist.mean - pop.mean, 2), "\n",
-          "SD of sample distribution: ", round(sd(resample$sample.mean),2), sep="") )
+cat(paste("Chow population mean = ", 
+              pop.mean, "\n",
+          "Chow sample distribution mean = ", 
+              sample.dist.mean, "\n",
+          "Difference (sample mean - population mean) = ", 
+              round(sample.dist.mean - pop.mean, 2), "\n",
+          "SD of sample distribution: ", 
+              round(sd(resample$sample.mean),2), sep="") )
 
 ```
 
@@ -439,10 +504,10 @@ sem = function(pop.data, sample.size=12){
   
   # take a new sample of 12 from the given population
   # here, random.sample is a **vector of bodyweights**
-  random.sample = sample(pop.data, sample.size)
+  random.sample = sample(pop.data,sample.size)
   
-  # formula for the SEM of a random sample
-  return( round(sd(random.sample)/sqrt(sample.size), 2) )
+  # add formula for the SEM of a random sample here (round off to 2 digits if you want)
+  return(SEM = ((sd(random.sample)) / (sqrt(sample.size))))
 }
 # ============================================================================ #
 ```
@@ -452,19 +517,19 @@ Now we can call this function any number of times, and then compare the SEM we c
 ```{r collapse=TRUE}
 # repeat sampling from the "chow" population 10 times (with default sample size = 12)
 print("SEM of individual 'chow' samples:")
-replicate(10, sem(chow))  # compute sem for 10 samples from "chow" population
+replicate(10, mean(sample(chow$Bodyweight,12)), sem(pop.data = chow$Bodyweight))  # compute sem for 10 samples from "chow" population
 
 # take the SD of all the sample means in the `resample` distribution
 # this is the **empirical SD** of the sampling distribution of the sample means!
 print(paste("SD of 1000 'chow' sample means: ", 
-            round(sd(resample$sample.mean),2), sep=""))
+            round(sd(resample$sample.mean),2), sem = ""))
 
 ```
 
 And we can also plot the SEM from a whole ton of samples to visualize how much the SEM varies between them:
 ```{r}
 # distribution of the SEM for 1000 samples of size 12
-sem_dist = data.frame(sem = replicate(1000,sem(chow)))
+sem_dist = data.frame(sem = replicate(1000, mean(sample(chow$Bodyweight,12))))
 
 # ============================================================================ #
 # plot the distribution
@@ -494,11 +559,11 @@ First, let's calculate the bounds of the 95% CI *by hand* for a single sample of
 ```{r}
 # create a sample of 12 bodyweights from the chow population
 sample.size = 12
-ctl.sample = sample(chow, sample.size)
+ctl.sample = sample(chow$Bodyweight)
 
 # compute SEM and 95% CI
-sem = sd(ctl.sample)/sqrt(length(ctl.sample))
-ci = c(mean(ctl.sample) - Q*sem, mean(ctl.sample) + Q*sem)
+SEM = sem(ctl.sample)
+ci = c((mean(ctl.sample))-(1.96*(SEM)),(mean(ctl.sample))+(1.96*(SEM)))
 
 cat("95% CI for an individual sample:\n", ci)
 ```
@@ -519,25 +584,22 @@ Q = qnorm(0.975)  # sigma for +/- 47.5% of a normal distribution
 # rename chow and hf to reflect that we are using these as the population
 chowPop = chow
 hfPop = hf
-plot(mean(chowPop)+c(-7,7),c(1,1),type="n",
-     xlab="weight",ylab="interval",ylim=c(1,n.samples))
-abline(v=mean(chowPop))
-abline(v=mean(hfPop), lty="dashed")
+plot(mean(chowPop$Bodyweight)+c(-7,7),c(1,1),type="n",
+     xlab="weight",ylab="interval", xlim = c(0,n.samples), ylim=c(1,n.samples))
+abline(v=mean(chowPop$Bodyweight))
+abline(v=mean(hfPop$Bodyweight), lty="dashed")
 
 # display the 95% CI for a bunch of random samples
-#ci_range = c() # initialize empty vector
 for (i in 1:n.samples) {
-  chow.sample = sample(chowPop,N)          # take a random sample
-  se = sd(chow.sample)/sqrt(N)             # compute SEM
+  chow.sample = sample(chowPop$Bodyweight,N,replace=TRUE) # take a random sample
+  se = sd(chow.sample)/sqrt(N)           # compute SEM
   interval = c(mean(chow.sample)-Q*se, mean(chow.sample)+Q*se) # compute 95% CI
-#  ci_range[i] = interval[2] - interval[1]  # record size of ci interval
   
   # draw the 95% CI -- color it green if it contains the true population mean, or red if not
-  covered = mean(chowPop) <= interval[2] & mean(chowPop) >= interval[1]
+  covered = mean(chowPop$Bodyweight) <= interval[2] & mean(chowPop$Bodyweight) >= interval[1]
   color = ifelse(covered,"forestgreen","red")
   lines(interval, c(i,i), col=color)
 }
-#summary(ci_range)  # display summary of the distribution of CI ranges
 # ============================================================================ #
 ```
 
@@ -545,23 +607,21 @@ Re-run the above code block a bunch of times.
 
 Around what proportion of these confidence intervals do NOT contain the true population mean? How much does this number seem to vary?
 ```{r}
-# around 5%, but often a few percent more (between 5-10%)
+# your answer here
+# About 5% of these confidence intervals do NOT contain the true population mean and this number seems to vary by +- 2 confidence intervals. 
 ```
 
 
 How much does the width of the 95% CI's seem to vary?
 ```{r}
-# using additions to the loop above to record the size of the CI interval
-# (commented out above)
-
-#  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-# 1.624   3.949   4.770   4.793   5.393   7.929 
+# your answer here
+# The width of the CI's vary around 1 or 2 SE's most often, with a max variance being 4 SE's the rarest. 
 ```
 
-About how often do your CI's contain the mean for the high-fat diet population (the dotted line)? What do you think this might mean?
+About how often do your CI's contain the mean for the high-fat diet population? What do you think this might mean?
 ```{r}
-# 10-30% of the time; this prompts further hypothesis testing
-# to determine how likely it is that high-fat and control samples are drawn from different distributions
+# your answer here
+# About 95% of the time, because we have designated a 95% CI which allows us to, on average, his the true population mean about 95% of the time. However, for the high fat population mean, the number of CI's that hit the high fat population mean are rare and far apart, so this means the two populations have significantly different cumulative density distributions. 
 ```
 
 

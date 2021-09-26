@@ -66,6 +66,7 @@ nav_exclude: false
   <summary>Details</summary>
 
 + **Class exercise and data set** - [zipped .Rmd](Recitation/W4.R1_Exercise_Empirical_Distributions.Rmd.zip) - [DATA](https://drive.google.com/file/d/1G3pP27gwQBGVfQLNoJxIfzsg1C_zokmj/view?usp=sharing){: target="blank"}
++ Answer key: [zipped .Rmd](Recitation/W4.R1_Exercise_Empirical_Distributions_KEY.Rmd.zip) - [HTML](Recitation/W4.R1_Exercise_Empirical_Distributions_KEY.html){: target="blank"}
 
 </details>
 

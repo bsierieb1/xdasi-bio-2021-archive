@@ -52,7 +52,7 @@ Let us create a data.frame with contig names in the first column and contig leng
 contig_names <- genome[c(TRUE,FALSE)] # but there are other ways, too
 head(contig_names)
 
-# get rid of ">"
+# get rid of ">" by splitting each element into the "before >" and "after >" part
 contig_names_split <- strsplit(contig_names,
                                split = ">") # split each element by ">"
 head(contig_names_split)
@@ -63,6 +63,10 @@ head(contig_names_split_unlisted)
 class(contig_names_split_unlisted)
 
 contig_names_split_unlisted_cleaned <- contig_names_split_unlisted[c(FALSE,TRUE)] # only keep even elements
+head(contig_names_split_unlisted_cleaned)
+
+# a simpler way - get rid of the first character in each element (since ">" is always just 1 character)
+contig_names_split_unlisted_cleaned <- substring(contig_names,2)
 head(contig_names_split_unlisted_cleaned)
 ```
 
