@@ -48,30 +48,32 @@ mice.pheno = read.csv("data/mice_pheno.csv", stringsAsFactors = TRUE)
 
 # extract female bodyweights for control and high-fat mice
 # Option 1: base R
-#ctl = mice.pheno[mice.pheno$Diet == "chow" & mice.pheno$Sex == "F","Bodyweight"]
-#trt = mice.pheno[mice.pheno$Diet == "hf"   & mice.pheno$Sex == "F","Bodyweight"]
+#ctl = 
+#trt = 
 
 # Option 2: dplyr (use `pull` at the end to extract just an unnamed vector of weights)
-ctl = filter(mice.pheno, Diet == "chow" & mice.pheno$Sex == "F") %>% select(Bodyweight) %>% pull
-trt = filter(mice.pheno, Diet == "hf" & mice.pheno$Sex == "F") %>% select(Bodyweight) %>% pull
+ctl = mice.pheno %>% filter(Sex == "F" & Diet == "chow") %>% pull
+trt = mice.pheno %>% filter(Sex == "F" & Diet == "hf") %>% pull
 ```
 
 ```{r collapse = TRUE}
-# take a look at these
+# take a look at these subsets
 head(ctl)
 head(trt)
 ```
 
+
 2. To get an idea of the expectation we would have looking at the entire dataset, compute the mean and SD of each population and find the mean difference between them.
 
 ```{r collapse=TRUE}
+# mean, sd, and diff for high-fat vs. control populations
 mean(ctl)
-mean(trt)
-
 sd(ctl)
+
+mean(trt)
 sd(trt)
 
-mean(trt) -  mean(ctl)
+mean(trt) - mean(ctl)
 ```
 
 Again, we see that the the high-fat mice are around 10% heavier than the control mice.
@@ -80,6 +82,7 @@ Again, we see that the the high-fat mice are around 10% heavier than the control
 ## II. The Null Distribution
 
 Most of the time, we don't have access to the full population for an experiment, but for this example, we have a large number (200+) control and high-fat diet mice that we can use as a proxy for the parent populations.
+
 
 ### Random sampling
 
@@ -108,10 +111,13 @@ Naturally, each time we take a different sample, we get a different mean. Since 
 # set a seed
 set.seed(3)
 
-# compare the means of two random samples
+# take two random samples
 ctl.sample = sample(ctl, 12)
 trt.sample = sample(trt, 12)
+ctl.sample
+trt.sample
 
+# compare the sample means
 obs.diff = mean(trt.sample) - mean(ctl.sample)
 obs.diff
 ```
@@ -161,32 +167,22 @@ The null distribution is all possible realizations of the difference in group me
 
 ```{r}
 # number of simulations
-n = 10000
 
 # initialize an empty vector
-null.dist = vector("numeric",length=length(n))
 
 # use a loop to run 10,000 simulations under the null
 
-for (i in 1:n) {  # repeat the following n times:
-  
-  # take two samples of 12 mice from the control population
-  ctl.sample = sample(ctl, 12)  # "control" sample
-  trt.sample = sample(ctl, 12)  # "treatment" (placebo) sample
-  
-  # record the mean difference between them
-  null.dist[i] = mean(trt.sample) - mean(ctl.sample)
-}
+
 ```
 
 4. Let's take a look at the distribution of our random variable:
 
 ```{r}
 # what's the range of the values we got?
-c(min(null.dist), max(null.dist))
+
 
 # make a histogram
-hist(null.dist, breaks=20, col="cadetblue1")
+
 ```
 
 
@@ -198,19 +194,16 @@ Now we can figure out how likely it is to see a value as big as the one we saw u
 
 ```{r}
 # histogram of null distribution with observed diff(trt.sample,ctl.sample)
-hist(null.dist, breaks=20, col="cadetblue1")
-abline(v=obs.diff, col="red", lwd=2)
+
+
 ```
 
 
 6. Compute the proportion of times we see a difference at least as big as our observed value in the null distribution.
 
 ```{r collapse=TRUE}
-# sum over the total gives the expected proportion > observed difference
-sum(null.dist > obs.diff) / n
+# expected proportion > observed difference
 
-# this is the same as the mean number of times we see this happen
-mean(null.dist > obs.diff)
 
 ```
 
@@ -227,6 +220,3 @@ In this case, we were able to run the simulations above because we had data from
 We will come back to this again later when we discuss $t$-tests, which follow a $t$-distribution. The $t$-distribution is very similar to a $z$-distribution for the standard normal, but it has somewhat longer tails for small sample sizes.
 
 ---
-
-
-

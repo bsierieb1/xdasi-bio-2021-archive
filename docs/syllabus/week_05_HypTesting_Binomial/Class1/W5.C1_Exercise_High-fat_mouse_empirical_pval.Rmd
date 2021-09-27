@@ -44,15 +44,15 @@ We previously found that mice in the high-fat diet group were on average around 
 
 ```{r}
 # load the dataset and take a look at it
-mice.pheno = 
+mice.pheno =
 
 # extract female bodyweights for control and high-fat mice
 # Option 1: base R
-#ctl = 
-#trt = 
+#ctl =
+#trt =
 
 # Option 2: dplyr (use `pull` at the end to extract just an unnamed vector of weights)
-#ctl = 
+#ctl =
 #trt = 
 ```
 
@@ -103,25 +103,25 @@ Naturally, each time we take a different sample, we get a different mean. Since 
 # set a seed
 
 # take two random samples
-ctl.sample = 
-trt.sample = 
+ctl.sample =
+trt.sample =
 ctl.sample
 trt.sample
 
 # compare the sample means
-obs.diff = 
+obs.diff =
 obs.diff
 ```
 
 
-***Is this sample size big enough to distinguish a true difference between the high-fat diet group and the control group? How often would we get as big a difference as this, just by chance?*** 
+***Is this sample size big enough to distinguish a true difference between the high-fat diet group and the control group? How often would we get as big a difference as this, just by chance?***
 
 This is where statistical inference can help us answer our scientific question. We need to keep in mind that these are just two random samples, and the difference in their means will vary each time we take a new sample.
 
   + Importantly, this means that any $p$-value we compute will represent just one single outcome of all possible outcomes.
   + Consequently, the $p$-value will differ each time we run this experiment independently.
 
-***This is why confidence intervals are helpful: they provide a quantitative (vs. qualitative) estimate of the true difference in means between the populations, based on the data from just a single trial.*** 
+***This is why confidence intervals are helpful: they provide a quantitative (vs. qualitative) estimate of the true difference in means between the populations, based on the data from just a single trial.***
 
 We will compute confidence intervals for this example as a future exercise; here we will just focus on $p$-values.
 
@@ -181,7 +181,7 @@ The null distribution is all possible realizations of the difference in group me
 
 Now we can figure out how likely it is to see a value as big as the one we saw under the null hypothesis. This will provide statistical support for our observation.
 
-5. Draw a histogram of the null distribution and superimpose a vertical line showing the observed difference between the high-fat sample and the control sample. 
+5. Draw a histogram of the null distribution and superimpose a vertical line showing the observed difference between the high-fat sample and the control sample.
 
 ```{r}
 # histogram of null distribution with observed diff(trt.sample,ctl.sample)
