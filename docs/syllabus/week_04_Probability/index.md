@@ -30,7 +30,7 @@ nav_exclude: false
 
 + [**Class notes**](Class1/W4.C1_Notes_Probability_Distributions_Part1.html){:target="blank"}
 + **In-class exercise** - [zipped .Rmd](Class1/W4.C1_In-class_Exercise.zip)
-  + **Key** - [zipped .Rmd](Class1/W4.C1_In-class_Exercise_KEY.zip)
+  + **Key** - [zipped .Rmd + .html](Class1/W4.C1_In-class_Exercise_KEY.zip)
 
 </details>
 
@@ -51,6 +51,7 @@ nav_exclude: false
 
 + **Monty Hall simulation** - [zipped .Rmd](Class2/Monty_Hall_simulation.zip)
 + **In-class exercise** - [zipped .Rmd](Class2/W4.C2_Exercise_Bayes.zip)
+  + **Key** - [zipped .Rmd + .html](Class1/W4.C2_Exercise_Bayes_KEY.zip)
 
 </details>
 
