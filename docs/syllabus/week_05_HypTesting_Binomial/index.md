@@ -28,10 +28,8 @@ nav_exclude: false
 
 ### Hypothesis Testing
 
-  <details closed markdown="block">
-    <summary>Details</summary>
-
-  + [**Class notes**](Class1/W5.C1_Notes_Hypothesis_testing.html){:target="blank"}
+  + [**Class notes (complete)**](Class1/W5.C1_Notes_Hypothesis_testing_full.html){:target="blank"}
+    + [zipped .Rmd](Class1/W5.C1_Notes_Hypothesis_testing.Rmd.zip)
   + **In-class exercise** - [zipped .Rmd](Class1/W5.C1_Exercise_High-fat_mouse_empirical_pval.Rmd.zip)
     <!-- + **Key** - [zipped .Rmd](Class1/W5.C1_Exercise_High-fat_mouse_empirical_pval_KEY.zip) -->
 

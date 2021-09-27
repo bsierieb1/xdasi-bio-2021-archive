@@ -17,7 +17,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-
 ### Example: Polio vaccine
 
 ```
@@ -35,7 +34,7 @@ Before we address this question, let's review the basics of hypothesis testing a
 
 To answer this question we need to formulate a *null* hypothesis, often denoted as $H_o$, and an alternative hypothesis, $H_A$.
 
-+ The $H_o$ for the above question is that there is no difference between the proportion of polio cases in the vaccinated and the unvaccinated groups. 
++ The $H_o$ for the above question is that there is no difference between the proportion of polio cases in the vaccinated and the unvaccinated groups.
 + The alternative hypothesis, $H_A$, is that the proportion of cases in the vaccine group is lower than in the unvaccinated group.
 
 If the probability of $H_o$ is very low, then we can reject $H_o$ and accept the alternate hypothesis $H_A$.
@@ -45,8 +44,8 @@ Since we know that random samples display variation, this question becomes, ***"
 
 ## Four basic steps of hypothesis testing
 
-- State the hypothesis. 
-- Compute the test statistic with the data. 
+- State the hypothesis.
+- Compute the test statistic with the data.
 - Determine the $p$-value.
 - Draw the appropriate conclusions.
 
@@ -69,7 +68,7 @@ Therefore we want to compare our results with the $H_o$ distribution and see ***
 + ***The $p$-value represents the probability of a specific event under the $H_o$, i.e. the probability of a particular observed outcome, given the null distribution.***
 
 
-### Example: handedness in toads^[1]
+### Example: handedness in toads
 
 ```
 Bisazza et al. (1996) tested the possibility of handedness in European toads, Bufo bufo, by sampling and measuring 18 toads from the wild. We will assume that this was a random sample. It was found that individual toads tended to use one forelimb more than the other. Of the 18 toads tested, 14 were right-handed and 4 were left-handed.
@@ -85,7 +84,7 @@ Our null and alternative hypotheses are:
 + The ***null expectation*** (no handedness) is that, out of 18 individuals sampled, we should observe 9 right-handed and 9 left-handed individuals.
 + The ***test statistic*** is 14, the number of right-handed individuals.
 
-When will perform a ***two-sided test*** since we are looking for any difference in either direction. 
+When will perform a ***two-sided test*** since we are looking for any difference in either direction.
 
 The null distribution and observed outcome for the handedness problem are illustrated below:
 
@@ -102,7 +101,7 @@ Since we will perform a two-tailed test, we are interested in the probability of
 
 ```{r collapse=TRUE}
 # cdf of total probability up to and including 4
-pbinom(q = 4, size = 18, prob = 0.5) 
+pbinom(q = 4, size = 18, prob = 0.5)
 
 # cdf of greater than 13 (same as >= 14)
 pbinom(13, 18, 0.5, lower.tail = F)
@@ -115,7 +114,7 @@ pbinom(13, 18, 0.5, lower.tail = F)
 pbinom(4, 18, 0.5) + pbinom(13,18,0.5, lower.tail = F)
 ```
 
-The $p$-value of our test statistic is 0.031. This is lower than the conventional cutoff of $p=0.05$, also known as **significance level**, or $\alpha$. 
+The $p$-value of our test statistic is 0.031. This is lower than the conventional cutoff of $p=0.05$, also known as **significance level**, or $\alpha$.
 
 Thus we **reject** the $H_o$ that there is no handedness and accept the $H_A$ that there is a preferential handedness for toads.
 
@@ -128,14 +127,24 @@ What are the null and alternative hypotheses?
 
 ```
 H_o: The proportion of children who contracted polio in each group was the same
-H_A: The proportion of children who contracted polio in each group was not the same
+H_A: The proportion of children who contracted polio in the vaccine group was lower than in the control group
 ```
 
 + What is the test statistic?
-+ What are the $p$-values for each group given the data?
-+ How significant was the $p$-value from this study?
+  + *The number of children with polio in the vaccinated group (n=200000)*
+  
++ What is the null distribution?
+  + *The binomial distribution with p=0.00057, the proportion of unvaccinated children who contracted polio.*
 
-```{r}
++ What are the $p$-values for each group given the data?
+  + *Control group: $\sim 0.52$ (we expect p=0.5, but the observed value is not exact due to discretization)*
+  + *Vaccine group: $\sim 10^{-19}$*
+
++ How significant was the $p$-value from this study?
+  + *Extremely significant!*
+
+
+```{r collapse = TRUE}
 # sample size
 n = 200000
 
@@ -148,10 +157,23 @@ num.polio.ctl = p.polio.ctl * n
 num.polio.vac = p.polio.vac * n
 num.polio.ctl # 114
 num.polio.vac # 32
+```
+
+```{r}
+# binomial test for unvaccinated group given H_o
+#pbinom(num.polio.ctl, n, prob=p.polio.ctl)  # control group
+pbinom(114, 200000, prob=0.00057)            # control group (hard-coded)
 
 # binomial test for vaccinated group given H_o
-pbinom(114,n,p.polio.ctl)  # control group
-pbinom(32,n,p.polio.ctl)   # vaccinated group
+#pbinom(num.polio.vac, n, prob=p.polio.ctl) # vaccinated group
+pbinom(32, 200000, prob=0.00057)            # vaccinated group (hard-coded)
+```
+
+*Note: if we wanted to find the probability that the vaccine might actually result in more cases than expected, we would combine the lower- and upper-tailed probabilities to get the total probability of seeing either 114-82=32 or fewer cases, or 114+82=196 or more cases:*
+
+```{r}
+# total prob of seeing at most 32 or at least 196 cases
+pbinom(32, 200000, prob=0.00057) + pbinom(195, 200000, prob=0.00057, lower.tail = FALSE)
 ```
 
 
@@ -161,7 +183,7 @@ pbinom(32,n,p.polio.ctl)   # vaccinated group
 
 There are two basic kinds of errors we can make in hypothesis testing:
 
-+ Rejecting a true null hypothesis is a **Type I** error. This is also called a **False Positive**. 
++ Rejecting a true null hypothesis is a **Type I** error. This is also called a **False Positive**.
 + Conversely, failing to reject a false null hypothesis is **Type II** error, or a **False negative**.
 
 ![](Images/Type_I_II_error.png){width=70%}
@@ -178,11 +200,11 @@ This is also illustrated in the table below:
 
 The number $\alpha$ is an arbitrary threshold at which we call an observed difference **significant**.
 
-  + Often, we choose $\alpha = 0.05$. 
+  + Often, we choose $\alpha = 0.05$.
     + Note that at this threshold, we will falsely reject a true null hypothesis 5% of the time, or 1/20 times.
     + The probability of accepting a true $H_o$, i.e. the **True negative** rate, is $1 - \alpha$.
-    
-One can try to reduce the **Type I** error by simply reducing the $\alpha$, for example setting $\alpha=0.01$. 
+
+One can try to reduce the **Type I** error by simply reducing the $\alpha$, for example setting $\alpha=0.01$.
 
   + However, this makes the **Type II** error worse! If the $\alpha$ threshold is too conservative, more true rejections will be missed.
   + On the other hand, if you are too liberal in setting $\alpha$, you risk increasing false negatives (failing to accept a true $H_o$).
@@ -191,19 +213,19 @@ One can try to reduce the **Type I** error by simply reducing the $\alpha$, for 
 
 The number $\beta$ represents the proportion of the time that we do NOT reject $H_o$, even though $H_A$ is true.
 
-  + A low **Type II** error is a sign that a test has high **power**, i.e. the probability of correctly accepting an alternative hypothesis $H_A$ (i.e. correctly rejecting a false null hypothesis). 
-  + Since power encompasses all **True positives**, power = $1 - \beta$. 
-  
+  + A low **Type II** error is a sign that a test has high **power**, i.e. the probability of correctly accepting an alternative hypothesis $H_A$ (i.e. correctly rejecting a false null hypothesis).
+  + Since power encompasses all **True positives**, power = $1 - \beta$.
+
 We will talk more about power when we discuss experimental designs.
 
 
 ## Interpreting non-significant results
 
-Note that a high $p$-value does not prove that the null hypothesis is true. 
+Note that a high $p$-value does not prove that the null hypothesis is true.
 
   + Our test is to see if the test statistic is more extreme than what we would expect by random sampling, and so all it says is that we cannot reject $H_o$ on the basis of the data at hand.
   + It is possible that with more data, our test would achieve greater **power**, i.e. the ability to discriminate between a true $H_o$ and a true $H_A$.
-  
+
 
 ## Confidence intervals
 
@@ -211,8 +233,8 @@ As we have already seen, confidence intervals enable us to estimate a range with
 
 $p$-values are closely related to confidence intervals: they are essentially reciprocal, and play complementary roles in Statistics. However,
 
-  + $p$-values are more ***qualitative***, since they only allow binary conclusions (i.e. "significant" or "not significant".) 
-  + Confidence intervals are more ***quantitative***: they give you z range of values that are acceptable. 
+  + $p$-values are more ***qualitative***, since they only allow binary conclusions (i.e. "significant" or "not significant".)
+  + Confidence intervals are more ***quantitative***: they give you z range of values that are acceptable.
 ***If a test statistic falls outside of the $1 - \alpha$ confidence interval, than the result of that test will be called statistically significant because the it will surely have a $p$-value less than 0.05.***
 
 
@@ -225,10 +247,10 @@ To investigate, Porter and Moore (1981) gave new T-shirts to children of nine mo
 In the exercise we will examine the following questions:
 
 + What is the appropriate null hypothesis?
-+ What is the alternative hypothesis? 
-+ What test statistic should you use? 
++ What is the alternative hypothesis?
++ What test statistic should you use?
 + If the null hypothesis were true, what is the probability of the observed data?
-+ What is the P-value for the test? 
++ What is the P-value for the test?
 + What is the appropriate conclusion?
 + We would we want to calculate a 95% confidence interval for the true proportion of correct identifications?
 

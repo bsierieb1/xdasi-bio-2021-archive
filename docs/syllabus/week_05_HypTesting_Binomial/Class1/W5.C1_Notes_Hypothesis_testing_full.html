@@ -291,7 +291,7 @@ Did the vaccine work, or did such a small difference arise purely by chance?</co
 <li><strong><em>The <span class="math inline">\(p\)</span>-value represents the probability of a specific event under the <span class="math inline">\(H_o\)</span>, i.e. the probability of a particular observed outcome, given the null distribution.</em></strong></li>
 </ul>
 <div id="example-handedness-in-toads" class="section level3">
-<h3>Example: handedness in toads<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></h3>
+<h3>Example: handedness in toads</h3>
 <pre><code>Bisazza et al. (1996) tested the possibility of handedness in European toads, Bufo bufo, by sampling and measuring 18 toads from the wild. We will assume that this was a random sample. It was found that individual toads tended to use one forelimb more than the other. Of the 18 toads tested, 14 were right-handed and 4 were left-handed.
 
 At this point the question became: do right-handed and left-handed toads occur with equal frequency in the toad population, or is one type more frequent than the other, as in the human population? Are these results evidence of a predominance of one type of handedness in toads?</code></pre>
@@ -315,7 +315,7 @@ At this point the question became: do right-handed and left-handed toads occur w
 <p>This distribution is an example of a <strong>binomial</strong> distribution with <span class="math inline">\(p=0.5\)</span> (we will discuss the binomial in great detail in the next class). Therefore, we can use R’s function for the CDF of a binomial distribution, <code>pbinom()</code>, to calculate the total probability of these two outcomes.</p>
 <p>Since we will perform a two-tailed test, we are interested in the probability of seeing <span class="math inline">\(\ge 14\)</span> OR <span class="math inline">\(\le 4\)</span> right-handed toads:</p>
 <pre class="r"><code># cdf of total probability up to and including 4
-pbinom(q = 4, size = 18, prob = 0.5) 
+pbinom(q = 4, size = 18, prob = 0.5)
 ## [1] 0.01544189
 # cdf of greater than 13 (same as &gt;= 14)
 pbinom(13, 18, 0.5, lower.tail = F)
@@ -334,11 +334,25 @@ pbinom(4, 18, 0.5) + pbinom(13,18,0.5, lower.tail = F)
 <p>We can formulate the question about vaccine effectiveness in a similar manner as for the handedness example above. Take a few minutes to formulate the null and alternative hypotheses, and then compute a <span class="math inline">\(p\)</span>-value for the observed data on your own. Assume the study included 200,000 unvaccinated and 200,000 vaccinated children.</p>
 <p>What are the null and alternative hypotheses?</p>
 <pre><code>H_o: The proportion of children who contracted polio in each group was the same
-H_A: The proportion of children who contracted polio in each group was not the same</code></pre>
+H_A: The proportion of children who contracted polio in the vaccine group was lower than in the control group</code></pre>
 <ul>
-<li>What is the test statistic?</li>
-<li>What are the <span class="math inline">\(p\)</span>-values for each group given the data?</li>
-<li>How significant was the <span class="math inline">\(p\)</span>-value from this study?</li>
+<li>What is the test statistic?
+<ul>
+<li><em>The number of children with polio in the vaccinated group (n=200000)</em></li>
+</ul></li>
+<li>What is the null distribution?
+<ul>
+<li><em>The binomial distribution with p=0.00057, the proportion of unvaccinated children who contracted polio.</em></li>
+</ul></li>
+<li>What are the <span class="math inline">\(p\)</span>-values for each group given the data?
+<ul>
+<li><em>Control group: <span class="math inline">\(\sim 0.52\)</span> (we expect p=0.5, but the observed value is not exact due to discretization)</em></li>
+<li><em>Vaccine group: <span class="math inline">\(\sim 10^{-19}\)</span></em></li>
+</ul></li>
+<li>How significant was the <span class="math inline">\(p\)</span>-value from this study?
+<ul>
+<li><em>Extremely significant!</em></li>
+</ul></li>
 </ul>
 <pre class="r"><code># sample size
 n = 200000
@@ -350,15 +364,22 @@ p.polio.vac = 0.00016
 # number of individuals with polio in each group
 num.polio.ctl = p.polio.ctl * n
 num.polio.vac = p.polio.vac * n
-num.polio.ctl # 114</code></pre>
-<pre><code>## [1] 114</code></pre>
-<pre class="r"><code>num.polio.vac # 32</code></pre>
-<pre><code>## [1] 32</code></pre>
-<pre class="r"><code># binomial test for vaccinated group given H_o
-pbinom(114,n,p.polio.ctl)  # control group</code></pre>
+num.polio.ctl # 114
+## [1] 114
+num.polio.vac # 32
+## [1] 32</code></pre>
+<pre class="r"><code># binomial test for unvaccinated group given H_o
+#pbinom(num.polio.ctl, n, prob=p.polio.ctl)  # control group
+pbinom(114, 200000, prob=0.00057)            # control group (hard-coded)</code></pre>
 <pre><code>## [1] 0.5248817</code></pre>
-<pre class="r"><code>pbinom(32,n,p.polio.ctl)   # vaccinated group</code></pre>
+<pre class="r"><code># binomial test for vaccinated group given H_o
+#pbinom(num.polio.vac, n, prob=p.polio.ctl) # vaccinated group
+pbinom(32, 200000, prob=0.00057)            # vaccinated group (hard-coded)</code></pre>
 <pre><code>## [1] 1.059181e-19</code></pre>
+<p><em>Note: if we wanted to find the probability that the vaccine might actually result in more cases than expected, we would combine the lower- and upper-tailed probabilities to get the total probability of seeing either 114-82=32 or fewer cases, or 114+82=196 or more cases:</em></p>
+<pre class="r"><code># total prob of seeing at most 32 or at least 196 cases
+pbinom(32, 200000, prob=0.00057) + pbinom(195, 200000, prob=0.00057, lower.tail = FALSE)</code></pre>
+<pre><code>## [1] 2.004552e-12</code></pre>
 </div>
 </div>
 <div id="errors-in-hypothesis-testing" class="section level2">
@@ -433,12 +454,6 @@ pbinom(114,n,p.polio.ctl)  # control group</code></pre>
 <hr />
 <p><em>The examples used here are from Whitlock, Michael C. &amp; Schluter, Dolph, The Analysis of Biological Data (Chapter 6).</em></p>
 </div>
-</div>
-<div class="footnotes">
-<hr />
-<ol>
-<li id="fn1"><p>1<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
-</ol>
 </div>
 
 
