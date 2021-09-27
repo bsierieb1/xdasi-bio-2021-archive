@@ -2,7 +2,7 @@
 title: Week 5
 parent: Syllabus
 has_children: false
-nav_exclude: true
+nav_exclude: false
 ---
 
 # Week 5: Title
@@ -21,12 +21,21 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- # Class - Monday, Sept. 27
+# Class - Monday, Sept. 27
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
+### Hypothesis Testing
+
+  <details closed markdown="block">
+    <summary>Details</summary>
+
+  + [**Class notes**](Class1/W5.C1_Notes_Hypothesis_testing.html){:target="blank"}
+  + **In-class exercise** - [zipped .Rmd](Class1/W5.C1_Exercise_High-fat_mouse_empirical_pval.Rmd.zip)
+    <!-- + **Key** - [zipped .Rmd](Class1/W5.C1_Exercise_High-fat_mouse_empirical_pval_KEY.zip) -->
+
+</details>
 
 <!-- ########################################################################### -->
 
