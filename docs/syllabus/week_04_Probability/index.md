@@ -51,7 +51,7 @@ nav_exclude: false
 
 + **Monty Hall simulation** - [zipped .Rmd](Class2/Monty_Hall_simulation.zip)
 + **In-class exercise** - [zipped .Rmd](Class2/W4.C2_Exercise_Bayes.zip)
-  + **Key** - [zipped .Rmd + .html](Class2/W4.C2_Exercise_Bayes_KEY.zip)
+  + Answer key: [zipped .Rmd + .html](Class2/W4.C2_Exercise_Bayes_KEY.zip)
 
 </details>
 
