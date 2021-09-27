@@ -80,7 +80,7 @@ Pr$C.Aa = 0.5^2 + 0.5^2
 Pr$C.Aa
 ```
 
-So, $$P(C.Aa | M.Aa,F.Aa) = 0.5$$
+So, $P(C.Aa | M.Aa,F.Aa) = 0.5$
 
 
 ***E) If a randomly sampled child has the $aa$ genotype, what is the probability that both its parents were also $aa$?***
@@ -100,20 +100,20 @@ So, $$P(C.Aa | M.Aa,F.Aa) = 0.5$$
 
 Let's use Bayes theorem to frame the problem:
 
-$$P(M.aa,F.aa | C.aa) = \frac{P(C.aa | M.aa,F.aa)*P(M.aa,F.aa)}{P(C.aa)}$$
+$$P(M.aa,F.aa|C.aa)=\frac{P(C.aa|M.aa,F.aa)*P(M.aa,F.aa)}{P(C.aa)}$$
 
 Using the Law of Total Probability:
 
-$$\begin{aligned}
-
+$$
+\begin{aligned}
 P(C.aa) =& \ P(C.aa | M.aa,F.aa) \ \ * P(M.aa,F.aa) \ \ + \\
          & \ P(C.aa | M.Aa,F.aa) \ * P(M.Aa,F.aa) \ + \\
          & \ P(C.aa | M.aa,F.Aa) \ * P(M.aa,F.Aa) \ + \\
          & \ P(C.aa | M.Aa,F.Aa) * P(M.Aa,F.Aa) \\
         =& \ (1)(0.9025)(0.9025) + (0.5)(0.095)(0.9025) + (0.5)(0.9025)(0.095) + (0.25)(0.095)(0.095) \\
         =& \ 0.9025.
-
-\end{aligned}$$ 
+\end{aligned}
+$$ 
 
 <!-- ======================================================================= -->
 <!-- <div class="qbox"> -->
