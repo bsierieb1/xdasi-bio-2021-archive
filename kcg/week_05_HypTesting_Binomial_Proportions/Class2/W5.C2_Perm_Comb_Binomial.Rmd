@@ -2,12 +2,12 @@
 title: "The Binomial Distribution"
 subtitle: "XDASI Fall 2021"
 output:
-  pdf_document:
-    toc: yes
-    toc_depth: 3
   html_document:
     toc: yes
     toc_float: yes
+    toc_depth: 3
+  pdf_document:
+    toc: yes
     toc_depth: 3
 ---
 
@@ -15,61 +15,155 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+<!-- Note: add `class.source="fold-show"` to top of R block to show code by default -->
+
+```{css, echo=FALSE}
+.qbox {
+  padding: 1em;
+  background: cornsilk;
+  border: 1px solid burlywood;
+  border-radius: 5px;
+}
+
+.bluebox {
+  padding: 1em;
+  background: #d8ecf3;
+  border: 1px solid cornflowerblue;
+}
+
+h1 {color: mediumblue}
+h2 {color: mediumblue}
+h3 {color: mediumblue}
+h4 {color: mediumblue; font-style: italic}
+```
+
+# References
+
+<!-- + **Whitlock & Schluter, Chapter 7: XXX** -->
+<!-- + **Optional**: ***Aho, Foundational and Applied Statistics for Biologists with R*** -->
+<!--   + [**Chapter 2**](https://drive.google.com/file/d/1cpC3ofcP9DIB8vDieE1lBVVAesWklCyM/view?usp=sharing) -->
+<!--   + [**Chapter 3.1-3.2**](https://drive.google.com/file/d/1ck7QGKh1TS_lo_BCjBHMk4LSB-TO2sEN/view?usp=sharing) -->
+
+# Overview
+
+The binomial is one of the most common discrete probability distributions. It answers questions of the form,
+
+***What is the total probability of getting X successes out of out of Y trials?***
+
+Simple examples include
+
++ the number of heads in a bunch of coin tosses
++ the number of times you get 6 when you roll a fair die repeatedly
++ the number of green M&Ms in a bag of mixed colors
++ the number of times a professor emails you back when you try to get hold of them
++ etc.
+
+Each of these scenarios has a certain ***fixed probability of success***. For a coin toss, $p=0.5$; the probability of any particular face value of a die is $p=1/6$; for green M&Ms it is $1/[number\ of\ colors]$ (assuming an even distribution of each); the probability of raising a response from your professor might be ... $p=?$.
+
+<!-- ======================================================================= -->
+<div class="qbox">
+$\Rightarrow$ ***Question: What are some examples of biological questions that follow a binomial distribution?***
+
+<details closed markdown="block">
+  <summary>Answer</summary>
+
++ The number of lines (animals, cells, etc.) with successful CRISPR edits out of X attempts.
++ The number of PCR reactions showing an insert out of X cloning attempts.
++ *Other ideas?*
+
+</details>
+</div>
+<!-- ======================================================================= -->
+<p>
 
 
-## Permutations
+In order to understand how the binomial distribution works, we need to understand all the ways it is possible to get different outcomes in scenarios like this.
 
-A **permutation** is a particular ***ordering*** of objects, like a DNA or protein sequence.
+Let's review some basic mathematics underlying combinatorial probabilities, and then apply these concepts to the binomial distribution.
 
-### Fixed number of objects
 
-The number of possible orderings of $n$ objects is "n factorial", which is written as $n!$. For example:
+# Permutations
 
-+ There are 6 ways to arrange 3 nucleotides to make a codon: 3! = 1. 
+A ***permutation*** is a particular ***ordering*** of objects, like a DNA or protein sequence.
+
+### Permutations of $n$ objects
+
+The number of possible ***orderings*** of $n$ objects is "n factorial", which is written as $n!$. For example:
+
++ There are 6 ways to arrange 3 nucleotides to make a codon: $3! = 6$. 
   + One possible set is $S = {A,G,U}$, and the codons you can make from these are: AGU (Ser), AUG (Met), GAU (Asp), GUA (Val), UAG (Stop), UGA (Stop). 
-+ If you have 5 amino acids, then you can arrange them in 120 different ways: $5! = 120$.
++ 5 amino acids can be arranged in 120 different ways: $5! = 120$.
+  + This will apply even if two or more a.a.'s are the same, as long as we consider each one as an individual, e.g. $R E_1 E_2 D Y$.
 
-### Subsets
+### Permutations of a subset $k$ out of $n$ objects
 
-If you randomly pick a **subset** of $k$ items from a larger set of $n$ items, then ***the number of possible sequences is much larger***. 
+If you randomly pick a ***subset*** of $k$ items from a ***larger set*** of $n$ items, the then ***the number of possible sequences is much larger***. For example,
 
-+ For example, if you pick 5 cards from a deck of 52, then you will have 52 choices on the first pick, 51 choices, on the second pick, and so on. 
-  + Because the number of cards to choose from decreases by one each time, the number of ways to order 5 cards picked at random will be $52*51*50*49*48$.
++ If you you pick out 5 amino acids at random from a peptide that is 22 residues long, there are:
+  + 22 choices on the first pick,
+  + 21 choices on the second pick, 
+  + and so on. 
 
-We can use a very simple mathematical trick to find a convenient way to express this. We just multiply $52*51*50*49*48$ by 1, but we write it as: 
+Since each pick is independent from the others, the probability of a particular sequence is the ***product*** of the probability of picking each item at random. 
 
-$$1 = \frac{47!}{47!} = \frac{47*46*...*2*1}{47*46*...*2*1}$$
+***However, the probability for each successive pick is not constant!*** Because the number of residues to choose from decreases by one each time, the number of possible sequences of any 5 residues picked at random from a 20-a.a. peptide will be $22*21*20*19*18$.
+
+We can use a very simple mathematical trick to find a convenient way to express this. We just multiply $22*21*20*19*18$ by 1, but we write it as: 
+
+$$1 = \frac{17!}{17!} = \frac{17*16*15*14*...*2*1}{17*16*15*14*...*2*1}$$
 So, we can now write out the number of permutations, $nPerm$, as:
 
-$$nPerm = 52*51*50*49*48 * \frac{47!}{47!} = 52*51*50*49*48* \bigg( \frac{47*46*...*2*1}{47*46*...*2*1} \bigg) = \frac{52!}{47!} = \frac{n!}{(n-k)!}$$
+$$
+\begin{align}
+nPerm &= 22*21*20*19*18* \frac{17!}{17!} \\
+      &= 22*21*20*19*18* \bigg( \frac{17*14*...*2*1}{17*14*...*2*1} \bigg) \\
+      &= \frac{22!}{17!} = \frac{n!}{(n-k)!}
+\end{align}
+$$
 
-The **probability** of picking a particular set of 5 cards in some order is the product of the individual probabilities of each random event:
+where $k$ is the number of items picked (a specific ***subset*** of outcomes), and $n$ is the total number of items to pick from (the ***universal set*** of possible outcomes).
 
-+ The probability of picking the first card is $\frac{1}{52}$,
-+ the probability of picking the second one is $\frac{1}{51}$, 
+
+### Probabilities of permutations
+
+The ***probability*** of picking one item from a set of $n$ items is $1/n$, i.e. the inverse of the number of items to choose from.
+
+If we extend this to a random set of $k$ out of $n$ items, the probability of a particular ***ordering*** of the $k$ items is the ***product of the individual probabilities of each random event***. 
+
+For the peptide example, the probability of a picking a set of 5 amino acids in some specific order is:
+
++ The probability of picking the first a.a. is $\frac{1}{22}$,
++ the probability of picking the second a.a. is $\frac{1}{21}$, 
 + and so on.
 
-$$\frac{1}{52}*\frac{1}{51}*\frac{1}{50}*\frac{1}{49}*\frac{1}{48} = \frac{1}{nPerm} = \frac{47!}{52!} = \frac{(n-k)!}{n!}$$
+$$
+\begin{align}
+\frac{1}{nPerm} =& \frac{1}{22}*\frac{1}{21}*\frac{1}{20}*\frac{1}{19}*\frac{1}{18}  \\
+                =& \frac{17!}{22!} = \frac{(n-k)!}{n!}
+\end{align}
+$$
 
-So, we see that the ***probability*** of any permutation of observed outcomes (ordering of independent random variables drawn from a finite set) is just the ***inverse*** of the number of possible permutations.
+Again, we see that the ***probability*** of any permutation of observed outcomes (ordering of independent random variables drawn from a finite set) is just the ***inverse*** of the number of possible permutations.
+
+This scenario corresponds to ***sampling without replacement***, where the number of possible choices decreases by one with each successive pick, and the corresponding probabilities increase accordingly.
 
 
-## Combinations
+# Combinations
 
-Now, say we don't care about the ***ordering*** of those 5 cards at all; we just want to know how probable it is that we pick **any particular set of 5 cards**.
+Now let's say we don't care about the ***ordering*** of those 5 amino acids at all; we just want to know how probable it is that we pick **any particular set of 5 a.a.**.
 
-Instead of $5! = 120$ possible orderings, we now have just one set of 5 cards in no particular order: $S = \{x_1,x_2,x_3,x_4,x_5\}$
+Instead of $5! = 120$ possible orderings of 5 a.a., we now have just one set of 5 a.a. in no particular order: $S = \{x_1,x_2,x_3,x_4,x_5\}$.
 
-+ This reduces the number of possibilities by $5!$, since we collapse all of the 120 independent possible orderings (***permutations***) into just one set (***combination***).
++ For a set of $n$ items, this reduces the number of possibilities by $n!$, since we collapse all of the independent possible orderings (***permutations***) into just one set (***combination***).
 
-So, we just divide our permutations by $5!$ to get the number of combinations:
+So, we just divide our permutations by $5!$ to get the number of combinations.
 
-$$nComb = \frac{nPerm}{5!} = \frac{52!}{5!*47!} = \frac{n!}{k!(n-k)!} = \binom{n}{k}$$
+$$nComb = \frac{nPerm}{5!} = \frac{22!}{5!*17!} = \frac{n!}{k!(n-k)!} = \binom{n}{k}$$
 
 This is the **binomial coefficient**, which we call "***n*** choose ***k***".
 
 
-## Binomial coefficient
+# Binomial coefficient
 
 When we perform more than one random trial, we are interested in the total probability that something occurs our of all the possible outcomes.
 
@@ -77,11 +171,11 @@ For example, if you want to make a strain with a GFP-tagged protein by CRISPR, a
 
 $$Pr[T]*Pr[T]*Pr[T]*Pr[!T]*Pr[!T]*Pr[!T]*Pr[!T]*Pr[!T]*Pr[!T]*Pr[!T] = Pr[T]^3*Pr[!T]^7$$
 
-This is one **permutation** of possible outcomes. But this represents only one of the ways you could get 3 transformants! It could be that the last 3 you picked were transformed, or the 1st, 4th, and 7th. 
+This is one ***permutation*** of possible outcomes. But this represents only one of the ways you could get 3 transformants! It could be that the last 3 you picked were transformed, or the 1st, 4th, and 7th, etc. 
 
 In terms of computing probabilities, we are interested in the **number of successes** for a series of **random trials**. In this example, that is 3 transformants out of 10. 
 
-So we need to know **how many ways** it is possible to get this number of transformants. This is where the **binomial binomial coefficient** comes in.
+So we need to know **how many ways** it is possible to get this number of transformants. This is where the ***binomial coefficient*** comes in.
 
 We can use **decision trees** to visualize how many possibilities exist for the different permutations of outcomes, and thus the number of possible combinations. However, this approach becomes increasingly unwieldy as the number of independent trials grows.
 
@@ -89,57 +183,58 @@ Instead, we can just use the formula we learned for combinations:
 
 $$\binom{n}{k} = \frac{n!}{k!(n-k)!}$$
 
-### Binomial probability
+## Binomial probability
 
 To calculate the total probability of getting 3 transformants out of 10, we need to know two things:
 
-1) The **number of ways** we can get 3 successes and 7 failures out of 10 trials. To get this number, we just use the **binomial coefficient**, which provides a general solution to the question, *"How many ways are there to get $k$ successes and $n-k$ failures out of $n$ trials?"*
+1. The **number of ways** we can get 3 successes and 7 failures out of 10 trials. 
+    + To get this number, we just use the **binomial coefficient**, which provides a general solution to the question, *"How many ways are there to get $k$ successes and $n-k$ failures out of $n$ trials?"*
 
-2) The **probability** of getting exactly 3 transformants in a single experiment. In the above example, we already found that this works out to $Pr[T]^3*Pr[!T]^7$.
+2. The **probability** of getting exactly 3 transformants in a single experiment. 
+    + In the above example, we already found that this works out to $Pr[T]^3*Pr[!T]^7$.
 
-We can also use a simple formula to generalize the probability of a particular outcome. Since each random trial is independent, we multiply the probability of success for each trial times the number of successes, and the probability of failure times the number of failures. For our example, this is:
+We can also use a simple formula to generalize the probability of a particular outcome. Since each random trial is independent, we multiply the ***probability of success*** for each trial by the ***number of successes***, and the ***probability of failure*** by the ***number of failures***. For our example, this is:
 
 $$Pr[transformed]^3*Pr[NOT\ \  transformed]^7 = Pr[success]^3*Pr[failure]^7$$
 
-Since $Pr[failure]$ just equals $1-Pr[success]$, this can be expressed more generally as follows:
+Since the number of failures is just $10 - number\ of\ successes$, we can instead write:
+
+$$Pr[success]^3*Pr[failure]^{10-3}$$
+
+
+This can be expressed more generally as follows:
 
 $$\pi^k\pi^{n-k}$$
 
-Where we use $\pi$ as shorthand for $Pr[success]$, $k$ for the number of successes, and $n$ for the total number of trials, so that $n-k$ equals $Pr[failure]$.
+where $\pi$ is shorthand for $Pr[success]$, $k$ is the number of successes, and $n$ is the total number of trials, so that $n-k$ equals $Pr[failure]$.
 
-Now we can put this all together, and say that "The total probability of getting any 3 successes out of 10 trials" is:
+Now we can put this all together, and say that ***the total probability of getting any 3 successes out of 10 trials*** is:
 
 $$ Pr[3 \ \ successes \ \ out \ \ of \ \ 10 \ \ trials] = \binom{10}{3}*0.2^3*(0.8)^{7}$$
 
 Or more generally,
 
 $$ Pr[k \ \ successes \ \ out \ \ of \ \ n \ \ trials] = \binom{n}{k}\pi^k(1-\pi)^{n-k}$$
+
 ### Binomial proportions
 
-If you want to find out how probable it is that you will get **3 or less** transformants, then you need to add up all the possible ways you could get one, two, or three transformants. This will be just the sum of outcomes for $k=1$, $k=2$, and $k=3$:
+If you want to find out the ***total probability*** that you will get **3 or less** transformants, then you need to add up all the possible ways you could get one, two, or three transformants. This will be just the sum of outcomes for $k=1$, $k=2$, and $k=3$:
 
-$$ Pr[\le3 \ \ successes \ \ out \ \ of \ \ 10 \ \ trials] = \binom{10}{0}*0.2^0*(0.8)^{10} +\\ \binom{10}{1}*0.2^1*(0.8)^{9} + \binom{10}{2}*0.2^2*(0.8)^{8} +\binom{10}{3}*0.2^3*(0.8)^{7}\\
-= \sum_{0}^3\binom{10}{k}*0.2^k*0.8^{1-k}$$
+$$
+\begin{aligned}
+Pr[\le3 \ \ successes \ \ out \ \ of \ \ 10 \ \ trials] =& \binom{10}{0}*0.2^0*(0.8)^{10}\ + \\
+  &\binom{10}{1}*0.2^1*(0.8)^{9}\ + \\
+  &\binom{10}{2}*0.2^2*(0.8)^{8}\ + \\
+  &\binom{10}{3}*0.2^3*(0.8)^{7} \\
+=& \sum_{0}^3\binom{10}{k}*0.2^k*0.8^{1-k}
+\end{aligned}
+$$
 
 More generally, we can write:
 
 $$ Pr[\le k \ \ successes \ \ out \ \ of \ \ n \ \ trials] = \sum_{0}^k\binom{n}{k}\pi^k(1-\pi)^{n-k}$$
 
-Fortunately, R has built-in functions that let us compute these proportions, so that we don't have to do all of this by hand.
-
-
-### Binomial proportions
-
-If you want to find out how probable it is that you will get **3 or less** transformants, then you need to add up all the possible ways you could get one, two, or three transformants. This will be just the sum of outcomes for $k=1$, $k=2$, and $k=3$:
-
-$$ Pr[\le3 \ \ successes \ \ out \ \ of \ \ 10 \ \ trials] = \binom{10}{0}*0.2^0*(0.8)^{10} +\\ \binom{10}{1}*0.2^1*(0.8)^{9} + \binom{10}{2}*0.2^2*(0.8)^{8} +\binom{10}{3}*0.2^3*(0.8)^{7}\\
-= \sum_{0}^3\binom{10}{k}*0.2^k*0.8^{1-k}$$
-
-More generally, we can write:
-
-$$ Pr[\le k \ \ successes \ \ out \ \ of \ \ n \ \ trials] = \sum_{0}^k\binom{n}{k}\pi^k(1-\pi)^{n-k}$$
-
-Fortunately, R has built-in functions that let us compute these proportions, so that we don't have to do all of this by hand.
+Fortunately, R has the built-in function `pbinom()` that lets us compute these probabilities automatically, so that we don't have to do all of this by hand!
 
 
 # Discrete distributions
@@ -153,19 +248,32 @@ where $\pi$ represents the probability of "success", and ranges from zero to one
 
 The formal way of writing this function seems kind of complicated, but it's really pretty simple. Since $x$ can only take on values of 0 or 1, and there is only one trial, $f(x)$ can take on only one of two values:
 
-$$f(1) = P(X=1) = \pi \ \ \ or \ \ \ f(0) = P(X=0) = 1-\pi.$$
+$$
+\begin{aligned}
+f(1) &= P(X=1) = \pi \\
+f(0) &= P(X=0) = 1-\pi
+\end{aligned}
+$$
 
 The CDF is:
 
 $$ F(X) = \begin{cases}
   1 - \pi & x = 0\\    
-  1 & x = 1    
+  1       & x = 1    
 \end{cases} $$
 
 What does this mean in practice? For a fair coin toss, the chance of getting heads or tails is the same: $P(X=1) = P(X=0) = 0.5$. 
 
-For another example, let's say you are trying to fuse a GFP tag onto the end of a CDS in *C. elegans* using CRISPR, and the efficiency is around 20% (this may be unrealistically high, depending on how well CRISPR is currently working in your lab, but let's go with it anyway). This means that if you pick only one worm, the chance of recovering a line WITH the GFP tag is 20%, and the chance of that worm NOT having the GFP tag is 80%. So, $P(X=1) = 0.2$, and $P(X=0) = 0.8$.
+#### Example
 
+Let's say you are trying to fuse a GFP tag onto the end of a CDS in *C. elegans* using CRISPR, and the efficiency is around 20% (this may be unrealistically high, depending on how well CRISPR is currently working in your lab, but let's go with it anyway). This means that if you pick only one worm, the chance of recovering a line WITH the GFP tag is 20%, and the chance of that worm NOT having the GFP tag is 80%. So,
+
+$$
+\begin{aligned}
+P(X=1) &= 0.2 \\
+P(X=0) &= 0.8 
+\end{aligned}
+$$
 
 ## The Binomial distribution
 
