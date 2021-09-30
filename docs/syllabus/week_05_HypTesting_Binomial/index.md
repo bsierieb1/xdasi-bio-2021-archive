@@ -39,7 +39,7 @@ nav_exclude: false
 
 <!-- ########################################################################### -->
 
-<!-- # Class - Thursday, Sept. 30
+# Class - Thursday, Sept. 30
 
 <details closed markdown="block">
   <summary>Details</summary>
@@ -50,7 +50,7 @@ nav_exclude: false
   + **In-class exercise** - [zipped .Rmd+.html](Class2/W5.C2-Exercise_Perm_Comb_Binomial.zip)
     <!-- + **Key** - [zipped .Rmd](Class2/W5.C2-Exercise_Perm_Comb_Binomial_KEY.zip) -->
 
-<!-- </details> -->
+</details>
 
 <!-- ########################################################################### -->
 
