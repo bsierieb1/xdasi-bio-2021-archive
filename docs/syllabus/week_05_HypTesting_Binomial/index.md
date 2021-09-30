@@ -44,7 +44,13 @@ nav_exclude: false
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
+### Permutations, Combinations, Bernoulli, and Binomial Distribution
+
+  + [**Class notes**](Class2/W5.C2-Notes_Perm_Comb_Binomial.html){:target="blank"}
+  + **In-class exercise** - [zipped .Rmd+.html](Class2/W5.C2-Exercise_Perm_Comb_Binomial.zip)
+    <!-- + **Key** - [zipped .Rmd](Class2/W5.C2-Exercise_Perm_Comb_Binomial_KEY.zip) -->
+
+<!-- </details> -->
 
 <!-- ########################################################################### -->
 
