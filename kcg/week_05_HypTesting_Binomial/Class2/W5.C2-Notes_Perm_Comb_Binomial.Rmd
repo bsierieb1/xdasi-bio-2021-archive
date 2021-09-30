@@ -358,24 +358,24 @@ In the example above, if $Pr[success]$ were $0.5$ instead of $0.2$, then you'd h
 As we learned above, the term "$n$ choose $k$" has a special name, the **Binomial coefficient**. For any $n$, it is possible to work out the number of possible ways of achieving any outcome using Pascal's Triangle:
 
 <!-- for HTML --> 
-<!-- $$ -->
-<!-- \begin{aligned} -->
-<!-- {0 \choose 0} \ \ \ \ \ \ \ \ \ \ \ \                &= \ \ \ \ \ \ \ 1 \\ -->
-<!-- {1 \choose 0}{1 \choose 1}\ \ \ \ \ \ \ \            &= \ \ \ \ \ 1 \ \ \ 1 \\ -->
-<!-- {2 \choose 0}{2 \choose 1}{2 \choose 2} \ \ \ \      &= \ \ \ 1 \ \ \ 2 \ \ \ 1 \\ -->
-<!-- {3 \choose 0}{3 \choose 1}{3 \choose 2}{3 \choose 3} &= \ 1 \ \ \ 3 \ \ \ 3 \ \ \ 1 -->
-<!-- \end{aligned} -->
-<!-- $$ -->
-
-<!-- for PDF --> 
 $$
 \begin{aligned}
-{0 \choose 0} \ \ \ \ \ \ \ \ \                      &= \ \ \ \ \ \ \ 1 \\
-{1 \choose 0}{1 \choose 1}\ \ \ \ \ \                &= \ \ \ \ \ 1 \ \ \ 1 \\
-{2 \choose 0}{2 \choose 1}{2 \choose 2} \ \ \        &= \ \ \ 1 \ \ \ 2 \ \ \ 1 \\
+{0 \choose 0} \ \ \ \ \ \ \ \ \ \ \ \                &= \ \ \ \ \ \ \ 1 \\
+{1 \choose 0}{1 \choose 1}\ \ \ \ \ \ \ \            &= \ \ \ \ \ 1 \ \ \ 1 \\
+{2 \choose 0}{2 \choose 1}{2 \choose 2} \ \ \ \      &= \ \ \ 1 \ \ \ 2 \ \ \ 1 \\
 {3 \choose 0}{3 \choose 1}{3 \choose 2}{3 \choose 3} &= \ 1 \ \ \ 3 \ \ \ 3 \ \ \ 1
 \end{aligned}
 $$
+
+<!-- for PDF --> 
+<!-- $$ -->
+<!-- \begin{aligned} -->
+<!-- {0 \choose 0} \ \ \ \ \ \ \ \ \                      &= \ \ \ \ \ \ \ 1 \\ -->
+<!-- {1 \choose 0}{1 \choose 1}\ \ \ \ \ \                &= \ \ \ \ \ 1 \ \ \ 1 \\ -->
+<!-- {2 \choose 0}{2 \choose 1}{2 \choose 2} \ \ \        &= \ \ \ 1 \ \ \ 2 \ \ \ 1 \\ -->
+<!-- {3 \choose 0}{3 \choose 1}{3 \choose 2}{3 \choose 3} &= \ 1 \ \ \ 3 \ \ \ 3 \ \ \ 1 -->
+<!-- \end{aligned} -->
+<!-- $$ -->
 
 The top line represents the possible combinations for $n = 0$, the second line for $n = 1$, etc. Notice that the sum of two components at a higher level of Pascal's triangle equals the component of the next lower level that is situated directly beneath and between them.
 
@@ -392,7 +392,6 @@ P(A \cap B) &= 2*P(A)*P(B) & &= 2\pi(1-\pi) \\
 P(B \cap B) &= P(B)*P(B) & &= (1-\pi)^2
 \end{aligned}
 $$
-
 
 There is only one way to get two successes or two failures ($S = \{00\}$ or $S = \{11\}$), and two ways to get one of each ($S = \{10, 01\}$). This pattern should look familiar to you; it's the same as for the binomial expansion:
 

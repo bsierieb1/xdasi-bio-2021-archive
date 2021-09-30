@@ -354,7 +354,7 @@ One interesting feature of the Binomial distribution is that it is **symmetric**
 In the example above, if $Pr[success]$ were $0.5$ instead of $0.2$, then you'd have the same chance of finding exactly one or exactly two transformants, since the chance of success or failure would be the same.
 
 
-## Pascal's Triangle
+### Pascal's Triangle
 
 As we learned above, the term "$n$ choose $k$" has a special name, the **Binomial coefficient**. For any $n$, it is possible to work out the number of possible ways of achieving any outcome using Pascal's Triangle:
 
@@ -398,15 +398,19 @@ $$
 There is only one way to get two successes or two failures ($S = \{00\}$ or $S = \{11\}$), and two ways to get one of each ($S = \{10, 01\}$). This pattern should look familiar to you; it's the same as for the binomial expansion:
 
 $$ (x+y)^2 = x^2 + 2xy + y^2 $$
-### Illustration
-
-Let's go back to Mendel's peas. Crossing two true-breeding lines of round ($AA$) and wrinkled ($aa) peas would give an F1 generation with all heterozygotes ($Aa$).
-
-For example, this could describe the different allele combinations you could get 
 
 The expansion above is a special case of the **Binomial Theorem** for $n$ independent trials, $(x+y)^n$, where $n = 2$. What would this look like for 3 trials?
 
 $$ (x+y)^3 = x^3 + 3x^2y + 3xy^2 + y^3 $$
+
+<!-- USE THIS FOR HOMEWORK -->
+
+Let's go back to Mendel's peas. Crossing two true-breeding lines of round ($AA$) and wrinkled ($aa$) peas would give an F1 generation with all heterozygotes ($Aa$). Then in the F2 generation, if we sampled two seeds, what would the possible phenotypes look like if $A$ is dominant to $a$? We expect a ratio of 3:1 dominant vs. recessive phenotypes. If we call th
+
+
+
+
+For example, this could describe the different allele combinations you could get 
 
 Do you start to see a pattern here? The binomial theorem can be extended to any arbitrary number of trials using the product rule for independent events. The binomial coefficients can be found using the "$n$ choose $k$" shortcut, ${n \choose k} = \frac{n!}{k!(n-k)!}$. Instead of writing out Pascal's Triangle to get the number of possible combinations for each outcome, we just use the general formula for arbitrary $n$ and $k$:
 
