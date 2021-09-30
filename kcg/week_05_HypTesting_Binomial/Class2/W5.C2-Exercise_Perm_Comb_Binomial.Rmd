@@ -89,13 +89,12 @@ What is the chance that you will find between 2 and 4 $T$s?
 
 The quantile function `qbinom(p, size, prob)` returns the smallest value of $q$ such that $Pr(X \le q) \ge p$. The quantile is defined as the smallest value $x$ such that $F(x) \ge p$. For example, $F(x) \ge 0.75$ means that 75% of the distribution is less than $x$. 
 
-How likely are you to find 3 or fewer of each kind of base in 75% of 10-mers picked at random from the genome?
+What is the maximum number of any single base you would expect to find in 75% of 10-mers picked at random from the genome?
 ```{r}
 
 ```
 
 What is the maximum number of any single base you would expect to find in 99% of random 10-mers?
-
 ```{r}
 
 ```
