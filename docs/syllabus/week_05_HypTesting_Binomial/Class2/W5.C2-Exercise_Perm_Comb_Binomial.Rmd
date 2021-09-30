@@ -1,0 +1,102 @@
+---
+title: 'In-class exercises: Permutations, Combinations, Binomial Proportions'
+subtitle: "XDASI Fall 2021"
+date: "9/30/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error = FALSE)
+```
+
+## Practice problems
+
+### 1. Nucleic acids: Sampling, permutations and combinations
+
+a. Restriction enzymes recognize specific sequences in DNA and cut the DNA within or near those sites. Many restriction enzymes recognize 6-bp sequences. How many possible combinations of 6 nt sequences are there?
+```{r}
+
+```
+
+b. At what frequency would you expect to find a binding site for a particular restriction enzyme that recognizes a 6 bp sequence? _Note: Restriction enzymes usually recognize a palindromic sequence, so you don't need to worry about looking on both strands._
+```{r}
+
+```
+
+c. What is the average length of a fragment produced by a 6-cutter?
+```{r}
+
+```
+
+d. The EcoR1 enzyme cuts the sequence "GAATTC". How many different sequences could be made out of this set of nucleotides (assume that you treat each A and T as distinct individuals)?
+```{r}
+
+```
+
+e. You are interested in synthesizing a bunch of random oligonucleotides for a SELEX experiment. How many possible oligos of length 22 are there?
+```{r}
+
+```
+
+
+f. How many ways could you make a sequence of 6 nt by grabbing them at random from a bag of 12 nucleotides (assuming each base is treated as a distinct unique entity, and you can only pick each nt once)? This is an example of "random sampling without replacement".
+```{r}
+
+```
+
+g. How many combinations of 6nt are there in a set of 12 random nucleotides? (That is, pick any group of 6 nt, where each one is treated as unique, and you don't care about the sequence in which you pick them.)
+```{r}
+
+```
+
+h. How are your answers in parts e and f related?
+```{r eval=FALSE}
+
+```
+
+
+## 2. Bernoulli distribution
+
+The frequency of a minor allele at the CFTR gene was found to be 0.17. What is the probability that any allele chosen at random from the population will NOT be that same allele?
+
+```{r}
+
+```
+
+
+## 3. Binomial distribution
+
+Consider a genome in which the four bases $A,C,G,T$ are present in equal proportions (this is actually rather uncommon, but let's go with it for now). 
+
+*For the following questions, think of them as "What is the probability of X and not Y?" (So, you are asking a binary question about one possible outcome vs. all others.)*
+
+If you were to pick a sequence of 10 nt completely at random, what is the chance that exactly 3 bases will be an $A$ (or any other homopolymer)?
+```{r}
+
+```
+
+What is the chance that you will find less than 5 $G$s (i.e. 4 or fewer)?
+```{r}
+
+```
+
+What is the chance that you will find between 2 and 4 $T$s?
+```{r}
+
+```
+
+The quantile function `qbinom(p, size, prob)` returns the smallest value of $q$ such that $Pr(X \le q) \ge p$. The quantile is defined as the smallest value $x$ such that $F(x) \ge p$. For example, $F(x) \ge 0.75$ means that 75% of the distribution is less than $x$. 
+
+What is the maximum number of any single base you would expect to find in 75% of 10-mers picked at random from the genome?
+```{r}
+
+```
+
+What is the maximum number of any single base you would expect to find in 99% of random 10-mers?
+```{r}
+
+```
+
+---
