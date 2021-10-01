@@ -27,10 +27,10 @@ Let each of us record one observation of the number of successes in 12 trials. E
 
 ```{r}
 # record all observations for the 2-sided spinner
-spinner2 <- c(6, 7, 9, 7, 2, 5, 8, 5, 6, 5, 6, 9, 4, 7, 8)
+spinner2 <- c(8, 8, 4, 5, 9, 5, 5, 6, 7, 8, 6, 7, 4, 4, 3)
 
 # record all observations for the 3-sided spinner
-spinner3 <- c(4, 5, 3, 3, 4, 4, 3, 6, 5, 6, 4, 3, 4, 7, 2)
+spinner3 <- c(3, 5, 6, 3, 1, 6, 2, 5, 6, 2, 4, 5, 3, 4)
 
 # arrange the data in a data.frame (long format)
 bino_data <- data.frame("method" = "spinner",
