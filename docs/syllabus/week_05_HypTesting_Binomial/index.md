@@ -5,7 +5,7 @@ has_children: false
 nav_exclude: false
 ---
 
-# Week 5: Title
+# Week 5: Probabilities Continued, Hypothesis Testing, Binomial Distributions
 {: .no_toc }
 
 <details closed markdown="block">
@@ -23,10 +23,10 @@ nav_exclude: false
 
 # Class - Monday, Sept. 27
 
+### Hypothesis Testing
+
 <details closed markdown="block">
   <summary>Details</summary>
-
-### Hypothesis Testing
 
   + [**Class notes (complete)**](Class1/W5.C1_Notes_Hypothesis_testing_full.html){:target="blank"}
     + [zipped .Rmd](Class1/W5.C1_Notes_Hypothesis_testing.Rmd.zip)
@@ -41,10 +41,10 @@ nav_exclude: false
 
 # Class - Thursday, Sept. 30
 
+### Permutations, Combinations, Bernoulli, and Binomial Distribution
+
 <details closed markdown="block">
   <summary>Details</summary>
-
-### Permutations, Combinations, Bernoulli, and Binomial Distribution
 
   + [**Class notes**](Class2/W5.C2-Notes_Perm_Comb_Binomial.html){:target="blank"}
   + **In-class exercise** - [zipped .Rmd+.html](Class2/W5.C2-Exercise_Perm_Comb_Binomial.zip)
@@ -56,11 +56,15 @@ nav_exclude: false
 
 <!-- ########################################################################### -->
 
-<!-- # Recitation - Friday, Oct. 1
+# Recitation - Friday, Oct. 1
+
+### Binomial Distribution
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
++ [**Class exercise**](Recitation/W5.R1_Exercise_Binomial_Distributions.Rmd.zip)
+
+</details>
 
 <!-- ########################################################################### -->

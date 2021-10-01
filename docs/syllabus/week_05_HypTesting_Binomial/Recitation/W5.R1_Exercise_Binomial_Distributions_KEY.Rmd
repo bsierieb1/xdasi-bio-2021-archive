@@ -99,13 +99,15 @@ We can use a sister function of `rbinom()` from the "d/p/q/r" family called `dbi
 
 ```{r}
 # simulate an ideal binomial distribution of the number of successes in 12 trials if the probability of success = 0.5
-dbinom0.5 <- dbinom(x = 0:12,
+n_successes_vector <- 0:12
+
+dbinom0.5 <- dbinom(x = n_successes_vector,
                     size = 12,
                     prob = 0.5)
 dbinom0.5
 
 # simulate an ideal binomial distribution of the number of successes in 12 trials if the probability of success = 1/3
-dbinom0.33 <- dbinom(x = 0:12,
+dbinom0.33 <- dbinom(x = n_successes_vector,
                      size = 12,
                      prob = 1/3)
 dbinom0.33
@@ -113,36 +115,52 @@ dbinom0.33
 # by default, all probabilities are on a 0..1 scale
 # calculate the most likely number of observations of each number of successes
 # if we perform a total of 15 observations
-dbinom0.5 <- round(15 * dbinom0.5,
+dbinom0.5 <- 15 * dbinom0.5
+dbinom0.5
+
+dbinom0.33 <- 15 * dbinom0.33
+dbinom0.33
+
+# the numbers of observations must be integers, so round up the values
+dbinom0.5 <- round(dbinom0.5,
                    digits = 0)
 dbinom0.5
 
-dbinom0.33 <- round(15 * dbinom0.33,
+dbinom0.33 <- round(dbinom0.33,
                     digits = 0)
 dbinom0.33
+```
 
-# these are essentially frequency vectors, e.g. dbinom output 0 0 0 1 2 3 ... means that 
-# 0, 1, 2 will not be observed, 3 will be observed once, 4 twice, 5 thrice ...
-# convert frequency vectors to "simple" vectors, e.g. 3 4 4 5 5 5 ...
+We are halfway there! There is one more important thing we need to change before we can plot our ideal distributions, though. Both our real (e.g. `spinner2`) and simulated (e.g. `simulated0.5`) data are simple collections of individual observations. It means that if we observed 1 success in 12 trials twice, these vectors will contain "1" two times. In contrast, the vectors that store our ideal data (`dbinom0.5` and `dbinom0.33`) contain **frequencies** of each observation in `n_successes_vector`. If we observed 1 success in 12 trials twice, this information will be stored like so:
+
+0 1 2 3 4 5 6 7 8 9 10 11 12 <-- `n_successes_vector`
+
+x 2 x x x x x x x x x  x  x  <-- `dbinom...`
+
+Therefore, we need to convert `dbinom0.5` and `dbinom0.33` from frequency vector to simple sets of all the individual observations. For example, `1 2 2 1 0 0 0 0 0 0 0 0 0` should become `0 1 1 2 2 3`.
+
+```{r}
+# use a for loop
 ideal0.5 <- c() # create an empty vector
 
-for (i in 0:12) {
+for (n_successes in n_successes_vector) {
   ideal0.5 <- c(ideal0.5,
-                rep(i, dbinom0.5[i+1]) )
+                rep(n_successes, dbinom0.5[n_successes + 1] ) ) # add 1 because the frequency of having 0 successes is stored in the 1st element of dbinom0.5 etc.
 }
 ideal0.5
 
 ideal0.33 <- c() # create an empty vector
 
-for (i in 0:12) {
+for (n_successes in n_successes_vector) {
   ideal0.33 <- c(ideal0.33,
-                 rep(i, dbinom0.33[i+1]) )
+                 rep(n_successes, dbinom0.33[n_successes + 1] ) ) # add 1 because... see above
 }
 ideal0.33
 
 # add to bino_data
 new_bino_data <- data.frame("method" = "ideal",
-                            "theoretical_probability" = c( rep(0.5, 15), rep(0.33, 16) ),
+                            "theoretical_probability" = c( rep(0.5, length(ideal0.5) ),
+                                                           rep(0.33, length(ideal0.33) ) ),
                             "values" = c( ideal0.5, ideal0.33 ))
 bino_data <- rbind(bino_data, new_bino_data)
 
