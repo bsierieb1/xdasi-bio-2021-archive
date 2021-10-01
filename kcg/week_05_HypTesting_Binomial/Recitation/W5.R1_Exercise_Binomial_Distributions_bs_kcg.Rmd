@@ -1,0 +1,197 @@
+---
+title: "Binomial Distributions Pt. I: Simulation, PDF, CDF"
+date: "October 1, 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+# Empirical, simulated, and ideal data
+
+All distributions (binomial, normal etc.) that we cover in this course are **ideal** distributions. Real data are very rarely distributed in *exactly* the same way. Still, as long as real data are distributed in *almost* the same way, it is useful to assume that they are well described by some ideal distribution. This allows us to use the same set of mathematical tools for every set of similarly distributed data.
+
+Here, we will compare three distributions:
+
+1. We will collect **real** data where we will measure the number of successes in a fixed number of trials.
+2. We will **simulate** a random sample of binomially distributed data using R.
+3. We will compare both to an **ideal** binomial distribution constructed using R.
+
+## Collect empirical data of the `N(successes)/N(trials)` variety
+
+Each of you will get a 2-sided and a 3-sided fidget spinner. Spin each spinner **12 times**. Each time, stop it by hand and determine whether **pink** or **other than pink** side came on top. Keep a tally (you may use [this website](https://tallycount.app/)). We will refer to each of the 12 spins as **trials**, and the number of times the pink came on top in 12 trials will be considered a single **observation**.
+
+Let each of us record one observation of the number of successes in 12 trials. Each person needs to submit 1 observation for the 2-sided spinner and 1 observation for the 3-sided spinner.
+
+```{r}
+# record all observations for the 2-sided spinner
+spinner2 <- c(6, 7, 9, 7, 2, 5, 8, 5, 6, 5, 6, 9, 4, 7, 8)
+
+# record all observations for the 3-sided spinner
+spinner3 <- c(4, 5, 3, 3, 4, 4, 3, 6, 5, 6, 4, 3, 4, 7, 2)
+
+# arrange the data in a data.frame (long format)
+bino_data <- data.frame("method" = "spinner",
+                        "theoretical_probability" = c( rep(0.5, length(spinner2) ),
+                                                       rep(0.33, length(spinner3) ) ),
+                        "values" = c(spinner2, spinner3))
+
+# plot the frequencies
+ggplot(data = bino_data,
+       mapping = aes(x = values,
+                     fill = method)) +
+  geom_histogram(position = position_dodge(0.7),
+                 breaks = seq(from = -0.5, to = 12.5, by = 1),
+                 col = "lightgrey") +
+  scale_fill_manual(values = "grey40") +
+  scale_x_continuous(breaks = 0:12,
+                     labels = 0:12,
+                     limits = c(0,12)) +
+  facet_wrap(~theoretical_probability,
+             ncol = 1)
+```
+
+## Simulate a random sample of binomially distributed data with the same parameters
+
+R allows you to simulate data randomly sampled from a distribution with given parameters. For this, we use "r" ("random sample") functions from the "d/p/q/r" family. Since we are working with binomial data, we will use the function `rbinom()`.
+
+```{r}
+# simulate performing 15 observations of the number of successes in 12 trials if the probability of success = 0.5
+simulated0.5 <- rbinom(n = 15,
+                       size = 12,
+                       prob = 0.5)
+simulated0.5
+
+# simulate performing 15 observations of the number of successes in 12 trials if the probability of success = 1/3
+simulated0.33 <- rbinom(n = 15,
+                        size = 12,
+                        prob = 1/3)
+simulated0.33
+
+# add to bino_data
+new_bino_data <- data.frame("method" = "simulated",
+                            "theoretical_probability" = c( rep(0.5, length(simulated0.5) ),
+                                                           rep(0.33, length(simulated0.33) ) ),
+                            "values" = c( simulated0.5, simulated0.33 ))
+
+bino_data <- rbind(bino_data, new_bino_data)
+
+# plot all frequencies
+ggplot(data = bino_data,
+       mapping = aes(x = values,
+                     fill = method)) +
+  geom_histogram(position = position_dodge(0.7),
+                 breaks = seq(from = -0.5, to = 12.5, by = 1),
+                 col = "lightgrey") +
+  scale_fill_manual(values = c("cornflowerblue", "grey40")) +
+  scale_x_continuous(breaks = 0:12,
+                     labels = 0:12,
+                     limits = c(0,12)) +
+  facet_wrap(~theoretical_probability,
+             ncol = 1)
+```
+
+## Generate the frequencies of an ideal binomial distribution with the same parameters
+
+We can use a sister function of `rbinom()` from the "d/p/q/r" family called `dbinom()` to generate a PDF of an ideal binomial distribution with the same parameters. The output will be a vector of probabilities for each observation (e.g. probability to observe 0 successes in 12 trials, 1 success, 2 successes etc.) on a scale of 0 to 1. We will need to convert these observation probabilities into real numbers of observations since we are performing a finite number of observations.
+
+```{r}
+# simulate an ideal binomial distribution of the number of successes in 12 trials if the probability of success = 0.5
+dbinom0.5 <- dbinom(x = 0:12,
+                    size = 12,
+                    prob = 0.5)
+dbinom0.5
+
+# simulate an ideal binomial distribution of the number of successes in 12 trials if the probability of success = 1/3
+dbinom0.33 <- dbinom(x = 0:12,
+                     size = 12,
+                     prob = 1/3)
+dbinom0.33
+
+# by default, all probabilities are on a 0..1 scale
+# calculate the most likely number of observations of each number of successes
+# if we perform a total of 15 observations
+dbinom0.5 <- round(15 * dbinom0.5,
+                   digits = 0)
+dbinom0.5
+
+dbinom0.33 <- round(15 * dbinom0.33,
+                    digits = 0)
+dbinom0.33
+
+# these are essentially frequency vectors, e.g. dbinom output 0 0 0 1 2 3 ... means that 
+# 0, 1, 2 will not be observed, 3 will be observed once, 4 twice, 5 thrice ...
+# convert frequency vectors to "simple" vectors, e.g. 3 4 4 5 5 5 ...
+ideal0.5 <- c() # create an empty vector
+
+for (i in 0:12) {
+  ideal0.5 <- c(ideal0.5,
+                rep(i, dbinom0.5[i+1]) )
+}
+ideal0.5
+
+ideal0.33 <- c() # create an empty vector
+
+for (i in 0:12) {
+  ideal0.33 <- c(ideal0.33,
+                 rep(i, dbinom0.33[i+1]) )
+}
+ideal0.33
+
+# add to bino_data
+new_bino_data <- data.frame("method" = "ideal",
+                            "theoretical_probability" = c( rep(0.5, 15), rep(0.33, 16) ),
+                            "values" = c( ideal0.5, ideal0.33 ))
+bino_data <- rbind(bino_data, new_bino_data)
+
+# plot all frequencies
+ggplot(data = bino_data,
+       mapping = aes(x = values,
+                     fill = method)) +
+  geom_histogram(position = position_dodge(0.7),
+                 breaks = seq(from = -0.5, to = 12.5, by = 1),
+                 col = "lightgrey") +
+  scale_fill_manual(values = c("black", "cornflowerblue", "grey40")) +
+  scale_x_continuous(breaks = 0:12,
+                     labels = 0:12,
+                     limits = c(0,12)) +
+  facet_wrap(~theoretical_probability,
+             ncol = 1)
+```
+
+## How likely is each empirical observation in an ideal binomial distribution with given parameters?
+
+We can determine how likely each of the individual observations is given the ideal distribution. We did this earlier in the polio vaccine example. To do this, we can use sister functions of `rbinom()` from the "d/p/q/r" family called `dbinom()` (which we used above) and `pbinom()`. The difference is that `dbinom()` returns the Y value from the PDF (what is the chance of observing exactly the given value?) and `pbinom()` returns the Y value from the CDF (what is the chance of observing the given value or a more extreme value?)
+
+```{r}
+# how likely is it to observe *exactly* 4 successes in 12 trials given the ideal binomial distribution with a 0.5 probability of success?
+dbinom(x = 4,
+       size = 12,
+       prob = 0.5)
+
+# *exactly* 8 successes?
+dbinom(x = 8,
+       size = 12,
+       prob = 0.5)
+
+# 4 *or fewer* successes?
+pbinom(q = 4,
+       size = 12,
+       prob = 0.5)
+
+# is it consistent with the eCDF? (note that the values may not match exactly due to rounding)
+plot(ecdf(ideal0.5))
+
+# 8 *or fewer* successes?
+pbinom(q = 8,
+       size = 12,
+       prob = 0.5)
+
+# 8 *or more* successes? (i.e. more than 7 successes)
+pbinom(q = 7,
+       size = 12,
+       prob = 0.5,
+       lower.tail = FALSE)
+```
