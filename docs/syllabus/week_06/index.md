@@ -5,7 +5,7 @@ has_children: false
 nav_exclude: true
 ---
 
-# Week 6: Title
+# Week 6: Goodness-of-fit Tests and Contingency Analysis
 {: .no_toc }
 
 <details closed markdown="block">
@@ -25,6 +25,8 @@ nav_exclude: true
 
 <details closed markdown="block">
   <summary>Details</summary>
+
+
 
 </details> -->
 

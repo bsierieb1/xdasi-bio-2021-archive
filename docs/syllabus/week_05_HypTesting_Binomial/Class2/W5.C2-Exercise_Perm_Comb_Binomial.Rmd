@@ -99,4 +99,24 @@ What is the maximum number of any single base you would expect to find in 99% of
 
 ```
 
+
+### Binomial proportions test
+
+Say you are analyzing the GC content across different regions of the genome and you find a region of 100 bases upstream of your favorite gene that has 63% CG content. How likely is it that this region has no significant CG bias? 
+
+First use the `pbinom()` function to get a p-value, and then perform a two-sided test using `binom.test()`.
+
+```{r}
+# pbinom
+
+# binom.test
+
+```
+
+Are the results the same? 
+
+```{r}
+
+```
+
 ---

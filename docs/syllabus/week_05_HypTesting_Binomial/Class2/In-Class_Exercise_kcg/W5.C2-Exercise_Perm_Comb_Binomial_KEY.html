@@ -259,7 +259,37 @@ pbinom(4,10,.25) - pbinom(1,10,.25)</code></pre>
 <p>What is the maximum number of any single base you would expect to find in 99% of random 10-mers?</p>
 <pre class="r"><code>qbinom(.99,10,.25)</code></pre>
 <pre><code>## [1] 6</code></pre>
+<div id="binomial-proportions-test" class="section level3">
+<h3>Binomial Proportions Test</h3>
+<p>Say you are analyzing the GC content across different regions of the genome and you find a region of 100 bases upstream of your favorite gene that has 63% CG content. How likely is it that this region has no significant CG bias?</p>
+<p>First use the <code>pbinom()</code> function to get a p-value, and then perform a two-sided test using <code>binom.test()</code>.</p>
+<pre class="r"><code># pbinom gives P(X &lt; or = x) and P(X &gt; x)
+# two-sided is looking for values more extreme than the one observed
+# at either end of the distribution
+pbinom(100-63,100, 0.5) + pbinom(62,100, 0.5, lower.tail=FALSE) # lt + ut</code></pre>
+<pre><code>## [1] 0.01203298</code></pre>
+<pre class="r"><code>pbinom(62,100, 0.5, lower.tail=FALSE) * 2                       # 2*upper tail</code></pre>
+<pre><code>## [1] 0.01203298</code></pre>
+<pre class="r"><code># binom.test gives P(X &gt;= x), so use the actual value you are looking for
+# and select which type of test
+binom.test(63,100, 0.5, alternative = c(&quot;two.sided&quot;))</code></pre>
+<pre><code>## 
+##  Exact binomial test
+## 
+## data:  63 and 100
+## number of successes = 63, number of trials = 100, p-value = 0.01203
+## alternative hypothesis: true probability of success is not equal to 0.5
+## 95 percent confidence interval:
+##  0.5276484 0.7244334
+## sample estimates:
+## probability of success 
+##                   0.63</code></pre>
+<p>Are the results the same?</p>
+<pre class="r"><code>## Yes they are exactly the same. The `binom.test()` function performs an exact test and should give the same results as `pbinom()`. 
+
+# It is also easier to use because you don&#39;t have to remember to subtract one for an upper-tailed test.</code></pre>
 <hr />
+</div>
 </div>
 
 

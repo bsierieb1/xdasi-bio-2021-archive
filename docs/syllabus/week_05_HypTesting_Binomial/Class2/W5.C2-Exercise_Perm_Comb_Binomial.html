@@ -200,7 +200,16 @@ pre code {
 <p>The quantile function <code>qbinom(p, size, prob)</code> returns the smallest value of <span class="math inline">\(q\)</span> such that <span class="math inline">\(Pr(X \le q) \ge p\)</span>. The quantile is defined as the smallest value <span class="math inline">\(x\)</span> such that <span class="math inline">\(F(x) \ge p\)</span>. For example, <span class="math inline">\(F(x) \ge 0.75\)</span> means that 75% of the distribution is less than <span class="math inline">\(x\)</span>.</p>
 <p>What is the maximum number of any single base you would expect to find in 75% of 10-mers picked at random from the genome?</p>
 <p>What is the maximum number of any single base you would expect to find in 99% of random 10-mers?</p>
+<div id="binomial-proportions-test" class="section level3">
+<h3>Binomial proportions test</h3>
+<p>Say you are analyzing the GC content across different regions of the genome and you find a region of 100 bases upstream of your favorite gene that has 63% CG content. How likely is it that this region has no significant CG bias?</p>
+<p>First use the <code>pbinom()</code> function to get a p-value, and then perform a two-sided test using <code>binom.test()</code>.</p>
+<pre class="r"><code># pbinom
+
+# binom.test</code></pre>
+<p>Are the results the same?</p>
 <hr />
+</div>
 </div>
 
 

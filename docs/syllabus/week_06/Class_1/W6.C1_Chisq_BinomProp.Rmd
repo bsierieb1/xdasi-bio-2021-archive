@@ -1,6 +1,6 @@
 ---
-title: "Chi-sq and proportional test"
-author: "Manpreet S. Katari / Kris Gunsalus"
+title: "Binomial Proportions and Chi-squared Tests"
+subtitle: "XDASI Fall 2021"
 output:
   html_document:
     toc: yes
@@ -15,23 +15,137 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Background Reading
+## Background Material
 
-+ Whitlock, Chapters 6, 7, & 8 
++ Whitlock & Schluter, Chapters 6, 7, & 8
 
-## $\chi^{2}$ - goodness of fit test
 
-The $\chi^{2}$ goodness of fit test is simply looking at the difference between experimentally `observed` data values and the `expected` values from a model.
+# Proportional Tests
+
+Observed results for categorical and discrete data can be compared to expected outcomes under a ***null hypothesis*** using a variety of different test statistics.
+
+We have already used resampling and simulation methods to determine how likely a particular outcome is under a ***null hypothesis*** for several different scenarios involving proportions that can be modeled using the binomial distribution.
+
+Here we will learn about several different methods that can be applied to binomial data or to categorical or discrete data with more than two outcomes.
+
+## Binomial Proportions
+
+The Binomial is a discrete distribution describing the probability of alternative binary outcomes. 
+
+To discover whether an observation is consistent with expectation given a particular sample size $n$ and probability of a binary outcome $p$, we need some way to **quantify** how likely it is that there is no difference between observed and expected outcomes.
+ 
+We previously used the `binom` family of functions to calculate the total probability of different events given the formula for the binomial CDF:
+
+$$ F(X) = P(X \le x) = \sum_{i=0}^n {n \choose k}p^{k}(1-p)^{n-k} $$
+
+For example, we saw that the probability of observing 14/18 right-handed frogs, given $p=0.5$ was very small, even if we perform a two-sided test for obtaining 
+
+```{r}
+# probability of obtaining 4 or less, or 14 or more, right-handed frogs
+# given neutral expectation for 18 animals = 18/2 = 9 (p=0.5)
+
+pbinom(13,18,p=0.5, lower.tail=FALSE) * 2  # p(X > 13) * 2
+pbinom(4,18,p=0.5) + pbinom(13,18,p=0.5, lower.tail=FALSE)
+```
+
+
+## Binomial proportions test
+
+Specifically, we want to know if the **proportion** of women who gave birth at an older age is significantly higher in the group of women WITH breast cancer (call this $\hat{p}_1$) than it is in the group of women WITHOUT breast cancer (call this $\hat{p}_2$). Under the null hypothesis $H_0$, the two proportions should be equal, so their difference should be zero:
+
+$$H_0: \hat{p}_{(Cancer\ \cap Above30)} - \hat{p}_{(Normal \cap Above30)} =\hat{p}_1 - \hat{p}_2 = 0$$
+
+### Proportions
+
+The population mean and variance are then given by: $\mu = p$ and $\sigma^2 = pq/n$, where $q = 1 - p$. We don't know the overall population proportion, but we can estimate it as the the weighted average of the sample proportions:
+
+$$ \hat{p} = \frac{Over30}{Total} = \frac{x_1 + x_2}{n_1 + n_2}$$
+where $x_1$ and $x_2$ are the number of women above 30 in each sample (Case = cancer, Control = normal) and $n_1$ and $n_2$ are the total number of women in each sample.
+
+Fortunately, we can use the ``prop.test`` function to calculate if the difference in the proportions is significant using this model. Since we expect the Case group to have a higher proportion of women who first gave birth above the age of 30, our alternative hypothesis is $H_A: \hat{p_1} > \hat{p_2}$, so we will choose a one-tailed test:
+
+```{r}
+## two-sample test for equal proportions
+# prop.test(x,n,p=NULL,correct=TRUE)
+#   look at the help section on how to use this command:
+#     x = vector or 1D table with 2 entries giving # of "successes" in each sample,
+#         or (SEE BELOW) a 2x2 table or matrix with # of sucesses and failures
+#     n = vector giving total number of samples
+#     correct = correction for continuous approximation of the binomial (default)
+
+## Data --
+# Case group (with cancer):         683/3220 are in "Above30" group
+# Control group (without cancer): 1498/10245 are in "Above30" group
+
+## Syntax method 1: using raw data
+# "successes" are "Above30", so            x = c( 683, 1498)
+# totals in each group (Case, Control) are n = c(3220,10245)
+
+prop.test(c(683,1498),c(3220,10245), alternative="greater") 
+
+## Syntax method 2: using a matrix
+# Notes:
+#  1) If a matrix is given instead of vector x, then n is ignored.
+#  2) A two-dimensional table (or matrix) is expected with 2 COLUMNS giving 
+#     the number of "successes" (Above30) and "failures" (Under30), respectively.
+#     Thus, the ROWS are the samples being compared (Case, Control).
+
+
+prop.test(data_table[1:2,1:2], alternative="greater")
+
+# The function returns a data structure with a lot of different pieces of information.
+# You can recover the p-value directly from the test result:
+prop.test(data_table[1:2,1:2], alternative="greater")$p.value
+
+# NOTE: if table orientation is flipped, we change our frame of reference, 
+# so the reported proportions and confidence interval are different ...
+prop.test(t(data_table[1:2,1:2]), alternative="greater")
+
+# ... but the p-value is the same!
+# This is because the test statistic itself is agnostic to table orientation.
+prop.test(t(data_table[1:2,1:2]), alternative="greater")$p.value
+
+# Note that `prop.test` reports the Chi-squared statistic ("X-squared") with df = 1.
+# Though the conceptual framework is different, the z-score and X-squared statistics
+# are mathematically equivalent for two-way comparisons. 
+# (In fact, for a two-sided test, `prop.test` calls `chisq.test` underneath.)
+# You can examine the code for this (or any) function using `getAnywhere(prop.test)`.
+```
+
+The extremely low $p$-value suggests that there is indeed an association between age of first child birth and breast cancer.
+
+The equations for the distribution of $\hat{p}_1 - \hat{p}_2$ and the $z$-score are explained in Rosner, Section 10.2 and summarized in Eq. 10.3. The default for the `prop.test` is to use Yates' correction for continuity, since the (continuous) normal approximation underestimates the true $p$-values based on the binomial distribution.
+
+As a rule of thumb, **the normal approximation is considered valid whenever $n_1\hat{p}\hat{q} \ge 5$ and $n_2\hat{p}\hat{q} \ge 5$**. When this does _**not**_ hold, **Fisher's Exact Test** is recommended (coming in a later chapter).
+
+The resulting $p$-value of a $\chi^2$ test will be the same as for a _**two-tailed**_ `prop.test`.
+
+We can confirm that the $p$-value returned by `chisq.test` is the same as for a two-tailed `prop.test`:
+```{r}
+chisq.test(data_table[1:2,1:2])$p.value
+
+# two-sided prop.test
+prop.test(c(683,1498),c(3220,10245))$p.value
+```
+
+**Note: The $\chi^2$ test is not recommended for cases where expected value in any cell is less than 5**; instead, **Fisher's Exact Test** is recommended.
+
+
+---
+
+## $\chi^{2}$ - goodness of-fit-test
+
+The $\chi^{2}$ "Chi square" goodness-of-fit test is simply looking at the difference between experimentally `observed` data values and the `expected` values from a model.
 
 ## Chi-squared Test
 
-The **Chi-squared Test** statistic, $X^2$, compares individual proportions in each group to the **expected proportion** based on the **population mean estimate**.
+The **Chi-squared Test** statistic, $\chi^2$, compares individual proportions in each group to the **expected proportion** based on the **population mean estimate**.
 
-The test statistic, $X^2$, is:
+The test statistic, $\chi^2$, is:
 
 $$ X^2 = \sum\frac{(Obs-Exp)^2}{Exp}$$
 
-So for each cell, we take the square of the difference between the Observed and Expected and divide by Expected, then sum these to get $X^2$. Under $H_0$, $X^2$ will have an asymptotic $\chi^2$ distribution with $(r-1)(c-1) = 1$ degree of freedom.
+So for each cell, we take the square of the difference between the Observed and Expected and divide by Expected, then sum these to get $\chi^2$. Under $H_0$, $\chi^2$ will have an asymptotic $\chi^2$ distribution with $(r-1)(c-1) = 1$ degree of freedom.
 
 ## $\chi^{2}$ distribution
 
@@ -197,7 +311,7 @@ chisq.test(data_table[1:2,1:2])$p.value
 chisq.test(t(data_table[1:2,1:2]))$p.value
 ```
 
-Notice that the manual calculation using `pchisq` does not give exactly the same $p$-value as `chisq.test`. This is because the approximation we made by hand does not correct for the fact that $X^2$ is a continuous function, and thus underestimates the true $p$-values based on the binomial distribution. In contrast, `chisq.test` uses Yates’ correction by default. 
+Notice that the manual calculation using `pchisq` does not give exactly the same $p$-value as `chisq.test`. This is because the approximation we made by hand does not correct for the fact that $\chi^2$ is a continuous function, and thus underestimates the true $p$-values based on the binomial distribution. In contrast, `chisq.test` uses Yates’ correction by default. 
 
 We can apply Yates' correction manually by subtracting 1/2 from each of the squared differences above, which will give us the same result at `chisq.test`:
 ```{r}
@@ -207,87 +321,6 @@ chisq
 pchisq(chisq, df = 1, lower.tail = F)
 ```
 
-
-## Binomial proportions
-
-Specifically, we want to know if the **proportion** of women who gave birth at an older age is significantly higher in the group of women WITH breast cancer (call this $\hat{p}_1$) than it is in the group of women WITHOUT breast cancer (call this $\hat{p}_2$). Under the null hypothesis $H_0$, the two proportions should be equal, so their difference should be zero:
-
-$$H_0: \hat{p}_{(Cancer\ \cap Above30)} - \hat{p}_{(Normal \cap Above30)} =\hat{p}_1 - \hat{p}_2 = 0$$
-
-### Proportions
-
-The population mean and variance are then given by: $\mu = p$ and $\sigma^2 = pq/n$, where $q = 1 - p$. We don't know the overall population proportion, but we can estimate it as the the weighted average of the sample proportions:
-
-$$ \hat{p} = \frac{Over30}{Total} = \frac{x_1 + x_2}{n_1 + n_2}$$
-where $x_1$ and $x_2$ are the number of women above 30 in each sample (Case = cancer, Control = normal) and $n_1$ and $n_2$ are the total number of women in each sample.
-
-Fortunately, we can use the ``prop.test`` function to calculate if the difference in the proportions is significant using this model. Since we expect the Case group to have a higher proportion of women who first gave birth above the age of 30, our alternative hypothesis is $H_A: \hat{p_1} > \hat{p_2}$, so we will choose a one-tailed test:
-
-```{r}
-## two-sample test for equal proportions
-# prop.test(x,n,p=NULL,correct=TRUE)
-#   look at the help section on how to use this command:
-#     x = vector or 1D table with 2 entries giving # of "successes" in each sample,
-#         or (SEE BELOW) a 2x2 table or matrix with # of sucesses and failures
-#     n = vector giving total number of samples
-#     correct = correction for continuous approximation of the binomial (default)
-
-## Data --
-# Case group (with cancer):         683/3220 are in "Above30" group
-# Control group (without cancer): 1498/10245 are in "Above30" group
-
-## Syntax method 1: using raw data
-# "successes" are "Above30", so            x = c( 683, 1498)
-# totals in each group (Case, Control) are n = c(3220,10245)
-
-prop.test(c(683,1498),c(3220,10245), alternative="greater") 
-
-## Syntax method 2: using a matrix
-# Notes:
-#  1) If a matrix is given instead of vector x, then n is ignored.
-#  2) A two-dimensional table (or matrix) is expected with 2 COLUMNS giving 
-#     the number of "successes" (Above30) and "failures" (Under30), respectively.
-#     Thus, the ROWS are the samples being compared (Case, Control).
-
-
-prop.test(data_table[1:2,1:2], alternative="greater")
-
-# The function returns a data structure with a lot of different pieces of information.
-# You can recover the p-value directly from the test result:
-prop.test(data_table[1:2,1:2], alternative="greater")$p.value
-
-# NOTE: if table orientation is flipped, we change our frame of reference, 
-# so the reported proportions and confidence interval are different ...
-prop.test(t(data_table[1:2,1:2]), alternative="greater")
-
-# ... but the p-value is the same!
-# This is because the test statistic itself is agnostic to table orientation.
-prop.test(t(data_table[1:2,1:2]), alternative="greater")$p.value
-
-# Note that `prop.test` reports the Chi-squared statistic ("X-squared") with df = 1.
-# Though the conceptual framework is different, the z-score and X-squared statistics
-# are mathematically equivalent for two-way comparisons. 
-# (In fact, for a two-sided test, `prop.test` calls `chisq.test` underneath.)
-# You can examine the code for this (or any) function using `getAnywhere(prop.test)`.
-```
-
-The extremely low $p$-value suggests that there is indeed an association between age of first child birth and breast cancer.
-
-The equations for the distribution of $\hat{p}_1 - \hat{p}_2$ and the $z$-score are explained in Rosner, Section 10.2 and summarized in Eq. 10.3. The default for the `prop.test` is to use Yates' correction for continuity, since the (continuous) normal approximation underestimates the true $p$-values based on the binomial distribution.
-
-As a rule of thumb, **the normal approximation is considered valid whenever $n_1\hat{p}\hat{q} \ge 5$ and $n_2\hat{p}\hat{q} \ge 5$**. When this does _**not**_ hold, **Fisher's Exact Test** is recommended (coming in a later chapter).
-
-The resulting $p$-value of a $\chi^2$ test will be the same as for a _**two-tailed**_ `prop.test`.
-
-We can confirm that the $p$-value returned by `chisq.test` is the same as for a two-tailed `prop.test`:
-```{r}
-chisq.test(data_table[1:2,1:2])$p.value
-
-# two-sided prop.test
-prop.test(c(683,1498),c(3220,10245))$p.value
-```
-
-**Note: The $\chi^2$ test is not recommended for cases where expected value in any cell is less than 5**; instead, **Fisher's Exact Test** is recommended.
 
 
 
@@ -309,7 +342,7 @@ prop.test(c(683,1498),c(3220,10245))$p.value
 ```
 
 
-3. Calculate the $X^2$ value using your observed and expected counts.
+3. Calculate the $\chi^2$ value using your observed and expected counts.
 
 ```{r}
 
