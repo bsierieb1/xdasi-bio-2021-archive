@@ -28,9 +28,9 @@ nav_exclude: false
 
 ### Hypothesis Testing
 
-  + **Class notes (complete)** - [.html](Class1/W5.C1_Notes_Hypothesis_testing_full.html){:target="blank"} - [zipped .Rmd](Class1/W5.C1_Notes_Hypothesis_testing_full.Rmd.zip)
+  + **Class notes (complete)** - [HTML](Class1/W5.C1_Notes_Hypothesis_testing_full.html){:target="blank"} - [zipped .Rmd](Class1/W5.C1_Notes_Hypothesis_testing_full.Rmd.zip)
   + **In-class exercise** - [zipped .Rmd](Class1/W5.C1_Exercise_High-fat_mouse_empirical_pval.Rmd.zip)
-    + Answer key - [zipped .Rmd+.html](Class1/W5.C1_Exercise_High-fat_mouse_empirical_pval_KEY.zip)
+    + Answer key - [zipped .Rmd](Class1/W5.C1_Exercise_High-fat_mouse_empirical_pval_KEY.Rmd.zip) - [HTML](Class1/W5.C1_Exercise_High-fat_mouse_empirical_pval_KEY.html){: target="blank"}
 
 </details>
 
@@ -46,7 +46,7 @@ nav_exclude: false
 ### Permutations, Combinations, Bernoulli, and Binomial Distribution
 
   + [**Class notes**](Class2/W5.C2-Notes_Perm_Comb_Binomial.html){:target="blank"}
-  + **In-class exercise** - [zipped .Rmd+.html](Class2/W5.C2-Exercise_Perm_Comb_Binomial.zip)
+  + **In-class exercise** - [zipped .Rmd](Class2/W5.C2-Exercise_Perm_Comb_Binomial.Rmd.zip) - [HTML](Class2/W5.C2-Exercise_Perm_Comb_Binomial.html){: target="blank"}
     <!-- + **Key** - [zipped .Rmd](Class2/W5.C2-Exercise_Perm_Comb_Binomial_KEY.zip) -->
 
 </details>
