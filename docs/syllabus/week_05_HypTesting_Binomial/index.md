@@ -61,7 +61,7 @@ nav_exclude: false
   <summary>Details</summary>
 
 + [**Class exercise**](Recitation/W5.R1_Exercise_Binomial_Distributions.Rmd.zip)
-  + Answer key - [zipped .Rmd](Recitation/W5.R1_Exercise_Binomial_Distributions_KEY.Rmd.zip] - [HTML](Recitation/W5.R1_Exercise_Binomial_Distributions_KEY.html){: target="blank"}
+  + Answer key - [zipped .Rmd](Recitation/W5.R1_Exercise_Binomial_Distributions_KEY.Rmd.zip) - [HTML](Recitation/W5.R1_Exercise_Binomial_Distributions_KEY.html){: target="blank"}
 
 </details>
 
