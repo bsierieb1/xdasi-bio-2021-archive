@@ -1,0 +1,500 @@
+---
+title: 'Homework 4: Probability'
+subtitle: "XDASI Fall 2021"
+author: "Shaili Regmi"
+date: "Due: 9/30/2021"
+output:
+  html_document:
+    toc: 3
+    toc_float: TRUE
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(gmodels)
+# remove "error = TRUE" to make knitr halt on errors
+# (do this when you are ready to check if your code will knit without errors)
+```
+
+# 1. Probability density and cumulative probability
+
+You are screening for genetic interactions between genes in yeast that cause deleterious fitness effects. To establish a baseline for your experiments, you decide to first estimate the probability density of colony diameters (in mm) for a population of WT yeast grown in controlled conditions (48 hours at 37°C). Fortunately, you have an automated image recognition system that allows you to do this for a large number of individual colonies!
+
+#### a. Simulate a sample of 1000 measured colonies with an average diameter of 1mm and a standard deviation of 0.1mm and store it in a variable. Set a seed to make your work reproducible. 
+
+What are the actual mean and SD? What about the IQR? Draw a boxplot to get a feel for the sample distribution.
+
+```{r}
+# set a seed
+set.seed(1)
+
+# sample
+colonies = rnorm(1000, 1, 0.1)
+
+# mean and sd
+mean_colonies = mean(colonies)
+sd_colonies = sd(colonies)
+mean_colonies
+sd_colonies
+
+# IQR and boxplot
+iqr_colonies = IQR(colonies)
+iqr_colonies
+
+boxplot(colonies)
+```
+
+#### b. What are the SEM and 95%CI for this sample? How are these summary statistics computed, and what do they mean?
+
+```{r}
+# Option 1: SEM and CI by hand
+
+# Option 2: using gmodels package
+colonies_stats = ci(colonies)
+colonies_stats
+
+ci_lower = colonies_stats["CI lower"]
+ci_lower
+ci_upper = colonies_stats["CI upper"]
+ci_upper
+
+# Explanation
+# SEM is computed by dividing the standard deviation of the sample (which is an estimate of the population's standard deviation) by the square root of the sample size. SEM tells us the precision of our sampling estimate.
+# CI is computed by taking (mean - 1.96*SEM) for the lower limit and (mean + 1.96*SEM) for the upper limit where 1.96 is the quantile found by qnorm(0.975) which is the bounds for the central 95% of the data around the mean for a normal distribution. The 95% CI gives us the range that the true population mean will fall within 95% of the time.
+```
+
+
+#### c. Draw a histogram of the sampled data, and make a qqplot to confirm that the sample really comes from a normal distribution.
+
+***Extra credit:*** *See if you can overlay some additional information on the histogram, such as vertical lines showing some statistics, a smoothened density line for your sample distribution, and/or an "ideal" normal curve with the same parameters.*
+
+```{r}
+# histograms
+
+# Option 1: base R
+hist(x = colonies,
+     prob = "true",
+     col = "violet", 
+     breaks = 60,
+     xlim = c(0.7, 1.5),
+     xlab = "Colony Diameter (mm)")
+
+abline(v = mean_colonies,
+       col = "red",
+       lwd = 2)
+
+abline(v = ci_lower,
+       col = "blue",
+       lwd = 1,
+       lty = "dashed")
+
+abline(v = ci_upper,
+       col = "blue",
+       lwd = 1,
+       lty = "dashed")
+
+lines(density(colonies),
+      col = "orange",
+      lwd = 2)  # smoothened curve
+
+# Option 2: ggplot
+
+
+# qqplot
+qqnorm(colonies,  
+       xlab = "Theoretical Quantiles", 
+       ylab = "Sample Quantiles",
+       main = "Normal Q-Q Plot")
+qqline(colonies)           # add an ideal qq line
+
+
+```
+
+
+Use the R functions for the CDF (`pnorm()`) and inverse CDF (`qnorm()`) to answer questions d-f below.
+
+#### d. What is the total probability that a randomly sampled colony from the parent population measures between 0.93 and 1.07 mm?
+
+```{r}
+pnorm(1.07, mean = mean_colonies, sd = sd_colonies) - pnorm(0.93, mean = mean_colonies, sd = sd_colonies)
+
+# 0.501 or 50% 
+```
+
+
+#### e. What is the proportion of data that are <1 or >1 standard deviations away from the mean?
+
+```{r}
+pnorm(mean_colonies - sd_colonies, mean = mean_colonies, sd = sd_colonies) +
+  pnorm(mean_colonies + sd_colonies, mean = mean_colonies, sd = sd_colonies, lower.tail = FALSE)
+# 0.317 or 31.7%
+```
+
+
+#### f. What diameters correspond to the 10% and 90% quantiles?
+
+```{r}
+qnorm(0.1, mean_colonies, sd_colonies)
+qnorm(0.9, mean_colonies, sd_colonies)
+# 0.866 for 10% quantile and 1.131 for 90% quantile
+```
+
+
+# 2. Co-occurrence of infection
+
+Among women voluntarily tested for sexually transmitted diseases in one university (modified from Tábora et al. 2005):
+
++ 18% tested positive for human papilloma virus (HPV) only,
++ 2% tested positive for Chlamydia only, and
++ 3% tested positive for both HPV and Chlamydia. 
+
+#### a. What is the total frequency of each STD in the population?
+
+```{r}
+# probabilities
+p.hpv = 0.18
+p.chl = 0.02
+p.hpv.chl = 0.03
+
+# total probabilities
+p.hpv.tot = p.hpv + p.hpv.chl
+p.chl.tot = p.chl + p.hpv.chl
+
+p.hpv.tot
+p.chl.tot
+```
+
+
+For the next 3 questions, use set notation to write out the question in terms of set operations (as a comment) and then compute the answer. You may write probabilities using the following syntax, e.g.:
+
++ P(A) * P(B)
++ P(A) + P(B)
++ P(A AND B)
++ P(A OR B)
++ P(A | B)
++ etc.
+
+#### b. What is the probability that a woman will test positive for Chlamydia, given that she is positive for HPV?
+
+```{r}
+# set operations
+# P(A | B) = P(A AND B) / P(B) where A is chl and B is hpv
+
+# conditional probability
+p.chl.given.hpv = p.hpv.chl / p.hpv.tot
+p.chl.given.hpv
+```
+
+
+#### c. What is the probability that a woman who tests positive for Chlamydia will also test positive HPV?
+
+```{r}
+# set operations
+# P(B | A) = P(A AND B) / P(A) where A is chl and B is hpv
+
+# conditional probability
+p.hpv.given.chl = p.hpv.chl / p.chl.tot
+p.hpv.given.chl
+```
+
+
+#### d. What is the total probability that a woman from this population who gets tested would test positive for either HPV and/or Chlamydia?
+
+```{r}
+# P(A OR B) = P(A) + P(B) - P(A AND B)
+p.chl.tot + p.hpv.tot - p.hpv.chl
+```
+
+
+#### e. Is the occurrence of these infections independent? Explain.
+
+```{r}
+# No, they are not independent because the probability of one event is affected by the occurrence of the other. In other words, P(A | B) is not equal to P(A) and P(B | A) is not equal to P(B).
+```
+
+
+# 3. Allele frequencies
+
+Many gene loci have a major allele and a number of minor alleles in the population. Let's say there are 5 alleles for a particular locus, that individuals mate randomly with respect to the genotype at this locus, and that allele frequencies for A1-A5 are 0.82, 0.06, 0.05, 0.04, and 0.03 respectively.
+
+For each of the questions below, write out the probability equations (e.g. P(Ai) for each term) and then compute the answers numerically.
+
+#### a. What is the probability that any single allele chosen at random from the population is either A2 or A5? Write out the probability statement as a comment below and then computer the answer.
+
+```{r}
+# Allele frequencies
+A1 = 0.82
+A2 = 0.06
+A3 = 0.05
+A4 = 0.04
+A5 = 0.03
+
+# Probability of either A2 or A5 = P(A2) + P(A5)
+A2 + A5
+
+```
+
+
+#### b. What is the probability that an individual carries two A3 alleles?
+
+```{r}
+# P(A3) * P(A3)
+A3 * A3
+```
+
+
+#### c. What is the probability that someone does NOT carry two A3 alleles?
+
+```{r}
+# 1 - P(an individual carries two A3 alleles)
+1 - (A3 * A3)
+```
+
+
+#### d. What is the probability that someone is heterozygous for A1 and A4?
+
+```{r}
+# 2 * P(A1) * P(A4)
+2 * A1 * A4
+```
+
+
+#### e. What is the probability that *neither* of two random individuals in the population would carry two A1 alleles?
+
+*Hint: first consider (i) the probability of carrying two A1 alleles, then (ii) the probability of NOT having two A1 alleles, and finally (iii) the probability that 2 individuals are not carrying two A1 alleles.*
+
+```{r}
+# prob of carrying two A1 alleles
+two_A1 = A1 * A1
+
+# prob of NOT having two A1 alleles
+not_two_A1 = 1 - two_A1
+
+# P(2 individuals are NOT A1,A1)
+not_two_A1 * not_two_A1
+
+```
+
+
+#### f. *Extra credit:* What is the probability that 3 random individuals carry no A3 or A4 alleles at all? (Remember that each individual carries two alleles.) 
+
+```{r}
+# prob of an allele being A3 or A4
+A3_or_A4 = A3 + A4
+
+# prob of an allele not being A3 or A4
+not_A3_or_A4 = 1 - A3_or_A4
+
+# P(neither of 2 alleles is A3 or A4)
+neither_of_2_A3_or_A4 = not_A3_or_A4 * not_A3_or_A4
+
+# P(3 people have no A3 or A4 alleles)
+neither_of_2_A3_or_A4 * neither_of_2_A3_or_A4 * neither_of_2_A3_or_A4
+
+```
+
+
+# 4. Trait inheritance
+
+Some people are hypersensitive to the smell of asparagus, and can even detect a strong odor in the urine of a person who has recently eaten asparagus. This trait turns out to have a simple genetic basis (Online Mendelian Inheritance in Man, 2019):
+
++ An individual with one or two copies of the $A$ allele at the gene ($AA$ or $Aa$ genotypes) can smell asparagus in urine, whereas 
++ a person with two copies of the alternative $a$ allele ($aa$ genotypes) cannot. 
+
+**In the human population, 5% of alleles are $A$ and 95% are $a$.**
+
+Assume that men and women in the population have the same allele frequencies at the asparagus-smelling gene and that marriage and child production are independent of the genotype at the gene.
+
+
+#### a. What is the probability that a randomly sampled individual from the population has two copies of the $a$ allele (that is, that it has an $aa$ genotype)? 
+
+*Note: below we suggest to use a list to hold all of the different variables you will need to calculate, to help you keep track of the combinations. A list uses similar syntax to a data frame, except it can hold any kind of data of any size.*
+
+```{r}
+Pr=list()
+Pr$a=0.95
+Pr$A=0.05
+
+Pr$aa = Pr$a * Pr$a
+Pr$aa
+```
+
+
+#### b. What is the probability that both members of a randomly sampled married couple (man and woman) are $aa$ at the asparagus-smelling gene? 
+
+```{r}
+Pr$aa_aa = Pr$aa * Pr$aa
+Pr$aa_aa
+```
+
+
+#### c. What is the probability that both members of a randomly sampled married couple (man and woman) are heterozygotes at this locus (meaning that each person has one allele $A$ and one allele $a$)? Remember that each allele can be inherited from either parent.
+
+```{r}
+# first calculate probability that one individual is heterozygous
+Pr$Aa = 2 * Pr$A * Pr$a
+Pr$Aa
+
+# probability that both parents are heterozygous
+Pr$Aa_Aa = Pr$Aa * Pr$Aa
+Pr$Aa_Aa        
+```
+
+
+#### d. What is the conditional probability that the first child of the couple in (c) is an $aa$ homozygote? Remember that the child must receive exactly one allele from each parent.
+
+***Beware: here you need to consider transmission probabilities, not the allele frequencies in the population! Think "Punnett square".***
+
+```{r collapse=TRUE}
+# conditional probability that Aa x Aa -> Aa
+Pr$Caa.FAa_MAa = (1/4)
+Pr$Caa.FAa_MAa
+```
+
+
+#### e. Above we figured out the probability that a child of known parentage inherits a particular allele combination. What if we want to turn this around and ask, ***If a randomly sampled child has the $aa$ genotype, what is the probability that both its parents were both $Aa$ heterozygotes?***
+
+To answer this we need to use **Bayes' Theorem**. Recall the definition of conditional probability:
+
+$$ P(F_{Aa} M_{Aa} | C_{aa}):= \frac{P(F_{Aa} M_{Aa} \cap C_{aa}) }{ P(C_{aa}) }$$
+and
+
+$$ P(C_{aa} | F_{Aa} M_{Aa}):= \frac{P(F_{Aa} M_{Aa} \cap C_{aa}) }{ P(F_{Aa} M_{Aa}) }$$
+
+
+Therefore, the intersection (co-occurrence) of the parental and child alleles can be written equivalently as:
+
+$$P(F_{Aa} M_{Aa} \cap C_{aa}) = P(F_{Aa} M_{Aa} | C_{aa}) * P(C_{aa}) = P(C_{aa}|F_{Aa}M_{Aa}) * P(F_{Aa}M_{Aa})$$
+
+Fantastic! Now we have what we need to find the desired ***posterior probability*** $P(F_{Aa} M_{Aa} | C_{aa})$, given the known
+
++ ***priors*** $P(F_{alleles}M_{alleles})$ and
++ ***likelihoods*** $P(C_{aa}|F_{alleles}M_{alleles})$.
+
+All we have to do is rearrange this equation and use Bayes Theorem:
+
+$$P(F_{Aa} M_{Aa} | C_{aa}) = \frac{P(C_{aa}|F_{Aa}M_{Aa}) * P(F_{Aa}M_{Aa})}{P(C_{aa})} = \frac{P(C_{aa}|F_{Aa}M_{Aa}) * P(F_{Aa}M_{Aa})}{\sum_{ij} P(C_{aa}|F_iM_j) * P(F_iM_j)}$$
+
+where $i,j \in \{AA, Aa, aA, aa\}$. 
+
+This equation represents ***the fraction of the time that we expect to see one particular combination of parental alleles given an $aa$ child (i.e. both parents are $Aa$ heterozygotes), relative to all the possible ways a child could inherit two $a$ alleles.***
+
+To compute the ***posterior probability***, we need to first quantify a bunch of individual probabilities, so let's break the problem into pieces and compute the required components in stages:
+
+- **i. Probabilities of each allele combination in any individual in the population (parental frequencies):**
+
+```{r collapse = TRUE}
+# probabilities of each allele combination in the parents
+Pr$AA = Pr$A * Pr$A # P(AA)
+Pr$Aa = Pr$A * Pr$a # P(Aa)
+Pr$aA = Pr$a * Pr$A # P(aA)
+Pr$aa = Pr$a * Pr$a # P(aa)
+
+Pr$AA
+Pr$Aa
+Pr$aA
+Pr$aa
+```
+
+- **ii. *Priors* for each combination of parental alleles (states of nature):**
+
+```{r collapse=TRUE}
+# priors for each combination of parental alleles
+Pr$Faa_Maa = Pr$aa * Pr$aa
+Pr$FAa_Maa = Pr$Aa * Pr$aa
+Pr$FAA_Maa = Pr$AA * Pr$aa
+Pr$Faa_MAa = Pr$aa * Pr$Aa
+Pr$FAa_MAa = Pr$Aa * Pr$Aa
+Pr$FAA_MAa = Pr$AA * Pr$Aa
+Pr$Faa_MAA = Pr$aa * Pr$AA
+Pr$FAa_MAA = Pr$Aa * Pr$AA
+Pr$FAA_MAA = Pr$AA * Pr$AA
+
+Pr$Faa_Maa
+Pr$FAa_Maa
+Pr$FAA_Maa
+Pr$Faa_MAa
+Pr$FAa_MAa
+Pr$FAA_MAa
+Pr$Faa_MAA
+Pr$FAa_MAA
+Pr$FAA_MAA
+```
+
+- **iii. *Likelihoods* (conditional probabilities) for $C_{aa}$ given each combination of parental alleles:**
+
+```{r}
+# individual likelihoods (think Punnett square)
+Pr$Caa.Faa_Maa = 1
+Pr$Caa.FAa_Maa = (1/2)
+Pr$Caa.FAA_Maa = 0
+Pr$Caa.Faa_MAa = (1/2)
+Pr$Caa.FAa_MAa = (1/4)
+Pr$Caa.FAA_MAa = 0
+Pr$Caa.Faa_MAA = 0
+Pr$Caa.FAa_MAA = 0
+Pr$Caa.FAA_MAA = 0
+```
+
+
+- **iv. *Total probability* $Pr(C_{aa})$ that the child is $aa$ (the denominator):**
+
+To find this, unfortunately need to consider the probabilities of all possible combinations of parental allele contributions, or possible ***states of nature***:
+
+$$\begin{aligned}P(C_{aa}) =& P(C_{aa}|F_{aa}M_{aa}) * P(F_{aa}M_{aa})  \ + \\
+                            & P(C_{aa}|F_{Aa}M_{aa}) * P(F_{Aa}M_{aa})  \ + \\
+                            & P(C_{aa}|F_{AA}M_{aa}) * P(F_{AA}M_{aa})  \ + \\
+                            & P(C_{aa}|F_{aa}M_{Aa}) * P(F_{aa}M_{Aa})  \ + \\
+                            & P(C_{aa}|F_{Aa}M_{Aa}) * P(F_{Aa}M_{Aa})  \ + \\
+                            & P(C_{aa}|F_{AA}M_{Aa}) * P(F_{AA}M_{Aa})  \ + \\
+                            & P(C_{aa}|F_{aa}M_{AA}) * P(F_{aa}M_{AA})  \ + \\
+                            & P(C_{aa}|F_{Aa}M_{AA}) * P(F_{Aa}M_{AA})  \ + \\
+                            & P(C_{aa}|F_{AA}M_{AA}) * P(F_{AA}M_{AA}) 
+\end{aligned}$$
+
+
+```{r}
+# total probability P(C_Aa)
+Pr$Caa = Pr$Caa.Faa_Maa * Pr$Faa_Maa + # first line filled in for you ... add the rest below
+  Pr$Caa.FAa_Maa * Pr$FAa_Maa +
+  Pr$Caa.FAA_Maa * Pr$FAA_Maa +
+  Pr$Caa.Faa_MAa * Pr$Faa_MAa +
+  Pr$Caa.FAa_MAa * Pr$FAa_MAa +
+  Pr$Caa.FAA_MAa * Pr$FAA_MAa +
+  Pr$Caa.Faa_MAA * Pr$Faa_MAA +
+  Pr$Caa.FAa_MAA * Pr$FAa_MAA +
+  Pr$Caa.FAA_MAA * Pr$FAA_MAA 
+  
+         
+
+Pr$Caa
+```
+
+
+- **v. Finally, we can plug the desired variables from above into the original Bayes equation to find the *posterior probability:* **
+
+$$P(F_{Aa}M_{Aa} | C_{aa}) = \frac{P(C_{aa}|F_{Aa}M_{Aa}) * P(F_{Aa}M_{Aa})}{P(C_{aa})}$$
+
+```{r}
+# Posterior probability of P(F_Aa, M_Aa | C_Aa):
+Pr$FAa_MAa.Caa = (Pr$Caa.FAa_MAa * Pr$FAa_MAa) / Pr$Caa
+Pr$FAa_MAa.Caa
+```
+
+
+#### f. If a randomly sampled child has the $aa$ genotype, what is the probability that both its parents were also $aa$?
+
+The ***posterior probability*** $P(F_{aa} M_{aa} | C_{aa})$ is:
+
+$$P(F_{aa} M_{aa} | C_{aa}) = \frac{P(C_{aa}|F_{aa}M_{aa}) * P(F_{aa}M_{aa})}{P(C_{aa})} = \frac{P(C_{aa}|F_{aa}M_{aa}) * P(F_{aa}M_{aa})}{\sum_{ij} P(C_{aa}|F_iM_j) * P(F_iM_j)}$$
+
+We computed all the relevant quantities above, so now this should be easy!
+
+```{r}
+Pr$Faa_Maa.Caa = (Pr$Caa.Faa_Maa * Pr$Faa_Maa) / Pr$Caa
+Pr$Faa_Maa.Caa
+```
+
+---

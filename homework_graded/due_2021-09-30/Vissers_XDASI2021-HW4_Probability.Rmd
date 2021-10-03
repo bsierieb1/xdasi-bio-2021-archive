@@ -1,7 +1,7 @@
 ---
 title: 'Homework 4: Probability'
 subtitle: "XDASI Fall 2021"
-author: "Sir Ronald Fisher [YOUR NAME HERE]"
+author: "Graeme Vissers"
 date: "Due: 9/30/2021"
 output:
   html_document:
@@ -11,7 +11,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, error = TRUE)
+knitr::opts_chunk$set(echo = TRUE, error = FALSE)
 library(ggplot2)
 library(gmodels)
 # remove "error = TRUE" to make knitr halt on errors
@@ -27,32 +27,37 @@ You are screening for genetic interactions between genes in yeast that cause del
 What are the actual mean and SD? What about the IQR? Draw a boxplot to get a feel for the sample distribution.
 
 ```{r}
-set.seed(1)
-n=1000
-yeast.sample = rnorm(n, 1, 0.1)
-y.mean = mean(yeast.sample)
-y.sd = sd(yeast.sample)
-c(y.mean,y.sd)
-summary(yeast.sample)
-boxplot(yeast.sample, horizontal = TRUE, xlab = "colony diameter (mm)")
+# set a seed
+
+# sample
+sample <- rnorm(1000, mean = 1, sd = 0.1)
+
+# mean and sd
+sample.mean <- mean(sample)
+sample.sd <- sd(sample)
+
+# IQR and boxplot
+sample.iqr <- IQR(sample)
+boxplot(sample)
+
 ```
 
 #### b. What are the SEM and 95%CI for this sample? How are these summary statistics computed, and what do they mean?
 
 ```{r}
-# by hand
-SEM = y.sd/sqrt(n)
-SEM
-Q = qnorm(0.975)
-c(y.mean - Q*SEM, y.mean + Q*SEM)
+# Option 1: SEM and CI by hand
 
-# using gmodels package
-ci(yeast.sample)
+# Option 2: using gmodels package
+library(gmodels)
+sample.sem <- ci(sample)[4]
+sample.ci <- ci(sample)[c(2,3)]
 
-
-# SEM is the sample estimator for the population mean and is SD/sqrt(sample size)
-# 95%CI is an interval within which we expect the true mean of the population to fall 95% of the time. 
-# It is the the sample mean +/- Q*SEM, where Q = the 97.5th quantile of the data (z_{1-alpha/2}, alpha = 0.05)
+# Explanation
+# The standard error of the mean is a way to measure the precision of the estimated mean relative
+# to the true mean. It is calculated by dividing the standard deviation of a sample by the square
+# root of a population size. The 95% ci represents the interval in which the true estimate will lie,
+# 95% of the time. The upper and lower bound of the ci can be estimated by adding or subtracting,
+# respectively, two standard errors from the mean. 
 ```
 
 
@@ -63,31 +68,24 @@ ci(yeast.sample)
 ```{r}
 # histograms
 
-# base R
-hist(yeast.sample, prob=TRUE, col="skyblue", breaks=40)
-lines(density(yeast.sample), col="darkblue", lwd=2)
-curve(dnorm(x, mean=y.mean, sd=y.sd), 
-      lwd=2, add=TRUE, yaxt="n")
-abline(v=y.mean, col="red", lwd=3, lty=2)
+# Option 1: base R
 
-# ggplot
-yeast.sample.df = data.frame(control = yeast.sample)
-
-ggplot(yeast.sample.df, aes(x=control)) +
-  geom_histogram(aes(y = ..density..), 
-                 color = "black", fill = "skyblue", binwidth=0.02) +
-  geom_vline(xintercept = y.mean, linetype="dashed",
-             color = "red", size=1) +
-  geom_line(aes(y = ..density..), 
-            stat = 'density', col="blue") +
-  stat_function(fun = dnorm,
-                args = list(mean = y.mean,
-                            sd = y.sd),
-                col = "black")
+# Option 2: ggplot
+sample.df <- data.frame(sample)
+ggplot(data = sample.df,
+       mapping = aes(x = sample)) +
+  geom_histogram(fill = "firebrick",
+                 col = "black") +
+  geom_vline(xintercept = mean(sample)) +
+  stat_function(fun = dnorm, args = list(mean=mean(sample), sd=sd(sample)))
 
 # qqplot
-qqnorm(yeast.sample)
-qqline(yeast.sample)
+qqnorm(sample,
+       xlab = "Theoretical Quantiles", 
+       ylab = "Sample Quantiles",
+       main = "Normal Q-Q Plot")
+qqline(sample)
+
 ```
 
 
@@ -96,21 +94,29 @@ Use the R functions for the CDF (`pnorm()`) and inverse CDF (`qnorm()`) to answe
 #### d. What is the total probability that a randomly sampled colony from the parent population measures between 0.93 and 1.07 mm?
 
 ```{r}
-pnorm(1.07, mean= y.mean, sd = y.sd) - pnorm(0.93, mean= y.mean, sd = y.sd)
+pnorm(1.07, mean = 1, sd = 0.1) - pnorm(0.93, mean = 1, sd = 0.1)
+
+# There is about a 51.6% probability of this occurring
 ```
 
 
 #### e. What is the proportion of data that are <1 or >1 standard deviations away from the mean?
 
 ```{r}
-pnorm(y.mean - y.sd, y.mean, y.sd) + pnorm(y.mean + y.sd, y.mean, y.sd, lower.tail=FALSE)
+pnorm(0.9, mean = 1, sd = 0.1) # Proportion of data <1 sd away from the mean
+1 - pnorm(1.1, mean = 1, sd = 0.1) # Proportion of data >1 sd away from the mean
+
+# 15.86% of the data is above the mean, and 15.86% is below. In total, about 31% of the data is either >1 or <1 sd away from the mean.
 ```
 
 
 #### f. What diameters correspond to the 10% and 90% quantiles?
 
 ```{r}
-c(qnorm(0.1,y.mean,y.sd),qnorm(0.9,y.mean,y.sd))
+qnorm(0.10, mean = 1, sd = 0.1)
+qnorm(0.90, mean = 1, sd = 0.1)
+
+# 0.8718 mm (10%) and 1.1281 (90% quantile)
 ```
 
 
@@ -125,15 +131,15 @@ Among women voluntarily tested for sexually transmitted diseases in one universi
 #### a. What is the total frequency of each STD in the population?
 
 ```{r}
-# your answer here
-
 # probabilities
 p.hpv = 0.18
 p.chl = 0.02
 p.hpv.chl = 0.03
 
+# total probabilities
 p.hpv.tot = p.hpv + p.hpv.chl
 p.chl.tot = p.chl + p.hpv.chl
+
 p.hpv.tot
 p.chl.tot
 ```
@@ -151,11 +157,10 @@ For the next 3 questions, use set notation to write out the question in terms of
 #### b. What is the probability that a woman will test positive for Chlamydia, given that she is positive for HPV?
 
 ```{r}
-# your answer here
+# set operations
+# P(chl | hpv) = P(chl AND hpv) / P(hpv)
 
 # conditional probability
-# P(Ch | HPV) = P(Ch AND HPV) / P(HPV)
-
 p.chl.given.hpv = p.hpv.chl / p.hpv.tot
 p.chl.given.hpv
 ```
@@ -164,11 +169,10 @@ p.chl.given.hpv
 #### c. What is the probability that a woman who tests positive for Chlamydia will also test positive HPV?
 
 ```{r}
-# your answer here
+# set operations
+# P(hpv | chl) = P(chl AND hpv) / P(chl) or
 
 # conditional probability
-# P(HPV | Ch) = P(Ch AND HPV) / P(Ch)
-
 p.hpv.given.chl = p.hpv.chl / p.chl.tot
 p.hpv.given.chl
 ```
@@ -177,27 +181,19 @@ p.hpv.given.chl
 #### d. What is the total probability that a woman from this population who gets tested would test positive for either HPV and/or Chlamydia?
 
 ```{r}
-# your answer here
-
-# P(HPV OR Chlamydia) = P(HPV) + P(Chlamydia) - P(HPV AND Chlamydia)
-p.hpv.tot + p.chl.tot - p.hpv.chl
-
-# this is the same as adding up the original numbers
-p.hpv + p.chl + p.hpv.chl
+tot.pos = p.chl + p.hpv + p.hpv.chl
+# The probability that a woman from this population tests positive for HPV and/or chlamydia is
+# 0.23
 ```
 
 
 #### e. Is the occurrence of these infections independent? Explain.
 
 ```{r}
-# your answer here
-
-# Independence: P(HPV AND Chlamydia) = P(HPV) * P(Chlamydia)
-indep.test = p.hpv.tot * p.chl.tot
-indep.test
-indep.test == p.hpv.chl
-
-# No - the joint probability is not the product of the individual probabilities.
+# No they are not independent. If they were independent, then the probability of testing positive
+# for chlamydia given testing positive for HPV should be the same as the total probability of testing
+# positive for HPV. However, the probability of testing positive for either disease increases
+# if you are positive for one.
 ```
 
 
@@ -217,34 +213,37 @@ A3 = 0.05
 A4 = 0.04
 A5 = 0.03
 
-# Probability of either A2 or A5 = ?
+1 - A1
 
-# P(A2 OR A5) = P(A2) + P(A5)
-A2 + A5
+# Probability of either A2 or A5 = 0.18
+
 ```
 
 
 #### b. What is the probability that an individual carries two A3 alleles?
 
 ```{r}
-# P(A3 AND A3) = P(A3)*P(A3)
-A3*A3
+pA3_A3 = 0.05 * 0.05
+
+# 0.0025
 ```
 
 
 #### c. What is the probability that someone does NOT carry two A3 alleles?
 
 ```{r}
-# P(not (A3 AND A3)) = 1 - P(A3 AND A3)
-1 - A3^2
+1 - pA3_A3
+
+# 0.9975
 ```
 
 
 #### d. What is the probability that someone is heterozygous for A1 and A4?
 
 ```{r}
-# P(A1 AND A4) = 2 * P(A1)*P(A4)  # since can inherit A1,A4 or A4,A1
-2*A1*A4
+pA1_A4 = 0.82 * 0.04
+
+# 0.0328
 ```
 
 
@@ -253,25 +252,37 @@ A3*A3
 *Hint: first consider (i) the probability of carrying two A1 alleles, then (ii) the probability of NOT having two A1 alleles, and finally (iii) the probability that 2 individuals are not carrying two A1 alleles.*
 
 ```{r}
-# P(A1,A1) = P(A1)*P(A1)          # prob of carrying two A1 alleles
-# P(! (A1,A1)) = 1 - P(A1)*P(A1)  # prob of NOT having two A1 alleles
+# prob of carrying two A1 alleles
+pA1_A1 = 0.82 * 0.82
+pA1_A1
 
-# P(2 individuals are NOT A1,A1) = (1 - P(A1)*P(A1)) * (1 - P(A1)*P(A1))
-(1-A1*A1)^2
+# prob of NOT having two A1 alleles
+1 - pA1_A1
+
+# P(2 individuals are NOT A1,A1)
+(1 - pA1_A1) * (1 - pA1_A1)
+
+# 0.1073
+
 ```
 
 
 #### f. *Extra credit:* What is the probability that 3 random individuals carry no A3 or A4 alleles at all? (Remember that each individual carries two alleles.) 
 
 ```{r}
-# P(A3 or A4) = P(A3) + P(A4)        # prob of an allele being A3 or A4
-# P(! (A3 or A4)) = 1 - P(A3 or A4)  # prob of an allele not being A3 or A4
+# prob of an allele being A3 or A4
+pA3.or.A4 = A3 + A4
 
-# P(neither of 2 alleles is A3 or A4) = [ 1 - P(A3 or A4) ]^2
-# P(3 people have no A3 or A4 alleles) = [ [ 1 - P(A3 or A4) ]^2 ]^3
-p3or4 = A3 + A4
-pNOT3or4 = 1 - p3or4
-pNOT3or4^6 # 3 invididuals * 2 alleles each
+# prob of an allele not being A3 or A4
+pnot.A3.or.A4 = 1 - pA3.or.A4
+
+# P(neither of 2 alleles is A3 or A4)
+p.neither.A3.or.A4 = pnot.A3.or.A4 * pnot.A3.or.A4
+
+# P(3 people have no A3 or A4 alleles)
+p.neither.A3.or.A4 * p.neither.A3.or.A4 * p.neither.A3.or.A4
+
+# 0.5678
 
 ```
 
@@ -297,7 +308,7 @@ Pr=list()
 Pr$a=0.95
 Pr$A=0.05
 
-Pr$aa = Pr$a * Pr$a
+Pr$aa = 0.95 * 0.95
 Pr$aa
 ```
 
@@ -305,7 +316,7 @@ Pr$aa
 #### b. What is the probability that both members of a randomly sampled married couple (man and woman) are $aa$ at the asparagus-smelling gene? 
 
 ```{r}
-Pr$aa_aa = Pr$aa * Pr$aa
+Pr$aa_aa = 0.9025 * 0.9025
 Pr$aa_aa
 ```
 
@@ -314,8 +325,7 @@ Pr$aa_aa
 
 ```{r}
 # first calculate probability that one individual is heterozygous
-# Aa (mother A, father a) and aA (mother a, father A) are the same, so multiply by 2
-Pr$Aa = Pr$A * Pr$a + Pr$a * Pr$A
+Pr$Aa = 0.95 * 0.05
 Pr$Aa
 
 # probability that both parents are heterozygous
@@ -368,15 +378,16 @@ To compute the ***posterior probability***, we need to first quantify a bunch of
 
 ```{r collapse = TRUE}
 # probabilities of each allele combination in the parents
-Pr$AA = Pr$A * Pr$A # P(AA)
-Pr$Aa = Pr$A * Pr$a # P(Aa)
-Pr$aA = Pr$a * Pr$A # P(aA)
-Pr$aa = Pr$a * Pr$a # P(aa)
+Pr$AA =  Pr$A * Pr$A # P(AA)
+Pr$Aa =  Pr$A * Pr$a # P(Aa)
+Pr$aA =  Pr$a * Pr$A # P(aA)
+Pr$aa =  Pr$a * Pr$a # P(aa)
 
 Pr$AA
 Pr$Aa
 Pr$aA
 Pr$aa
+
 ```
 
 - **ii. *Priors* for each combination of parental alleles (states of nature):**
@@ -384,13 +395,13 @@ Pr$aa
 ```{r collapse=TRUE}
 # priors for each combination of parental alleles
 Pr$Faa_Maa = Pr$aa * Pr$aa
-Pr$FAa_Maa = Pr$Aa * Pr$aa
+Pr$FAa_Maa = Pr$Aa * Pr$aa + Pr$aA * Pr$aa
 Pr$FAA_Maa = Pr$AA * Pr$aa
-Pr$Faa_MAa = Pr$aa * Pr$Aa
-Pr$FAa_MAa = Pr$Aa * Pr$Aa
-Pr$FAA_MAa = Pr$AA * Pr$Aa
+Pr$Faa_MAa = Pr$aa * Pr$Aa + Pr$aA * Pr$aa
+Pr$FAa_MAa = Pr$Aa * Pr$Aa + Pr$aA * Pr$Aa + Pr$aA * Pr$aA + Pr$Aa * Pr$aA
+Pr$FAA_MAa = Pr$AA * Pr$Aa + Pr$AA * Pr$aA
 Pr$Faa_MAA = Pr$aa * Pr$AA
-Pr$FAa_MAA = Pr$Aa * Pr$AA
+Pr$FAa_MAA = Pr$Aa * Pr$AA + Pr$aA * Pr$AA
 Pr$FAA_MAA = Pr$AA * Pr$AA
 
 Pr$Faa_Maa
@@ -402,6 +413,7 @@ Pr$FAA_MAa
 Pr$Faa_MAA
 Pr$FAa_MAA
 Pr$FAA_MAA
+
 ```
 
 - **iii. *Likelihoods* (conditional probabilities) for $C_{aa}$ given each combination of parental alleles:**
@@ -437,16 +449,16 @@ $$\begin{aligned}P(C_{aa}) =& P(C_{aa}|F_{aa}M_{aa}) * P(F_{aa}M_{aa})  \ + \\
 
 
 ```{r}
-# total probability P(C_aa)
-Pr$Caa = Pr$Caa.Faa_Maa * (Pr$aa * Pr$aa) +
-         Pr$Caa.FAa_Maa * (Pr$Aa * Pr$aa) +
-         Pr$Caa.FAA_Maa * (Pr$AA * Pr$aa) +
-         Pr$Caa.Faa_MAa * (Pr$aa * Pr$Aa) +
-         Pr$Caa.FAa_MAa * (Pr$Aa * Pr$Aa) +
-         Pr$Caa.FAA_MAa * (Pr$AA * Pr$Aa) +
-         Pr$Caa.Faa_MAA * (Pr$aa * Pr$AA) +
-         Pr$Caa.FAa_MAA * (Pr$Aa * Pr$AA) +
-         Pr$Caa.FAA_MAA * (Pr$AA * Pr$AA)
+# total probability P(C_Aa)
+Pr$Caa = Pr$Caa.Faa_Maa * Pr$Faa_Maa +  # first line filled in for you ... add the rest below
+         Pr$Caa.FAa_Maa * Pr$FAa_Maa +
+         Pr$Caa.FAA_Maa * Pr$FAA_Maa +
+         Pr$Caa.Faa_MAa * Pr$Faa_MAa +
+         Pr$Caa.FAa_MAa * Pr$FAa_MAa +
+         Pr$Caa.FAA_MAa * Pr$FAA_MAa +
+         Pr$Caa.Faa_MAA * Pr$Faa_MAA +
+         Pr$Caa.FAa_MAA * Pr$FAa_MAA +
+         Pr$Caa.FAA_MAA * Pr$FAA_MAA
 
 Pr$Caa
 ```
@@ -458,7 +470,7 @@ $$P(F_{Aa}M_{Aa} | C_{aa}) = \frac{P(C_{aa}|F_{Aa}M_{Aa}) * P(F_{Aa}M_{Aa})}{P(C
 
 ```{r}
 # Posterior probability of P(F_Aa, M_Aa | C_Aa):
-Pr$FAa_MAa.Caa = Pr$Caa.FAa_MAa * (Pr$Aa * Pr$Aa) / Pr$Caa
+Pr$FAa_MAa.Caa = (Pr$Caa.FAa_MAa * Pr$FAa_MAa) / Pr$Caa
 Pr$FAa_MAa.Caa
 ```
 
@@ -472,7 +484,7 @@ $$P(F_{aa} M_{aa} | C_{aa}) = \frac{P(C_{aa}|F_{aa}M_{aa}) * P(F_{aa}M_{aa})}{P(
 We computed all the relevant quantities above, so now this should be easy!
 
 ```{r}
-Pr$Faa_Maa.Caa = Pr$Caa.Faa_Maa * Pr$Faa_Maa / Pr$Caa
+Pr$Faa_Maa.Caa = (Pr$Caa.Faa_Maa * Pr$Faa_Maa) / Pr$Caa
 Pr$Faa_Maa.Caa
 ```
 
