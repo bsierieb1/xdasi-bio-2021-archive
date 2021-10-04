@@ -1,0 +1,417 @@
+---
+title: "RNA-seq Analysis with Seurat"
+author: "Michelle"
+date: "9/29/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
+
+```{r include=FALSE, results='hide', message=FALSE, warning=FALSE}
+#loading required packages
+library(dplyr)
+library(Seurat)
+library(patchwork)
+library(ggplot2)
+library(gridExtra)
+library(ggrepel)
+```
+
+
+# Short Intro to Single Cell RNA-seq and Seurat
+
+intro text here
+
+The Seurat tutorial can be found [here](https://satijalab.org/seurat/articles/pbmc3k_tutorial.html). You can download the data set from that page. For this exercise, you will be following the basic structure of the tutorial and trying to recreate some of the analysis/plotting on your own.
+
+# Loading and processing the data set  
+First, load the PBMC data set.
+```{r}
+pbmc.data <- Read10X(data.dir = "hg19/")
+```
+Next, initialize the Seurat object with the raw (non-normalized) data.
+```{r}
+pbmc <- CreateSeuratObject(counts = pbmc.data, project = "pbmc3k", min.cells = 3, min.features = 200)
+```
+
+# Examining Features and Filtering
+Before any analysis, you'll want to examine the data and filter out any cells that contain sparse or low quality data. Similarly, you want to filter out any cells that have an unusually high number of genes, as that might represent a droplet that contained multiple cells.   
+
+Here we are interested in looking at: 
+
+  *   The number of unique genes (features) detected in each cell.  
+  *   The total number of molecules detected within a cell.   
+  *   The percentage of reads that map to the mitochondrial genome.  
+
+The last one is done because low-quality or dying cells can contain extensive mitochondrial contamination. You will take a look at the percentage of mitochondrial genes relative to the total expression. This can be done using the "PercentageFeatureSet()" function, which calculates the percentage of counts originating from a set of features
+Here we ask for it to look for the gene names starting with "MT-" to mean the set of mitochondrial genes.
+
+
+```{r}
+pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, pattern = "^MT-")  
+```
+
+The easiest way to get a sense of where each cell falls within these metrics is to plot the data. Take a look at the violin plot from the Seurat package:  
+```{r}
+VlnPlot(pbmc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+```
+&nbsp;  
+Next you will recreate these plots on your own from the data.
+
+First, create a dataframe of the metadata, where these metrics are stored.
+```{r}
+metadata_df<-as.data.frame(pbmc@meta.data)
+```
+Using ggplot, create a violin plot for each feature in the metadata.
+Try to arrange them in the same plot using the gridExtra package.
+```{r}
+nfeature_plot <- ggplot(metadata_df, aes(x=orig.ident, y=nFeature_RNA, 
+                                         fill= orig.ident)) + 
+  geom_violin() +
+  geom_jitter(width = 0.3, size=.4)+
+  theme(panel.background=element_blank(), 
+        strip.background = element_blank(),
+        panel.border=element_rect(colour="black",fill=NA),
+        legend.title = element_blank(),
+        legend.position="none",
+        plot.title = element_text(hjust = 0.5, face="bold"))+
+  xlab("Identity")+
+  ylab("")+
+  ggtitle("nFeature_RNA")
+
+ncount_plot <- ggplot(metadata_df, aes(x=orig.ident, y=nCount_RNA, 
+                                       fill= orig.ident)) + 
+  geom_violin() +
+  geom_jitter(width = 0.3, size=.4)+
+  theme(panel.background=element_blank(), 
+        strip.background = element_blank(),
+        panel.border=element_rect(colour="black",fill=NA),
+        legend.title = element_blank(),
+        legend.position="none",
+        plot.title = element_text(hjust = 0.5, face="bold"))+
+  xlab("Identity")+
+  ylab("")+
+  ggtitle("nCount_RNA")
+
+percmt_plot <- ggplot(metadata_df, aes(x=orig.ident, y=percent.mt, 
+                                       fill= orig.ident)) + 
+  geom_violin() +
+  geom_jitter(width = 0.3, size=.4)+
+  theme(panel.background=element_blank(), 
+        strip.background = element_blank(),
+        panel.border=element_rect(colour="black",fill=NA),
+        legend.title = element_blank(),
+        legend.position="none",
+        plot.title = element_text(hjust = 0.5, face="bold"))+
+  xlab("Identity")+
+  ylab("")+
+  ggtitle("Percent MT")
+
+grid.arrange(nfeature_plot, ncount_plot, percmt_plot, nrow=1)
+
+```
+xx  
+Another good way to visualize the data is to use scatter plots to see how well the features correlate with one another.  
+Take a look at the Seurat scatter plot:  
+```{r}
+plot1 <- FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "percent.mt")
+plot2 <- FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+plot1 + plot2
+```
+xx  
+You'll notice that they put the Pearson correlation between the features in the title of the plots.  
+Make your own scatter plots to further examine the features (you can use ggplot or base plotting).  
+First, use pearson correlation to determine the relationships between the features.
+State your results, what do they mean?
+```{r}
+count_percentmt_cor <- cor(metadata_df$nCount_RNA, metadata_df$percent.mt, method = c("pearson"))
+count_feature_cor <- cor(metadata_df$nCount_RNA, metadata_df$nFeature_RNA, method = c("pearson"))
+count_percentmt_cor
+count_feature_cor
+```
+Next, make some scatter plots:  
+```{r}
+scatter1 <- ggplot(metadata_df, aes(x=nCount_RNA, y=percent.mt, color=nCount_RNA)) + 
+  geom_point() +
+  theme(panel.background=element_blank(), 
+        strip.background = element_blank(),
+        panel.border=element_rect(colour="black",fill=NA),
+        legend.title = element_blank(),
+        legend.position="none",
+        plot.title = element_text(hjust = 0.5, face="bold"))+
+  xlab("Identity")+
+  ylab("")+
+  ggtitle(paste(round(count_percentmt_cor,2)))
+
+scatter2 <- ggplot(metadata_df, aes(x=nCount_RNA, y=nFeature_RNA, color=nCount_RNA)) + 
+  geom_point() +
+  theme(panel.background=element_blank(), 
+        strip.background = element_blank(),
+        panel.border=element_rect(colour="black",fill=NA),
+        legend.title = element_blank(),
+        legend.position="none",
+        plot.title = element_text(hjust = 0.5, face="bold"))+
+  xlab("Identity")+
+  ylab("")+
+  ggtitle(paste(round(count_feature_cor,2)))
+
+grid.arrange(scatter1, scatter2, nrow=1)
+```
+
+Filter data based on your chosen parameters. Here we will filter out anything with fewer than 200 or more than 2500 unique genes, and anything with more than 5% mitochondrial genes. (Since the total number of genes and the number of unique genes are highly correlated, we do not need to filter based on total counts.)  
+```{r}
+pbmc <- subset(pbmc, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
+```
+
+# Normalize the Data
+
+Suerat uses a normalization method “LogNormalize” that normalizes the feature expression measurements for each cell by the total expression, multiplies this by a scale factor (10,000 by default), and log-transforms the result.   
+
+Values are stored in: "pbmc[["RNA"]]@data"  
+We are going to do the same on our own.
+
+First, pull out the matrix of RNA counts, found in "pbmc[["RNA"]]@data". 
+```{r}
+mat.data<- as.matrix(pbmc[["RNA"]]@data)
+```
+
+Next, transform the matrix to normalized counts. The normalization is as follows:  
+
+  * Individual gene counts for each cell are divided by the total counts for that cell and multiplied by the scale factor (here the scale factor is 10,000).    
+  * The resulting value is then natural-log transformed using log1p.  
+
+(Hint, you can use apply or a for loop for this.)  
+
+```{r}
+norm.mat.data<- apply(mat.data, 2, function(x) log1p(x/sum(x)*10000))
+```
+
+Now use the Seurat code to normalize the data within the Seurat object:  
+```{r}
+pbmc <- NormalizeData(pbmc, normalization.method = "LogNormalize", scale.factor = 10000)
+```
+
+Examine your matrix and the Seurat matrix, are they the same? 
+
+# Identification of Highly Variable Genes  
+Using Seurat:
+```{r}
+pbmc <- FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 2000)
+
+top10 <- head(VariableFeatures(pbmc), 10)
+plot1 <- VariableFeaturePlot(pbmc)
+plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
+plot2
+```
+
+To make this plot yourself, first extract the matrix of gene variability as a dataframe:  
+```{r}
+variable_genes<- as.data.frame(pbmc@assays[["RNA"]]@meta.features)
+```
+Convert row names into a column:  
+```{r}
+variable_genes <- data.frame(genes = row.names(variable_genes), variable_genes)
+```
+
+Next, make the scatter plot, including labels for the top 10 variable genes.  
+Hints:  
+
+  * you are plotting mean against standard variance  
+  * the x axis has been transformed  
+  * you can use the "top10" variable created from the Seurat object to help with the labeling  
+
+```{r}
+variable_genes <- variable_genes %>%
+  mutate(plotlabel = as.character(genes))%>%
+  mutate(plotlabel = ifelse(plotlabel %in% top10, plotlabel, ""))
+
+var_scatter <- ggplot(variable_genes, aes(x=vst.mean, y=vst.variance.standardized)) + 
+  geom_point(aes(color=vst.variable)) +
+  scale_color_manual(values= c("black", "red"))+
+  theme(panel.background=element_blank(), 
+        strip.background = element_blank(),
+        panel.border=element_rect(colour="black",fill=NA),
+        legend.title = element_blank(),
+        legend.position="none")+
+  scale_x_continuous(trans='log10')+
+  geom_text_repel(aes(label=plotlabel))+
+  xlab("Average Expression")+
+  ylab("Standardized Variance")
+
+var_scatter
+```
+
+# Scaling
+Next, you will scale the data so that the gene expression for each gene across samples has mean of zero and a standard deviation of one.  
+To do this you will:  
+
+  * Extract the gene expression matrix from the Seurat object.  
+  * Scale each gene to fit a standard normal distribution.  
+  
+(Hint, this can be sone by subtracting the mean and dividing by the standard deviation for each value int the gene expression matrix.)  
+```{r}
+mat.scale<- as.matrix(pbmc[["RNA"]]@data)
+
+mat.scale2<- apply(mat.scale, 1, function(x) (x - mean(x)) / sd(x))
+mat.scale2<- t(mat.scale2)
+```
+
+Now scale the data in the Seurat object:  
+```{r}
+all.genes <- rownames(pbmc)
+pbmc <- ScaleData(pbmc, features = all.genes)
+```
+
+The scaled data can be found in "pbmc[["RNA"]]@scale.data", take a look at it, 
+is it the same as your manually scaled data?
+
+# PCA
+Description of PCA goes here.  
+
+Run PCA using Seurat:  
+```{r}
+pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
+print(pbmc[["pca"]], dims = 1:5, nfeatures = 5)
+VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
+```
+
+To recreate this plot, first extract the PCA data:   
+```{r}
+vizdim<- pbmc@reductions[["pca"]]@feature.loadings
+```
+Next, convert row names into a column:  
+```{r}
+vizdim <- data.frame(genes = row.names(vizdim), vizdim)
+```
+Now you are ready to create the plots.
+```{r}
+PC1<- vizdim %>%
+  select(genes, PC_1)%>%
+  arrange(desc(abs(PC_1))) %>% 
+    slice_head(n=30)
+
+PC2<- vizdim %>%
+  select(genes, PC_2)%>%
+  arrange(desc(abs(PC_2))) %>% 
+  slice_head(n=30)
+
+PC1 <- ggplot(PC1, aes(x=PC_1, y=reorder(genes, PC_1)))+ 
+  geom_point() +
+  theme(panel.background=element_blank(), 
+        strip.background = element_blank(),
+        panel.border=element_rect(colour="black",fill=NA),
+        legend.title = element_blank(),
+        legend.position="none")+
+  ylab("")
+
+PC2 <- ggplot(PC2, aes(x=PC_2, y=reorder(genes, PC_2)))+ 
+  geom_point() +
+  theme(panel.background=element_blank(), 
+        strip.background = element_blank(),
+        panel.border=element_rect(colour="black",fill=NA),
+        legend.title = element_blank(),
+        legend.position="none")+
+  ylab("")
+
+grid.arrange(PC1, PC2, nrow=1)
+```
+
+Here is the dimplot from Seurat
+```{r}
+DimPlot(pbmc, reduction = "pca")
+```
+
+To recreate this plot, get data from cell embeddings, which stores the coordinates for each cell in low-dimensional space.  
+```{r}
+dim<- as.data.frame(pbmc@reductions[["pca"]]@cell.embeddings)
+```
+Now make the plot:  
+```{r}
+dim_plot <- ggplot(dim, aes(x=PC_1, y=PC_2, color= "red"))+ 
+  geom_point(size=0.4) +
+  theme(panel.background=element_blank(), 
+        strip.background = element_blank(),
+        panel.border=element_rect(colour="black",fill=NA),
+        legend.title = element_blank(),
+        legend.position="none")
+
+dim_plot
+```
+
+# heatmaps  
+To get more insight into the principal components (PC), you can use heatmaps to visualize gene expression within the PCs. Both cells and features are ordered according to their PCA scores.  The parameter "balanced" used here plots the cells on both ends of the spectrum.  
+```{r}
+DimHeatmap(pbmc, dims = 1, cells = 500, balanced = TRUE)
+DimHeatmap(pbmc, dims = 1:15, cells = 500, balanced = TRUE)
+```
+
+# Elbow Plots  
+Elbow plots are a useful tool in determining the dimensionality of your data. It can help you easily pick the number of PCs to include in downstream analysis by plotting the ranking of principle components based on the percentage of variance explained by each one.   
+```{r}
+ElbowPlot(pbmc)
+```
+
+To make your own, first extract and process data.  
+```{r}
+elbow_data<- as.data.frame(pbmc@reductions[["pca"]]@stdev)
+elbow_data <- data.frame(PC = row.names(elbow_data), elbow_data)
+colnames(elbow_data)[2] <- "std_dev"
+elbow_data$PC<- as.numeric(elbow_data$PC)
+elbow_data$std_dev<- as.numeric(elbow_data$std_dev)
+```
+Now make plot:  
+```{r}
+elbow <- ggplot(elbow_data, aes(x=PC, y=std_dev))+ 
+  geom_point() +
+  xlim(c(0,20))+
+  theme(panel.background=element_blank(), 
+        strip.background = element_blank(),
+        panel.border=element_rect(colour="black",fill=NA),
+        legend.title = element_blank(),
+        legend.position="none")
+elbow
+```
+
+# Clustering  
+Intro to clustering and seurat clustering.    
+"As in PhenoGraph, we first construct a KNN graph based on the euclidean distance in PCA space, and refine the edge weights between any two cells based on the shared overlap in their local neighborhoods (Jaccard similarity). This step is performed using the FindNeighbors() function, and takes as input the previously defined dimensionality of the dataset (first 10 PCs).  
+
+To cluster the cells, we next apply modularity optimization techniques such as the Louvain algorithm (default) or SLM [SLM, Blondel et al., Journal of Statistical Mechanics], to iteratively group cells together, with the goal of optimizing the standard modularity function. The FindClusters() function implements this procedure, and contains a resolution parameter that sets the ‘granularity’ of the downstream clustering, with increased values leading to a greater number of clusters. We find that setting this parameter between 0.4-1.2 typically returns good results for single-cell datasets of around 3K cells. Optimal resolution often increases for larger datasets. The clusters can be found using the Idents() function."  
+```{r}
+pbmc <- FindNeighbors(pbmc, dims = 1:10)
+pbmc <- FindClusters(pbmc, resolution = 0.5)
+```
+# UMAP  
+Non-linear dimensional reduction. Put explanation here.  
+
+```{r}
+pbmc <- RunUMAP(pbmc, dims = 1:10)
+DimPlot(pbmc, reduction = "umap")
+```  
+xx
+Make your own UMAP plot.    
+First, get the data.  
+```{r}
+umap<-as.data.frame(pbmc@reductions[["umap"]]@cell.embeddings)
+umap_meta<-as.data.frame(pbmc@meta.data)
+umap<-merge(umap, umap_meta, by=0, all=TRUE)
+```
+Next, create the plot.  
+```{r}
+umap_plot <- ggplot(umap, aes(x=UMAP_1, y=UMAP_2, color= seurat_clusters))+ 
+  geom_point(size=0.5) +
+  theme(panel.background=element_blank(), 
+        strip.background = element_blank(),
+        panel.border=element_rect(colour="black",fill=NA),
+        legend.title = element_blank(),
+        legend.position="right")
+
+umap_plot
+```
+
+
+
+
