@@ -23,10 +23,10 @@ nav_exclude: false
 
 # Class - Monday, Oct. 4
 
+### Exact and Approximate Binomial Test, Chi-squared
+
 <details closed markdown="block">
   <summary>Details</summary>
-
-### Exact and Approximate Binomial Test, Chi-squared
 
 + [**Class notes**](Class1/W6.C1-Notes_Chisq_BinomProp.html){:target="blank"}
 + **In-class exercise** - [zipped .Rmd](Class1/W6.C1-Exercise_ChiSquare.Rmd.zip) - [HTML](Class1/W6.C1-Exercise_ChiSquare.html){: target="blank"}
