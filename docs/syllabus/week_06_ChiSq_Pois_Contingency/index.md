@@ -2,7 +2,7 @@
 title: Week 6
 parent: Syllabus
 has_children: false
-nav_exclude: true
+nav_exclude: false
 ---
 
 # Week 6: Goodness-of-fit Tests and Contingency Analysis
@@ -21,14 +21,19 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- # Class - Monday, Oct. 4
+# Class - Monday, Oct. 4
 
 <details closed markdown="block">
   <summary>Details</summary>
 
+### Exact and Approximate Binomial Test, Chi-squared
+
++ [**Class notes**](Class1/W6.C1-Notes_Chisq_BinomProp.html){:target="blank"}
++ **In-class exercise** - [zipped .Rmd](Class1/W6.C1-Exercise_ChiSquare.Rmd.zip) - [HTML](Class2/W6.C1-Exercise_ChiSquare.html){: target="blank"}
+  <!-- + **Key** - [zipped .Rmd](Class1/W6.C1-Exercise_ChiSquare_KEY.Rmd.zip) -->
 
 
-</details> -->
+</details>
 
 <!-- ########################################################################### -->
 

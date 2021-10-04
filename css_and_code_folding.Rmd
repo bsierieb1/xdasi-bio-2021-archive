@@ -1,0 +1,48 @@
+---
+title: "css and code folding templates for class notes"
+subtitle: "XDASI Fall 2021"
+output:
+  html_document:
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+```{css, echo=FALSE}
+.qbox {
+  padding: 1em;
+  background: cornsilk;
+  border: 1px solid burlywood;
+  border-radius: 5px;
+}
+
+.bluebox {
+  padding: 1em;
+  background: #d8ecf3;
+  border: 1px solid cornflowerblue;
+}
+
+h1 {color: mediumblue}
+h2 {color: mediumblue}
+h3 {color: mediumblue}
+h4 {color: mediumblue; font-style: italic}
+```
+
+
+<!-- == TEMPLATE =========================================================== -->
+<!-- Note: add `class.source="fold-show"` to top of R block to show code by default -->
+<!-- ======================================================================= -->
+<!-- <div class="qbox"> -->
+<!-- $\Rightarrow$ ***Question: ?*** -->
+
+<!-- <details closed markdown="block"> -->
+<!--   <summary>Answer</summary> -->
+
+<!-- + Answer. -->
+
+<!-- </details> -->
+<!-- </div> -->
+<!-- ======================================================================= -->
