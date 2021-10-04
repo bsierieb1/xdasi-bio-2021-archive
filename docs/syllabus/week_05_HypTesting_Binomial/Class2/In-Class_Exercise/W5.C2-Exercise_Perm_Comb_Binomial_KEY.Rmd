@@ -129,14 +129,17 @@ Say you are analyzing the GC content across different regions of the genome and 
 First use the `pbinom()` function to get a p-value, and then perform a two-sided test using `binom.test()`.
 
 ```{r}
-# pbinom gives P(X < or = x) and P(X > x)
-# two-sided is looking for values more extreme than the one observed
+## pbinom 
+# use P(X < or = x) for lower tail and P(X > x-1) for upper tail
+# two-sided test is looking for values more extreme than the one observed
 # at either end of the distribution
-pbinom(100-63,100, 0.5) + pbinom(62,100, 0.5, lower.tail=FALSE) # lt + ut
-pbinom(62,100, 0.5, lower.tail=FALSE) * 2                       # 2*upper tail
+# lower.tail = 100-63 = 37
+pbinom(37,100, 0.5) + pbinom(62,100, 0.5, lower.tail=FALSE) # lt + ut
+pbinom(62,100, 0.5, lower.tail=FALSE) * 2                   # 2*upper tail
 
-# binom.test gives P(X >= x), so use the actual value you are looking for
-# and select which type of test
+## binom.test
+# gives P(X <= n-x) + P(X >= x) for a two-sided test,
+# so use the actual value you are looking for and select the type of test
 binom.test(63,100, 0.5, alternative = c("two.sided"))
 ```
 

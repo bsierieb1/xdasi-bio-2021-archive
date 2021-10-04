@@ -46,8 +46,8 @@ nav_exclude: false
   <summary>Details</summary>
 
   + [**Class notes**](Class2/W5.C2-Notes_Perm_Comb_Binomial.html){:target="blank"}
-  + **In-class exercise** - [zipped .Rmd](Class2/W5.C2-Exercise_Perm_Comb_Binomial.Rmd.zip) - [HTML](Class2/W5.C2-Exercise_Perm_Comb_Binomial.html){: target="blank"}
-    <!-- + **Key** - [zipped .Rmd](Class2/W5.C2-Exercise_Perm_Comb_Binomial_KEY.zip) -->
+  + **In-class exercise** - [zipped .Rmd](Class2/In-Class_Exercise/W5.C2-Exercise_Perm_Comb_Binomial.Rmd.zip) - [HTML](Class2/In-Class_Exercise/W5.C2-Exercise_Perm_Comb_Binomial.html){: target="blank"}
+    + Answer key - [zipped .Rmd](Class2/In-Class_Exercise/W5.C2-Exercise_Perm_Comb_Binomial_KEY.Rmd.zip) - [HTML](Class2/In-Class_Exercise/W5.C2-Exercise_Perm_Comb_Binomial_KEY.html){: target="blank"}
 
 </details>
 

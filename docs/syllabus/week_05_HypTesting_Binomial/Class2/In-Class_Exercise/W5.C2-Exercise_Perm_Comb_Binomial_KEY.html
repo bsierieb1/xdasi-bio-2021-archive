@@ -263,15 +263,18 @@ pbinom(4,10,.25) - pbinom(1,10,.25)</code></pre>
 <h3>Binomial Proportions Test</h3>
 <p>Say you are analyzing the GC content across different regions of the genome and you find a region of 100 bases upstream of your favorite gene that has 63% CG content. How likely is it that this region has no significant CG bias?</p>
 <p>First use the <code>pbinom()</code> function to get a p-value, and then perform a two-sided test using <code>binom.test()</code>.</p>
-<pre class="r"><code># pbinom gives P(X &lt; or = x) and P(X &gt; x)
-# two-sided is looking for values more extreme than the one observed
+<pre class="r"><code>## pbinom 
+# use P(X &lt; or = x) for lower tail and P(X &gt; x-1) for upper tail
+# two-sided test is looking for values more extreme than the one observed
 # at either end of the distribution
-pbinom(100-63,100, 0.5) + pbinom(62,100, 0.5, lower.tail=FALSE) # lt + ut</code></pre>
+# lower.tail = 100-63 = 37
+pbinom(37,100, 0.5) + pbinom(62,100, 0.5, lower.tail=FALSE) # lt + ut</code></pre>
 <pre><code>## [1] 0.01203298</code></pre>
-<pre class="r"><code>pbinom(62,100, 0.5, lower.tail=FALSE) * 2                       # 2*upper tail</code></pre>
+<pre class="r"><code>pbinom(62,100, 0.5, lower.tail=FALSE) * 2                   # 2*upper tail</code></pre>
 <pre><code>## [1] 0.01203298</code></pre>
-<pre class="r"><code># binom.test gives P(X &gt;= x), so use the actual value you are looking for
-# and select which type of test
+<pre class="r"><code>## binom.test
+# gives P(X &lt;= n-x) + P(X &gt;= x) for a two-sided test,
+# so use the actual value you are looking for and select the type of test
 binom.test(63,100, 0.5, alternative = c(&quot;two.sided&quot;))</code></pre>
 <pre><code>## 
 ##  Exact binomial test
