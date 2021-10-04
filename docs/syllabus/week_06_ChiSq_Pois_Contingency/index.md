@@ -29,7 +29,7 @@ nav_exclude: false
   <summary>Details</summary>
 
 + [**Class notes**](Class1/W6.C1-Notes_Chisq_BinomProp.html){:target="blank"}
-+ **In-class exercise** - [zipped .Rmd](Class1/W6.C1-Exercise_ChiSquare.Rmd.zip) - [HTML](Class1/W6.C1-Exercise_ChiSquare.html){: target="blank"}
++ **In-class exercise** - [zipped .Rmd](Class1/W6.C1-Exercise_ChiSquare.Rmd.zip)
   <!-- + **Key** - [zipped .Rmd](Class1/W6.C1-Exercise_ChiSquare_KEY.Rmd.zip) -->
 
 
