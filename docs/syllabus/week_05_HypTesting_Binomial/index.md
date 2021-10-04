@@ -23,10 +23,10 @@ nav_exclude: false
 
 # Class - Monday, Sept. 27
 
+### Hypothesis Testing
+
 <details closed markdown="block">
   <summary>Details</summary>
-
-### Hypothesis Testing
 
   + **Class notes (complete)** - [HTML](Class1/W5.C1_Notes_Hypothesis_testing_full.html){:target="blank"} - [zipped .Rmd](Class1/W5.C1_Notes_Hypothesis_testing_full.Rmd.zip)
   + **In-class exercise** - [zipped .Rmd](Class1/W5.C1_Exercise_High-fat_mouse_empirical_pval.Rmd.zip)
@@ -40,10 +40,10 @@ nav_exclude: false
 
 # Class - Thursday, Sept. 30
 
+### Permutations, Combinations, Bernoulli, and Binomial Distribution
+
 <details closed markdown="block">
   <summary>Details</summary>
-
-### Permutations, Combinations, Bernoulli, and Binomial Distribution
 
   + [**Class notes**](Class2/W5.C2-Notes_Perm_Comb_Binomial.html){:target="blank"}
   + **In-class exercise** - [zipped .Rmd](Class2/W5.C2-Exercise_Perm_Comb_Binomial.Rmd.zip) - [HTML](Class2/W5.C2-Exercise_Perm_Comb_Binomial.html){: target="blank"}
@@ -56,6 +56,8 @@ nav_exclude: false
 <!-- ########################################################################### -->
 
 # Recitation - Friday, Oct. 1
+
+### Binomial Distribution
 
 <details closed markdown="block">
   <summary>Details</summary>
