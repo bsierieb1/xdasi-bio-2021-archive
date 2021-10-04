@@ -5,7 +5,7 @@ has_children: false
 nav_exclude: false
 ---
 
-# Week 5: Title
+# Week 5: Probability Cont'd, Hypothesis Testing, Binomial Distribution
 {: .no_toc }
 
 <details closed markdown="block">
