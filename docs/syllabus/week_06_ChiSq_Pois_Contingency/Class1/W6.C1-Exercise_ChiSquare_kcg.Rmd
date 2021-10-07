@@ -1,7 +1,7 @@
 ---
-title: "Exercise: Chi-Square Test"
+title: "Exercise: Chi-Square Test of Independence"
 subtitle: "XDASI Fall 2021"
-date: "10/4/2021"
+date: "10/7/2021"
 output:
   html_document:
     toc: no
@@ -94,6 +94,7 @@ pchisq(chisq, df = 1, lower.tail = F)
 ```{r}
 chisq.test(Observed)
 ```
+
 ### 6. Apply Yates' continuity correction to your manual calculation of the $X^2$ test statistic.
 
 ```{r}
@@ -112,5 +113,18 @@ pchisq(new.chisq, df = 1, lower.tail = F)
 ```{r}
 # The normal distribution is a continuous approximation and underestimates the 
 # significance of the discrete differences without this correction.
+```
+
+### 9. Use a two-sample $z$-test to perform the same test.
+
+```{r}
+prop.test(Observed)
+```
+
+### 10. How do the results compare? 
+
+```{r}
+# they are the same since they both use the normal approximation
+# they just use a different formulation and different test statistic
 ```
 

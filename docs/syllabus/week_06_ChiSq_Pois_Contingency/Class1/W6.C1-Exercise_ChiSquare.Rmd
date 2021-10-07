@@ -78,6 +78,7 @@ chisq
 ```{r}
 
 ```
+
 ### 6. Apply Yates' continuity correction to your manual calculation of the $X^2$ test statistic.
 
 ```{r}
@@ -92,6 +93,18 @@ new.chisq
 ```
 
 ### 8. Why did we need to apply Yates' correction?
+
+```{r}
+# your answer here
+```
+
+### 9. Use a two-sample $z$-test to perform the same test.
+
+```{r}
+
+```
+
+### 10. How do the results compare? 
 
 ```{r}
 # your answer here

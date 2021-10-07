@@ -1,0 +1,576 @@
+---
+title: "Binomial Proportions and Chi-squared Tests"
+subtitle: "XDASI Fall 2021"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    toc_depth: 3
+    code_folding: hide
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+---
+<!-- Note: add `class.source="fold-show"` to top of R block to show code by default -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+```
+
+```{css, echo=FALSE}
+.qbox {
+  padding: 1em;
+  background: cornsilk;
+  border: 1px solid burlywood;
+  border-radius: 5px;
+}
+
+.bluebox {
+  padding: 1em;
+  background: #d8ecf3;
+  border: 1px solid cornflowerblue;
+}
+
+h1 {color: mediumblue}
+h2 {color: mediumblue}
+h3 {color: mediumblue}
+h4 {color: mediumblue; font-style: italic}
+```
+
+
+<!-- == TEMPLATE for qbox ================================================== -->
+<!-- ======================================================================= -->
+<!-- <div class="qbox"> -->
+<!-- $\Rightarrow$ ***Question: ?*** -->
+
+<!-- <details closed markdown="block"> -->
+<!--   <summary>Answer</summary> -->
+
+<!-- + Answer. -->
+
+<!-- </details> -->
+<!-- </div> -->
+<!-- ======================================================================= -->
+
+# Background Material
+
++ Whitlock & Schluter, Chapters 6, 7, & 8
++ <A href="https://www.essycode.com/distribution-viewer/" target="blank">Interactive distributions viewer</a>
+
+
+# Significance Tests for Proportional Data
+
+Observed results for categorical and discrete data can be compared to expected outcomes under a ***null hypothesis*** using a variety of different test statistics.
+
+We have already used the sampling distribution of a test statistic and simulation methods to determine how likely a particular outcome is under a null hypothesis, and we have applied this to several scenarios that can be modeled using the **binomial distribution**.
+
+Here we will learn about several different statistical tests that can be applied to binomial data or to **categorical or discrete data with more than two outcomes**.
+
+
+## Binomial proportions
+
+The Binomial is a discrete distribution describing the probability of alternative binary outcomes. 
+
+To discover whether an observation is consistent with expectation given a particular sample size $n$ and probability of a binary outcome $p$, we need some way to **quantify** how likely it is that there is no difference between observed and expected outcomes.
+ 
+We previously used the `binom` family of functions to calculate the total probability of different events given the formula for the binomial CDF:
+
+$$ F(X) = P(X \le x) = \sum_{i=0}^n {n \choose k}p^{k}(1-p)^{n-k} $$
+
++ For example, we saw that the probability of observing 14/18 right-handed frogs, given $p=0.5$ was very small, even if we perform a two-sided test.
++ Similarly, we saw that the probability of observing 10/25 spermatogenesis genes on the mouse X chromosome was very small, given the null expectation that only 6% of these should be on the X $(p=0.061)$ if they were distributed randomly across all chromosomes (taking into account chromosome lengths).
+
+
+### Exact test for binomial proportions
+
+While we can use `pbinom()` to compute exact p-values for one- or two-tailed tests, it's not super practical because we need to manually figure out the values to test for either extreme (unless p=0.5).
+
+Instead, we can use the `binom.test()` function, which performs an exact test using the equation for the binomial CDF to compute p-values. Consequently, it gives exactly the same result as using `pbinom()`.
+
++ Frog handedness example
+```{r class.source="fold-show"}
+# ============================================================================ #
+# H_o: No handedness in frogs
+# H_A: Frogs are left- or right-handed
+
+# probability of finding 4 or less, or 14 or more, right-handed frogs
+# given neutral expectation for 18 animals = 18/2 = 9 (p=0.5)
+
+#pbinom(4,18,p=0.5) + pbinom(13,18,p=0.5, lower.tail=FALSE)
+pbinom(13,18,p=0.5, lower.tail=FALSE) * 2   # p(X > 13) * 2 (same as above)
+
+binom.test(14, 18, p=0.5, alternative="two.sided")
+```
+
++ Spermatogenesis genes example
+```{r class.source="fold-show"}
+# ============================================================================ #
+# H_o: Spermatogenesis genes are randomly distributed among chromosomes
+#       specifically, P(genes on X)=0.061 and Exp(x) = 0.061*25 = 1.25
+# H_A: Spermatogenesis genes are NOT randomly distributed 
+
+# use upper-tail prob of getting >9/25 genes and
+# lower-tail prob of getting <= (1.25 - (10-1.25)) = 1.25 - 8.75 = -6.25
+## NOTE that we cannot just double the u.t. since distribution is truncated at 0
+## (it is not symmetrical for very small p)
+
+#pbinom(-6.25,25,p=0.061) + pbinom(9,25,p=0.061, lower.tail=FALSE)
+pbinom(9,25,p=0.061, lower.tail=FALSE)   # same since l.t. = 0
+
+binom.test(10, 25, p=0.061, alternative="two.sided")
+```
+
+Notice that the syntax is a little different, and it's actually **easier to use** because for an upper-tailed test you don't need to remember to subtract one from the value you are interested in (whereas `pbinom()` always finds p(X <= x or X > x, but  never X >= x).
+
+
+### Approximate binomial proportions test
+
+Since enumerating all possible combinations for exact binomial proportions is not that practical, especially for very large $n$, approximate methods have been developed that give similar but not identical $p$-values. 
+
+The approximate binomial test can be used for one-sample or two-sample tests. If two samples actually come from the same population, we can formulate our null hypothesis as, 
+
+$\ \ \ \ \ H_o$: the **difference in sample proportions** is zero: $H_o = \hat{p_1} - \hat{p_2} = 0$
+
+Moreover, since we know that for large $n$ the *sampling distribution of the sample mean is approximately normal*, we can use the ***normal approximation*** to the binomial distribution when the sample size is large enough. It is important to note the following:
+
++ In general, **this approximation is only valid for larger sample sizes (> 25-30)**. 
++ Another rule of thumb is that **$np$ and $n(1-p)$ should be >5** for both samples in order to use this approximation. 
++ When this is not the case, ***Fisher's Exact Test*** (coming soon!) is recommended instead.
+
+
+#### Test statistic $z$
+
+With the normal approximation, we can use the expected mean of the sampling distribution and its standard deviation (the standard error) to compute a $z$-score and use this as our test statistic. Hence, **this test is also called a $z$-test**. 
+
+We need two things to perform the $z$-test:
+
++ Expected ***mean*** under $H_o$:
+  + Since we assume the samples are independent, we expect $\hat{p_1} - \hat{p_2}$ should be normally distributed with mean $p=0$. 
++ ***Standard error***:
+  + The standard error for a binomial is $SE_{\hat{p}} = \sqrt{\hat{p}(1-\hat{p})/n}$.
+  + By definition, the sum of two independent, normally distributed random variables follows a normal distribution with $Z \sim \mathcal{N}(\mu_X + \mu_Y, \sigma^2_{X} + \sigma^2_Y)$. So, we expect the variance to be the sum of the individual sample variances:
+
+$$s = \frac{pq}{n_1} + \frac{pq}{n_2} =
+      pq \bigg(\frac{1}{n_1} + \frac{1}{n_2} \bigg)$$
+
+The **test statistic** for binomial proportions is then:
+
+$$ z = \frac{\hat{p_1} - \hat{p_2}}{\sqrt{\hat{p}\hat{q}/n}} = \sim \mathcal{N}(0,1)$$
+
+where:
+
++ $\hat{p_1}$ is the first sample proportion
++ $\hat{p_2}$ is the second sample proportion
++ $\hat{p}$ is the best estimator for the sample proportion under $H_o$, $p$
++ $\hat{q}=1-\hat{p}$ 
++ $n = n_1 + n_2$ is the total sample size
+
+You can see that the form of this equation is the same as a $z$-score for any sampling distribution: It is just the difference in sample means (here, measured as proportions) divided by the standard error.
+
+This is very similar to the simulation of sample means we performed for the high-fat mouse diet example under $H_o$, except in this case we are looking at **proportions** for discrete data, not differences in the mean for continuous numerical data.
+
+
+#### Estimate for the expected proportion $\hat{p}$
+
+Since we don't always know what the expected population actually is (see breast cancer example below), we have to estimate it from the combined data by assuming that the two samples come from the same population. So, our best estimate for $p$ is a weighted mean of the sample proportions:
+
+$$ \hat{p} = \frac{n_1\hat{p_1} + n_2\hat{p_1}}{n_1 + n_2}
+           = \frac{x_1 + x_2}{n_1 + n_2} 
+           = \frac{x}{n}$$
+
+The 95%CI is:
+
+$$ 95\%\ CI (p_1 - p_2) = (\hat{p_1} - \hat{p_2}) \pm z_{\alpha/2} \sqrt{\hat{p}\hat{q}/n} $$
+
+### Approximate binomial $z$-test in R
+
+The `prop.test()` performs a "test of equal or given proportions" and evaluates whether the sample proportions in two or more groups are the same, or are equal to some given values, under the null hypothesis. 
+
+The test may be performed as a one-sample test, in which we are comparing an observed proportion to an expected proportion, or as a two-sample test where we are comparing two samples.
+
+#### One-sample tests
+
+The frog handedness example is a one-sample test, and we can see that the result is close but not identical to the one computed using the exact binomial proportions test.
+
+```{r  class.source="fold-show"}
+# frog handedness, two-tailed test
+binom.test(14, 18, p=0.5, alternative="two.sided")
+prop.test(14, 18, p=0.5, alternative="two.sided")
+```
+
+As you may have noticed, the default for the `prop.test` is to use ***Yates' correction for continuity***, since the (continuous) normal approximation underestimates the true $p$-values based on the binomial distribution.
+
+<!-- ======================================================================= -->
+<div class="qbox">
+$\Rightarrow$ ***Question: Why is it not appropriate to use this approximation for the example of spermatogenesis genes on the X chromosome?***
+
+<details closed markdown="block">
+  <summary>Answer</summary>
+
++ Because the assumptions of the test do not hold, i.e. that $np >5$.
+
+</details>
+</div>
+<!-- ======================================================================= -->
+
+
+#### Two-sample test: Breast cancer
+
+An international study was done to test the hypothesis that women who postpone childbirth until later in life have a higher risk of breast cancer, which they examined by asking whether there is an association between the incidence of breast cancer and the age at which women first gave birth.^[This is taken from Example 10.4 from Rosner, *Fundamentals of Biostatistics*, 8th ed.]
+
+The study found that 683 out of 3,220 women *with* breast cancer (21.2%) and 1,498 out of 10,245 women *without* breast cancer first gave birth at an age of 30 or above (14.6%).
+
+***Is this difference significant?***
+
+Specifically, we want to know if the **proportion** of women who gave birth at an older age is significantly higher in the group of women with breast cancer (call this $\hat{p}_1$) than it is in the group of women without breast cancer (call this $\hat{p}_2$). 
+
+Under the **null hypothesis** $H_0$, the two proportions should be equal, so their **difference should be zero**:
+
+$$H_o: \hat{p}_{(Cancer\ \cap Above30)} - \hat{p}_{(Normal \cap Above30)} =\hat{p}_1 - \hat{p}_2 = 0$$
+
+The population mean and variance are then given by: $\mu = p$ and $\sigma^2 = pq/n$, where $q = 1 - p$. We don't know the overall population proportion, but we can estimate it as the the weighted average of the sample proportions:
+
+$$ \hat{p} = \frac{Over30}{Total} = \frac{x_1 + x_2}{n_1 + n_2}$$
+
+where $x_1$ and $x_2$ are the number of women above 30 in each sample (Case = cancer, Control = normal) and $n_1$ and $n_2$ are the total number of women in each sample.
+
+We can use the `prop.test()` function to calculate if the difference in the proportions is significant using this model. Since we expect the Case group to have a higher proportion of women who first gave birth above the age of 30, our alternative hypothesis is $H_A: \hat{p_1} > \hat{p_2}$, so we will choose a **one-tailed** test. 
+
+While we're at it, let's also compare the result to what we would get using the ***Binomial Exact Test***.
+
+```{r class.source="fold-show"}
+# Case   = c(683,2537)   # total =  3220
+# Control= c(1498,8747)  # total = 10245
+
+# ============================================================================ #
+# exact test: expect p=1498/10245 = 0.1462177
+binom.test(683, 3220, p=0.1462177, alternative=c("greater"))
+
+# ============================================================================ #
+# prop.test
+prop.test(c(683,1498),    # "successes" in each group
+          c(3220,10245),  # totals in each group
+          alternative="greater") 
+```
+
+In this case the two methods agree pretty well! The extremely low $p$-value suggests that ***there is indeed an association between age of first child birth and breast cancer.***
+
+#### Notes on `prop.test()`
+
++ This command can be used on data that is formulated in different ways.
+  + The syntax we used above was essentially a **1D table** giving the number of "successes" in each sample and the sample size for each. 
+  + There is an alternative syntax for this command that uses a **2D contingency table**. We will return to this when we examine the ***Chi-squared test*** below.
++ Again, ***Yates' correction*** for continuous approximation of the binomial is applied by default, since the normal approximation underestimates the true $p$-values based on the binomial distribution.
+  + As a rule of thumb, the normal approximation is considered valid whenever $n_1\hat{p}\hat{q} \ge 5$ and $n_2\hat{p}\hat{q} \ge 5$. When this does not hold, ***Fisher's Exact Test*** is recommended (coming in a later chapter).
+
+---
+
+## Chi-squared ($\chi^{2}$) goodness of-fit-test
+
+The $\chi^{2}$ test is a more general test that can be applied to categorical or discrete data involving a single variable or multiple variables, and data with more than two possible outcomes.
+
+The $\chi^{2}$ test looks for ***proportional differences*** between experimentally observed data and the expected values from a null model across all possible outcomes.
+
+The test statistic, $X^2$, compares observed and expected counts in each group, relative to the population mean estimate under the null hypothesis. It is defined as:
+
+$$ X_i^2 = \sum_i\frac{(Obs_i-Exp_i)^2}{Exp_i} 
+         = \sum_i\frac{(x_i-n\hat{p_i})^2}{n\hat{p_i}}$$
+
+where $i$ represents an iterator across all possible outcomes. The equation on the right-hand side is the equivalent formulation for ***Pearson's goodness-of-fit*** statistic, where $x_i$ is the observed count for outcome $i$, $n$ is the total counts, and $Exp_i = \hat{p_i}$ is the best estimate for the expected probability of outcome $i$.
+
+If there is no difference between groups, then we expect $\chi^2$ to be relatively small, since the differences between groups will just be due to variation in random samples drawn from the same population. 
+
+As the true difference between groups (the effect size) increases, however, the test statistic will eventually exceed the critical value for determining significance, which is usually set at $\alpha = 0.05$.
+
+
+### $\chi^{2}$ distribution
+
+Under $H_o$, the test statistic $X^2$ is well approximated by a $\chi^2$ distribution, which has a known mathematical form: it is the distribution of the sum of squares for $k$ independent random variables sampled from a standard normal distribution.
+
+$$Q = \sum\limits_{i=1}^{k} Z_{i}^{2} \sim \chi^2(k)$$
+
+Let's simulate what a $\chi^2$ distribution looks like for $k = 10$,  $k = 5$, and $k = 1$ values sampled from a standard normal distribution. 
+
+To do this, we will simply take a sample of size k using `rnorm(k, mean=0, sd=1)`, and then repeat this a large number of times.
+
+```{r}
+# Chi-squared distribution for k = 10, 5, or 1 d.f.
+
+# Randomly sample k items from a standard normal distribution
+# and take the sum of squared values of the random samples
+# Repeat this a large number of times to obtain the sampling distribution
+chisq.sample = function(chik, n) {
+
+  normval=numeric()
+  for (i in 1:n) {
+  
+  normval[i]=sum(rnorm(chik)**2)
+  }
+  return(normval)
+}
+
+# sample distribution for 3 different values of k
+n = 10000  # sample size
+chisq10 = chisq.sample(10,n)
+chisq5  = chisq.sample(5, n)
+chisq1  = chisq.sample(1, n)
+
+# make a histogram for k=10
+hist(chisq10, breaks=100, 
+     col=rgb(1,0,0,.25),  # make it red, with 25% transparency
+     ylim=c(0,2000),      # set the limits of the y-axis
+     xlab = "Chi-squared",
+     main = "Chi-squared sampling distribution (n=10,000)")
+
+# add a new histogram for k=5
+hist(chisq5, breaks=75,   # reduce number of bins (distro is more skewed)
+     col=rgb(0,1,0,.25),  # green, with 25% transparency
+     add=T)               # overlay new plot onto old plot
+
+# add a new histogram for k=1
+hist(chisq1, breaks=50,   # use even fewer bins
+     col=rgb(0,0,1,.25),  # blue, with 25% transparency
+     add=T)               # overlay new plot onto old plot
+
+# Add a legend
+legend("topright", 
+  legend = c("k=1", "k=5", "k=10"), 
+  col = c(rgb(0,0,1,.25), 
+          rgb(0,1,0,.25),
+          rgb(1,0,0,.25)), 
+  pch = 15, 
+  bty = "n", 
+  pt.cex = 2, 
+  cex = 1.2, 
+  text.col = "black", 
+  horiz = F , 
+  inset = c(0.1, 0.1))
+```
+
+<!-- ======================================================================= -->
+<div class="qbox">
+$\Rightarrow$ ***Question: How does the distribution change as $k$ increases? What does this imply for the critical threshold of the test statistic?***
+
+<details closed markdown="block">
+  <summary>Answer</summary>
+
++ As $k$ increases, the distribution shifts to the right and begins to look more symmetrical.
++ The critical threshold for the distribution (the value of $\chi^2$ corresponding to $\alpha=0.05$) will increase correspondingly.
+
+</details>
+</div>
+<!-- ======================================================================= -->
+
+
+### Assumptions
+
+For an ideal $\chi^2$ distribution, the degree of freedom is also $k$ (since all the random variables are free to vary independently).
+
+Since the $\chi^{2}$ test uses a normal approximation for discrete data, it relies on the idea that the data are sampled independently and at random. In practice, the sampling distribution of the test statistic is well approximated by an ideal $\chi^2$ distribution only under certain conditions. General rules of thumb are:
+
++ Expected frequencies for all categories are at least 1 or greater.
++ Expected frequencies should be <5 for no more than 1/5 of categories.
+
+When these conditions are not met, the test is not reliable and it is recommended to use ***Fisher's exact test*** instead (we will discuss this soon).
+
+***Reminder: A $\chi^2$ test is only valid when the normal approximation for discrete data holds.***
+
+
+### Contingency tables
+
+Categorical data are typically organized into a **contigency table** of observed vs. expected counts. For two variables with two possible outcomes each, this results in a 2x2 table. Larger tables can be used for multinomial vs. binary outcomes.
+
+#### Example: Breast cancer
+
+Let us return to our example above for breast cancer incidence. Our contingency table will have two rows and two columns to represent the number of women in each group and the grand totals:
+
+```{r}
+Case   = c(683,2537)   # total =  3220
+Control= c(1498,8747)  # total = 10245
+
+# contingency table with row and col margins, plus grand total
+CaseT     = c(Case,    sum(Case))     # = c( 683, 2537,  3220)
+ControlT  = c(Control, sum(Control))  # = c(1498, 8747, 10245) 
+Totals    = CaseT + ControlT
+
+data_table = rbind(CaseT, ControlT, Totals)
+colnames(data_table) = c("Above30", "Below30", "SampleTotal")
+rownames(data_table) = c("Case", "Control", "GroupTotal")
+knitr::kable(data_table)
+```
+
++ Note that by convention, 
+  + the two samples to be compared are presented in the **rows**
+  + the different groups within each sample are presented in the **columns**
++ However, ***table orientation is arbritrary for the purpose of the statistical tests***, which will give the same result either way.
+
+### Degrees of freedom
+
+Under the null hypothesis, $H_o$, the test statistic will have an asymptotic distribution with $(r-1)(c-1)$ ***degrees of freedom***, where $r$ and $c$ are the number of rows and columns in the table. 
+
+Note that when there is only one variable with binary outcomes (so we are performing a binomial proportions test), there is only one degree of freedom since $(r-1)(c-1) = 1$. 
+
+<!-- ======================================================================= -->
+<div class="qbox">
+$\Rightarrow$ ***Question: Why are there less degrees of freedom than the number of possible outcomes for a Chi-squared test?***
+
+<details closed markdown="block">
+  <summary>Answer</summary>
+
++ Because we are counting up squared differences between groups, there are always fewer logically independent values that are free to vary in the data. Why is this?
+  + Since we already know the total size of a sample, when we iterate over all of the individual elements, we automatically know the value of the last one.
+  + Therefore the last comparison is not truly "independent" of the others.
+
+</details>
+</div>
+<!-- ======================================================================= -->
+
+
+### Computing $\chi^2$ with contingency tables
+
+A common practice is to designate rows with the subscript $i$ and columns with the subscript $j$, so the counts in each cell will have an index $x_{ij}$. Since this can get confusing, we can instead refer to the quadrants as $a$ (top left), $b$ (top right), $c$ (bottom left), and $d$ (bottom right).
+
++ $a = x_{11}$ = cancer & first birth >30
++ $b = x_{12}$ = cancer & first birth <30
++ $c = x_{21}$ = NO cancer & first birth >30
++ $d = x_{22}$ = NO cancer & first birth <30
+
+Individual row and column totals are called ***marginal*** totals (since the sum of the cells is written in the margins).
+
+Row margins:
+
+  + $m_1 = a + b = x_{11} + x_{12} = x_{1+}$: all women with cancer
+  + $m_2 = c + d = x_{21} + x_{22} = x_{2+}$: all women without cancer
+
+Column margins:
+
+  + $n_1 = a + c = x_{+1} = x_{11} + x_{21}$: all women who first gave birth >30
+  + $n_2 = b + d = x_{+2} = x_{12} + x_{22}$: all women who first gave birth <30
+
+Grand total:
+
+  + $N = (a+b+c+d) = x_{11} + x_{12} + x_{21} + x_{22} 
+      = x_{1+} + x_{2+} = x_{+1} + x_{+2}$
+
+
+#### Null hypothesis
+
+For our breast cancer example, ***if there is no association*** between cancer and the age at which women first gave birth, then the proportion of women with first birth >30 in the Case and Control groups should be the same, and the joint probability should follow the product rule under independence. Therefore, the expected proportion of individuals with both characteristics would just equal the product of the independent proportions:
+
+$$\hat{p}_{(Cancer\ \cap Above30)} = \hat{p}_{Cancer} * \hat{p}_{Above30}$$
+
+This is our **null hypothesis**. Using the contingency table, we can write this as:
+
+$$H_{0}: \hat{p}_{ij} =  \hat{p}_{i+}*\hat{p}_{+j}$$
+
+To perform the $\chi^2$ test, we need to convert these probabilities to expected ***counts*** for each group, which is just the total table count multiplied by the joint probability under independence. 
+
+This is easily calculated as the product of the *row margins* and the *column margins*, divided by the grand total:
+
+$$H_{0}: E_{ij} = N*\hat{p}_{i+}*\hat{p}_{+j} = \frac{x_{i+}x_{+j}}{N} = \frac{m_in_j}{N}$$
+
+Here this is: 
+
+$$H_o: E(Case\ \cap >30) = \frac{(Total Case)*(Total >30)}{Total} 
+                         = \frac{m_1*n_1}{N} 
+                         = \frac{3220*2181}{13465}$$
+
+First, let's calculate the expected counts "by hand":
+```{r}
+# by index
+N = data_table[3,3]
+Case_tot    = data_table[1,3]
+Ctl_tot     = data_table[2,3]
+Over30_tot  = data_table[3,1]
+Under30_tot = data_table[3,2]
+
+# by name (to avoid mixing up rows and columns)
+# N = data_table["GroupTotal","SampleTotal"]
+# Case_tot    = data_table["Case","SampleTotal"]
+# Ctl_tot     = data_table["Control","SampleTotal"]
+# Over30_tot  = data_table["GroupTotal","Above30"]
+# Under30_tot = data_table["GroupTotal","Below30"]
+
+
+Expected = c( Case_tot * Over30_tot  / N,
+              Ctl_tot  * Over30_tot  / N,
+              Case_tot * Under30_tot / N,
+              Ctl_tot  * Under30_tot / N)
+
+ExpectedValues = matrix(Expected,nrow=2,ncol=2)
+ExpectedValues
+```
+
+
+### $\chi^2$ test statistic
+
+Now we can calculate the $X^2$ statistic and use the `pchisq()` function to get a $p$-value for it based on the cumulative Chi-squared distribution with one degree of freedom, $P(X^2 \ge \chi^2_{1,1-\alpha})$:
+
+```{r}
+chisq = sum( (data_table[1:2,1:2] - ExpectedValues)^2 / ExpectedValues )
+chisq
+pchisq(chisq, df = 1, lower.tail = F)
+```
+
+<!-- ======================================================================= -->
+<div class="qbox">
+$\Rightarrow$ ***Question: How likely is it that there is no difference between the groups?***
+
+<details closed markdown="block">
+  <summary>Answer</summary>
+
++ Extremely unlikely. The probability is $8.5*10^{-19}$.
+
+</details>
+</div>
+<!-- ======================================================================= -->
+
+
+### Chi-squared test in R
+
+The R command for the Chi-squared test is `chisq.test`. The result is a list, so we can perform the test and extract the $p$-value using the special `$` notation. Note the result is the same for the contingency table in either orientation:
+```{r}
+chisq.test(data_table[1:2,1:2])     # default continuity correction (correct = TRUE)
+chisq.test(data_table[1:2,1:2])$p.value
+
+# result is the same regardless of table orientation
+chisq.test(t(data_table[1:2,1:2]))$p.value
+```
+
+
+### Continuity correction
+
+Why didn't our manual calculation using `pchisq` give exactly the same $p$-value as the `chisq.test()` function?
+
+This is because for the manual approximation, we did not correct for the fact that $\chi^2$ is a continuous function, and thus underestimates the true $p$-values based on the binomial distribution. In contrast, `chisq.test` uses Yates’ correction by default. 
+
+We can apply Yates' correction manually by subtracting 1/2 from each of the squared differences above, which will give us the same result at `chisq.test()`:
+```{r}
+# Yates' correction for continuity
+chisq = sum( (abs(data_table[1:2,1:2] - ExpectedValues) - 0.5)^2 / ExpectedValues )
+chisq
+pchisq(chisq, df = 1, lower.tail = F)
+```
+
+
+## $\chi^2$ vs. $z$ test
+
+The $\chi^2$ and $z$ tests can be shown to be mathematically equivalent, even though they use a different test statistic.
+
+We can see that $p$-value obtained using `chisq.test()` for our breast cancer example is the same as for a _**two-tailed**_ `prop.test`:
+```{r}
+# chi-squared test
+chisq.test(data_table[1:2,1:2])$p.value
+
+# two-sided prop.test
+prop.test(c(683,1498),c(3220,10245))$p.value
+prop.test(data_table[1:2,1:2])$p.value
+```
+
+Notice that for `prop.test()`, we can either use the 1D table syntax or the matrix syntax that `chisq.test()` likes.
+
+***Reminder: These approximate tests are not recommended for cases where the normal approximation does not hold***; instead, **Fisher's Exact Test** is recommended, which performs a hypergeometric test (more on this to come).
+
+<!-- ======================================================================= -->

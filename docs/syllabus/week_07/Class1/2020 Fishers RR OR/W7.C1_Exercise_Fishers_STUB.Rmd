@@ -1,0 +1,118 @@
+
+
+## Exercise
+
+22,071 physicians served as subjects to study effect of aspirin on incidence of heart attacks. There are two groups: those who took aspirin regularly for 5 years and others (11,043 of the 22,071) received placebo instead of aspirin. 189 of the group that took placebo suffered a heart attack and 104 of those who took aspirin suffered a heart attack. Does aspirin have a significant association with physicians suffering from a heart attack?
+  
+  In last week's class you used a Chi-square test to answer this question. Here let's use Fisher's exact test instead.
+
+1. Create a contingency table for these data.
+
+```{r}
+# aspirin 
+# heart attach
+N = 22071
+a = 189 # took placebo and had heart attack
+b = 104 # took aspirin and had heart attack
+c = 
+d = 
+
+placebo_total = 11043
+placebo_heart = 189
+placebo_healthy = placebo_total - placebo_heart
+
+aspirin_total = N - placebo_total
+aspirin_heart = 104
+aspirin_healthy = aspirin_total - aspirin_heart
+
+
+aspirindata = rbind(c(placebo_heart,aspirin_heart),
+                    c(placebo_healthy, aspirin_healthy)
+                    )
+aspirindata
+
+heart_total = placebo_heart + aspirin_heart
+healthy_total = placebo_healthy + aspirin_healthy
+```
+
+2. Calculate the expected values.
+
+```{r}
+placebo_heart_expected = (placebo_total/N) * (heart_total/N) * N
+placebo_heart_expected
+
+placebo_healthy_expected = (placebo_total/N) * (healthy_total/N) * N
+placebo_healthy_expected
+
+aspirin_healthy_expected = (aspirin_total/N) * (healthy_total/N) * N
+aspirin_healthy_expected
+
+aspirin_heart_expected = (aspirin_total/N) * (heart_total/N) * N
+aspirin_heart_expected
+
+
+```
+
+
+3. Calculate the $X^2$ value using your observed and expected counts.
+
+```{r}
+
+chisqvalue = sum( ((placebo_healthy - placebo_healthy_expected)^2)/placebo_healthy_expected +
+                  ((placebo_heart - placebo_heart_expected)^2)/placebo_heart_expected +
+                  ((aspirin_healthy - aspirin_healthy_expected)^2)/aspirin_healthy_expected +
+                  ((aspirin_heart - aspirin_heart_expected)^2)/aspirin_heart_expected
+                  )
+
+chisqvalue
+
+```
+
+
+4. What is the $p$-value of the test statistic?
+
+```{r}
+
+pchisq(chisqvalue, df = 1, lower.tail = F)
+chisq.test(aspirindata)
+```
+
+
+5. Calculate the $p$-value using Fisher's exact test.
+
+```{r}
+fisher.test(aspirindata)
+
+```
+
+6. Calculate the $p$-value using the `phyper` function.
+
+```{r}
+# phyper(q, m, n, k, lower.tail = TRUE, log.p = FALSE)
+# 
+# 
+# x = , q	
+# vector of quantiles representing the number of white balls drawn without replacement from an urn which contains both black and white balls.
+# 
+# m	
+# the number of white balls in the urn.
+# 
+# n	
+# the number of black balls in the urn.
+# 
+# k	
+# the number of balls drawn from the urn.
+# 
+# p	
+# probability, it must be between 0 and 1.
+# 
+# ```{r}
+# x = aspirin_heart
+# m = aspirin_total
+# n = placebo_total
+# k = heart_total
+# 
+# phyper(x,m,n,k,lower.tail = T )
+
+```
+

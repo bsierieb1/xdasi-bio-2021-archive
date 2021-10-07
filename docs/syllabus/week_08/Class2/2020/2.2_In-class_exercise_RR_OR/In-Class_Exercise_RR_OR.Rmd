@@ -1,0 +1,82 @@
+---
+title: 'Exercise: RR vs. OR'
+subtitle: "XDAS 2020"
+author: "Kris Gunsalus"
+date: "10/8/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+```
+
+## Is high blood pressure a risk factor for stroke?
+
+Consider two different experimental designs for determining whether high blood pressure is a risk factor for strokes:
+
++ **Design 1** 
+  + 2000 men between the ages of 70-80 are chosen at random from the population.
+  + These are divided into groups with and without a history of high blood pressure.
+  + The number of men in each group who experienced a stroke sometime within the following 5 years is recorded.
+ 
++ **Design 2**
+  + 2000 men between the ages of 70-80 are recruited for a study, of which 1000 have never had a stroke and 1000 have had a stroke in the last 5 years.
+  + The proportion of each group who have a history of high blood pressure is recorded.
+
+The data might look something like this:
+
+**Design 1**
+```{r, echo=F}
+## Design 1 ========================= #
+Stroke    = c(100,50)   # total =  200
+NoStroke = c(600,1250)  # total = 1800
+data_matrix1 = rbind(Stroke, NoStroke)
+colnames(data_matrix1) = c("HiBP","LoBP")
+
+# kable is a table generator from the knitr package
+kable(data_matrix1)
+```
+
+**Design 2**
+```{r, echo=F}
+## Design 2 ========================= #
+Stroke   = c(200,800)  # total =  1000
+NoStroke = c(50,950)   # total = 1000
+data_matrix2 = rbind(Stroke, NoStroke)
+colnames(data_matrix2) = c("HiBP","LoBP")
+kable(data_matrix2)
+```
+
+
+Now, let's compute both $RR = \frac{p_{Stroke|HiBP}}{p_{Stroke|LoBP}}$ and 
+$OR = \frac{p_{stroke|HiBP}/(1-p_{Stroke|HiBP})}{p_{Stroke|LoBP}/(1-p_{Stroke|LoBP}}$ for both scenarios:
+
+```{r, collapse=T}
+## Design 1 ================= #
+
+
+
+## Design 2 ================= #
+
+
+
+```
+
+We can use the `riskratio()` and `oddsratio()` functions from the "epitools" package to compute the risk ratio automatically.
+
+***Note:*** Look at the documentation for this command. It expects a table in a different format than what we have here! We can specify to change this by setting the `rev` parameter. We also need to transpose the table!!!
+
+```{r}
+library(epitools)
+
+
+
+
+```
+
+We can see that for Design 1, the RR and OR are similar. 
+
+However, in the second case, RR is very different from OR. It really doesn't make sense to try to compute RR for Design 2, because we have vastly exaggerated the proportion of people who have had a stroke by picking 1000 people in each focal group. So ***"the probability that someone with HiBP has had a stroke"*** is not reflective of the actual incidence of strokes among a random sample of men with HiBP, and likewise for ***"the probability that someone with LoBP has had a stroke"***.
+
+The OR, however, is about the same in the two studies. This makes sense, because even though the total number of people with a Stroke is way higher in Design 2, we still expect that the ***relative ratios*** of people who did vs. didn't have a stroke in the two groups to be about the same as for Design 1.

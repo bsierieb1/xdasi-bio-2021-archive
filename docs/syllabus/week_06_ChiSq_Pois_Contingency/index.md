@@ -39,12 +39,16 @@ nav_exclude: false
 
 <!-- ########################################################################### -->
 
-<!-- # Class - Thursday, Oct. 7
+# Class - Thursday, Oct. 7
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
+</details>
+
++ [**Class notes**](Class2/W6.C2-Notes_Categorical_Tests_for_Independence.html){:target="blank"}
+
+
 
 <!-- ########################################################################### -->
 
