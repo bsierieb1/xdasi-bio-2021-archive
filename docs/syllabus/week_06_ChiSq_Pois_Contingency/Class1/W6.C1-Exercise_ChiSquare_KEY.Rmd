@@ -32,6 +32,8 @@ placebo_heart   = 189    # a: took placebo and heart attack
 aspirin_heart   = 104    # b: took aspirin and heart attack
 placebo_healthy = 10854  # c: took placebo and healthy
 aspirin_healthy = 10924  # d: took aspirin and healthy
+# placebo_healthy = placebo_total - placebo_heart
+# aspirin_healthy = aspirin_total - aspirin_heart
 
 placebo_total = 11043    # column 1 margin
 aspirin_total = 11028    # column 2 margin
@@ -39,6 +41,7 @@ aspirin_total = 11028    # column 2 margin
 heart_total   = placebo_heart   + aspirin_heart    # row 1 margin
 healthy_total = placebo_healthy + aspirin_healthy  # row 2 margin
 
+# make the contingency table
 Observed = rbind(c(placebo_heart,   aspirin_heart),
                  c(placebo_healthy, aspirin_healthy))
 rownames(Observed) = c("Heart",  "Healthy")
@@ -49,14 +52,33 @@ Observed
 
 ### 2. Calculate the expected values for each group.
 
+If there is no difference between groups, we expect the ***rate***, i.e. the proportion,
+of heart attacks in the placebo and control groups to be ***independent***:
+
+$$ P(group \cap treatment) = P(group) * P(treatment) $$
+
+The expected total ***probabilities*** for each group or treatment are just the **marginal totals divided by N**, the total number of subjects, i.e. $P(group) = n_{group} / N$ and $P(treatment) = n_{treatment} / N$.
+
+To get the expected ***counts*** in each cell in the table, we then multiply the probabilities for each combination of group and treatment by the total number of subjects in the study: $P(group) * P(treatment) * N$. 
+
+Note that an equivalent shortcut given the counts (which we already have from the raw data) would be to just multiply the marginal totals and divide by N, i.e. $n_{group} * n_{treatment} / N$; both ways are written out below.
+
 ```{r}
 N = 22071  # total
 
-placebo_heart_expected   = (placebo_total/N) * (heart_total/N)   * N
-aspirin_heart_expected   = (aspirin_total/N) * (heart_total/N)   * N
-placebo_healthy_expected = (placebo_total/N) * (healthy_total/N) * N
-aspirin_healthy_expected = (aspirin_total/N) * (healthy_total/N) * N
+# Expected counts = p(group) * p(treatment) * N
+# placebo_heart_expected   = (placebo_total/N) * (heart_total/N)   * N
+# aspirin_heart_expected   = (aspirin_total/N) * (heart_total/N)   * N
+# placebo_healthy_expected = (placebo_total/N) * (healthy_total/N) * N
+# aspirin_healthy_expected = (aspirin_total/N) * (healthy_total/N) * N
 
+# Expected counts = n(group) * n(treatment) / N
+placebo_heart_expected   = placebo_total * heart_total / N
+aspirin_heart_expected   = aspirin_total * heart_total / N
+placebo_healthy_expected = placebo_total * healthy_total / N
+aspirin_healthy_expected = aspirin_total * healthy_total / N
+
+# make the contingency table
 Expected = rbind(c(placebo_heart_expected,   aspirin_heart_expected),
                  c(placebo_healthy_expected, aspirin_healthy_expected))
 rownames(Expected) = c("Heart",  "Healthy")
@@ -91,6 +113,8 @@ pchisq(chisq, df = 1, lower.tail = F)
 
 ### 5. Calculate the $p$-value using the `chisq.test()` function.
 
+*Note that there is no `alternative` argument for this test. We cannot do a two-sided test because we are always looking for a positive value of the test statistic that is at least as, or more extreme than, the critical value of $\chi_{df=1}^2$. The Chi-squared distribution is one-sided! So the alternative hypothesis can only be $H_A: P(Obs) \ne P(Exp)$.*
+
 ```{r}
 chisq.test(Observed)
 ```
@@ -98,21 +122,21 @@ chisq.test(Observed)
 ### 6. Apply Yates' continuity correction to your manual calculation of the $X^2$ test statistic.
 
 ```{r}
-new.chisq = sum( (abs(Observed - Expected) - 0.5)^2 / Expected)
-new.chisq
+adj.chisq = sum( (abs(Observed - Expected) - 0.5)^2 / Expected)
+adj.chisq
 ```
 
 ### 7. Recalculate the $p$-value using `pchisq()`.
 
 ```{r}
-pchisq(new.chisq, df = 1, lower.tail = F)
+pchisq(adj.chisq, df = 1, lower.tail = F)
 ```
 
 ### 8. Why did we need to apply Yates' correction?
 
 ```{r}
-# The normal distribution is a continuous approximation and underestimates the 
-# significance of the discrete differences without this correction.
+# The normal distribution is a continuous approximation for discrete data and underestimates
+# the p-value (i.e. overestimates the significance) without this correction.
 ```
 
 ### 9. Use a two-sample $z$-test to perform the same test.
@@ -126,5 +150,22 @@ prop.test(Observed)
 ```{r}
 # they are the same since they both use the normal approximation
 # they just use a different formulation and different test statistic
+```
+
+Some notes on `prop.test()` vs. `chisq.test()`:
+
++ The Chi-squared test can only test for one alternative hypothesis, $H_A: p_{obs} \ne p_{exp}$. 
++ The default for the `prop.test()` is to perform a two-sided test, and this is equivalent to the result of a Chi-squared test.
++ The `prop.test()` ($z$-test) can also perform one-sided tests, e.g. $H_A: p_{obs} \gt p_{exp}$.
+  + The $p$-value for a one-sided test is half as big as the $p$-value for a two-sided test (because $1 - \alpha$ is now all on one side of a normal distribution). 
+
+```{r}
+# chi-squared vs. two-sided z-test
+chisq.test(Observed)
+prop.test(Observed)
+
+# one-sided z-test
+prop.test(Observed, alternative = "greater")
+chisq.test(Observed)$p.value / 2
 ```
 

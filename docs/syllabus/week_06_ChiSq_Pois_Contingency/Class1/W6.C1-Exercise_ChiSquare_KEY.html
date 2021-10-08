@@ -186,6 +186,8 @@ placebo_heart   = 189    # a: took placebo and heart attack
 aspirin_heart   = 104    # b: took aspirin and heart attack
 placebo_healthy = 10854  # c: took placebo and healthy
 aspirin_healthy = 10924  # d: took aspirin and healthy
+# placebo_healthy = placebo_total - placebo_heart
+# aspirin_healthy = aspirin_total - aspirin_heart
 
 placebo_total = 11043    # column 1 margin
 aspirin_total = 11028    # column 2 margin
@@ -193,6 +195,7 @@ aspirin_total = 11028    # column 2 margin
 heart_total   = placebo_heart   + aspirin_heart    # row 1 margin
 healthy_total = placebo_healthy + aspirin_healthy  # row 2 margin
 
+# make the contingency table
 Observed = rbind(c(placebo_heart,   aspirin_heart),
                  c(placebo_healthy, aspirin_healthy))
 rownames(Observed) = c(&quot;Heart&quot;,  &quot;Healthy&quot;)
@@ -205,13 +208,26 @@ Observed</code></pre>
 </div>
 <div id="calculate-the-expected-values-for-each-group." class="section level3">
 <h3>2. Calculate the expected values for each group.</h3>
+<p>If there is no difference between groups, we expect the <strong><em>rate</em></strong>, i.e. the proportion, of heart attacks in the placebo and control groups to be <strong><em>independent</em></strong>:</p>
+<p><span class="math display">\[ P(group \cap treatment) = P(group) * P(treatment) \]</span></p>
+<p>The expected total <strong><em>probabilities</em></strong> for each group or treatment are just the <strong>marginal totals divided by N</strong>, the total number of subjects, i.e. <span class="math inline">\(P(group) = n_{group} / N\)</span> and <span class="math inline">\(P(treatment) = n_{treatment} / N\)</span>.</p>
+<p>To get the expected <strong><em>counts</em></strong> in each cell in the table, we then multiply the probabilities for each combination of group and treatment by the total number of subjects in the study: <span class="math inline">\(P(group) * P(treatment) * N\)</span>.</p>
+<p>Note that an equivalent shortcut given the counts (which we already have from the raw data) would be to just multiply the marginal totals and divide by N, i.e. <span class="math inline">\(n_{group} * n_{treatment} / N\)</span>; both ways are written out below.</p>
 <pre class="r"><code>N = 22071  # total
 
-placebo_heart_expected   = (placebo_total/N) * (heart_total/N)   * N
-aspirin_heart_expected   = (aspirin_total/N) * (heart_total/N)   * N
-placebo_healthy_expected = (placebo_total/N) * (healthy_total/N) * N
-aspirin_healthy_expected = (aspirin_total/N) * (healthy_total/N) * N
+# Expected counts = p(group) * p(treatment) * N
+# placebo_heart_expected   = (placebo_total/N) * (heart_total/N)   * N
+# aspirin_heart_expected   = (aspirin_total/N) * (heart_total/N)   * N
+# placebo_healthy_expected = (placebo_total/N) * (healthy_total/N) * N
+# aspirin_healthy_expected = (aspirin_total/N) * (healthy_total/N) * N
 
+# Expected counts = n(group) * n(treatment) / N
+placebo_heart_expected   = placebo_total * heart_total / N
+aspirin_heart_expected   = aspirin_total * heart_total / N
+placebo_healthy_expected = placebo_total * healthy_total / N
+aspirin_healthy_expected = aspirin_total * healthy_total / N
+
+# make the contingency table
 Expected = rbind(c(placebo_heart_expected,   aspirin_heart_expected),
                  c(placebo_healthy_expected, aspirin_healthy_expected))
 rownames(Expected) = c(&quot;Heart&quot;,  &quot;Healthy&quot;)
@@ -245,6 +261,7 @@ chisq</code></pre>
 </div>
 <div id="calculate-the-p-value-using-the-chisq.test-function." class="section level3">
 <h3>5. Calculate the <span class="math inline">\(p\)</span>-value using the <code>chisq.test()</code> function.</h3>
+<p><em>Note that there is no <code>alternative</code> argument for this test. We cannot do a two-sided test because we are always looking for a positive value of the test statistic that is at least as, or more extreme than, the critical value of <span class="math inline">\(\chi_{df=1}^2\)</span>. The Chi-squared distribution is one-sided! So the alternative hypothesis can only be <span class="math inline">\(H_A: P(Obs) \ne P(Exp)\)</span>.</em></p>
 <pre class="r"><code>chisq.test(Observed)</code></pre>
 <pre><code>## 
 ##  Pearson&#39;s Chi-squared test with Yates&#39; continuity correction
@@ -254,19 +271,19 @@ chisq</code></pre>
 </div>
 <div id="apply-yates-continuity-correction-to-your-manual-calculation-of-the-x2-test-statistic." class="section level3">
 <h3>6. Apply Yates’ continuity correction to your manual calculation of the <span class="math inline">\(X^2\)</span> test statistic.</h3>
-<pre class="r"><code>new.chisq = sum( (abs(Observed - Expected) - 0.5)^2 / Expected)
-new.chisq</code></pre>
+<pre class="r"><code>adj.chisq = sum( (abs(Observed - Expected) - 0.5)^2 / Expected)
+adj.chisq</code></pre>
 <pre><code>## [1] 24.29034</code></pre>
 </div>
 <div id="recalculate-the-p-value-using-pchisq." class="section level3">
 <h3>7. Recalculate the <span class="math inline">\(p\)</span>-value using <code>pchisq()</code>.</h3>
-<pre class="r"><code>pchisq(new.chisq, df = 1, lower.tail = F)</code></pre>
+<pre class="r"><code>pchisq(adj.chisq, df = 1, lower.tail = F)</code></pre>
 <pre><code>## [1] 8.28534e-07</code></pre>
 </div>
 <div id="why-did-we-need-to-apply-yates-correction" class="section level3">
 <h3>8. Why did we need to apply Yates’ correction?</h3>
-<pre class="r"><code># The normal distribution is a continuous approximation and underestimates the 
-# significance of the discrete differences without this correction.</code></pre>
+<pre class="r"><code># The normal distribution is a continuous approximation for discrete data and underestimates
+# the p-value (i.e. overestimates the significance) without this correction.</code></pre>
 </div>
 <div id="use-a-two-sample-z-test-to-perform-the-same-test." class="section level3">
 <h3>9. Use a two-sample <span class="math inline">\(z\)</span>-test to perform the same test.</h3>
@@ -287,6 +304,49 @@ new.chisq</code></pre>
 <h3>10. How do the results compare?</h3>
 <pre class="r"><code># they are the same since they both use the normal approximation
 # they just use a different formulation and different test statistic</code></pre>
+<p>Some notes on <code>prop.test()</code> vs. <code>chisq.test()</code>:</p>
+<ul>
+<li>The Chi-squared test can only test for one alternative hypothesis, <span class="math inline">\(H_A: p_{obs} \ne p_{exp}\)</span>.</li>
+<li>The default for the <code>prop.test()</code> is to perform a two-sided test, and this is equivalent to the result of a Chi-squared test.</li>
+<li>The <code>prop.test()</code> (<span class="math inline">\(z\)</span>-test) can also perform one-sided tests, e.g. <span class="math inline">\(H_A: p_{obs} \gt p_{exp}\)</span>.
+<ul>
+<li>The <span class="math inline">\(p\)</span>-value for a one-sided test is half as big as the <span class="math inline">\(p\)</span>-value for a two-sided test (because <span class="math inline">\(1 - \alpha\)</span> is now all on one side of a normal distribution).</li>
+</ul></li>
+</ul>
+<pre class="r"><code># chi-squared vs. two-sided z-test
+chisq.test(Observed)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s Chi-squared test with Yates&#39; continuity correction
+## 
+## data:  Observed
+## X-squared = 24.29, df = 1, p-value = 8.285e-07</code></pre>
+<pre class="r"><code>prop.test(Observed)</code></pre>
+<pre><code>## 
+##  2-sample test for equality of proportions with continuity correction
+## 
+## data:  Observed
+## X-squared = 24.29, df = 1, p-value = 8.285e-07
+## alternative hypothesis: two.sided
+## 95 percent confidence interval:
+##  0.08973881 0.20357783
+## sample estimates:
+##    prop 1    prop 2 
+## 0.6450512 0.4983929</code></pre>
+<pre class="r"><code># one-sided z-test
+prop.test(Observed, alternative = &quot;greater&quot;)</code></pre>
+<pre><code>## 
+##  2-sample test for equality of proportions with continuity correction
+## 
+## data:  Observed
+## X-squared = 24.29, df = 1, p-value = 4.143e-07
+## alternative hypothesis: greater
+## 95 percent confidence interval:
+##  0.09861191 1.00000000
+## sample estimates:
+##    prop 1    prop 2 
+## 0.6450512 0.4983929</code></pre>
+<pre class="r"><code>chisq.test(Observed)$p.value / 2</code></pre>
+<pre><code>## [1] 4.14267e-07</code></pre>
 </div>
 </div>
 
