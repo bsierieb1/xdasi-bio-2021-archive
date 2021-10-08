@@ -41,6 +41,8 @@ nav_exclude: false
 
 # Class - Thursday, Oct. 7
 
+### Exact and Approximate Binomial Test, Chi-squared, Cont'd
+
 <details closed markdown="block">
   <summary>Details</summary>
 
@@ -54,11 +56,15 @@ nav_exclude: false
 
 <!-- ########################################################################### -->
 
-<!-- # Recitation - Friday, Oct. 8
+# Recitation - Friday, Oct. 8
+
+### Binomial Distribution - Hypothesis Testing
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
++ [**Class exercise**](Recitation/W6.R1_Exercise_Binomial_Distributions.Rmd.zip)
+
+</details>
 
 <!-- ########################################################################### -->
