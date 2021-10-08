@@ -1,0 +1,182 @@
+---
+title: "Binomial Distributions Pt. II: Hypothesis Testing"
+date: "October 8, 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+# Hypothesis Testing with Categorical Data
+
+Several different tests that can be applied to binomial and other categorical data have been covered in this topic. The amount of information may be somewhat overwhelming, so you may feel uncertain which test to apply in which situation. Here, we will settle on a general framework how to decide on a test to use.
+
+We will apply each test to the 2-sided vs 3-sided fidget spinner data we collected last time. As a reminder, each element in the vector is the number of successes (pink side up) in 12 trials (spins) in the hands of one person.
+
+```{r}
+spinner2 <- c(8, 8, 4, 5, 9, 5, 5, 6, 7, 8, 6, 7, 4, 4, 3)
+
+spinner3 <- c(3, 5, 6, 3, 1, 6, 2, 5, 6, 2, 4, 5, 3, 4)
+```
+
+**Very important!** Most tests do not deal with replicates - they are designed to compare two observed frequencies or an observed frequency to an expected frequency. Therefore, we need to sum up our observations. It is also useful to arrange our data as a contingency table.
+
+```{r}
+# sum up observations
+spinner2_successes <- sum(spinner2)
+spinner2_trials <- sum( rep(12, length(spinner2) ) )
+spinner2_successes
+spinner2_trials
+
+spinner3_successes <- sum(spinner3)
+spinner3_trials <- sum( rep(12, length(spinner3) ) )
+spinner3_successes
+spinner3_trials
+
+# arrange as a contingency table
+spinner_table <- matrix(data = c(spinner2_successes, spinner3_successes,
+                                 spinner2_trials - spinner2_successes, spinner3_trials - spinner3_successes),
+                        nrow = 2,
+                        ncol = 2,
+                        byrow = TRUE)
+rownames(spinner_table) <- c("pink","not_pink")
+colnames(spinner_table) <- c("2-sided","3-sided")
+spinner_table
+```
+
+But do not worry, at the end we will also see how to incorporate the information about replicates into hypothesis testing.
+
+## 1. Exact tests - a little slow, but, well, exact
+
+### 1.1. Comparing an observed binomial frequency to a theoretically expected one? Use Exact Binomial Test.
+
+```{r}
+# is the success frequency observed with 2-sided spinner likely if the probability of success is 0.5?
+binom.test(x = spinner2_successes,
+           n = spinner2_trials,
+           p = 0.5)
+
+# is the success frequency observed with 3-sided spinner likely if the probability of success is 0.5?
+binom.test(x = spinner3_successes,
+           n = spinner3_trials,
+           p = 0.5)
+
+# is the success frequency observed with 3-sided spinner likely if the probability of success is 1/3?
+binom.test(x = spinner3_successes,
+           n = spinner3_trials,
+           p = 1/3)
+```
+
+
+### 1.2. Comparing two or more observed frequencies? Use Fisher's Exact Test.
+
+```{r}
+# is the probability of success with 2-sided and 3-sided spinner likely the same?
+fisher.test(spinner_table)
+
+# multiply the values in your table by some large number (e.g. 10,000) and note the amount of time it takes to compute
+fisher.test(10000*spinner_table)
+```
+
+
+## 2. Approximate tests - lightning-fast, reviewer #2 loves them, but not exact
+
+### 2.1. Comparing an observed frequency to a theoretically expected one? Use Test of Given Proportions or Chi-Squared Goodness-of-Fit Test.
+
+Note: test of given proportions (`prop.test()`) only works with binomial data, while chi-squared goodness-of-fit test (`chisq.test()`) can take multinomial data, too.
+
+```{r}
+# is the success frequency observed with 2-sided spinner likely if the probability of success is 0.5?
+prop.test(x = spinner2_successes,
+          n = spinner2_trials,
+          p = 0.5)
+
+chisq.test(x = c(spinner2_successes, spinner2_trials - spinner2_successes),
+           p = c(0.5, 0.5))
+
+# is the success frequency observed with 3-sided spinner likely if the probability of success is 0.5?
+prop.test(x = spinner3_successes,
+          n = spinner3_trials,
+          p = 0.5)
+
+chisq.test(x = c(spinner3_successes, spinner3_trials - spinner3_successes),
+           p = c(0.5, 0.5))
+
+# is the success frequency observed with 3-sided spinner likely if the probability of success is 1/3?
+prop.test(x = spinner3_successes,
+          n = spinner3_trials,
+          p = 1/3)
+
+chisq.test(x = c(spinner3_successes, spinner3_trials - spinner3_successes),
+           p = c(1/3, 2/3))
+```
+
+
+### 2.2. Comparing two or more observed frequencies? Use Test of Equal Proportions or Chi-Squared Test of Independence.
+
+Note: test of equal proportions (`prop.test()`) only works with binomial data, while chi-squared test of independence (`chisq.test()`) can take multinomial data, too.
+
+```{r}
+# is the probability of success with 2-sided and 3-sided spinner likely the same?
+prop.test(spinner_table)
+chisq.test(spinner_table)
+
+# multiply the values in your table by some large number (e.g. 10,000) and note the amount of time it takes to compute
+prop.test(10000*spinner_table)
+chisq.test(10000*spinner_table)
+```
+
+
+## 3. Binomial regression - when replicates matter
+
+Simplistically, here is the idea: first, we plot the number of successes in the two groups that we want to compare. Then, we draw a straight line through the data and determine whether the line is parallel to one of the axes (two groups are not different) or whether it has a significant slope (two groups are different). We can use the `glm()` function for that. In reality, it "draws a line" in somewhat different coordinates than the ones we are going to plot, but this is not very important right now. We will cover the topic of generalized linear models later.
+
+```{r}
+# arrange data in a data.frame (long format)
+spinner_long <- data.frame("successes" = c(spinner2, spinner3),
+                           "trials" = rep(12, length(spinner2) + length(spinner3) ),
+                           "spinner_type" = c(rep(2, length(spinner2) ),
+                                              rep(3, length(spinner3) ) ) )
+
+# plot number of successes on the Y and separate the two spinners along the X
+set.seed(1) # set seed to make jitter reproducible
+ggplot(data = spinner_long,
+       mapping = aes(x = spinner_type,
+                     y = successes)) +
+  geom_jitter(height = 0,
+              width = 0.02) +
+  ylim(c(0,12))
+
+# perform regression
+spinner_regression <- glm(cbind(spinner_long$successes, spinner_long$trials - spinner_long$successes) ~ spinner_long$spinner_type,
+                          family = "binomial")
+summary(spinner_regression)
+```
+
+You should look at the p-value next to the slope term (`0.00167 **` in our case).
+
+```{r}
+# add the line to the plot
+# try to ignore the nightmarish expression inside geom_line()
+# if you are still curious, the linear regression is not
+# "successes = a * spinner_type + b"
+# but
+# "ln(p/(1-p)) = a * spinner_type + b", where p is the probability of success
+# so, we need to calculate p from the equation and then multiply it by the number of trials (12)
+# to determine the y value (number of successes in 12 trials) in our plot
+set.seed(1) # set seed to make jitter reproducible
+ggplot(data = spinner_long,
+       mapping = aes(x = spinner_type,
+                     y = successes)) +
+  geom_line(mapping = aes(y = 12*(exp(1)^(spinner_type*spinner_regression$coefficients[2]+spinner_regression$coefficients[1]))/(1+exp(1)^(spinner_type*spinner_regression$coefficients[2]+spinner_regression$coefficients[1]))),
+             size = 5,
+             color = "lightblue") +
+  geom_jitter(height = 0,
+              width = 0.02) +
+  ylim(c(0,12))
+
+```
+
+Please note that binomial regression does not perform well with all data (e.g. 0-inflated data tend to be problematic), and you may need to perform other kinds of regression analysis. However, this is beyond the scope of this exercise.
