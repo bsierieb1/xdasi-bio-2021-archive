@@ -21,7 +21,7 @@ library(knitr)
 
 ## Types of questions
 
-1. ***Goodness-of-fit***: Does one categorical variable fit an expected frequency distribution?
+1. ***Goodness-of-fit***: Do one or more categorical variables fit an expected frequency distribution?
 2. ***Independence***: Are two categorical variables associated in some way? Do response variables differ between groups?
 
 ## One-sample vs. two-sample tests
@@ -49,11 +49,12 @@ library(knitr)
 The **exact tests** should be used whenever possible, since they compute exact probabilities given all possible outcomes. However,
 
 + The **binomial proportions test** only works for binary outcomes (two categories).
-+ **Fisher's test** only works for 2x2 contingency tables (two groups with binary outcomes). 
++ **Fisher's test** can be extended to larger RxC tables, but it works best when the row and column totals are small, since it is computationally more expensive.
+  + While R is able to calculate Fisher's for some tables with many observations, it becomes relatively slow for large sample sizes, in which case the Chi-squared test of independence is sufficiently accurate.
 
 ### *Limitations of approximate tests*
 
-**Approximate** frequency tests do not provide accurate $p$-values when the frequency of one or more groups is low. Before using a $\chi^2$ test, you should check that the following **assumptions** are met:
+**Approximate** frequency tests do not provide accurate $p$-values when the frequency of one or more groups is low. Standard textbooks will tell you that before using a $\chi^2$ test, you should check that the following **assumptions** are met:
 
 + Samples are unbiased random samples
 + At least 20% of the cells have an expected frequency = 5
@@ -62,8 +63,10 @@ The **exact tests** should be used whenever possible, since they compute exact p
 When the above conditions are **not** met, several **alternative options** are available:
 
 + Combine some groups so that assumptions can be met (e.g. two groups can become "Other")
-+ Use an exact test, if applicable
++ Use an exact test if possible
 + Use permutation tests to compute a $p$-value (Chapter 13, W&S)
+
+*Note that the numbers given above are slightly arbitrary cutoffs. In general, exact tests are preferred whenever feasible.*
 
 
 ### *Continuity correction for approximate tests*
@@ -80,7 +83,9 @@ The following diagram[^1] illustrates the P-value computed by an approximate tes
 
 To correct for this, the default behavior in R for $\chi^2$ tests is to perform ***Yates' continuity correction***, which modifies the $(O-E)^2$ term as $(|O-E| - 1/2)^2$ to reduce the overall magnitude of the $\chi^2$ test statistic. The term "continuity" correction is applied here because a *continuous* function (Chi-square) is being applied to approximate a *discrete* function (e.g. binomial).
 
-Nevertheless, it is still preferable to use an exact test whenever possible in order to get the most accurate measure of significance.
+There is some disagreement about when continuity correction should be applied, since in some cases it can result in overcorrection that results in a type II error (failure to correctly reject the null hypothesis). The Yates correction is strongly recommended when the expected number of observations in a cell is less than 5-10.
+
+*For these reasons, it is preferable to use an exact test whenever possible in order to get the most accurate measure of significance.*
 
 
 ## Contingency tests
@@ -98,33 +103,29 @@ If the differences are not random, we may also like to know the strength of the 
 Two kinds of analysis can be done to address such questions:
 
 + Tests for **independence**: do the data show a significant difference from what would be expected if two variables were unrelated?
-  + **Exact tests**: compute an exact $p$-value based on all possible discrete outcomes
-  + **Approximate tests**: estimate $p$-values based on a continuous approximation of a discrete distribution
+  + ***Exact tests***: compute an exact $p$-value based on all possible discrete outcomes
+  + ***Approximate tests***: estimate $p$-values based on a continuous approximation of a discrete distribution
+  
 + **Estimation**: how different is a response variable between two groups of interest?
-  + **Relative risk**: relative proportions between two groups
-  + **Odds ratio**: relative ***odds*** between two groups
+  + ***Relative risk***: relative proportions between two groups
+  + ***Odds ratio***: relative ***odds*** between two groups
   
 We will discuss measures of association for categorical data in the next class, and for continuous data a little bit later.
 
 
 ### $\chi^2$ test for independence
 
-The $\chi^2$ is the most common **approximate test** for independence and is widely used for contingency analysis. It can be used to test multiple categories and so is appropriate for a range of simple comparisons. Please refer to the lecture notes from the last class for a discussion of $\chi^2$ tests.
+The $\chi^2$ is the most common **approximate test** for independence and is widely used for contingency analysis. It can be used to test multiple categories with multiple possible outcomes and so is appropriate for a range of simple comparisons. Please refer to the lecture notes from the last class for a discussion of $\chi^2$ tests.
 
 Other approximate tests exist for experimental designs that are **paired** or that control for **multiple measurements**. We will not cover these here, but they are mentioned at the bottom of this document.
 
-+ Tests for **independence**: do the data show a significant difference from what would be expected if two variables were unrelated?
-  + **Exact tests**: compute an exact $p$-value based on all possible discrete outcomes
-  + **Approximate tests**: estimate $p$-values based on a continuous approximation of a discrete distribution
-
-
 ### Fisher's Exact Test
 
-Fisher's exact test provides an **exact $p$-value** for contingency tables by computing the cumulative probability of **all possible scenarios** that differ as much or more from a neutral expectation than the observed values. 
+Fisher's exact test uses the **hypergeometric** distribution (sampling without replacement from a finite population) to provide an **exact $p$-value** for contingency tables, by computing the cumulative probability of **all possible scenarios** that differ as much or more from a neutral expectation than the observed values. 
 
 + Where possible to use, it is preferred to the $\chi^2$ test for all 2x2 contingency tables.
-  + In particular, it must be used instead of the $\chi^2$ test for independence for cases where some of the **frequencies** in the contingency table are **too low to satisfy the assumptions** of the $\chi^2$ test. 
-+ Fisher's exact $p$-value can be extrapolated to larger tables, but it becomes computationally impractical as the number of possibilities increases.
+  + In particular, it should be used instead of the $\chi^2$ test for independence for cases where some of the **frequencies** in the contingency table are **too low to satisfy the assumptions** of the $\chi^2$ test. 
++ Fisher's exact $p$-value can be extrapolated to larger datasets and tables with more rows and columns, but it becomes computationally impractical as the number of possibilities increases.
 
 We will discuss Fisher's test in the next class.
 
@@ -144,7 +145,7 @@ The $G$–test of goodness-of-fit (a.k.a. likelihood ratio test, log-likelihood 
 
 It turns out that experimental study design governs whether the true distribution of the data is hypergeometric or multinomial, and therefore whether Fisher's is necessarily the right choice.
 
-Barnard's test is a **non-parametric alternative** to Fisher's exact test. Because it ***does not assume (is not conditioned on) fixed margins***, Barnard's exact test is reported to have greater ***power*** than Fisher's exact test for 2x2 contingency tables. You can read about it on Wikipedia:
+Barnard's test is a **non-parametric alternative** to Fisher's exact test. Because it is not conditioned on fixed margins (meaning it does not assume that the row and column totals are independent), Barnard's exact test is reported to have greater ***power*** than Fisher's exact test for 2x2 contingency tables. You can read about it on Wikipedia:
  [Barnard's test](https://en.wikipedia.org/wiki/Barnard%27s_test)
 
 An implementation of Barnard's test is available in R:
