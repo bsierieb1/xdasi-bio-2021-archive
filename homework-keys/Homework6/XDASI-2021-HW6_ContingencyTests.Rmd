@@ -1,0 +1,195 @@
+---
+title: 'Homework 5: Contingency Tests'
+subtitle: "XDASI Fall 2021"
+author: "Florence Nightingale [YOUR NAME HERE]"
+date: "Due: 10/15/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error=TRUE, eval=FALSE)
+```
+
+
+# Association between obesity and genetic polymorphisms
+
+## Q0: Load BMI Data
+
+This is a published data set containing measurements of Body Mass Index (BMI) and single-nucleotide polymorphisms (SNPs) based on genotyping of 79 individuals. The data file provided contains the BMI (numeric) and the presence or absence of 7 SNPs (a factor, encoded as Y or N) for each individual.
+
+Our goal in this study is to determine whether any of the SNPs are associated with Obesity.
+
+#### a) Load the `HW6_SNP_Data.tsv` file into a dataframe called `hw6.data`.
+
+```{r}
+
+```
+
+#### b) Briefly describe the structure of this observational data set. 
+
+What measurements have been taken, and what is the data type of those measurements?
+
+```{r}
+# your answer here
+```
+
+
+## Q1: $\chi^2$ Test
+
+#### a) Add an column for `Overweight` status
+
+The column should have binary values (e.g. TRUE/FALSE) according to whether the BMI for each individual is 25 or above, or under 25.
+
+
+```{r}
+
+```
+
+#### b) How many individuals are overweight by this definition? How many are not overweight?
+
+```{r}
+
+```
+
+#### c) Generate a contingency table for Overweight and SNP1.
+
+```{r}
+
+```
+
+#### c) Generate a table of expected counts.
+
+Make a table showing the **expected** number of individuals in each cell for the Overweight / SNP1 contingency table, assuming independence:
+
+$$E_{A{\cap}B} = Pr_A * Pr_B * Total = n_A * n_B/ N$$
+
+```{r}
+
+```
+
+#### d) $\chi^2$ statistic
+
+Calculate the $\chi^2$ test statistic for association between Obesity and SNP1 based on the observed and expected counts.
+
+```{r}
+
+```
+
+
+#### e) Compute a $p$-value for the test statistic
+
+Use the CDF for the $\chi^2$ distribution to compute the significance of the test statistic.
+
+```{r}
+
+```
+
+#### f) Confirm your results using R's Chi-squared test function
+
+*Note: Turn Yates' correction on or off depending on whether you used this for the manual calculation above.*
+
+```{r}
+
+```
+
+#### g) What is the null hypothesis for this chi-squared test?
+
+```{r eval=FALSE}
+# your answer here
+```
+
+#### h) Interpret the result of the Chi-squared test between the Overweight trait and SNP1.
+
+```{r eval=FALSE}
+# your answer here
+```
+
+
+## Q2: Fisher's exact test
+
+#### A) Describe the difference between Fisher's Exact Test and the Chi-Squared test.
+
+```{r eval=FALSE}
+# your answer here
+```
+
+#### b) Test the relationship between the Overweight trait and SNP1 with a Fisher's Exact Test.
+
+```{r}
+
+```
+
+#### c) What is the null hypothesis for this Fisher's Exact Test?
+
+```{r eval=FALSE}
+# your answer here
+```
+
+
+#### d) Interpret the result of your Fisher's Exact test. Compare the p-values to the chi-squared test.
+
+```{r eval=FALSE}
+# your answer here
+```
+
+
+## Q3: Measures of Association
+
+#### a) How are the Relative Risk and Odds Ratio defined?
+
+```{r}
+# your answer here
+```
+
+#### b) Calculate the RR for SNP1 and Obesity.
+
+```{r}
+
+```
+
+#### c) Confirm your results using the `riskratio` function in the `epitools` package.
+
+*Your use of Yates' correction should match whatever you did above.*
+
+```{r}
+
+```
+
+#### d) Calculate the OR for SNP1 and Obesity manually.
+
+```{r}
+
+```
+
+#### d) Confirm your results using the `oddsratio` function in the `epitools` package.
+
+Note: Use the `wald` method for maximum likelihood estimation.
+
+*Your use of Yates' correction should match whatever you did above.*
+
+```{r}
+
+```
+
+#### e) How did the result of your Chi-squared and Fisher's tests line up with the report from the odds ratio function?
+
+```{r}
+# your answer here
+```
+
+
+## Q4: Check the other SNPs to see which SNP is most associated with obesity.
+
+#### a) Use Fisher's Exact Test to check for this.
+
+*Hint: You may want to use a loop to do this. Recall that you can extract the p-value from the test report using the `$p.value` notation.*
+
+```{r}
+
+```
+
+#### b) Are any of the SNPs significantly asociated with BMI?
+
+```{r eval=FALSE}
+# your answer here
+```
