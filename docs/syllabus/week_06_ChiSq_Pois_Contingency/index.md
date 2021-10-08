@@ -32,7 +32,6 @@ nav_exclude: false
 + **In-class exercise** - [zipped .Rmd](Class1/W6.C1-Exercise_ChiSquare.Rmd.zip)
   <!-- + **Key** - [zipped .Rmd](Class1/W6.C1-Exercise_ChiSquare_KEY.Rmd.zip) -->
 
-
 </details>
 
 <!-- ########################################################################### -->
@@ -46,11 +45,9 @@ nav_exclude: false
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details>
-
 + [**Class notes**](Class2/W6.C2-Notes_Categorical_Tests_for_Independence.html){:target="blank"}
 
-
+</details>
 
 <!-- ########################################################################### -->
 
