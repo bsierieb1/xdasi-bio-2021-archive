@@ -21,13 +21,8 @@ library(knitr)
 
 ## Types of questions
 
-<<<<<<< Updated upstream
 1. ***Goodness-of-fit***: Do one or more categorical variables fit an expected frequency distribution?
 2. ***Independence***: Are two categorical variables associated in some way? Do response variables differ between groups?
-=======
-1. ***Goodness-of-fit***: Does one categorical variable fit an expected frequency distribution?
-2. ***Independence***: Are two (or more) categorical variables associated in some way? Do response variables differ between groups?
->>>>>>> Stashed changes
 
 ## One-sample vs. two-sample tests
 
@@ -53,14 +48,10 @@ library(knitr)
 
 The **exact tests** should be used whenever possible, since they compute exact probabilities given all possible outcomes. However,
 
-+ The **binomial proportions test** only works for binary outcomes (two categories).
-<<<<<<< Updated upstream
-+ **Fisher's test** can be extended to larger RxC tables, but it works best when the row and column totals are small, since it is computationally more expensive.
-  + While R is able to calculate Fisher's for some tables with many observations, it becomes relatively slow for large sample sizes, in which case the Chi-squared test of independence is sufficiently accurate.
-=======
++ The **binomial proportions test ($z$-test)** only works for binary outcomes (two categories).
 + **Fisher's test** is usually used only for 2x2 contingency tables. 
-  + It can, in fact, be applied to larger RxC tables, but its computational efficiency declines for very large sample sizes.
->>>>>>> Stashed changes
+  + It can be extended to larger RxC tables, but it works best when the row and column totals are small, since it is computationally more expensive, so its computational efficiency declines for very large sample sizes.
+  + While R is able to calculate Fisher's for some tables with many observations, it becomes relatively slow for large sample sizes, in which case the Chi-squared test of independence is sufficiently accurate.
 
 ### *Limitations of approximate tests*
 

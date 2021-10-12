@@ -277,7 +277,7 @@ div.tocify {
 <tr class="header">
 <th></th>
 <th>One variable</th>
-<th>Two variables</th>
+<th>Two or more variables</th>
 </tr>
 </thead>
 <tbody>
@@ -293,14 +293,15 @@ div.tocify {
 </tr>
 </tbody>
 </table>
-<p><em>Note: the binomial approximate test, or the <span class="math inline">\(z\)</span>-test, can be used instead of the <span class="math inline">\(\chi^2\)</span> test for one or two variables. It is mathematically equivalent to the <span class="math inline">\(\chi^2\)</span> test because they both use a normal approximation. However the <span class="math inline">\(\chi^2\)</span> test is more general because it can be applied to multiple categories.</em></p>
+<p><em>Note: the binomial approximate test, or the <span class="math inline">\(z\)</span>-test, can be used instead of the <span class="math inline">\(\chi^2\)</span> test with the null hypothesis that one or more groups have the same or given proportions (probabilities of success). It is mathematically equivalent to the <span class="math inline">\(\chi^2\)</span> test because they both use a normal approximation. However the <span class="math inline">\(\chi^2\)</span> test is more general because it can be applied to multiple variables. In R, the <span class="math inline">\(z\)</span>-test is called the “Test of Equal or Given Proportions” and is implemented as <code>prop.test()</code>.</em></p>
 <div id="limitations-of-exact-tests" class="section level3">
 <h3><em>Limitations of exact tests</em></h3>
 <p>The <strong>exact tests</strong> should be used whenever possible, since they compute exact probabilities given all possible outcomes. However,</p>
 <ul>
-<li>The <strong>binomial proportions test</strong> only works for binary outcomes (two categories).</li>
-<li><strong>Fisher’s test</strong> can be extended to larger RxC tables, but it works best when the row and column totals are small, since it is computationally more expensive.
+<li>The <strong>binomial proportions test (<span class="math inline">\(z\)</span>-test)</strong> only works for binary outcomes (two categories).</li>
+<li><strong>Fisher’s test</strong> is usually used only for 2x2 contingency tables.
 <ul>
+<li>It can be extended to larger RxC tables, but it works best when the row and column totals are small, since it is computationally more expensive, so its computational efficiency declines for very large sample sizes.</li>
 <li>While R is able to calculate Fisher’s for some tables with many observations, it becomes relatively slow for large sample sizes, in which case the Chi-squared test of independence is sufficiently accurate.</li>
 </ul></li>
 </ul>
@@ -309,7 +310,7 @@ div.tocify {
 <h3><em>Limitations of approximate tests</em></h3>
 <p><strong>Approximate</strong> frequency tests do not provide accurate <span class="math inline">\(p\)</span>-values when the frequency of one or more groups is low. Standard textbooks will tell you that before using a <span class="math inline">\(\chi^2\)</span> test, you should check that the following <strong>assumptions</strong> are met:</p>
 <ul>
-<li>Samples are unbiased random samples</li>
+<li>Samples are unbiased random samples (i.e. observations are independent of each other)</li>
 <li>At least 20% of the cells have an expected frequency = 5</li>
 <li>The <em>expected frequency</em> for all cells is at least 1</li>
 </ul>
