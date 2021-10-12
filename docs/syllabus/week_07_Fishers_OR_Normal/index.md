@@ -30,7 +30,7 @@ nav_exclude: false
 
 + [**Class notes**](Class1/W7.C1-Notes-RR_OR_Fishers.html){:target="blank"}
 + **In-class exercise** - [zipped .Rmd](Class1/W7.C1-Exercise_RR_OR_Fishers.Rmd.zip)
-  <!-- + Answer Key - [zipped .Rmd](Class1/W7.C1-Exercise_RR_OR_Fishers_KEY.Rmd.zip) - [HTML](Class1/W7.C1-Exercise_RR_OR_Fishers_KEY.html){:target="blank"} -->
+  + Answer Key - [zipped .Rmd](Class1/W7.C1-Exercise_RR_OR_Fishers_KEY.Rmd.zip) - [HTML](Class1/W7.C1-Exercise_RR_OR_Fishers_KEY.html){:target="blank"}
 
 </details>
 

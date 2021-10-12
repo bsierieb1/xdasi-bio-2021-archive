@@ -1,20 +1,41 @@
 ---
-title: "Associations betwen categorical variables"
+title: "Associations Between Categorical Variables"
 subtitle: "Contingency Analysis: Relative Risk, Odds Ratios, and Fisher's Exact Test"
 date: "October 12, 2021"
 output:
-  pdf_document:
-    toc: yes
-    toc_depth: '2'
   html_document:
     toc: yes
     toc_float: yes
     toc_depth: 3
+    code_folding: hide
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
+```
+
+
+```{css, echo=FALSE}
+.qbox {
+  padding: 1em;
+  background: cornsilk;
+  border: 1px solid burlywood;
+  border-radius: 5px;
+}
+
+.bluebox {
+  padding: 1em;
+  background: #d8ecf3;
+  border: 1px solid cornflowerblue;
+}
+
+h1 {color: mediumblue}
+h2 {color: mediumblue}
+h3 {color: mediumblue}
 ```
 
 ## Review
@@ -149,23 +170,25 @@ $$e^{ln(OR) - 1.96*SE_{ln(OR)}} < OR < e^{ln(OR) + 1.96*SE_{ln(OR)}}$$
   
 
 <!-- ======================================================================= -->
-<!-- <div class="qbox"> -->
+<div class="qbox">
 $\Rightarrow$ ***Question: Say we want to determine if getting a COVID vaccine helps protect people against getting sick with this coronavirus. Which of the following designs could we use to calculate the relative risk?***
 
-Design 1: Pick 1000 COVID patients and 1000 healthy people and compute the relative risk of getting sick, given that they'd already gotten the vaccine.
+**Design 1**: Pick 1000 COVID patients and 1000 healthy people and compute the relative risk of getting sick, given that they'd already gotten the vaccine.
 
-Design 2: Pick 2000 people, 1000 vaccinated and 1000 unvaccinated. Ask what proportion in each group got sick with the virus.
+**Design 2**: Pick 2000 people, 1000 vaccinated and 1000 unvaccinated. Ask what proportion in each group got sick with the virus.
 
 <details closed markdown="block">
   <summary>Answer</summary>
+
+Computing RR would only be valid for ***Design 2.***
 
 + The relative proportions of people who got sick **given that they'd already been vaccinated (or not)** would not be meaningful because the total number of sick vs. healthy people was chosen arbitrarily.
 
 $$ RR = \frac{(Vac \cap COVID) / (Total\ Vac)}{(Unvac \cap COVID) / (Total\  Unvac)} = \frac{a/(a+c)}{b(b+d)}$$
 
-If we'd only been able to find 200 people with COVID, then the relative risk would change.
+If we'd only been able to find 200 people with COVID, then the relative risk would change!
 
-In contrast, the odds ratio would not change significantly because the proportions of people who got sick in each group would stay about the same:
+In contrast, the odds ratio would not change significantly because the proportions of people who got sick in each group would stay about the same (with minor variations due to random sampling):
 
 $$ OR = \frac{(COVID \cap Vac) / (COVID \cap Unvac)}{(Healthy \cap Vac) / (Healthy \cap Unvac)} = \frac{a/c}{b/d} = \frac{ad}{bc}$$
 
@@ -204,7 +227,7 @@ The $p$-value will be the proportion of all possible ways to get a value **equal
 
 We can perform a Fisher's exact test using the `fisher.test()` function. Let's go back to the example of cancer incidence among women who first gave birth under or over the age of 30. We will choose a one-tailed test, since we expect the Case group (women with cancer) to have a higher proportion of women who first gave birth over 30. 
 
-```{r}
+```{r class.source="fold-show"}
 Case    = c(683,2537)   # total =  3220
 Control = c(1498,8747)  # total = 10245
 data_matrix = rbind(Case, Control)
