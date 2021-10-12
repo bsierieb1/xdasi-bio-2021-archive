@@ -2,7 +2,7 @@
 title: Week 7
 parent: Syllabus
 has_children: false
-nav_exclude: true
+nav_exclude: false
 ---
 
 # Week 7: Title
@@ -21,12 +21,18 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- # Class - Tuesday, Oct. 12 (Legislative Monday)
+# Class - Tuesday, Oct. 12 (Legislative Monday)
+
+### Relative Risk, Odds Ratios, and Fisher's Exact Test
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
++ [**Class notes**](Class1/W7.C1-Notes-RR_OR_Fishers.html){:target="blank"}
++ **In-class exercise** - [zipped .Rmd](Class1/W7.C1-Exercise_RR_OR_Fishers.Rmd.zip)
+  <!-- + Answer Key - [zipped .Rmd](Class1/W7.C1-Exercise_RR_OR_Fishers_KEY.Rmd.zip) - [HTML](Class1/W7.C1-Exercise_RR_OR_Fishers_KEY.html){:target="blank"} -->
+
+</details>
 
 <!-- ########################################################################### -->
 

@@ -17,29 +17,61 @@ knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
 ```
 
-## Overview
+## Review
 
-A common question that arises in biology is whether and **how much** a response variable differs between groups. If so, we would also like to evaluate whether the probability distribution of one categorical variable is likely to be **dependent** on that of a second variable. In other words, are any observed differences are likely to occur by chance alone, due to variation among random samples? For example:
+Last time we talked about different kinds of contingency analysis and focused on approximate tests for frequency tables. The general question is whether a response variable is likely dependent on a potential explanatory variable. For example:
 
 + *Do smokers have a higher incidence of lung cancer?*
 + *Does aspirin lower the incidence of heart attacks?*
 + *Do parasites alter the behavior of their hosts?*
-+ *Did something go wrong with my CRISPR experiment? (I.e. Was the efficiency of getting an edit in one set of experiments significantly different from usual? This could indicate that something went wrong with my reagents.)*
 
-Two kinds of analysis can be done to address such questions:
+There are two kinds of questions we may be interested in, for which different kinds of measures are used:
 
-+ **Estimation**: how different is a response variable between two groups of interest?
-  + **Relative risk**: relative proportions between two groups
-  + **Odds ratio**: relative ***odds*** between two groups
++ Are two variables associated?
++ How different are the relative frequencies in a treatment group vs. a control group?
+  + Analyze the relative risk or odds ratios between groups.
+
+In both cases, we want to know whether observed differences between groups are likely to arise purely by chance. To answer these questions we can perform two different kinds of analysis:
+
 + Tests for **independence**: do the data show a significant difference from what would be expected if two variables were unrelated?
   + **Exact tests**: compute an exact $p$-value based on all possible discrete outcomes
   + **Approximate tests**: estimate $p$-values based on a continuous approximation of a discrete distribution
 
++ **Estimation**: how different is a response variable between two groups of interest?
+  + **Relative risk**: relative proportions between two groups
+  + **Odds ratio**: relative ***odds*** between two groups
+
+## Experimental Designs for Tabular Data
+
+Studies involving categorical data may be performed using different frameworks:
+
++ **Model I**: Observations are classified as they are collected. 
+  + The total number of trials is chosen, but the classes to which they are assigned will vary.
+  + In this case, the row and column totals can both vary freely.
+
++ **Model II**: Totals for one group are fixed, while the other varies.
+  + Usually it is the explanatory variable that is chosen and the dependent variable is measured
+  + For example, a certain number of subjects are given aspirin vs. a placebo, and the number of heart attacks in each group is then measured.  
+  + In this case, the number of observations is fixed in one dimension, so the row or column totals are fixed while the other varies.
+  
++ **Model III**: Totals for both groups are fixed.
+  + This type of design is not commonly used in biology.
+  + The classic example is Fisher's "lady tasting tea" study, in which the number of cups of tea in which the milk was added before or after the tea were predetermined in order to test whether a lady could tell the difference between these, as she claimed.
+
 ## Measures of association
+
+There are two common methods to estimate the magnitude of differences between groups. Which one is appropriate depends on the experimental design.
+
++ **Relative risk**: used for **observational** studies and **experimental** studies in which ***random samples*** of the population are subjected to two different treatments.
++ **Odds ratio**: used for observational and **case-control** studies where the number of subjects in the case and control groups are fixed.
+
+These measures are similar when the frequency of an outcome of interest, called the ***focal outcome***, is small in the population.
 
 ### Relative risk
 
-Relative risk is useful for **observational** studies and **experimental** studies in which random samples of the population are subjected to two different treatments.
+Relative risk is defined as the ratio of the proportion of subjects with a focal outcome in one group vs. the other group. 
+
+This measure ***cannot be used in case-control studies*** where the number of subjects in two groups is fixed (a Model II or III design), since the relative frequencies do not reflect their natural occurrence in a population. This will make more sense if we look at some examples.
 
 ***W&S Example 9.2:*** *Around of half of 39,876 women are randomly assigned to receive 100mg of aspirin every other day for 10 years, while the other half received a placebo. Did long-term aspirin treatment significantly reduce the incidence of invasive cancer?*
 
@@ -114,130 +146,49 @@ $$e^{ln(OR) - 1.96*SE_{ln(OR)}} < OR < e^{ln(OR) + 1.96*SE_{ln(OR)}}$$
 + When samples are ***chosen at random*** in the population, divided into groups based on a ***potential causal factor***, and then the frequency of a particular ***focal outcome*** is examined in each group, the RR and OR will produce very similar results.
 + However, RR cannot be used for **case-control** studies in which individuals are ***pre-selected*** based on known focal outcomes, and potential underlying causal factors are then examined for association with each known outcome.
   + This is because the samples were not chosen at random from the population, and therefore the proportions of individuals with each focal outcome do not reflect the proportions in the population at large.
+  
 
-#### Exercise: is high blood pressure a risk factor for stroke?
+<!-- ======================================================================= -->
+<!-- <div class="qbox"> -->
+$\Rightarrow$ ***Question: Say we want to determine if getting a COVID vaccine helps protect people against getting sick with this coronavirus. Which of the following designs could we use to calculate the relative risk?***
 
-Consider two different experimental designs for determining whether high blood pressure is a risk factor for strokes:
+Design 1: Pick 1000 COVID patients and 1000 healthy people and compute the relative risk of getting sick, given that they'd already gotten the vaccine.
 
-+ **Design 1** 
-  + 2000 men between the ages of 70-80 are chosen at random from the population.
-  + These are divided into groups with and without a history of high blood pressure.
-  + The number of men in each group who experienced a stroke sometime within the following 5 years is recorded.
- 
-+ **Design 2**
-  + 2000 men between the ages of 70-80 are recruited for a study, of which 1000 have never had a stroke and 1000 have had a stroke in the last 5 years.
-  + The proportion of each group who have a history of high blood pressure is recorded.
+Design 2: Pick 2000 people, 1000 vaccinated and 1000 unvaccinated. Ask what proportion in each group got sick with the virus.
 
-The data might look something like this:
+<details closed markdown="block">
+  <summary>Answer</summary>
 
-**Design 1**
-```{r, echo=F}
-## Design 1 ========================= #
-Stroke    = c(100,50)   # total =  200
-NoStroke = c(600,1250)  # total = 1800
-data_matrix1 = rbind(Stroke, NoStroke)
-colnames(data_matrix1) = c("HiBP","LoBP")
++ The relative proportions of people who got sick **given that they'd already been vaccinated (or not)** would not be meaningful because the total number of sick vs. healthy people was chosen arbitrarily.
 
-# kable is a table generator from the knitr package
-kable(data_matrix1)
-```
+$$ RR = \frac{(Vac \cap COVID) / (Total\ Vac)}{(Unvac \cap COVID) / (Total\  Unvac)} = \frac{a/(a+c)}{b(b+d)}$$
 
-**Design 2**
-```{r, echo=F}
-## Design 2 ========================= #
-Stroke   = c(200,800)  # total =  1000
-NoStroke = c(50,950)   # total = 1000
-data_matrix2 = rbind(Stroke, NoStroke)
-colnames(data_matrix2) = c("HiBP","LoBP")
-kable(data_matrix2)
-```
+If we'd only been able to find 200 people with COVID, then the relative risk would change.
 
-Let's compute RR and OR and compare the results. First, we will do this by hand, and then using R.
+In contrast, the odds ratio would not change significantly because the proportions of people who got sick in each group would stay about the same:
 
----
+$$ OR = \frac{(COVID \cap Vac) / (COVID \cap Unvac)}{(Healthy \cap Vac) / (Healthy \cap Unvac)} = \frac{a/c}{b/d} = \frac{ad}{bc}$$
 
-## Overview: Tests for frequency distributions
+Notice that the OR will also not change depending on the orientation of the table.
 
-|                   | One variable                	| Two variables          |
-|-------------------|-------------------------------|------------------------|
-| ***Exact***	      | Binomial proportions          |	Fisher’s exact test    |
-| ***Approximate***	| $\chi^2$ goodness-of-fit      |	$\chi^2$ test of independence |
+</details>
+</div>
+<!-- ======================================================================= -->
 
 
-### Types of questions
+## Fisher's Exact Test for Independence
 
-1. ***Goodness-of-fit***: Does one categorical variable fit an expected frequency distribution?
-2. ***Independence***: Are two categorical variables associated in some way? Do response variables differ between groups?
+Last time we talked about the $\chi^2$ test for independence, which compares **observed vs. expected** values to estimate the probability of obtaining a result at least as extreme as the observed data. This approach uses a **continuous distribution** to **approximate** the probability. When the expected frequency of any cell in a contingency table is too small, an exact test is preferred. 
 
-
-### Types of frequency tests
-
-+ ***Exact tests***: Enumerate **all possible discrete outcomes** that are at least as extreme as the observed data (i.e. as or more different from expectation) and compute the total probability of these.
-+ ***Approximate tests***: Compare **observed vs. expected** values to estimate the probability of obtaining a result at least as extreme as the observed data. This approach uses a **continuous distribution** to **approximate** the probability.
-
-
-#### *Limitations of exact tests*
-
-The **exact tests** should be used whenever possible, since they compute exact probabilities given all possible outcomes. However,
-
-+ The **binomial proportions test** only works for binary outcomes (two categories).
-+ **Fisher's test** only works for 2x2 contingency tables (two groups with binary outcomes). 
-
-
-#### *Limitations of approximate tests*
-
-**Approximate** frequency tests do not provide accurate P-values when the frequency of one or more groups is low. Before using a $\chi^2$ test, you should check that the following **assumptions** are met:
-
-+ Samples are unbiased random samples
-+ At least 20% of the cells have an expected frequency = 5
-+ The *expected frequency* for all cells is at least 1
-
-When the above conditions are **not** met, several **alternative options** are available:
-
-+ Combine some groups so that assumptions can be met (e.g. two groups can become "Other")
-+ Use an exact test, if applicable
-+ Use permutation tests to compute a P-value (Chapter 13, W&S)
-
-#### *Continuity correction for approximate tests*
-
-The following diagram[^1] illustrates the P-value computed by an approximate test relative to the P-value from a binomial exact test as a function of sample size. This shows that even for sample sizes that meet the criteria for an approximate test, $\chi^2$ (black) and a similar test called the "G-test" (green) provide estimates for P-values that are too small relative to an exact binomial P-value, thus inflating the apparent significance of the test.
-
-![](Images/Exact_vs_approximate_P-value.png){width=50%}
-
-```{r out.width="50%", include=F}
-# library(knitr)
-# include_graphics("Images/Exact_vs_approximate_P-value.png")
-```
-
-
-To correct for this, the default behavior in R for $\chi^2$ tests is to perform ***Yates' continuity correction***, which modifies the $(O-E)^2$ term as $(|O-E| - 1/2)^2$ to reduce the overall magnitude of the $\chi^2$ test statistic. The term "continuity" correction is applied here because a *continuous* function (Chi-square) is being applied to approximate a *discrete* function (e.g. binomial).
-
-Nevertheless, it is still preferable to use an exact test whenever possible in order to get the most accurate measure of significance.
-
-
-### $\chi^2$ test for independence
-
-The $\chi^2$ is the most common **approximate test** for independence and is widely used for contingency analysis. It can be used to test multiple categories and so is appropriate for a range of simple comparisons. Please refer to the lecture notes from the last class for a discussion of $\chi^2$ tests.
-
-Other approximate tests exist for experimental designs that are paired or that control for multiple measurements. We will not cover these here, but they are mentioned at the bottom of this document.
-
-
-### Fisher's Exact Test
-
-Fisher's exact test provides an **exact $p$-value** for contingency tables by computing the cumulative probability of **all possible scenarios** that differ as much or more from a neutral expectation than the observed values. 
+Fisher's test provides an **exact $p$-value** for contingency tables by enumerating **all possible discrete outcomes** that are at least as extreme as the observed data (i.e. as or more different from neutral expectation) and and computing the total probability of these.
 
 + It is preferred to the $\chi^2$ test for all 2x2 contingency tables.
 + It should be used instead of the $\chi^2$ test for independence for cases where some of the **frequencies** in the contingency table are **too low to satisfy the assumptions** of the $\chi^2$ test. 
 + R can also compute Fisher's exact $p$-value using larger tables. When computationally feasible, use Fisher's over $\chi^2$.
 
-
-
-#### Assumptions
+### Formula
 
 Fisher's test assumes **fixed row margins** (row totals), which are needed to compute the the probability of values at least as extreme as the observed frequencies relative to expectation under the rule of independence, i.e. $P(A \cap B) = P(A) * P(B)$ for each cell in the contingency table.
-
-
-#### Formula
 
 With fixed marginal counts, the count in one cell, $x_{ij}$, will determine the counts in the other three cells (see Aho, Section 11.6.3 for details).
 
@@ -248,35 +199,8 @@ where $N=a+b+c+d$.
 
 The $p$-value will be the proportion of all possible ways to get a value **equal to or more extreme** than the observed count in one of the cells (typically $x_{11}$).
 
-#### W&S Example 9.5
 
-The method Fisher's uses to enumerate these possibilities is illustrated in this example from W&S, which asks if vampire bats prefer to bite cows in estrus (!)
-
-What are the null and alternative hypotheses?
-
-```{r, echo=F}
-# obs
-vampire <- read.csv(
-  url("https://whitlockschluter3e.zoology.ubc.ca/Data/chapter09/chap09e5VampireBites.csv"),
-  stringsAsFactors = FALSE)
-vampireTable <- table(vampire$bitten, vampire$estrous)
-kable(vampireTable)
-
-# exp
-expTable = rbind("Bitten"=c(1.3,19.7,21),
-                 "Not_bitten"=c(20.7,308.3,329),
-                 "Totals"=c(22,328,350))
-colnames(expTable) = c("Estrus", "Not_estrus", "Total")
-
-kable(expTable)
-```
-
-The total probability is computed by summing up the probabilities of the observed data, plus the data from all the tables with more "extreme" values (i.e. fewer than 6 cows in estrus).
-
-![](Images/WS_Ex_9.5.png){width=60%}
-
-
-#### Example
+### Example
 
 We can perform a Fisher's exact test using the `fisher.test()` function. Let's go back to the example of cancer incidence among women who first gave birth under or over the age of 30. We will choose a one-tailed test, since we expect the Case group (women with cancer) to have a higher proportion of women who first gave birth over 30. 
 
@@ -305,7 +229,8 @@ The $p$-value computed in this way is not exactly the same as we get from the ot
 
 ***Note that the orientation of the table does not matter -- the test gives the same result either way.***
 
-#### Odds Ratios and 95% CI
+
+### Odds Ratios and 95% CI
 
 The output for Fisher's exact test include a reference to the **odds ratio** and a 95% confidence interval. Under independence, the odds ratio should equal 1, so if one row has higher or lower counts than expected then the OR will be greater than or less than 1. 
 
@@ -320,7 +245,9 @@ fisher_test$conf.int
 ```
 
 
-In this example, the null hypothesis is that there is no difference between groups: $H_0: \Theta = 1$. The alternative hypothesis is $H_A: \Theta > 1$. Since OR = 1.57, and the 95% CI is $1.44 < \Theta < \infty$, we can conclude that the incidence of cancer is not the same between these two groups.
+In this example, the null hypothesis is that there is no difference between groups: $H_0: \Theta = 1$. The alternative hypothesis is $H_A: \Theta > 1$. 
+
+Since OR = 1.57, and the 95% CI is $1.44 < \Theta < \infty$, we can conclude that the incidence of cancer is not the same between these two groups.
 
 
 ## Fisher's Test and the Hypergeometric Distribution
@@ -375,40 +302,6 @@ phyper(q, m, n, k, lower.tail = FALSE)
 
 This is exactly the same result we obtained using Fisher's test!
 
----
-
-## Other frequency tests
-
-Other flavors of tests exist that apply to different kinds of situations where frequency data need to be analyzed. We will not cover these here, but merely mention them in case you may want to use them in the future.
-
-
-### G-test for goodness-of-fit
-
-The $G$–test of goodness-of-fit (a.k.a. likelihood ratio test, log-likelihood ratio test, or $G^2$ test) tests whether one nominal variable with two or more categories fits a theoretical expectation. Like the Chi-square test, it should be used with large sample sizes, since it will give inaccurate $P$-values for small sample sizes.
-
-
-### Barnard's Exact Test for equality of proportions
-
-It turns out that experimental study design governs whether the true distribution of the data is hypergeometric or multinomial, and therefore whether Fisher's is necessarily the right choice.
-
-Barnard's test is a **non-parametric alternative** to Fisher's exact test. Because it ***does not assume (is not conditioned on) fixed margins***, Barnard's exact test is reported to have greater ***power*** than Fisher's exact test for 2x2 contingency tables. You can read about it on Wikipedia:
- [Barnard's test](https://en.wikipedia.org/wiki/Barnard%27s_test)
-
-An implementation of Barnard's test is available in R:
-[Blog on Barnard's exact test](https://www.r-statistics.com/2010/02/barnards-exact-test-a-powerful-alternative-for-fishers-exact-test-implemented-in-r/)
-
-
-### McNemar and Cochran-Mantel-Haenszel
-
-For more complicated scenarios, additional tests are available that we will not cover here. These include:
-
-+ ***McNemar's test***
-  + Used for "paired data", in which two measurements that come from the same individuals are compared. For example, a response variable can be compared between "pre-" and "post-" treatment, such as incidence of heart attacks before and after bypass surgery.
-+ ***Cochran-Mantel-Haenszel test***
-  + Used for testing the independence of two nominal variables with *repeated measurements*. For example[^2], to test for independence between an *Allele* and *Habitat* measured in four different *Locations*, the test could be applied to a 2x2x4 table to test for a relationship between the first two variables while controlling for the third.
-  + The R implementation can also handle larger sets of categorical data.
-
----
 
 ## R commands for different kinds of frequency tests
 
@@ -435,27 +328,9 @@ Some short tutorials for making tables and converting between data frames and ta
 + [R Cookbook](http://www.cookbook-r.com/Manipulating_data/Converting_between_data_frames_and_contingency_tables/)
 + [Quick R](https://www.statmethods.net/stats/frequencies.html)
 
-
 ---
 
 ## Additional Resources
 
-+ **Whitlock & Schluter, Chapters 8 and 9**
-+ **Whitlock & Schluter Online Tutorials**
-  + [Frequency Data](https://whitlockschluter3e.zoology.ubc.ca/RLabs/R_tutorial_Frequency_data.html)
++ **Whitlock & Schluter Online Tutorial**
   + [Contingency Analysis](https://whitlockschluter3e.zoology.ubc.ca/RLabs/R_tutorial_Contingency_analysis.html)
-+ [**Handbook of Biological Statistics**](http://www.biostathandbook.com/)
-  + Goodness-of-fit tests
-    + [Binomial](http://www.biostathandbook.com/exactgof.html)
-    + [Chi-square](http://www.biostathandbook.com/chigof.html)
-    + [G-test](http://www.biostathandbook.com/gtestgof.html)
-  + Tests for independence
-    + [Fisher's Exact Test](http://www.biostathandbook.com/fishers.html)
-    + [Chi-square](http://www.biostathandbook.com/chiind.html)
-      + [*The problem with small numbers in Chi-square test*](http://www.biostathandbook.com/small.html)
-  + [Chochran-Mantel-Haenzl](http://www.biostathandbook.com/cmh.html)
-+ [R Cookbook](http://www.cookbook-r.com/)
-+ Aho, Chapter 11
-
-[^1]: [Handbook of Biological Statistics](http://www.biostathandbook.com/), by John H. McDonald
-[^2]: [Handbook of Biological Statistics](http://www.biostathandbook.com/), by John H. McDonald
