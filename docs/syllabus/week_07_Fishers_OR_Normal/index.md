@@ -38,12 +38,17 @@ nav_exclude: false
 
 <!-- ########################################################################### -->
 
-<!-- # Class - Thursday, Oct. 14
+# Class - Thursday, Oct. 14
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
++ **Class notes (2020)**
+  + [**Hypergeometric distribution**](Class2/Discrete_Distributions.html){:target="blank"}
+  + [**Normal distribution**](Class2/XDAS2020-Normal-Distribution.html){:target="blank"}
+
+
+</details>
 
 <!-- ########################################################################### -->
 
