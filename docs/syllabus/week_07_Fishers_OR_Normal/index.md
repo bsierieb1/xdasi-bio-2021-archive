@@ -44,7 +44,7 @@ nav_exclude: false
   <summary>Details</summary>
 
 + **Class notes (2020)**
-  + [**Hypergeometric distribution**](Class2/Discrete_Distributions.html){:target="blank"}
+  + [**Hypergeometric distribution**](Class2/XDAS2020-Discrete_Distributions.html){:target="blank"}
   + [**Normal distribution**](Class2/XDAS2020-Normal-Distribution.html){:target="blank"}
 
 
