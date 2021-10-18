@@ -298,7 +298,7 @@ div.tocify {
 <div id="hypergeometric-test" class="section level2">
 <h2>Hypergeometric test</h2>
 <p>The <code>hyper</code> family of functions in R does not observe the usual naming convention, which is a bit confusing at first, but the variables are the same.</p>
-<p>For example[^1], let’s say we have a list of 59 genes that are predicted to be regulated by the mouse E2F transcription factor, and we want to know whether they are enriched for genes involved in the cell cycle. There are 13,588 genes with some GO annotation in the mouse genome, and 611 of them are annotated with the term “cell cycle”. We find that 19 out of our 59 genes are annotated with the GO term “cell cycle”.</p>
+<p>For example<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, let’s say we have a list of 59 genes that are predicted to be regulated by the mouse E2F transcription factor, and we want to know whether they are enriched for genes involved in the cell cycle. There are 13,588 genes with some GO annotation in the mouse genome, and 611 of them are annotated with the term “cell cycle”. We find that 19 out of our 59 genes are annotated with the GO term “cell cycle”.</p>
 <p>Is the list of predicted E2F targets significantly enriched for the GO term “cell cycle”? We can figure this out in the following way:</p>
 <pre class="r"><code>help(phyper)
 
@@ -320,8 +320,8 @@ N = 13588     # total annotated genes
 exp.overlap = A * B / N
 print(paste(&quot;Expected overlap =&quot;, round(exp.overlap,2)))</code></pre>
 <pre><code>## [1] &quot;Expected overlap = 2.65&quot;</code></pre>
-<pre class="r"><code># Fold-enrichment:
-fold.enrichment = ( Overlap/A ) / ( B/N )
+<pre class="r"><code># Fold-enrichment: OL / (A*B/N) = (OL/A) / (B/N) = OL*N / A*B
+fold.enrichment = Overlap / exp.overlap
 print(paste(&quot;Fold-enrichment =&quot;, round(fold.enrichment,2)))</code></pre>
 <pre><code>## [1] &quot;Fold-enrichment = 7.16&quot;</code></pre>
 <pre class="r"><code># P(enrichment) = upper-tail probability: P(X &gt;= x)
@@ -365,6 +365,12 @@ fisher.test(contingency.table, alternative=&quot;greater&quot;)</code></pre>
 <pre class="r"><code>fisher.test(contingency.table, alternative=&quot;greater&quot;)$p.value</code></pre>
 <pre><code>## [1] 4.989683e-12</code></pre>
 </div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>1<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
 </div>
 
 
