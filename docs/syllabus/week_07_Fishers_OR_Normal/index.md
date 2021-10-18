@@ -43,10 +43,9 @@ nav_exclude: false
 <details closed markdown="block">
   <summary>Details</summary>
 
-+ **Class notes (2020)**
-  + [**Hypergeometric distribution**](Class2/XDAS2020-Discrete_Distributions.html){:target="blank"}
-  + [**Normal distribution**](Class2/XDAS2020-Normal-Distribution.html){:target="blank"}
-
++ **Class notes**
+  + **Pathway Commons primer: Fisher's Exact Test** - [HTML](https://www.pathwaycommons.org/guide/primers/statistics/fishers_exact_test/){:target="blank"} - [PDF](Class2/W7.C2-Notes-Hypergeometric_Distribution.html)
+  + [**Hypergeometric distribution**](Class2/W7.C2-Notes-Hypergeometric_Distribution.html){:target="blank"}
 
 </details>
 
