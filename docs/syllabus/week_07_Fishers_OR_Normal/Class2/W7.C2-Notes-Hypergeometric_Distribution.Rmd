@@ -80,7 +80,7 @@ The components of the equation are:
 
 The `hyper` family of functions in R does not observe the usual naming convention, which is a bit confusing at first, but the variables are the same. 
 
-For example^[1], let's say we have a list of 59 genes that are predicted to be regulated by the mouse E2F transcription factor, and we want to know whether they are enriched for genes involved in the cell cycle. There are 13,588 genes with some GO annotation in the mouse genome, and 611 of them are annotated with the term "cell cycle". We find that 19 out of our 59 genes are annotated with the GO term "cell cycle". 
+For example, let's say we have a list of 59 genes that are predicted to be regulated by the mouse E2F transcription factor, and we want to know whether they are enriched for genes involved in the cell cycle. There are 13,588 genes with some GO annotation in the mouse genome, and 611 of them are annotated with the term "cell cycle". We find that 19 out of our 59 genes are annotated with the GO term "cell cycle". 
 
 Is the list of predicted E2F targets significantly enriched for the GO term "cell cycle"? We can figure this out in the following way:
 
