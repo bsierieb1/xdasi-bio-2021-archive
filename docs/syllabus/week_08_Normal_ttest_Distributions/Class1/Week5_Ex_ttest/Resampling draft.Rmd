@@ -1,0 +1,97 @@
+---
+title: "Resampling draft"
+author: "Kris Gunsalus"
+date: "2/27/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+### Estimating with the bootstrap
+
+**Bootstrapping** is when we sample our dataset **with replacement**. The idea is that we sample repeatedly from the same data values to approximate what the population may look like. 
+
+Let's simulate randomly obtaining 10 measurements from the sample. If we do this many times, we will see that the *distribution of the sample means* of the simulated population follows a normal distribution. 
+
+What does the standard deviation of this distribution represent?
+
+<!-- YOUR ANSWER HERE -->
+
+The standard deviation of this sampling distribution is called the **Standard Error (SE)**.
+
+```{r}
+#########################################################################
+# this function generates a distribution of the means of a set of numbers
+# of many samples of size n
+# arguments: sample_set = a vector
+#            n = sample size
+#            iter = number of times to repeat sampling
+########################################################################
+mean_dist = function(sample_set, n, iter){
+
+  mean_v=numeric()    # initialize an empty vector
+  for (i in 1:iter) { # repeat sampling `iter` times
+    
+    # randomly sample `n` items from `sample_set` with replacement
+    # and take the mean and append to `mean_v`
+    mean_v[i] = mean(sample_set[sample(1:length(sample_set),
+                                       n, replace=T)])
+  }
+  return(mean_v)
+}
+```
+
+Try this exercise using iter=10000 with varying sample sizes: n=5, n=10, and n=50. 
+
+*NOTE: You can simply run the same code block above, using different arguments for the function. I find it easiest to copy and edit the function calls, then comment and uncomment different lines.*
+
+#### How does the SD of the samples change as the samples size $n$ increases? Why is this?
+
+<!-- YOUR ANSWER HERE -->
+
+```{r}
+## test with different arguments, and print the mean and SD for the
+# sampling distribution of the sample means
+# (comment out different lines to test)
+
+## vary n
+#sample_means = mean_dist(sample_set=Placebo,n=5,iter=10000)
+#sample_means = mean_dist(sample_set=Placebo,n=10,iter=10000)
+sample_means = mean_dist(sample_set=Placebo,n=50,iter=10000)
+
+# vary iter
+#sample_means = mean_dist(sample_set=Placebo,n=5,iter=1000)
+#sample_means = mean_dist(sample_set=Placebo,n=10,iter=1000)
+#sample_means = mean_dist(sample_set=Placebo,n=50,iter=1000)
+
+paste("Mean=", round(mean(sample_means),3),
+       " ; SD=", round(sd(sample_means),4))
+
+paste("Population SD estimate=",round(sd(sample_means) * sqrt(n),4))
+
+
+# simulate a normal curve with the same parameters
+xfit = seq(44,56,length=100)
+yfit = dnorm(xfit,mean=mean(sample_means),sd=sd(sample_means))
+
+# make a histogram, set breaks to 24, freq = FALSE
+# then overlay a normal curve with the same parameters
+hist(sample_means, breaks = 24, freq = FALSE)
+lines(xfit,yfit,col="blue",lwd = 2)
+```
+
+Now use 1000 iterations instead while varying the sample size. 
+
+#### How do your results compare to your simulations using 10k iterations? What key insight does this reveal about the sampling distribution of the sampling means?
+
+<!-- YOUR ANSWER HERE -->
+
+Add a line to the above code block that estimates the population standard deviation using the SD from your sampling exercises above. Comper n=5, n=10, and n=50 with iter=10k. How do your estimates vary?
+
+<!-- YOUR ANSWER HERE -->
+
+

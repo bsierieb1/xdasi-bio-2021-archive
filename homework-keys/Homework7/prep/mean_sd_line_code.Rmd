@@ -1,0 +1,97 @@
+---
+title: "Mean, Standard Deviation, and Standard Error on Line Graphs"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
+
+# Assignment
+
+The paper ["Stoichiometric interactions explain spindle dynamics and scaling across 100 million years of nematode evolution (Farhadifar et al., 2020)"](https://elifesciences.org/articles/55877#content), explores spindle dynamics in *C. elegans* using a combination of imaging methods and QTL mapping of intercross lines.
+The authors use line graphs in figure 3 e,f:
+
+![Figure 3](Mean_sd.png){#id .class width=50% height=50%}
+
+In the paper ["Metabolic competition in the tumor microenvironment is a driver of cancer progression (Chang et al., 2015)"](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4864363/) the authors use mouse models to demonstrate that in cancers, T cells are metabolically restricted by tumor glucose consumption, ulimately allowing tumor progression. 
+the authors use line graphs in figure 4b:
+
+![Figure 4](Mean_SEM.png){#id .class width=75% height=75%}
+
+
+
+1. What questions were the researchers trying to answer in Farhadifar, et al, figure 3?      
+    + What data is being plotted?   
+    + What do the shaded areas represent?
+
+2. What questions were the researchers trying to answer in Chang, et al, figure 4?      
+    + What data is being plotted?   
+    + What do the error bars represent?  
+    
+3. What is the difference between the standard error (SEM) of the mean and standard deviation?  
+
+4. Which graphical representation do you prefer? (Shaded area or error bars)
+
+5. How would you calculate the SEM of standard deviation in R?
+
+6. How would you plot a similar graph in R? The dataset "mean_sd_data.csv" contains eight replicates each of a treatment and condition. Using this dataset:
+
+  + calculate the mean, standard deviation, and standard error of the mean (SEM)
+  + use a line graph to plot the mean and SEM, with a shaded area representing the SEM
+  + use a line graph to plot the mean and standard deviation, with error bars representing the standard deviation
+  
+```{r}
+
+library(ggplot2)
+library(dplyr)
+
+mean_sd_data <- as.data.frame(read.csv("mean_sd_data.csv"))
+
+mean_sd_data<-mean_sd_data %>%
+  group_by(TREATMENT, time) %>%
+  summarise(mean= mean(Values), se=sd(Values)/sqrt(length(Values)), sd=sd(Values))
+
+mean_sd_data$se_upper<- mean_sd_data$mean + mean_sd_data$se
+mean_sd_data$se_lower<- mean_sd_data$mean - mean_sd_data$se
+mean_sd_data$sd_upper<- mean_sd_data$mean + mean_sd_data$sd
+mean_sd_data$sd_lower<- mean_sd_data$mean - mean_sd_data$sd
+
+mean_sd_plot_se<- ggplot(mean_sd_data, aes(x =time, y = mean, color = TREATMENT))+
+  geom_line() +
+  xlab("Time [s]")+
+  ylab("Values")+
+  theme(panel.background=element_blank(), 
+        strip.background = element_blank(),
+        strip.placement = "outside",
+        panel.border=element_rect(colour="black",fill=NA),
+        legend.title = element_blank(),
+        legend.position="bottom", 
+        legend.direction="horizontal")  +
+  geom_ribbon(aes(ymin=se_lower,ymax=se_upper, fill= TREATMENT),alpha=0.3, linetype = 0) 
+
+
+mean_sd_plot_se
+
+mean_sd_plot_sd<- ggplot(mean_sd_data, aes(x =time, y = mean, color = TREATMENT))+
+  geom_line() +
+  xlab("Time [s]")+
+  ylab("Values")+
+  theme(panel.background=element_blank(), 
+        strip.background = element_blank(),
+        strip.placement = "outside",
+        panel.border=element_rect(colour="black",fill=NA),
+        legend.title = element_blank(),
+        legend.position="bottom", 
+        legend.direction="horizontal")  +
+  geom_errorbar(aes(ymin=sd_lower,ymax=sd_upper, color= TREATMENT), width=5) 
+
+
+mean_sd_plot_sd
+
+```
+    
+    
+
+    
