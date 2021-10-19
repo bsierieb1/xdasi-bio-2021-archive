@@ -47,7 +47,7 @@ nav_exclude: false
 
 + **Class notes**
   + **Pathway Commons primer: Fisher's Exact Test** - [HTML](https://www.pathwaycommons.org/guide/primers/statistics/fishers_exact_test/){:target="blank"} - [PDF](Class2/FisherExactTest-PathwayGuide.pdf)
-  + [**Hypergeometric distribution (updated)**](Class2/W7.C2-Notes-Hypergeometric_Distribution_v2.html){:target="blank"}
+  + **Hypergeometric distribution (updated)** - [HTML](Class2/W7.C2-Notes-Hypergeometric_Distribution_v2.html){:target="blank"} - [PDF](Class2/W7.C2-Notes-Hypergeometric_Distribution_v2.pdf)
 
 </details>
 

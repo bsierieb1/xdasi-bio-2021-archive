@@ -3,12 +3,12 @@ title: "Hypergeometric Distribution"
 subtitle: "XDASI Fall 2021"
 date: "10/14/2021"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: 2
   html_document:
     toc: yes
     toc_float: yes
-    toc_depth: 2
-  pdf_document:
-    toc: yes
     toc_depth: 2
 ---
 
@@ -62,7 +62,7 @@ remaining number of individuals to choose from.
 
 The hypergeometric PDF is defined as:
 
-$$ f(x) = P(X = x) = \frac{{B \choose x}*{N-B \choose A-x}}{N \choose A}$$
+$$ f(x) = P(X = x) = \frac{\binom{B}{x} \binom{N-B}{A-x}} {\binom{N}{A}}$$
 
 where:
 
@@ -191,9 +191,9 @@ Since both methods enumerate all possible combinations of outcomes at least as e
 
 Fisher's test gives the added benefit of providing a 95%CI and an odds ratio.
 
-## Should I use `pyhper` or `fisher.test`?
+## Which test should I use?
 
-Since they give the same result, it doesn't really matter, unless you wish to report confidence intervals or odds ratios. However, `phyper` is implemented in a slightly more efficient manner. You can see this by comparing the execution times of the two commands (though in this case the practical effect is trivial):
+Since `pyhper` or `fisher.test` give the same $p$-value, it doesn't really matter, unless you wish to report confidence intervals or odds ratios. However, `phyper` is implemented in a slightly more efficient manner. You can see this by comparing the execution times of the two commands (though in this case the practical effect is trivial):
 
 ```{r results=FALSE}
 start.time.phyper = Sys.time()
