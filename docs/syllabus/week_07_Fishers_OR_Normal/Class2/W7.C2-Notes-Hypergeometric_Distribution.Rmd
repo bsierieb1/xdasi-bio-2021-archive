@@ -28,7 +28,7 @@ In our field, probably the most common application of the hypergeometric distrib
 To test this, we need to ask whether the observed overlap is different from what we would
 expect if we picked the same number of genes at random from the genome. What would this be? We can use set theory to figure this out. Let's visualize the problem:
 
-![**Overlap between two sets of genes in the genome**](Images/hypergeometric.png){width=40%}
+![**Overlap between two sets of genes in the genome**](Images/hypergeo_GO_example.png){width=40%}
 
 Our question is whether the overlap between the two sets of genes is greater than (or less than) expected by chance. Under independence, we know that:
 
@@ -74,7 +74,7 @@ The components of the equation are:
 + $\binom{N - M}{n - x}$: the number of ways to get ($A\ \ NOT\ \ B$) out of ($N\ \ NOT\ \ B$) items 
 + $\binom{N}{n}$: the number of ways to get $A$ out of $N$ items
 
-![**Hypergeometric formula**](Images/hyper_choose.png){width=50%}
+![**Hypergeometric formula**](Images/hypergeo_eqn_picto.png){width=50%}
 
 ## Hypergeometric test
 
