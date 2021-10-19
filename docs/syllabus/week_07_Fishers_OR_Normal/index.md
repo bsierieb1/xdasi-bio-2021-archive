@@ -46,8 +46,8 @@ nav_exclude: false
 ### Fisher's Exact Test and the Hypergeometric Distribution
 
 + **Class notes**
-  + **Pathway Commons primer: Fisher's Exact Test** - [HTML](https://www.pathwaycommons.org/guide/primers/statistics/fishers_exact_test/){:target="blank"} - [PDF](Class2/FisherExactTest-PathwayGuide.pdf)
-  + **Hypergeometric distribution (updated)** - [HTML](Class2/W7.C2-Notes-Hypergeometric_Distribution_v2.html){:target="blank"} - [PDF](Class2/W7.C2-Notes-Hypergeometric_Distribution_v2.pdf)
+  + **Pathway Commons primer: Fisher's Exact Test** - [HTML](https://www.pathwaycommons.org/guide/primers/statistics/fishers_exact_test/){:target="blank"} - [PDF](Class2/FisherExactTest-PathwayGuide.pdf){:target="blank"}
+  + **Hypergeometric distribution (updated)** - [HTML](Class2/W7.C2-Notes-Hypergeometric_Distribution_v2.html){:target="blank"} - [PDF](Class2/W7.C2-Notes-Hypergeometric_Distribution_v2.pdf){:target="blank"}
 
 </details>
 
