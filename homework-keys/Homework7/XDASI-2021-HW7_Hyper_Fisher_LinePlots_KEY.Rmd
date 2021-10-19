@@ -198,7 +198,6 @@ The paper [***Stoichiometric interactions explain spindle dynamics and scaling a
 ### b) Panels C and D
 
 About how many data points are there for each line? What do the error bars represent? Would you change anything about the way the data are represented?
-
 ```{r eval=FALSE}
 # your answer here (2-3 sentences)
 ```
@@ -217,6 +216,7 @@ What is being plotted? What do the shaded areas represent, and why do you think 
 # your answer here (~2-3 sentences)
 ```
 
+_Here the authors are trying to show how much variation they see both within and between WT and RNAi-treated embryos. They use ribbons because the measurements are relatively continuous (they probably image every second but I didn't look for this information in the Methods). I presume that they show SD here since they are trying to illustrate that the spindle movements are highly stereotypic in the two conditions (so their RNAi is good; presumably they did this on more than one day, but I don't know.) Since SEM is a lot smaller than SD, SEM ribbons would be even thinner._
 
 ## 5) Line plots with SD or SEM
 
