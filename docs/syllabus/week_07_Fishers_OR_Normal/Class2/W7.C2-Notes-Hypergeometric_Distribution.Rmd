@@ -55,7 +55,7 @@ remaining number of individuals to choose from.)
 
 The PDF is defined as:
 
-$$ f(x) = P(X = x) = {M \choose x}{N - M \choose n - x}\bigg/{N \choose n} $$
+$$ f(x) = P(X = x) = \frac{{M \choose x}{N - M \choose n - x}}{N \choose n} $$
 
 where:
 

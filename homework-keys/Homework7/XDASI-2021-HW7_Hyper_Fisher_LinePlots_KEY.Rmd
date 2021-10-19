@@ -198,9 +198,17 @@ The paper [***Stoichiometric interactions explain spindle dynamics and scaling a
 ### b) Panels C and D
 
 About how many data points are there for each line? What do the error bars represent? Would you change anything about the way the data are represented?
+
 ```{r eval=FALSE}
 # your answer here (2-3 sentences)
 ```
+
+_The RIAIL panel contains **208** recombinant inbred advanced intercross lines. These were generated from a cross between the laboratory strain, N2, and a wild isolate from Hawaii, CB4856. The reference is: Rockman et al., Selection at Linked Sites Shapes Heritable Phenotypic Variation in C. elegans. Science (2010) | DOI: 10.1126/science.1194208_
+
+_The error bars represent SEMs for the final spindle length given the cell length associated with QTL1 and QTL2, grouped by the ancestral allele at each locus (N2 or CB4856). The SNPs have opposite effects on the final spindle length._
+
+_The graphs are designed to help the reader distinguish the differences between the two alleles, even though there is a lot of variation. Since these are individual lines, you wouldn't want to show SD, but you could show 95% CIs (however they wouldn't look as pretty!)_
+
 
 ### c) Panels E and F
 
