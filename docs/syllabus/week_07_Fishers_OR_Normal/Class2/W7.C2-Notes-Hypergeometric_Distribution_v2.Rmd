@@ -62,7 +62,7 @@ remaining number of individuals to choose from.
 
 The hypergeometric PDF is defined as:
 
-$$ f(x) = P(X = x) = \frac{{B \choose x}{N-B \choose A-x}}{N \choose A}$$
+$$ f(x) = P(X = x) = \frac{{B \choose x}*{N-B \choose A-x}}{N \choose A}$$
 
 where:
 
