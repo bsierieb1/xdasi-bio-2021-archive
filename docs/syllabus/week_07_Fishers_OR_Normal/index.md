@@ -5,7 +5,7 @@ has_children: false
 nav_exclude: false
 ---
 
-# Week 7: Title
+# Week 7: Relative Risk, Odds Ratios, and Fisher's Exact Test
 {: .no_toc }
 
 <details closed markdown="block">
@@ -40,10 +40,10 @@ nav_exclude: false
 
 # Class - Thursday, Oct. 14
 
+### Fisher's Exact Test and the Hypergeometric Distribution
+
 <details closed markdown="block">
   <summary>Details</summary>
-
-### Fisher's Exact Test and the Hypergeometric Distribution
 
 + **Class notes**
   + **Pathway Commons primer: Fisher's Exact Test** - [HTML](https://www.pathwaycommons.org/guide/primers/statistics/fishers_exact_test/){:target="blank"} - [PDF](Class2/FisherExactTest-PathwayGuide.pdf){:target="blank"}
@@ -55,11 +55,15 @@ nav_exclude: false
 
 <!-- ########################################################################### -->
 
-<!-- # Recitation - Friday, Oct. 15
+# Recitation - Friday, Oct. 15
+
+### For Loops
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
+Today we learned how to write for loops and how to use the apply family of functions as an alternative to loops.
+
+</details>
 
 <!-- ########################################################################### -->

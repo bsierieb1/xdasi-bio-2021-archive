@@ -5,7 +5,7 @@ has_children: false
 nav_exclude: false
 ---
 
-# Week 8: Title
+# Week 8: Normal, t, Poisson, and Exponential Distributions
 {: .no_toc }
 
 <details closed markdown="block">
