@@ -1,8 +1,10 @@
 ---
-title: "Exercise: Exponential and Poisson"
-subtitle: "XDASI Fall 2021"
+title: 'Exercise: Exponential and Poisson'
+subtitle: XDASI Fall 2021
 date: "10/21/2021"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -17,7 +19,7 @@ For some animals, like lizards (or hydra), their mortality rate is independent o
 $\Rightarrow$ ***What is the expected number of deaths per year?***
 
 ```{r}
-# Poisson: E(X) = SD(X) = lambda = 0.05
+# Poisson: E(X) = SD(X) = lambda = 0.05 per month
 0.05 * 12
 ```
 
@@ -25,7 +27,7 @@ $\Rightarrow$ ***What is the expected number of deaths per year?***
 $\Rightarrow$ ***What is the expected lifespan of one of these lizards?*** (In other words, this is the typical "wait time" until one death occurs?)
 
 ```{r}
-# Exponential: E(X) = SD(X) = 1/lambda = 20 months.
+# Exponential: E(X) = SD(X) = 1/lambda = 20 months
 1/0.05
 ```
 
@@ -54,7 +56,11 @@ dpois(0, lambda = mu) # same, since just one value for x
 
 $\Rightarrow$ ***What is the probability an animal will survive 20 months or less?***
 
-Hinte: This is given by the CDF.
+Hint:
+
++ This is given by the lower-tail CDF of the exponential distribution
++ This is equivalent to the upper-tail CDF of the Poisson distribution.
+
 
 $$ P(X \le 20) = 1 - e^{-0.05*20} = 1 - 0.3679 = 0.6321 $$
 

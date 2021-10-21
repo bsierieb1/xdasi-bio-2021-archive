@@ -38,11 +38,14 @@ nav_exclude: false
 
 # Class - Thursday, Oct. 21
 
-## Poisson and Exponential Distributions
+## One-sample t-tests; Poisson and Exponential Distributions
 
 <details closed markdown="block">
   <summary>Details</summary>
 
++ **t-tests**: [**Exercise** (zipped RMD)](Class2/W8.C2-Exercise_t-tests.Rmd.zip)
+
++ **Poisson and Exponential**
   + [**Class notes**](Class2/W8.C2-Notes-Poisson_Exponential.html){:target="blank"}
   + [**Exercise** (zipped RMD)](Class2/W8.C2-Exercise_Exp_Pois.Rmd.zip)
 
