@@ -1,0 +1,69 @@
+---
+title: "Exercise: Exponential and Poisson"
+subtitle: "XDASI Fall 2021"
+date: "10/21/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Example: Lizard mortality
+
+For some animals, like lizards (or hydra), their mortality rate is independent of their age. Over an extended trip to Costa Rica, you studied a large population of lizards and found that their rate of mortality is $\lambda$ = 0.05 deaths per month.
+
+$\Rightarrow$ ***What is the expected number of deaths per year?***
+
+```{r}
+
+```
+
+
+$\Rightarrow$ ***What is the expected lifespan of one of these lizards?*** (In other words, this is the typical "wait time" until one death occurs?)
+
+```{r}
+
+```
+
+
+$\Rightarrow$ ***What is the probability an animal will survive more than 20 months?*** 
+
+Hint: 
+
++ This is given by the the exponential survivorship function.
++ Alternatively, it is given by the lower-tail Poisson probability (use $\mu$ formulation).
+
+```{r, collapse = T}
+# with exponential
+
+# with Poisson
+
+```
+
+$\Rightarrow$ ***What is the probability an animal will survive 20 months or less?***
+
+Hint: 
+
++ This is given by the lower-tail CDF of one distribution, and the upper-tail CDF of the other distribution.
+
+```{r, collapse = T}
+# using exponential
+
+# using poisson
+
+```
+
+
+$\Rightarrow$ ***What is the probability an animal will survive between 10 and 15 months?*** 
+
+Hint: 
+
++ To get the total probability across an interval, we subtract the total probability of the lower value from that of the higher value.
++ We can't answer this with Poisson, since can only vary # events (not time)!
+
+```{r, collapse = T}
+
+```
+
