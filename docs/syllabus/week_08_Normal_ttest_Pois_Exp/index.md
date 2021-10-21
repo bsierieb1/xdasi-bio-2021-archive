@@ -23,7 +23,7 @@ nav_exclude: false
 
 # Class - Monday, Oct. 18
 
-## Normal Distribution and t-Distribution
+### Normal Distribution and t-Distribution
 
 <details closed markdown="block">
   <summary>Details</summary>
@@ -38,7 +38,7 @@ nav_exclude: false
 
 # Class - Thursday, Oct. 21
 
-## One-sample t-tests; Poisson and Exponential Distributions
+### One-sample t-tests; Poisson and Exponential Distributions
 
 <details closed markdown="block">
   <summary>Details</summary>
