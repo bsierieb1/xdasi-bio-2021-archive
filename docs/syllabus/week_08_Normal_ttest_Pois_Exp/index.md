@@ -55,11 +55,13 @@ nav_exclude: false
 
 <!-- ########################################################################### -->
 
-<!-- # Recitation - Friday, Oct. 22
+# Recitation - Friday, Oct. 22
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
+[**Data**](Recitation/Data_Cortex_Nuclear_trimmed.csv)
+
+</details>
 
 <!-- ########################################################################### -->
