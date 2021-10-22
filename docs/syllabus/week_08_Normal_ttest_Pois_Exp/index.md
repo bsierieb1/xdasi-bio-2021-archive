@@ -65,7 +65,7 @@ nav_exclude: false
 + [**Data**](Recitation/Data_Cortex_Nuclear_trimmed.csv)
   + [**Final code**](Recitation/W8.R1_Exercise_IfElseAndOrGrep.R.zip)
 
-[More on Regular Expressions](https://rstudio-pubs-static.s3.amazonaws.com/74603_76cd14d5983f47408fdf0b323550b846.html)
+[More on Regular Expressions](https://rstudio-pubs-static.s3.amazonaws.com/74603_76cd14d5983f47408fdf0b323550b846.html){:target="blank"}
 
 </details>
 
