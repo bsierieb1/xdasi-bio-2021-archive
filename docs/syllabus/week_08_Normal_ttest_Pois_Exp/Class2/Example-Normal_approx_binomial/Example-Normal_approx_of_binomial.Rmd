@@ -3,8 +3,8 @@ title: "Continuity correction for normal approximation of the binomial"
 author: "Kris Gunsalus"
 date: "10/18/2021"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -37,7 +37,7 @@ sd.binom
 The general rule of thumb is that we can use the normal approximation if $np \ge 5$ and $n(1-p) \ge 5$.
 Since $np > 5$, we can go ahead and use this approximation.
 
-Let's take a large number of samples from this distribution draw a histogram of the results. Then we will add a line that shows a normal approximation with a normal approximation overlaid on top:
+Let's take a large number of samples from this distribution draw a histogram of the results. Then we will add a line that shows a normal approximation overlaid on top:
 
 ```{r}
 # sample from a binomial

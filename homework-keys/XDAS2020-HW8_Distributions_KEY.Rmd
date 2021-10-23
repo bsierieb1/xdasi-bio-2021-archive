@@ -1,0 +1,448 @@
+---
+title: "XDAS2020 HW8: Distributions"
+author: "Yoshinori Ohsumi"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 3
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error=TRUE, tidy.opts=list(width.cutoff=80), tidy=TRUE)
+
+# Load libraries
+require(ggplot2)
+require(reshape2)
+require(scales)
+require(dplyr)
+```
+
+## Review
+
+- Aho Chapter 3 (discrete and continuous distributions)
+- Lecture notes on distributions, dqpr functions
+
+
+## Q1: Poisson distribution
+
+A relatively new technique in systems biology is single-cell sequencing. Tiny nanoliter droplets are created using microfluidics that contain an individual cell and a bead which has a molecular barcode, used to uniquely label transcripts from that cell.
+
+```{r echo=FALSE, out.width = '100%'}
+knitr::include_graphics("McCarroll_DropSeq.gif")
+```
+
+
+#### a. Rate of cells per droplet
+
+The volume of each droplet is 0.5 nanoliter. Cells are present at a constant concentration of 100 cells per microliter. What is the rate of cells included per droplet? (Hint: Remember to convert units!!!)
+
+```{r}
+# Calculate the rate of the event (a cell being present in a droplet)
+# Convert ul to nl: (100/ul)/(1000/nl) = 0.1
+cell.droplet.rate <- 0.1 * 0.5
+print(paste("Rate is", cell.droplet.rate, "cells per 0.5 nanoliter droplet"))
+```
+
+
+#### b. Probability mass function
+
+Plot the PMF for the Poisson distribution using this rate (the PMF is a PDF for a discrete distribution):
+
++ First, generate the PMF.
++ Then, make a data frame with two columns containing the number of cells and the PMF data.
++ Finally, use `ggplot` to plot the PMF vs. the number of cells.
+
+```{r}
+
+# Calculate the probability mass function (across a range of 0:10 is sufficient)
+cell.droplet.pmf <- dpois(0:10, cell.droplet.rate)
+
+# Check the sum of the probability mass function
+cell.droplet.pmf.sum <- sum(cell.droplet.pmf)
+print(cell.droplet.pmf.sum)
+
+# Create a data.frame with the data
+cell.droplet.pmf.df <- data.frame(PMF = cell.droplet.pmf,  # the pmf data
+                                  N_Cells = 0:10)          # the range vector
+
+# Make a density plot with the number of cells (x-axis) and PMF (y-axis).
+# NOTE: ggplot evaluates the values of the x and y parameters as variables, so
+#       the column names below should NOT be enclosed in quotes.
+cell.droplet.pmf.plot <- ggplot(cell.droplet.pmf.df, # the data.frame
+                                aes(x=N_Cells,       # the column to plot on the x-axis
+                                    y=PMF)           # the column to plot on the y-axis
+                                ) +
+  theme_classic() +
+  geom_line() +
+  # Use the `pretty_breaks()` function from the scales package to make the X-axis cleaner
+  scale_x_continuous(breaks=pretty_breaks())
+
+print(cell.droplet.pmf.plot)
+```
+
+
+#### c. PMF for different concentrations
+
+The experimentalist can control the concentration of cells in this experiment. Plot probability mass functions for experiments with 100 cells / microliter, 1000 cells / microliter, and 2000 cells / microliter. 
+
+```{r}
+
+# Calculate the probability mass function (across a range of 0:10 is sufficient)
+cell.droplet.pmf.n100 <- dpois(0:10, 0.1 * 0.5)
+cell.droplet.pmf.n1000 <- dpois(0:10, 1 * 0.5)
+cell.droplet.pmf.n2000 <- dpois(0:10, 2 * 0.5)
+
+# Create a data.frame with one column for each dataset and one for the range vector
+q1c.data.frame <- data.frame(n100 = cell.droplet.pmf,
+                             n1000 = cell.droplet.pmf.n1000,
+                             n2000 = cell.droplet.pmf.n2000,
+                             N_Cells = 0:10)
+
+# look at the first few lines of the data.frame
+head(q1c.data.frame)
+
+# Melt the dataframe for ggplot to convert the data to "long" format
+# This allows us to group the data by Concentration for plotting
+# Specify the column names:
+#   'id.vars'       : row identifier; independent variable (will plot on x-axis)
+#   'value.name'    : data value; the dependent variable   (will plot on y-axis)
+#   'variable.name' : 'variable' to which datapoints belong; here, the datasets
+q1c.data.frame.melted <- melt(q1c.data.frame,                  # data.frame
+                              id.vars = "N_Cells",             # x-axis
+                              value.name = "Probability",      # y-axis
+                              variable.name = "Concentration") # datasets (plot key)
+
+# look at the first few lines of the melted data frame
+head(q1c.data.frame.melted)
+
+# Make a density plot, using Concentration as the key to color the three datasets.
+# Note that we pass the groupings for the display to ggplot using the 'color' parameter.
+q1c.plot <- ggplot(q1c.data.frame.melted, 
+                   aes(x=N_Cells, y=Probability, color=Concentration)) +
+  theme_classic() +
+  geom_line() +
+  scale_x_continuous(breaks=pretty_breaks())
+print(q1c.plot)
+```
+
+
+#### d. Expectation values
+
+Each experiment produces 1e6 (a million) droplets. Plot the expected number of droplets with exactly one cell for each experimental concentration.
+
+```{r}
+
+# Select only the data where N_Cells is 1 from the melted data frame
+q1d.data.frame.melted <- filter(q1c.data.frame.melted, N_Cells == 1)
+
+# Using the *computed probabilities* and *the total number of droplets per experiment*,
+# add a column named 'Expected_Droplets' with the expected number of droplets
+# to 'q1d.data.frame.melted'
+q1d.data.frame.melted$Expected_Droplets <- q1d.data.frame.melted$Probability * 1e6
+
+# Plot the data as a bar plot
+q1d.plot <- ggplot(q1d.data.frame.melted, 
+                   aes(x=Concentration, y=Expected_Droplets, fill=Expected_Droplets)) +
+  theme_classic() +
+  geom_col()
+print(q1d.plot)
+```
+
+$\Rightarrow$ ***Which concentration produces the largest number of droplets with one cell? Why might this be?***
+
+<!-- ENTER YOUR ANSWER BELOW -->
+2000 cells / microliter gives the largest number of droplets with exactly one cell. 
+
+
+#### e. Minimizing doublets
+
+The optimal cell concentration maximizes the number of droplets with a single cell and minimizes the rate of 'doublets', which have 2 or more cells in a single droplet. Plot the number of droplets that have 1 cell and the number that have 2+ cells for each experimental concentration.
+
+```{r}
+
+# Select the rows where N_Cells is > 1 from the melted data frame you created in Q1c.
+q1e.data.frame.melted <- q1c.data.frame.melted[q1c.data.frame.melted$N_Cells > 1,]
+
+# Calculate the *sum of the probabilities* for all N_Cells > 1 for each concentration.
+n100.probability <- sum(q1e.data.frame.melted[q1e.data.frame.melted$Concentration == "n100", "Probability"])
+n1000.probability <- sum(q1e.data.frame.melted[q1e.data.frame.melted$Concentration == "n1000", "Probability"])
+n2000.probability <- sum(q1e.data.frame.melted[q1e.data.frame.melted$Concentration == "n2000", "Probability"])
+
+# Create a new data.frame containing just the probabilities for N_Cells > 1.
+# This will be in "melted" format since it is a subset of a melted data.frame.
+# The data frame will have 3 rows for the 3 concentrations and their probabilities. 
+q1e.data <- data.frame(Concentration=c("n100", "n1000", "n2000"),
+                       Probability=c(n100.probability, 
+                                     n1000.probability, 
+                                     n2000.probability),
+                       N_Cells="2+") 
+
+# Add a column called 'Expected_droplets' with the *expected number of droplets* 
+# containing 2+ cells per experiment (Recall that each expermeint has 1 million cells)
+q1e.data$Expected_Droplets <- q1e.data$Probability * 1e6
+
+# Row bind the data for N_Cells == 1 and N_Cells > 1
+# (add the data in 'qe1.data' as rows to 'q1d.data.frame.melted')
+q1e.plot.data <- rbind(q1d.data.frame.melted, q1e.data)
+
+# Plot the data as a bar plot
+q1e.plot <- ggplot(q1e.plot.data, 
+                   aes(x=Concentration, y=Expected_Droplets, fill=N_Cells)) +
+  theme_classic() +
+  geom_col(position="dodge") # plot side-by-side
+print(q1e.plot)
+```
+
+$\Rightarrow$ _**Which experimental concentration has the lowest doublet rate? Which concentration would you choose for your experiment?**_
+
+<!-- ENTER YOUR ANSWER BELOW -->
+The 100 cells / microliter concentration has the lowest doublet rate. Even though you get a lot more droplets with one cell/ul at 1000 or 2000 cells, the rate of doublets is also higher. Since the goal is to minimize doublets, we will take a hit in total droplets with 1 cell. This tradeoff is worth it because otherwise we will not be able to deconvolute the data.
+
+
+#### f. Why the Poisson?
+
+$\Rightarrow$ ***In no more than one paragraph (5 sentences), explain why modeling this problem with the Poisson distribution was an appropriate choice.***
+
+<!-- ENTER YOUR ANSWER BELOW -->
+The Poisson distribution measures the number of events that occur in a fixed interval if the rate of events occurring is known. The event is a cell being included in a droplet, concentration is the known rate of events occurring, and the droplet size is a fixed interval.
+
+
+#### g. Chi-square goodness-of-fit test
+
+Above, we simulated idealized data for this experiment for the purposes of illustration. If we could optically measure the number of cells per droplet in an actual experiment, then we could see whether the data actually fit the expected distribution.
+
+Let's sample some data from a Poisson distribution with the same parameters and compare it to the ideal data to see if they come from the same distribution. (Of course we expect that they will in this case, but knowing how to do this may come in handy in the future.)
+
+```{r}
+
+# generate a sample of 1 million cells from a Poisson distribution with the expected
+# rate constant for the n100 data
+sample.rpois = rpois(1e6, lambda=cell.droplet.rate)
+head(sample.rpois)
+
+# make a frequency table from the data
+sample.rpois.table = table(sample.rpois)
+sample.rpois.table
+
+
+# combine the sampled and ideal data into a matrix
+#   row 1 = frequency table for sample data
+#   row 2 = probability vector for ideal PMF
+
+# NOTE: the length of the sample table might not always be the same
+# and will certainly be shorter than the length of the probability vector you made
+# So you need to truncate it just to be sure 
+chisq.data = rbind(sample.rpois.table,
+                   q1c.data.frame$n100[1:length(sample.rpois.table)])
+chisq.data
+
+# do the chi-squared test
+chisq.test( chisq.data )
+
+
+# you could also do the test by comparing two frequency vectors
+#   (multiply the probabilities by 1 million to get comparable numbers, and
+#    then round off to get integers)
+chisq.data2 = rbind(sample.rpois.table,
+                    round(q1c.data.frame$n100[1:length(sample.rpois.table)] * 1e6))
+chisq.data2
+
+# now do the chi-squared test with the new matrix
+chisq.test( chisq.data2 )
+
+# make a plot to compare these visually
+barplot(chisq.data2, beside=T, 
+        col=c("aquamarine3","coral"))
+legend("topright", c("Observed","Expected Poisson"), pch=15, 
+       col=c("aquamarine3","coral"), 
+       bty="n")
+
+```
+
+$\Rightarrow$ ***How do your sampled data compare to the ideal data in the Chi-squared test? Why would the two p-values not be the same?***
+
+<!-- ENTER YOUR ANSWER BELOW -->
+The sampled data certainly fit the expected distribution. P-values are not the same because the resolution of the test is lower when comparing the probabilities, since they are so small.
+
+
+## Q1.5: Create a `ggplot` function to print density plots
+
+This question is like Platform 9 and 3/4 from Harry Potter. It's not a real question, but you'll need it to get where you are going. ;-)
+
+Notice that in Q1b and Q1c we used almost the same `ggplot` function to generate line plots. We are going to be doing a lot of the same below, so let's make our life a little easier by wrapping this in our own function, so we don't need to keep repeating the same code again and again. This will make our code look a little cleaner, and probably save us from spending extra time fixing up typos.
+
+```{r}
+# ----------------------------------------------------------------------------------- #
+# Function 'print.density.plot': create and print a density plot
+#
+# Parameters:
+#  - df: a data frame object
+#  - x: a string, the name of the df column to plot on the x-axis
+#  - y: a string, the name of the df column to plot on the y-axis (default="PMF")
+#  - group.by: an optional 'color' parameter for plotting >1 dataset
+#
+# Use the `pretty_breaks()` function from the scales package to make the X-axis cleaner
+# ----------------------------------------------------------------------------------- #
+# NOTE: Below we use the ggplot function 'aes_string', which accepts quoted strings
+#   instead of evaluating column names as variables directly (as does 'aes' above).
+#   This is really useful when you do not know in advance what the column names will be!
+# ----------------------------------------------------------------------------------- #
+print.density.plot <- function(df, x, y="PMF", group.by) {
+  my.plot = NULL  # initialize the plot variable
+
+  # make a simple x-y plot
+  if (missing(group.by)) {
+    my.plot = ggplot(df, aes_string( x = x, y = y ) ) +
+                     theme_classic() +
+                     geom_line() +
+                     scale_x_continuous(breaks=pretty_breaks())
+  }
+  
+  # if we get passed a 'group.by' parameter for the 'color' aesthetic, use it
+  else {
+    my.plot = ggplot(df, aes_string( x = x, y = y, color = group.by ) ) +
+                     theme_classic() +
+                     geom_line() +
+                     scale_x_continuous(breaks=pretty_breaks())
+  }
+
+  print(my.plot)  # now print it!
+}
+# ----------------------------------------------------------------------------------- #
+```
+
+
+## Q2: Negative Binomial distribution
+
+Expression of many genes is controlled at the translational level. One example is the stress response gene ATF4. In unstressed conditions, ribosomes bind to an ATF4 transcript at the 5' end, and then translate an upstream Open Reading Frame (uORF), which is a short sequence that does not produce functional protein. 
+
+At the stop codon of this uORF, in unstressed conditions, the ribosome dissociates from the transcript **98% of the time**. If the ribosome does not dissociate, it re-initiates translation and produces a functional ATF4 protein.
+
+#### a. Probability mass function
+
+Recall that the negative binomial PMF describes the probability of $r$ 'successes' after $x$ 'failures.' The random variable for this distribution is $X_r$, the number of unsuccessful trials before getting a desired number of successes.
+
+$\Rightarrow$ ***What is the probability of 'success' in this experiment?***
+
+<!-- ENTER YOUR ANSWER BELOW -->
+The probability of success here is the probability that the ribosome will not dissociate, so $p=0.02$.
+
+
+Plot the PMF for the number of ribosomes that correctly dissociate from the ATF4 transcript before a ribosome erroneously produces **one functional ATF4 protein molecule**.
+
+```{r}
+
+# Create the NB probability mass function over the range 0:200.
+atf4.unstressed.pmf <- dnbinom(0:200, 1, 0.02)
+
+# Create a data.frame with the data.
+# The first column will contain the pmf data.
+# The second column will contain the range vector.
+atf4.unstressed.pmf.df <- data.frame(PMF = atf4.unstressed.pmf,
+                                     Correctly_Dissociated = 0:200)
+
+# Make a density plot using our cool function from Q1.5 (the pmf goes on the y-axis).
+# Note that we *pass column names to our function as strings* rather than as variable names.
+print.density.plot(df=atf4.unstressed.pmf.df, 
+                   x="Correctly_Dissociated", 
+                   y="PMF")
+```
+
+$\Rightarrow$ _**This particular NB example may also be modeled by another distribution we talked about in class. What is it, and why? Explain.**_
+
+<!-- ENTER YOUR ANSWER BELOW -->
+The geometric distribution is a special case of the negative binomial distribution where the number of successes is fixed at 1. 
+
+
+#### b. Activation rate for stress response
+
+Each ATF4 transcript must produce **10 functional ATF4 protein molecules** to activate the cellular stress response program. Here we will examine the _**rate of activation**_ of the cellular stress response program. 
+
+First, plot the PMF for the **NUMBER** of ribosome binding events that will occur before **10 functional ATF4 protein molecules** are made.
+
+```{r}
+
+# Create the probability mass function over the range 0:1000 (ribosome bindings)
+atf4.response.activation.pmf <- dnbinom(0:1000, 10, 0.02)
+
+# Create a data.frame with the data
+atf4.response.activation.pmf.df <- data.frame(PMF = atf4.response.activation.pmf, 
+                                              Ribosome_Bindings = 0:1000)
+
+# Make a density plot using our cool function from Q1.5 (the pmf goes on the y-axis).
+# We don't have to specify the parameter names explicitly, as long as we pass them in
+# the correct order! (df, x, y)
+print.density.plot(atf4.response.activation.pmf.df, 
+                   "Ribosome_Bindings", "PMF")
+```
+
+Ribosomes bind to the transcript at a rate of **1 every 10 seconds**. Plot the probability mass function for the number of **MINUTES** it will take to activate the cellular stress response program.
+
+```{r}
+
+# Add a Time column (in minutes) to this data frame.
+atf4.response.activation.pmf.df["Time"] <- atf4.response.activation.pmf.df["Ribosome_Bindings"] / 6
+
+atf4.response.activation.pmf.df$Time <- atf4.response.activation.pmf.df$Ribosome_Bindings / 6
+
+# Make a density plot of the TIME to activate the response (the pmf goes on the y-axis).
+# The function provides a default value for the function to plot on the y-axis (y="PMF"), 
+# so you don't even need to pass an argument for it unless you want to change it.
+print.density.plot(atf4.response.activation.pmf.df, "Time")
+```
+
+
+#### c. Post-translational regulation of ATF4
+
+ATF4 is also regulated post-translationally; it is degraded with a half-life of 20 minutes. 
+
+$\Rightarrow$ _**Do you expect that the cellular stress response program is likely to activate by chance, due to leakage through the regulatory mechanisms? If the protein was stable, how would your answer change? Answer qualitatively (do not create any additional mathematical models). Answer in no more than one paragraph (5 sentences).**_
+
+<!-- ENTER YOUR ANSWER BELOW -->
+The ATF4-mediated cellular stress response program is unlikely to occur by chance. The likelihood of producing 10 ATF protein molecules in 20 minutes is very low. If the protein was stable the ATF4 stress response program would occur after ~75 minutes.
+
+
+#### d. Regulation by signaling
+
+You add 4 micrograms per milliliter of tunicamycin to the culture, causing signalling pathways to phosphorylate eIF2alpha. 
+
+The ribosome now dissociates from the uORF 60% of the time and re-initiates to create a functional ATF4 protein 40% of the time. Plot the probability mass function for the **TIME** it takes to activate the stress response program in the presence of tunicamycin and in unstressed conditions (on the same plot).
+
+```{r}
+
+# Create the probability mass function over the range 0:1000 (ribosome bindings)
+# (It still takes 10 productive ATF protein molecules to activate the stress response)
+atf4.stress.response.activation.pmf <- dnbinom(0:1000, 10, 0.4)
+
+# Create a data.frame with the data for the stressed condition.
+# Ribosome_Bindings and Time will be numerical vectors.
+# Condition will be an appropriate category label for this condition.
+atf4.stress.response.activation.pmf.df <- data.frame(PMF = atf4.stress.response.activation.pmf, 
+                                                     Ribosome_Bindings = 0:1000,
+                                                     Time = 0:1000 / 6,
+                                                     Condition = "Tunicamycin")
+
+# Copy the unstressed data to a new data frame, and 
+# add a 'Condition' column for the unstressed condition.
+atf4.unstress.response.activation.pmf.df <- atf4.response.activation.pmf.df
+atf4.unstress.response.activation.pmf.df$Condition <- "Unstressed"
+
+# Row bind the unstressed and stressed data to create a full data set.
+q2d.combined.data <- rbind( atf4.unstress.response.activation.pmf.df,
+                            atf4.stress.response.activation.pmf.df )
+
+# Make a combined density plot using 'Time' as the independent variable.
+#   We will use ggplot's 'color' parameter as an aesthetic mapping for the 'Condition'.
+#   Our function passes this to 'ggplot' using its 'group.by' parameter.
+print.density.plot(q2d.combined.data, "Time", "PMF", group.by = "Condition")
+
+```
+
+#### e. Do you expect that the cell will activate the cellular stress response program now? Why or why not? Answer in no more than one paragraph (5 sentences).
+
+<!-- ENTER YOUR ANSWER BELOW -->
+Yes. The cell is highly likely to activate the stress response program now; it will most likely have produced enough ATF4 within 10 minutes. Since the half-life of the protein is 20 minutes, this is plenty of time to activate the stress response program.
