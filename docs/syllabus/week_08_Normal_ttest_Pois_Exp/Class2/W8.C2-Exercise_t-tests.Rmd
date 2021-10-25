@@ -48,11 +48,33 @@ First, load the data for the "population" in the file `placebo_pop.csv` and turn
 
 ```{r}
 # population data
+# simulate 1000 samples from a normal with the same parameters 
+Placebo_pop = rnorm(1000, mean = 50.482, sd = 2.693)
+head(Placebo_pop)
 
+# write to file
+# Placebo_pop = data.frame(value = Placebo_pop)
+# write.table(Placebo_pop, file = "placebo_pop.csv", row.names = FALSE, col.names = FALSE)
+
+# load from file
+# Placebo_pop = read.table("placebo_pop2.csv", header=FALSE)
+# Placebo_pop = Placebo_pop[,1]
+# head(Placebo_pop)
 
 # sample data
 Placebo = c(54,51,58,44,55,52,42,47,58,46)
 Drug = c(54,73,53,70,73,68,52,65,65,60)
+```
+
+
+
+## Sample vs. population parameters
+
+Compare the mean and SD of the Placebo population and the two samples. Do these look pretty different? Why?
+
+```{r}
+## check the parameters from the true population and the sample means
+
 ```
 
 
@@ -61,19 +83,13 @@ Drug = c(54,73,53,70,73,68,52,65,65,60)
 Draw a histogram of the population data to see and see where the two samples means fall relative to the control distribution. If you like, you can overlay a vertical line showing where the means of the sample distributions are relative to the population distribution.
 
 ```{r}
-## check the parameters from the true population and the sample means
-
-## visualize the results
-
-
-```
-
-## Sample vs. population parameters
-
-Compare the mean and SD of the Placebo population and the Placebo sample. Do these look pretty different? Why?
-
-```{r}
-
+## visualize the distribution and sample means
+hist(Placebo_pop, breaks=20, freq=FALSE, xlim = c(40,65))
+xfit = seq(40,65,length=100)
+yfit = dnorm(xfit,mean=mean(Placebo_pop),sd=sd(Placebo_pop))
+lines(xfit,yfit,col="blue",lwd = 2)
+abline(v = mean(Placebo), col="blue", lwd=2, lty=2)
+abline(v = mean(Drug), col="red", lwd=2, lty=2)  # off scale
 ```
 
 
@@ -92,21 +108,38 @@ Let's calculate the 95% CI for the mean of each population that the samples are 
 ```{r}
 ## t_critical: t-score for 97.5% area
 ## also need degrees of freedom for this distribution (length - 1)
+# range is from 2.5% to 97.5%
+# df = same for Placebo and Drug (9)
+t_0.975 = qt(p = 0.975, df = length(Placebo)-1)  # t-score corresponding to 97.5th percentile
+t_0.975
+n_0.975 = qnorm(p = 0.975)
+n_0.975
 
 # placebo SEM
-
+Pmean = mean(Placebo)
+Pse = sd(Placebo)/sqrt(length(Placebo))
+Pmean
+Pse
 
 # drug SEM
+Dmean = mean(Drug)
+Dse = sd(Drug)/sqrt(length(Drug))
+Dmean
+Dse
 
 
-# placebo and drug 95% CI
+# placebo 95% CI
+c( Pmean - Pse*t_0.975 , Pmean + Pse*t_0.975 )
+
+# drug 95% CI
+c( Dmean - Dse*t_0.975 , Dmean + Dse*t_0.975 )
 
 ```
 
 Using the rules of thumb given in your textbook, can you conclude by eye that the samples come from different populations? Why or why not?
 
 ```{r eval=FALSE}
-# your answer here
+# probably very significant b/c CI's do not overlap
 ```
 
 
@@ -120,9 +153,12 @@ Run a one-sample $t$-test for each sample against Placebo_pop. Do the samples lo
 
 ```{r}
 # Placebo sample
+Pt.test = t.test(Placebo, mu=mean(Placebo_pop))
+Pt.test
 
 # Drug sample
-
+Dt.test = t.test(Drug, mu=mean(Placebo_pop))
+Dt.test
 ```
 
 You can inspect the `t.test` object using `str()`; it's a list containing a bunch of information about the results of the $t$-test. 
@@ -133,7 +169,12 @@ Do this for both the Drug and the Placebo samples. Are these the same as what yo
 
 ```{r}
 # confidence intervals from t-tests
+#str(Pt.test)
+Pt.test$p.value
+Pt.test$conf.int
 
+t.test(Drug, mu=mean(Placebo_pop))$conf.int
+t.test(Drug, mu=mean(Placebo_pop))$p.value
 ```
 
 

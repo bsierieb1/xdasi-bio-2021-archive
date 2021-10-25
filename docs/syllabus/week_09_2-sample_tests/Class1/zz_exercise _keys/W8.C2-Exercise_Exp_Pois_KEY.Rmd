@@ -1,0 +1,89 @@
+---
+title: 'Exercise: Exponential and Poisson'
+subtitle: XDASI Fall 2021
+date: "10/21/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Example: Lizard mortality
+
+For some animals, like lizards (or hydra), their mortality rate is independent of their age. Over an extended trip to Costa Rica, you studied a large population of lizards and found that their rate of mortality is $\lambda$ = 0.05 deaths per month.
+
+$\Rightarrow$ ***What is the expected number of deaths per year?***
+
+```{r}
+# Poisson: E(X) = SD(X) = lambda = 0.05 per month
+0.05 * 12
+```
+
+
+$\Rightarrow$ ***What is the expected lifespan of one of these lizards?*** (In other words, this is the typical "wait time" until one death occurs?)
+
+```{r}
+# Exponential: E(X) = SD(X) = 1/lambda = 20 months
+1/0.05
+```
+
+
+$\Rightarrow$ ***What is the probability an animal will survive more than 20 months?*** 
+
+Hint: 
+
++ This is given by the the exponential survivorship function.
+
+$$P_{exp}(X > 20) = e^{-0.05*20} = 0.3679 $$
++ Alternatively, it is given by the lower-tail Poisson probability for $\mu = \lambda * t = 0.05 * 20$:
+
+$$P_{pois}(X = 0 ) = e^{-\lambda t}\frac{\lambda t^x}{x!} = e^{-\mu}\frac{\mu^x}{x!}$$
+
+```{r, collapse = T}
+# with exponential
+exp(-0.05*20)                       # manual calculation
+pexp(20, rate = 0.05, lower.tail=F) # with CDF
+
+# with Poisson: need to multiply units out to mu = lambda * t = 0.05/month * 20 months => 1 new unit
+mu = 0.05*20 # number of deaths in t=20 months
+ppois(0, lambda = mu, lower.tail=T)
+dpois(0, lambda = mu) # same, since just one value for x
+```
+
+$\Rightarrow$ ***What is the probability an animal will survive 20 months or less?***
+
+Hint:
+
++ This is given by the lower-tail CDF of the exponential distribution
++ This is equivalent to the upper-tail CDF of the Poisson distribution.
+
+
+$$ P(X \le 20) = 1 - e^{-0.05*20} = 1 - 0.3679 = 0.6321 $$
+
+```{r, collapse = T}
+1-exp(-0.05*20) # manual calculation
+pexp(20,0.05)   # with CDF
+
+ppois(0, lambda = mu, lower.tail=F) # P(no death > 20 months)
+```
+
+
+$\Rightarrow$ ***What is the probability an animal will survive between 10 and 15 months?*** 
+
+Hint: 
+
++ To get the total probability across an interval, we subtract the total probability of the lower value from that of the higher value.
++ We can't answer this with Poisson, since can only vary # events (not time)!
+
+
+$$ P(10 \le X \le 15) = (1 - e^{-0.05*15}) - (1 - e^{-0.05*10}) = e^{-0.05*10} - e^{-0.05*15} =  0.165 $$
+
+```{r, collapse = T}
+exp(-0.05*10) - exp(-0.05*15) # manual calculation
+pexp(15,0.05) - pexp(10,0.05) # with CDF
+```
+
