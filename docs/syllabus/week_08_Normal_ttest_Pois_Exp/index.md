@@ -44,6 +44,7 @@ nav_exclude: false
   <summary>Details</summary>
 
 + **t-tests**: [**Exercise** (zipped RMD)](Class2/W8.C2-Exercise_t-tests.Rmd.zip)
+  + *See Monday, Oct. 25 for updated exercise and answer key*
 
 + **Poisson and Exponential**
   + [**Class notes**](Class2/W8.C2-Notes-Poisson_Exponential.html){:target="blank"}
