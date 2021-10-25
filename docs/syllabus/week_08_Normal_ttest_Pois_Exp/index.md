@@ -47,7 +47,6 @@ nav_exclude: false
 
 + **Poisson and Exponential**
   + [**Class notes**](Class2/W8.C2-Notes-Poisson_Exponential.html){:target="blank"}
-  + [**Exercise** (zipped RMD)](Class2/W8.C2-Exercise_Exp_Pois.Rmd.zip)
 
 </details>
 

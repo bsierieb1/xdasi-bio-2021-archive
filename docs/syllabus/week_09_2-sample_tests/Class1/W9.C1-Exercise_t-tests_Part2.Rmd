@@ -1,0 +1,348 @@
+---
+title: 'T-tests: one-sample, two-sample, and paired tests'
+subtitle: XDASI Fall 2021
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    toc_depth: 4
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, collapse = TRUE)
+library(ggplot2)
+```
+
+## Review
+
++ Random samples
++ Standard normal distribution
+  - What is a $z$-score?
+  - What are the quantiles?
+  - How do you capture height vs. area? 
++ Sampling distribution of the sample mean
++ Standard error
++ Confidence intervals
++ What is a $z$-score?
++ $t$-statistics vs. $z$-statistics : when is each appropriate?
++ P values : one- vs. two-sided
++ What does qt(0.975) represent?
+
+
+This worksheet illustrates basic concepts and practical application of significance tests for different experimental scenarios.
+
+## Sample data
+
+To illustrate the various types of $t$-test, we will use a simple case study where a drug was administered to 10 random patients (or test subjects) and its effect was compared to that of a placebo pill. Three different experimental designs are illustrated:
+
++ Treatment sample vs. control population (one-sample test)
++ Two random samples: treatment vs. control (two-sample test)
++ One sample measured before and after treatment (paired test)
+
+In all three scenarios, measurements were collected to answer the question:
+
+***Is there a significant difference between the control subjects and the those who were given the drug?***
+
+To generate sample data for this exercise, I simulated some normally distributed data for a large control population and wrote this to a file (`placebo_pop.csv`). I then drew two random samples from normal distributions with different means.
+
+```{r}
+# population data
+# simulate 1000 samples from a normal with the same parameters 
+Placebo_pop = rnorm(1000, mean = 50.482, sd = 2.693)
+head(Placebo_pop)
+
+# write to file
+# Placebo_pop = data.frame(value = Placebo_pop)
+# write.table(Placebo_pop, file = "placebo_pop.csv", row.names = FALSE, col.names = FALSE)
+
+# load from file
+# Placebo_pop = read.table("placebo_pop2.csv", header=FALSE)
+# Placebo_pop = Placebo_pop[,1]  # turns data frame into a simple vector
+# head(Placebo_pop)
+
+# sample data
+Placebo = c(54,51,58,44,55,52,42,47,58,46)
+Drug = c(54,73,53,70,73,68,52,65,65,60)
+```
+
+
+## Sample vs. population parameters
+
+Compare the mean and SD of the Placebo population and the Placebo sample. Do these look pretty different? Why?
+
+```{r}
+## check the parameters from the true population
+paste("Pop. mean = ",round(mean(Placebo_pop),3),
+      " ; Pop. SD = ",round(sd(Placebo_pop),4))
+
+## check the parameters from the estimated population
+paste("Sample mean = ",round(mean(Placebo),3),
+      " ; Sample SD = ",round(sd(Placebo),4))
+paste("Drug sample = ",round(mean(Drug),3),
+      "; Drug sample = ",round(sd(Drug),4))
+```
+
+
+## Placebo population distribution
+
+Let's take a look at the "population" and see where the two samples means fall relative to the control distribution.
+
+```{r}
+## visualize the distribution and sample means
+hist(Placebo_pop, breaks=20, freq=FALSE, xlim=c(40,65))
+xfit = seq(40,65,length=100)
+yfit = dnorm(xfit,mean=mean(Placebo_pop),sd=sd(Placebo_pop))
+lines(xfit,yfit,col="blue",lwd = 2)
+abline(v = mean(Placebo), col="blue", lwd=2, lty=2)
+abline(v = mean(Drug), col="red", lwd=2, lty=2)  # off scale
+```
+
+
+## t-distrubution
+
+
+### Confidence Intervals
+
+The standard error is very helpful because it gives us an idea of how close our data are to the actual mean. We can use the SE to help define **Confidence Intervals (CI)** for the the actual population means from which the samples were drawn.
+
+Here, we assume that we have random samples and that the measurements are normally distributed in the population. The estimated distribution of the sample means will then follow a $t$-distribution, which is similar to a standard normal distribution but with heavier tails. As the sample size increases, the tails of the $t$-distribution become smaller and it resembles closely the $Z$-distribution.
+
+Let's calculate the 95% CI for the mean of each population that the samples are drawn from. Here are the steps we need:
+
+1. Use the `qt()` *quantile function* to identify the critical $t$-score, $t_{crit}$, for the the 95% CI with the appropriate $df$.
+2. Estimate the mean and SEM for the Placebo and Drug samples.
+3. Use these values to compute the 95% CI's for the two samples.
+
+```{r}
+## t_critical: t-score for 97.5% area (range is from 2.5% to 97.5%)
+## also need degrees of freedom for this distribution (length - 1)
+##   df = same for Placebo and Drug (9)
+
+# Placebo and Drug are the same length so this works for both df
+t_0.975 = qt(p = 0.975, df = length(Placebo)-1)  # t-score for 97.5th percentile
+paste0("t_crit = ",round(t_0.975,4))
+
+# note this is bigger than the corresponding z-score would be
+# n_0.975 = qnorm(p = 0.975)
+# n_0.975
+
+
+# placebo SEM
+Pmean = mean(Placebo)
+Pse=sd(Placebo)/sqrt(length(Placebo))
+Pmean
+Pse
+
+# drug SEM
+Dmean = mean(Drug)
+Dse=sd(Drug)/sqrt(length(Drug))
+Dmean
+Dse
+
+# placebo and drug 95% CI
+c(Pmean - Pse * t_0.975, Pmean + Pse * t_0.975)
+c(Dmean - Dse * t_0.975, Dmean + Dse * t_0.975)
+```
+
+### One-sample $t$-test
+
+A one-sample $t$-test compares a sample against expected parameters for a larger population. 
+
+The `t.test()` function in R takes a vector of input data (a sample) and automatically finds the degrees of freedom for the corresponding $t$-distribution based on the length of the vector. 
+
+Run a one-sample $t$-test for each sample against Placebo_pop. Do the samples look like they both came from the same parent population?
+
+```{r}
+# Placebo sample
+t.test(Placebo, mu=mean(Placebo_pop))
+
+# Drug sample
+t.test(Drug, mu=mean(Placebo_pop))
+```
+
+
+You can inspect the `t.test` object using `str()`; it's a list containing a bunch of information about the results of the $t$-test. 
+
+Notice that the output of `t.test()` includes an estimate for the 95% CI. We can check our manual calculations by extracting just the CIs from the function output. The precise expression to get the CI is `t.test()$confint[1:2]`. 
+
+Do this for both the Drug and the Placebo samples. Are these the same as what you calculated above?
+
+```{r}
+# confidence intervals and p-values from t-tests
+#str(Pt.test)
+
+t.test(Placebo, mu=mean(Placebo_pop))$conf.int[1:2] # lower and upper CI limits
+#t.test(Placebo, mu=mean(Placebo_pop))$conf.int      # also indicates 0.95 is the range
+
+t.test(Drug, mu=mean(Placebo_pop))$conf.int[1:2]
+
+t.test(Placebo, mu=mean(Placebo_pop))$p.value
+t.test(Drug, mu=mean(Placebo_pop))$p.value
+
+```
+
+---
+
+## Two-sample $t$-test
+
+The **null hypothesis** is that the samples come from the same population, so their means should be the same.
+
+$$ H_o : \mu_{Drug} = \mu_{Placebo} $$
+$$ H_A : \mu_{Drug} \ne \mu_{Placebo} $$
+
+### Stripchart
+
+First let's inspect the two samples by making two strip charts showing the mean and SEM, or the mean and 95%CI, for the Placebo and Drug samples. Refer to this helpful tutorial on adding different kinds of summary statistics to ggplot strip charts: https://ggplot2tutor.com/tutorials/summary_statistics
+
+```{r}
+# make a data frame
+
+# reset levels (alphabetical by default)
+
+
+###
+
+# basic jitter plot
+
+
+# jitter plot with SE
+# calculate by hand (not sure if there is a function for this)
+
+
+# 95%CI with pointrange (pointrange is default)
+
+
+# 95%CI with error bars
+
+
+```
+
+Using the rules of thumb given in your textbook, can you conclude by eye from the 95%CI that the samples come from different populations? Why or why not?
+
+```{r eval=FALSE}
+# your answer here
+```
+
+
+### Difference in sample means
+
+Another way to frame $H_o$ is to say that we expect the **difference between the two sample means to be 0**. We know this because if we were to plot a distribution of random variables with the same mean, we would expect to get a mean difference of 0. This is the null hypothesis for a two-sample $t$-test.
+
+$$ H_o : \mu_{Drug} - \mu_{Placebo} = 0 $$
+$$ H_A : \mu_{Drug} - \mu_{Placebo} \ne 0$$
+
+### The difference in sample means is normally distributed
+
+We already know that the ***sampling distribution of the sample mean*** is normally distributed, and that the sum or difference of two normally distributed variables is also normally distributed. Therefore, the ***difference in sample means must also be normally distributed***. 
+
+Now let's consider the Placebo and Drug samples to be two separate "populations". If we repeatedly take two random samples from these, we can determine (with 95% confidence) what is the actual difference in the means of the populations.
+
+Let's check this for ourselves by repeatedly taking two smaller samples from the Placebo and Drug samples and plotting the differenc between them:
+
+```{r}
+# initialize an empty vector
+
+# sample size
+n=5
+
+# for loop to take 10000 samples
+
+
+# histogram of the sample differences
+
+
+```
+
+
+### Standard vs. Welch's $t$-test
+
+Since we expect that we have random samples drawn from a normal distribution, and our samples are pretty small, it is valid to use $t$-statistics to test our null hypothesis.
+
+The $t$-score for the ***observed difference in the means*** is computed in the same way as the $z$- or $t$-score for a normal distribution: it is simply the mean difference *standardized* by the standard error:
+
+$$ t = \frac{(\bar{Y}_1 - \bar{Y}_2)}{SE_{\bar{Y}_1 - \bar{Y}_2}}$$
+
+For ***independent samples***, we have two choices of $t$-test: **Welch's approximate** $t$-test (for unequal variances) or a standard $t$-test (which assumes equal variances). These differ slightly in the formulas they use for the degrees of freedom and the variance, which is used to compute the standard error.
+
+Below, compare the two variations of the $t$-test. 
+
+```{r}
+# perform two versions of a 2-sample test using R
+
+    # equal variances
+    # Welch (unequal variances)
+```
+
+How do the results compare?
+
+```{r eval=FALSE}
+# your answer here
+```
+
+What is similar and what is different about these results in comparison with the one-sample tests above?
+
+```{r eval=FALSE}
+# your answer here
+```
+
+In practice, it is generally preferred to use Welch's $t$-test since it has similar power (we will talk about this soon), and it is more robust to differences in variance and sample size.
+
+
+## Paired $t$-test
+
+What if the data are taken from the ***same individuals***? For example, we could test the same patients before and after treatment. In this kind of experimental design, we say that the data are ***paired***. If there is no difference between the two measurements for each individual -- for example, a new drug for blood pressure has no measurable benefit -- then we would expect that our before and after values would be about the same on average.
+
+The **paired $t$-test** is performed in the same way as the one-sample $t$-test, except we use the ***mean difference between paired measurements*** from the two samples, $\bar{X}_D$, to compute a test statistic. This is a nice design because it controls for inter-individual variation, however it is not appropriate when the two samples are truly independent.
+
+### Null hypothesis
+
+Our ***null hypothesis*** is usually that the ***mean paired difference***, $D_o$, is zero (we could set it to something else if our null hypothesis is that the difference between them is something else ...).
+
+For paired data, we ***assume that the two sets of measurements are arranged in the same order*** as the corresponding individuals (because we have good record-keeping practices!) The test statistic is:
+
+$$ t^* = \frac{\bar{X}_{D} - D_0}{\frac{s_{D}}{\sqrt{n}}} = \frac{\bar{X}_{D} - D_0}{SE_{D}}  = \frac{\sqrt{n}}{s_D}(\bar{X}_{D} - D_0) $$
+
+where 
+
++ $\bar{X_D}$ is the mean of the pairwise differences, 
++ $s_D$ is the standard deviation of the pairwise differences, and 
++ $D_0$ is what we are testing (i.e. the expectation for the null hypothesis, which in this case is $0$). 
+
+### Test statistic and $p$-value
+
+To compute this $t$-statistic, we can simply subtract one vector from the other to obtain pair-wise differences for each individual, take the mean, and divide by the standard error. We then find the $p$ value in the usual way. 
+
+First, find the $t$-statistic and the $p$-value by hand. Then, perform a paired $t$-test for the difference between the two samples.
+
+```{r}
+# paired difference between samples
+
+
+# t-score and p-value by hand
+
+
+# paired t-test: t.test(treatment, control, ...)
+
+```
+
+### Relationship between one-sample and paired-sample tests
+
+Study the above equation to convince yourself that the form of the $t$-statistic for a ***paired test*** is the same as that for a ***one-sample*** $t$-test, substituting $\bar{X}_D$ for $\bar{X}$, $D_o$ for $\mu_o$, and $s_D$ for $s$. 
+
+It is important to note that the result from the **one-sample** $t$-test using the **paired differences** between the two samples gives the same result as a **two-sample** $t$-test with the **paired** option!
+
+Use the `t.test()` function to perform a one-sample test that compares the paired difference vector against the expected mean difference, and then perform a paired $t$-test to verify that the two methods are equivalent.
+
+```{r}
+# one-sample test: sample diff vs. Exp(mu) = 0
+
+
+# paired t-test: t.test(treatment, control, ...)
+
+```
+
+_**Note**_: when performing any $t$-test with two samples, you must specify the **test set first**, and the **control set second** -- otherwise you get a $t$-score that is on the opposite side of the distribution. This will not change your $p$-value, however your **confidence interval** will have the wrong sign!!!
+

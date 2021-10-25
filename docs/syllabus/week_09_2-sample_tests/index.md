@@ -2,7 +2,7 @@
 title: Week 9
 parent: Syllabus
 has_children: false
-nav_exclude: true
+nav_exclude: false
 ---
 
 # Week 9: Title
@@ -21,12 +21,22 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- # Class - Monday, Oct. 25
+# Class - Monday, Oct. 25
+
+## Exponential Distribution and Two-sample t-tests
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
+  + **Poisson and Exponential**
+    + ***See class notes from last Thursday***
+    + [**Exercise** (zipped RMD)](Class2/W8.C2-Exercise_Exp_Pois.Rmd.zip)
+
+  + **Two-sample t-tests**:
+    + [**Exercise Part 2** (zipped RMD)](Class1/W9.C1-Exercise_t-tests_Part2.Rmd.zip)
+
+
+</details>
 
 <!-- ########################################################################### -->
 
