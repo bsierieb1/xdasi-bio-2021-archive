@@ -1,0 +1,462 @@
+---
+title: 'Homework 5: Binomial Distribution'
+subtitle: "XDASI Fall 2021"
+author: "Noha Ismail"
+date: "Due: 10/8/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+### Note
+
+For these exercises, please note the following:
+
++ You should review the addition and multiplication rules for the joint probability of independent and mutually exclusive events.
++ You will sometimes need to use the `choose()` function, which computes the binomial coefficient for you. Look up the documentation for this function to find out how to use it.
++ You will also need to learn how to use the `binom()` family of functions.
+
+
+## 1. Autosomal recessive disorder
+
+Many disease genes have autosomal recessive phenotypes. Below, assume that both parents are heterozygous for to alleles, A and a, and the aa genotype displays the disease phenotype.
+
+a. What are the individual probabilities of each allele combination among the progeny?
+
+```{r}
+Aa = 0.5
+aa= 0.25
+AA = 0.25
+
+
+```
+
+b. What is the probability that 1 out of 3 children will have the disease?
+
+```{r}
+
+dbinom(1,3,0.25)
+
+
+```
+
+c. What is the probability that all 3 children will be carriers (i.e. they have the allele but do not have the disease)?
+
+```{r}
+
+dbinom(3,3,0.5)
+
+
+
+```
+
+d. What is the probability that at least one child will be a carrier (i.e. they have the a allele but do not have the disease)?
+
+```{r}
+
+pbinom(0,3,0.5, lower.tail = FALSE)
+
+#or
+
+(Aa) * 1 +
+(Aa) * (Aa) +
+(Aa) * (Aa) * (Aa)
+
+```
+
+e. Now imagine that the disease is recessive lethal, so children with the disease will not survive gestation. What is the probability that at least one child will be a carrier?
+
+```{r}
+
+Aa_new = 2/3
+AA_new = 1/3
+
+
+pbinom(0,3,2/3, lower.tail = FALSE)
+
+
+
+```
+
+f. What is the probability that all 3 children will be carriers?
+
+```{r}
+
+dbinom(3,3,2/3)
+
+##or
+
+(0.666)^3
+
+```
+
+
+## 2. Wnt signaling
+
+Proliferation of embryonic stem cells is important for early development and is promoted by Wnt signaling, which promotes cell cycle progression through the transcriptional activator beta-catenin. In a study of the developing mouse, it was found that only 11% of cells in a region of the brain that is rich in neuronal progenitors was responsive to Wnt (even though Wnt is required for stem cell expansion).
+
+Here we will examine different possible outcomes we could observe using FACS to sort cells from this region that are labeled with a fluorescent antibody against the Wnt receptor. Assume you are sampling from a relatively large number of cells (>10,000). 
+
+Below, we will adopt the following conventions:
+
++ **W** = Wnt-responsive cells (cells with the receptor and are fluorescent)
++ **I** = Wnt-insensitive cells (no receptor, no fluorescence)
+
+a. Use **only the addition and multiplication rules** for probabilities to find the probability of observing each of the outcomes below among a sample of 6 cells. 
+
+*Hint: would you consider this sampling with or without replacement, if you are sampling <100 cells?*
+
+```{r collapse=TRUE}
+## Here we are sampling without replacement
+
+# probability of different cell types
+pW = 0.11
+pI = 0.89
+
+
+# 1. A sequence of WWIIII
+pW * pW * pI * pI * pI * pI 
+# 2. A sequence of IIWWII
+pI * pI * pW * pW * pI * pI 
+
+
+
+
+
+```
+
+b. How many ***ways*** (combinations) are there to get four Wnt-insensitive cells out of 6 total? This is the same as the number of ways to get two Wnt-responsive cells out of 6 (why?).
+
+```{r}
+n = 6
+k = 4
+
+z <- factorial(6) / (factorial(4) * factorial(2))
+z
+
+#or
+
+choose(6,4)
+#since the total is 6 cells in both, so it will be the same when we take factorial of (6) and divided by
+#factorial 2 * factorial 4 -- they are complimentary to each other
+
+
+
+
+```
+
+c. What is the total ***probability*** of getting **exactly** 4 I cells and 2 W cells in your sample, taking into account all the different ways that this outcome can be obtained?
+
++ First, answer this using `choose()` and the individual probabilities (according to the formula for binomial proportions).
++ Then, use one of the `binom()` functions to compute the same result.
+
+For the rest of this question, we will consider observing a Wnt-responsive cell in a single Bernoulli trial to be a ***"success"***.
+
+```{r}
+# with choose
+
+choose(6,4) * (pI)^4 * (pW)^2
+
+
+# with a binom function
+  
+dbinom(4,6, 0.89)
+
+```
+
+d. What would be the ***probability*** of getting **2 or less** W cells in a sample (again considering "W" to be a "success")?
+
++ First, answer this using `choose()` and the individual probabilities.
++ Then, use one of the `binom()` functions to compute the same result.
+
+```{r}
+# with choose and probabilities
+
+choose(6,2) * (pI)^4 * (pW)^2 +
+choose(6,1) * (pI)^5 * (pW)^1 + choose(6,0) * (pW)^0 * (pI)^6
+
+
+# with a binom function
+
+pbinom(2,6,0.11, lower.tail = TRUE)
+
+```
+
+
+e. How many ***ways*** are there to get **at least one** (i.e. 1 or more) W cell in a sample of 6 cells? 
+
+*Hint: `choose()` can take a vector, and you can use `sum()` to add up the combinations, so you don't really have to add all of the individual terms up by hand.*
+
+```{r}
+# example
+# choose(6,3) + choose(6,4)
+# sum(choose(6,3:4))
+
+sum(choose(6, 1:6))
+
+
+# your answer here
+
+```
+
+e. What is the ***probability*** of getting 6 I's and no W's?
+
+```{r}
+choose(6,6) * (pI)^6 * (pW)^0
+
+```
+
+f. What would be the ***probability*** of getting **at least one** (i.e. 1 or more) W cell in a sample of 6 cells? You can calculate this at least 4 equivalent ways given the tools you have!
+
+***Method 1):*** Use only addition and multiplication rules for probabilities
+
+*Hint: This could be 1 or more W's with any combination of W's or I's. This is easy to solve when you remember that it is the same as Pr(NOT IIIIII) !*  :)
+ 
+```{r}
+
+1 - (pI)^6
+```
+
+***Method 2):*** Use the binomial formula with `choose()`, pW, and pI
+
+*Again, remember that this is the same as 1 - Pr(0 W's)*
+
+```{r}
+
+
+
+1 - (choose(6,6) * (pI)^6)
+
+```
+
+***Method 3):*** Use the `dbinom()` function
+
+*Hint: `dbinom()` also takes a vector, so you can use the `sum()` function to add up all of the discrete probabilities for W>0.*
+
+```{r}
+
+sum(dbinom(1:6,6,0.11))
+```
+
+***Method 4:*** Use the `pbinom()` function
+
+```{r}
+
+pbinom(0 ,6,pW, lower.tail = FALSE)
+```
+
+---
+
+## 3. Ecological influence of pollution
+
+During the industrial revolution in England, London become covered in a lot of black soot from burning coal. Five years beforehand, the proportion of white moths that could be found in London was 87%.[^1] However black moths gained a survival advantage as the air became more polluted. 
+
+If you were to sample moths in London 5 years into the industrial revolution, and you found that 35 out of 50 moths were white, how likely would that be if the population had remained the same?
+
+a. Use the `choose()` function for the binomial coefficient and the addition and multiplication rules for probabilities to find how likely it would be to catch ***exactly*** 35/50 white moths if P(white) remained unchanged.
+
+```{r}
+p = 0.87
+q = 0.13
+
+# probability of 35/50 white given p
+
+choose(50,35) * p^35 * q^15
+```
+
+
+b. Use one of the R `binom()` functions to compute this probability.
+
+```{r}
+
+dbinom(35,50, p)
+```
+
+
+c. Really what you are probably more interested in is finding out how likely it is that you only found _**no more than**_ 35 in total. Given the null distribution, what is the total probability of this event? Does this result seem significant?
+
+```{r}
+# how likely is it to see only 35/50 white moths?
+
+pbinom(q = 35,size = 50, prob = p, lower.tail = TRUE)
+# is this significant?
+
+#yes it is significant, since 0.001 is less than 0.05 which is the threshold for p value
+
+```
+
+
+d. Confidence interval
+
+The `binom` package has a method called `binom.confint()` that will compute confidence intervals for the binomial distribution using a large number of different methods. Download this package, install the library, and use it to compute a 95%CI for the true population parameter given the data. 
+
+What is your best estimate for P(white), and what are the mean and 95% CI for the number of white moths you'd expect to see in your sample of 50 post-industrial moths?
+
+```{r}
+# install.packages("binom")  # do this once
+library(binom)
+moth.ci = binom.confint(35,50,0.95)
+moth.ci
+
+
+# P(white) and 95% CI for 50 moths (multiply probabilities by sample size)
+# below we use the concatenate function to print out mixed text and variables
+# just plug in the relevant numbers from moth.ci below
+cat("Mean estimate = ", 0.7  , 
+    "; 95%CI = ",       0.5539177* 50 ,
+    "-",                0.8213822* 50 )
+```
+
+
+e. Use R's `par()` and `plot()` function to draw side-by-side plots showing the ideal binomial **PDF and CDF** for the null distribution with n=50 and p=P(white)=0.11.
+
++ For the PDF, use "histogram-like vertical lines".
++ For the CDF, use "stair-steps".
+
+*Hint: check the documentation to find the plot `type` parameter for a histogram or a step type.*
+
+```{r}
+## Option 1: just make a quick plot all in one go
+par(mfrow=c(1,2))
+
+# create a vector for the x-axis ranging from 0-50
+x.range = 0:50 
+
+# plot x on the x-axis and distributions on the y-axis
+plot(x= x.range, y= dbinom(0:50, 50, 0.11), type="h" ,
+     main="PDF",
+     xlab="expected # of white moths", ylab="point probability")
+plot(x= x.range , y= pbinom(0:50, 50, 0.11), type= "s" ,
+     main="CDF",
+     xlab="expected # of white moths", ylab="total probability")
+
+
+## Option 2: step by step
+
+# first specify the expected proportion (probability) of successes
+pW = 0.11
+  
+# create a vector for the x-axis ranging from 0-50
+x.range = 0:50 
+
+# PDF
+dbinom.W = dbinom(0:50, 50, pW)
+
+# CDF
+pbinom.W = pbinom(0:50, 50, pW)
+
+# make the plots (as above)
+
+```
+
+f. What kind of data structure would you need to create in order to use the `hist()` function or `ggplot` instead?
+
+```{r}
+# your answer here
+
+#it is a vector and ggplot is a data frame
+```
+
+---
+
+## Extra credit: write a CDF function
+
+1. Use a loop to compute the the cumulative probability of seeing between **0** and **x** moths in a sample of size **n** by adding up all the discrete probabilities for a discrete variable. 
+2. Wrap this in a function.
+3. Then, call your function to find the total probability of seeing no more than 35/50 white moths, given the null distribution with P(W) = 0.11 or P(W) = 0.87. *Note that for both of the examples here, we considered W to be a success, we just changed p = P(W).*
+
+```{r}
+# define the function
+cdf <- function(x,n,p) {
+  result = numeric(x+1)
+  for (i in 0:x) { 
+    result[i+1] = dbinom(i,n,p)
+  }
+  return(sum(result))
+}
+
+# call the function for two different probability values
+
+```
+
+---
+
+## Extra credit: Make a histogram of the ideal PDF using ggplot2
+
+***Before you start***, go to this website: <a href="https://www.stat.berkeley.edu/~stark/Java/Html/BinHist.htm" target="blank">**SticiGui**</a>. 
+
++ If you enter (n=50, p=0.11), you will see approximately what the probability distribution for Question 1 should look like. For Question 2, just change p=0.87.
+
+**Follow the example from recitation** to draw  plot of the ideal binomial PDF we would expect to get for **x** "successes" in a sample of size **n**, given any probability of "success" **p**. 
+
+Let's also pretend we replicated this on 20 different samples of size 50, so we will be plotting the number of replicates in which we would expect to find 1,2,3,..,49,50 W"successes" out of 50.
+
+Then, follow these steps:
+
+1. Generate a vector of the expected ***probability distribution*** for the number of "successes" observed out of 50 random trials based on an ideal binomial distribution.
+  + For P(success), use either P(W) = 0.11 or P(W) = 0.87.
+2. Multiply this by the number of replicates to get the **frequency distribution** and round off to the nearest integer.
+3. Convert this to a "simple" vector of counts.
+4. Finally, make a histogram of these data. This should result in graphs that show the expected number of times that X out of 50 successes were observed in 20 replicate experiments.
+
+```{r}
+# create variables for binomial sampling and initialize them with your choice of p
+sample.size = 50
+p.success = 
+
+# probability distribution
+ideal.sample = 
+#ideal.sample
+
+# convert probabilities to frequencies
+# (multiply by number of replicate experiments)
+replicates = 20
+ideal.freq = 
+#ideal.freq
+
+# convert frequencies to count vector of observed proportion of W cells
+# e.g. for freq.W = 0 0 1 2 3 4 3 3 2 1 1 0 0 ... we have
+# 0 reps with 0 W, 0 reps w/ 1 W, 1 rep w/ 2 W, 2 reps w/ 3W, 3 reps w/ 4 W, etc.
+# so we convert this to: counts.W = c(2,3,3,4,4,4,5,5,5,5,6,6,6,7,7,7,8,8,9,10)
+ideal.counts = c() # create an empty vector
+
+for (i in 0:sample.size) {
+  ideal.counts <- 
+    
+}
+#ideal.counts
+
+bino_data <- data.frame("successes" = ideal.counts)
+
+# plot all frequencies
+ggplot(data = bino_data, mapping = aes(x = successes)) +
+  # center columns on integers
+  geom_histogram(breaks = seq(from = -0.5, to = sample.size+0.5, by = 1),
+                 col = "midnightblue", fill="cornflowerblue") +
+  # declutter labels
+  scale_x_continuous(name="Expected number of successes)",
+                     breaks=seq(0,sample.size,5),
+                     limits = c(0,sample.size)) +
+  ylab("Frequency") +
+  ggtitle(paste0("Ideal binomial frequency distribution for 20 replicates (n=",
+  sample.size, ", p=", p.success, ")"))
+```
+
+Now answer the following questions:
+```{r}
+# What is the most frequent number of W observed out of a sample size of 50?
+
+# How does this gibe with the given probability P(W)?
+
+# What is the total height of all the bars if you sum them all up?
+
+# What does this number correspond to?
+
+# Where would you expect to the peak of the distribution to be if P(W)  = 0.35?
+
+```
+
+[^1]: Disclaimer: I made this up, but based on a true story (see https://en.wikipedia.org/wiki/Peppered_moth_evolution).

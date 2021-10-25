@@ -1,0 +1,252 @@
+---
+title: 'Homework 5: Contingency Tests'
+subtitle: "XDASI Fall 2021"
+author: "Wells Burrell"
+date: "Due: 10/15/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error=TRUE, eval=FALSE)
+```
+
+
+# Association between obesity and genetic polymorphisms
+
+## Q0: Load BMI Data
+
+This is a published data set containing measurements of Body Mass Index (BMI) and single-nucleotide polymorphisms (SNPs) based on genotyping of 79 individuals. The data file provided contains the BMI (numeric) and the presence or absence of 7 SNPs (a factor, encoded as Y or N) for each individual.
+
+Our goal in this study is to determine whether any of the SNPs are associated with Obesity.
+
+#### a) Load the `HW6_SNP_Data.tsv` file into a dataframe called `hw6.data`.
+
+```{r}
+hw6.data = data.frame(read.delim("/Users/wellsburrell/Desktop/R/R/W7/HW6_SNP_Data.tsv"))
+head(hw6.data)
+```
+
+#### b) Briefly describe the structure of this observational data set. 
+
+What measurements have been taken, and what is the data type of those measurements?
+
+```{r}
+# The BMI of an individual and whether or not they have certain SNPs; BMI is a quantitative variable while SNPs are measured as a categorical (logical) variable either Y/N.
+```
+
+
+## Q1: $\chi^2$ Test
+
+#### a) Add an column for `Overweight` status
+
+The column should have binary values (e.g. TRUE/FALSE) according to whether the BMI for each individual is 25 or above, or under 25.
+
+
+```{r}
+library(dplyr)
+
+hw6.data = hw6.data %>% 
+  mutate(Overweight = if_else(hw6.data$BMI >= 25, TRUE, FALSE))
+head(hw6.data)
+
+```
+
+#### b) How many individuals are overweight by this definition? How many are not overweight?
+
+```{r}
+total.indiv = length(hw6.data$BMI)
+overweight.indiv = length(which(hw6.data$BMI >= 25))
+notover.indiv = total.indiv - overweight.indiv
+
+# Overweight
+overweight.indiv
+# Not overweight
+notover.indiv
+```
+
+#### c) Generate a contingency table for Overweight and SNP1.
+
+```{r}
+SNP1over = length(hw6.data %>% filter( Overweight == TRUE & SNP1 == "Y") %>% pull)
+NoSNP1over = length(hw6.data %>% filter( Overweight == TRUE & SNP1 == "N") %>% pull)
+SNP1under = length(hw6.data %>% filter( Overweight == FALSE & SNP1 == "Y") %>% pull)
+NoSNP1under = length(hw6.data %>% filter( Overweight == FALSE & SNP1 == "N") %>% pull)
+
+OverVsSNP1.table = rbind(c(SNP1over, NoSNP1over),
+                         c(SNP1under, NoSNP1under))
+colnames(OverVsSNP1.table) = c("SNP1","!SNP1")
+rownames(OverVsSNP1.table) = c("Over","!Over")
+OverVsSNP1.table
+
+```
+
+#### c) Generate a table of expected counts.
+
+Make a table showing the **expected** number of individuals in each cell for the Overweight / SNP1 contingency table, assuming independence:
+
+$$E_{A{\cap}B} = Pr_A * Pr_B * Total = n_A * n_B/ N$$
+
+```{r}
+PrOver = overweight.indiv / total.indiv
+PrSNP1 = length(hw6.data %>% filter(SNP1 == "Y") %>% pull) / total.indiv
+
+
+SNP1over.expected = PrOver * PrSNP1 * total.indiv
+SNP1under.expected = (1 - PrOver) * PrSNP1 * total.indiv
+NoSNP1over.expected = PrOver * (1 - PrSNP1) * total.indiv
+NoSNP1under.expected = (1 - PrOver) * (1 - PrSNP1) * total.indiv
+
+OverVsSNP1.table.expected = rbind(c(SNP1over.expected, NoSNP1over.expected),
+                         c(SNP1under.expected, NoSNP1under.expected))
+colnames(OverVsSNP1.table.expected) = c("SNP1","!SNP1")
+rownames(OverVsSNP1.table.expected) = c("Over","!Over")
+OverVsSNP1.table.expected
+```
+
+#### d) $\chi^2$ statistic
+
+Calculate the $\chi^2$ test statistic for association between Obesity and SNP1 based on the observed and expected counts.
+
+```{r}
+chisq = sum((OverVsSNP1.table - OverVsSNP1.table.expected)^2 / OverVsSNP1.table.expected)
+chisq
+```
+
+
+#### e) Compute a $p$-value for the test statistic
+
+Use the CDF for the $\chi^2$ distribution to compute the significance of the test statistic.
+
+```{r}
+pchisq(chisq, 1, lower.tail = F)
+```
+
+#### f) Confirm your results using R's Chi-squared test function
+
+*Note: Turn Yates' correction on or off depending on whether you used this for the manual calculation above.*
+
+```{r}
+chisq.test(OverVsSNP1.table, correct = FALSE)
+```
+
+#### g) What is the null hypothesis for this chi-squared test?
+
+```{r eval=FALSE}
+# The null hypothesis is that there is no relationship between SNP1 and being overweight--that the proportion of overweight people with SNP1 is the same as the proportion of not overweight people with SNP1.
+```
+
+#### h) Interpret the result of the Chi-squared test between the Overweight trait and SNP1.
+
+```{r eval=FALSE}
+# There is not enough evidence to reject the null hypothesis that there is no relationship between being overweight and having SNP1. 
+```
+
+
+## Q2: Fisher's exact test
+
+#### A) Describe the difference between Fisher's Exact Test and the Chi-Squared test.
+
+```{r eval=FALSE}
+# While the Chi-Squared test relies on comparing the observed vs. expected values to estimate the probability of obtaining a certain result based on a continuous distribution, Fisher's Exact test actually calculates the probability of all possible discrete outcomes at least as extreme as the observed data and sums these probabilities. In this way, the P-value determined by the Fisher's test is more accurate than the value approximated using Chi-Squared. 
+```
+
+#### b) Test the relationship between the Overweight trait and SNP1 with a Fisher's Exact Test.
+
+```{r}
+fisher.test(OverVsSNP1.table)
+```
+
+#### c) What is the null hypothesis for this Fisher's Exact Test?
+
+```{r eval=FALSE}
+# No relationship between being overweight and having SNP1.
+```
+
+
+#### d) Interpret the result of your Fisher's Exact test. Compare the p-values to the chi-squared test.
+
+```{r eval=FALSE}
+# There is not enough evidence to reject the null hypothesis and conclude some relationship between being overweight and having SNP1. In fact, the observed data appears extremely likely (p = 1), given the null is true. Compared to the chi-squared p value of 0.8719, the fisher's test suggests that the observed data set is even more likely to occur under the null; both agree that the observed data is highly likely under the null.
+```
+
+
+## Q3: Measures of Association
+
+#### a) How are the Relative Risk and Odds Ratio defined?
+
+```{r}
+# Relative Risk is the ratio of the proportion of subjects with a focal outcome in one group vs. another. The Odds Ratio is the ratio of the odds of a focal outcome where "odds" is defined as the probability of a certain outcome over the probability of all other outcomes.
+```
+
+#### b) Calculate the RR for SNP1 and Obesity.
+
+```{r}
+pr1 = SNP1over / (SNP1over + NoSNP1over)
+pr2 = SNP1under / (SNP1under + NoSNP1under)
+
+pr1/pr2
+```
+
+#### c) Confirm your results using the `riskratio` function in the `epitools` package.
+
+*Your use of Yates' correction should match whatever you did above.*
+
+```{r}
+riskratio(OverVsSNP1.table, correction = FALSE, rev = c("both"))
+```
+
+#### d) Calculate the OR for SNP1 and Obesity manually.
+
+```{r}
+(pr1/(1-pr1)) / (pr2/(1-pr2))
+```
+
+#### d) Confirm your results using the `oddsratio` function in the `epitools` package.
+
+Note: Use the `wald` method for maximum likelihood estimation.
+
+*Your use of Yates' correction should match whatever you did above.*
+
+```{r}
+oddsratio.wald(OverVsSNP1.table, correction = FALSE, rev = c("both"))
+```
+
+#### e) How did the result of your Chi-squared and Fisher's tests line up with the report from the odds ratio function?
+
+```{r}
+# They all agree that the observed data is very likely to occur under the null hypothesis of no relationship between obesity and SNP1.
+```
+
+
+## Q4: Check the other SNPs to see which SNP is most associated with obesity.
+
+#### a) Use Fisher's Exact Test to check for this.
+
+*Hint: You may want to use a loop to do this. Recall that you can extract the p-value from the test report using the `$p.value` notation.*
+
+```{r}
+p = c()
+
+for (i in 2:8){
+SNPover = length(hw6.data %>% filter( Overweight == TRUE & .[[i]] == "Y") %>% pull)
+NoSNPover = length(hw6.data %>% filter( Overweight == TRUE & .[[i]] == "N") %>% pull)
+SNPunder = length(hw6.data %>% filter( Overweight == FALSE & .[[i]] == "Y") %>% pull)
+NoSNPunder = length(hw6.data %>% filter( Overweight == FALSE & .[[i]] == "N") %>% pull)
+
+OverVsSNP.table = rbind(c(SNPover, NoSNPover),
+                         c(SNPunder, NoSNPunder))
+
+p = c(p, fisher.test(OverVsSNP.table)$p.value)
+}
+
+snp.names = colnames(hw6.data)[2:8]
+rbind(snp.names, p)
+
+
+```
+
+#### b) Are any of the SNPs significantly asociated with BMI?
+
+```{r eval=FALSE}
+# Using a cutoff value of p>0.05, there is no significantly associated SNPs with BMI.
+```

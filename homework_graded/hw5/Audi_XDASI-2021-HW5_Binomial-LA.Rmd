@@ -1,7 +1,7 @@
 ---
 title: 'Homework 5: Binomial Distribution'
 subtitle: "XDASI Fall 2021"
-author: "Jacob Bernoulli [YOUR NAME HERE]"
+author: "Lauren Audi"
 date: "Due: 10/8/2021"
 output: html_document
 ---
@@ -16,56 +16,70 @@ library(ggplot2)
 For these exercises, please note the following:
 
 + You should review the addition and multiplication rules for the joint probability of independent and mutually exclusive events.
-+ You will sometimes need to use the `choose()` function, which computes the binomial coefficient for you. Look up the documentation for this function to find out how to use it. 
++ You will sometimes need to use the `choose()` function, which computes the binomial coefficient for you. Look up the documentation for this function to find out how to use it.
 + You will also need to learn how to use the `binom()` family of functions.
 
 
 ## 1. Autosomal recessive disorder
 
-Many disease genes have autosomal recessive phenotypes. Below, assume that both parents are heterozygous for to alleles, A and a, and the aa genotype displays the disease phenotype.
+Many disease genes have autosomal recessive phenotypes. Below, assume that both parents are heterozygous for two alleles, A and a, and the aa genotype displays the disease phenotype.
 
 a. What are the individual probabilities of each allele combination among the progeny?
 
 ```{r}
-p = list()
-p$AA = 0.25
-p$Aa = 0.5
-p$aa = 0.25
+Aa = 0.5
+aa = 0.25
+AA = 0.25 
+
 ```
 
 b. What is the probability that 1 out of 3 children will have the disease?
 
 ```{r}
-choose(3,1) * p$aa * (p$AA + p$Aa)^2
-dbinom(1,3,p$aa)
+
+#prob 1 will have it and the other two won't
+0.25 * 0.75 * 0.75
+
 ```
 
 c. What is the probability that all 3 children will be carriers (i.e. they have the allele but do not have the disease)?
 
 ```{r}
-(p$Aa)^3
-dbinom(3,3,p$Aa)
+# all three children will have it so 0.5 * 0.5 *0.5 
+
+0.5^3
+
 ```
 
 d. What is the probability that at least one child will be a carrier (i.e. they have the a allele but do not have the disease)?
 
 ```{r}
-pbinom(0,3,p$Aa, lower.tail=FALSE)
+#1 - the probability that they will be either a AA or AA
+1- (0.5 * 0.5 * 0.5)
+
+
 ```
 
 e. Now imagine that the disease is recessive lethal, so children with the disease will not survive gestation. What is the probability that at least one child will be a carrier?
 
 ```{r}
-p$AA = 1/3
-p$Aa = 2/3
-pbinom(0,3, p$Aa, lower.tail=FALSE)
+
+AA = 1/3 # changes because aa doesn't survive
+Aa = 2/3
+AA
+#1 - minus the prob you are not a carrier three times 
+1- (AA)^3
+
 ```
 
 f. What is the probability that all 3 children will be carriers?
 
 ```{r}
-(p$Aa)^3
-dbinom(3,3,p$Aa)
+
+#prob you are a carrier 
+1-0.3333
+#prob you are carrier three times 
+0.666^3
 ```
 
 
@@ -86,23 +100,33 @@ a. Use **only the addition and multiplication rules** for probabilities to find 
 
 ```{r collapse=TRUE}
 ## Here we are sampling without replacement
-
 # probability of different cell types
 pW = 0.11
 pI = 0.89
 
 # 1. A sequence of WWIIII
-pW*pW*pI*pI*pI*pI
-
+pW * pW * pI * pI * pI * pI 
 # 2. A sequence of IIWWII
-pW^2 * pI^4  # probability is the same independent of sequence
+pI * pI * pW * pW * pI * pI 
+
 ```
 
 b. How many ***ways*** (combinations) are there to get four Wnt-insensitive cells out of 6 total? This is the same as the number of ways to get two Wnt-responsive cells out of 6 (why?).
 
 ```{r}
+# combinations - doesn't matter the order: n!/(n-k)!*k!
+#  6!/((6-4)!(4)!)
+factorial(6)/(factorial(6-4) * factorial(4))
+#or with choose - does the work for you!!!
 choose(6,4)
+
+#6!/((6-2)!(2)!)
+factorial(6)/(factorial(6-2) * factorial(2))
+#or with choose
 choose(6,2)
+
+# Becasue the denominatoris the same in both instances (8) -- its a binomial -- only two options 
+
 ```
 
 c. What is the total ***probability*** of getting **exactly** 4 I cells and 2 W cells in your sample, taking into account all the different ways that this outcome can be obtained?
@@ -113,8 +137,18 @@ c. What is the total ***probability*** of getting **exactly** 4 I cells and 2 W 
 For the rest of this question, we will consider observing a Wnt-responsive cell in a single Bernoulli trial to be a ***"success"***.
 
 ```{r}
-choose(6,2)* pW^2 * pI^4
-dbinom(2,6,prob=pW)
+# with choose
+
+#calculate total possible ways to get 4 of the same then multiply by probability of each 
+choose(6, 4) * pI^4 * pW^2
+#can run either -- is the same 
+choose(6,2)* pI^4 * pW^2
+# with a binom function 
+#dbinom is a probability mass function of binomial distribution
+#dbinom = probability of observing value equal to x
+dbinom(x= 4, size = 6, prob= pI) #prob of getting 4 I out of 6 
+dbinom(2, 6, pW) # porb of getting 2W of of 6 
+
 ```
 
 d. What would be the ***probability*** of getting **2 or less** W cells in a sample (again considering "W" to be a "success")?
@@ -123,17 +157,16 @@ d. What would be the ***probability*** of getting **2 or less** W cells in a sam
 + Then, use one of the `binom()` functions to compute the same result.
 
 ```{r}
-# choose + probs
-choose(6,0) * pW^0 * pI^6 + 
-choose(6,1) * pW^1 * pI^5 + 
-choose(6,2) * pW^2 * pI^4
+# with choose and probabilities
+#give all the possible options for pW = 2, 1 & 0
+(choose(6, 2) * pW^2 * pI^4) + (choose(6, 1) * pW^1 * pI^5) + (choose(6, 0) * pW^0 * pI^6)
 
-# dbinom
-sum(dbinom(0:2,6,pW))
-
-# pbinom
-pbinom(2,6,pW)
+# with a binom function
+#pbinom is a cumulative distribution function of this distribution
+#pbinom = probability of observing value smaller or equal to x
+pbinom(q =2 , size =6, prob = pW)
 ```
+
 
 e. How many ***ways*** are there to get **at least one** (i.e. 1 or more) W cell in a sample of 6 cells? 
 
@@ -145,13 +178,16 @@ e. How many ***ways*** are there to get **at least one** (i.e. 1 or more) W cell
 # sum(choose(6,3:4))
 
 # your answer here
+#sum all options 1-6 instead of writing it out 
 sum(choose(6,1:6))
 ```
 
 e. What is the ***probability*** of getting 6 I's and no W's?
 
 ```{r}
-pI^6
+#use dbinom because its exact
+dbinom(x=6, size=6, prob = pI)
+
 ```
 
 f. What would be the ***probability*** of getting **at least one** (i.e. 1 or more) W cell in a sample of 6 cells? You can calculate this at least 4 equivalent ways given the tools you have!
@@ -161,7 +197,9 @@ f. What would be the ***probability*** of getting **at least one** (i.e. 1 or mo
 *Hint: This could be 1 or more W's with any combination of W's or I's. This is easy to solve when you remember that it is the same as Pr(NOT IIIIII) !*  :)
  
 ```{r}
-1 - pI^6
+#prob of i and w = 1 so prob of not I = 1 - prob of I 
+1 - (pI^6)
+
 ```
 
 ***Method 2):*** Use the binomial formula with `choose()`, pW, and pI
@@ -169,7 +207,8 @@ f. What would be the ***probability*** of getting **at least one** (i.e. 1 or mo
 *Again, remember that this is the same as 1 - Pr(0 W's)*
 
 ```{r}
-1 - choose(6,0) * pW^0 * pI^6
+1- choose(6,0) * pW^0 * pI^6
+
 ```
 
 ***Method 3):*** Use the `dbinom()` function
@@ -177,14 +216,18 @@ f. What would be the ***probability*** of getting **at least one** (i.e. 1 or mo
 *Hint: `dbinom()` also takes a vector, so you can use the `sum()` function to add up all of the discrete probabilities for W>0.*
 
 ```{r}
-sum(dbinom(1:6,6,pW))
+sum(dbinom(1:6, 6, pW))
+
+#or 
+1 - dbinom(6, 6, pI)
+
 ```
 
 ***Method 4:*** Use the `pbinom()` function
 
 ```{r}
-1 - pbinom(0,6,pW, lower.tail = TRUE)
-pbinom(0,6,pW, lower.tail = FALSE)  # upper tail probability for W>0
+#pbinom gives the prob of less than, so prob of 0 W - 1 = prob of 1-6 
+1 - pbinom(0, 6, pW)
 ```
 
 ---
@@ -198,20 +241,19 @@ If you were to sample moths in London 5 years into the industrial revolution, an
 a. Use the `choose()` function for the binomial coefficient and the addition and multiplication rules for probabilities to find how likely it would be to catch ***exactly*** 35/50 white moths if P(white) remained unchanged.
 
 ```{r}
-p = 0.87
-q = 0.13
-choose(50,35)*p^35*q^15 # 0.088%
+p = 0.87 #white
+q = 0.13 #black
+
+# probability of 35/50 white given p
+choose(50, 35) * p^35 * q^15
 ```
 
 
 b. Use one of the R `binom()` functions to compute this probability.
 
 ```{r}
-# PDF
-dbinom(35,size=50,prob=0.87)
-
-# CDF
-pbinom(35,size=50,prob=0.87) - pbinom(34,size=50,prob=0.87) 
+#use dbinom because its exact 
+dbinom(x=35, size = 50, prob = p)
 ```
 
 
@@ -219,10 +261,11 @@ c. Really what you are probably more interested in is finding out how likely it 
 
 ```{r}
 # how likely is it to see only 35/50 white moths?
-cat("P-value =",pbinom(35,50,0.87))
+#pbinom = no more than 
+pbinom(35, 50, p)
 
 # is this significant?
-# yes, the probability is <0.05, our standard cutoff for significance
+# yes it is significant , it is less than 0.05%
 ```
 
 
@@ -233,13 +276,17 @@ The `binom` package has a method called `binom.confint()` that will compute conf
 What is your best estimate for P(white), and what are the mean and 95% CI for the number of white moths you'd expect to see in your sample of 50 post-industrial moths?
 
 ```{r}
-# install.packages("binom")  # do this once
+install.packages("binom")  # do this once
 library(binom)
-moth.ci = binom.confint(35, 50, conf.level = 0.95, methods = "agresti-coull")
+moth.ci = binom.confint(35, 50, conf.level = 0.95, methods = "all")
 moth.ci
 
-# P(white) and 95% CI
-cat("Mean estimate = ", moth.ci$mean*50, "; 95%CI = ", moth.ci$lower*50, "-", moth.ci$upper*50)
+# P(white) and 95% CI for 50 moths (multiply probabilities by sample size)
+# below we use the concatenate function to print out mixed text and variables
+# just plug in the relevant numbers from moth.ci below
+cat("Mean estimate = ",  0.7, 
+    "; 95%CI = ",  0.5539 * 50,
+    "-", 0.8214 * 50)
 ```
 
 
@@ -253,46 +300,48 @@ e. Use R's `par()` and `plot()` function to draw side-by-side plots showing the 
 ```{r}
 ## Option 1: just make a quick plot all in one go
 par(mfrow=c(1,2))
-x.range = 0:50 
-plot(x=x.range, y=dbinom(x.range, size=50, prob=0.11), type="h", 
-     main="PDF",
-     xlab="expected # of white moths", 
-     ylab="point probability")
-plot(x=x.range, y=pbinom(x.range, size=50, prob=0.11), type="s", 
-     main="CDF",
-     xlab="expected # of white moths", 
-     ylab="total probability")
-
-
-## Option 2: step by step
-
-# first specify the expected probability of success
-pW = 0.11
 
 # create a vector for the x-axis ranging from 0-50
 x.range = 0:50 
 
-# PDF and CDF
-dbinom.W = dbinom(x = x.range, size = max(x.range), prob=pW)
-#dbinom.W
-pbinom.W = pbinom(q = x.range, size = max(x.range), prob=pW)
-#pbinom.W
+# plot x on the x-axis and distributions on the y-axis
+plot(x= x.range, y= dbinom(0:50, 50, 0.11), type="h" , #histogram like lines 
+     main="PDF",
+     xlab="expected # of white moths", ylab="point probability")
+plot( x.range, y = pbinom(0:50, 50, 0.11),  type= "s" , #stair steps 
+     main="CDF",
+     xlab="expected # of white moths", ylab="total probability")
 
-# make the plots
-# par(mfrow=c(1,2))
-# plot(x = x.range, y=dbinom.W, type="h", main="PDF",
-#      xlab="expected # of white moths",ylab="point probability")
-# plot(x = x.range, y=pbinom.W, type="s", main="CDF",
-#      xlab="expected # of white moths",ylab="total probability")
+
+## Option 2: step by step
+
+# first specify the expected proportion (probability) of successes
+pW = 0.11
+  
+# create a vector for the x-axis ranging from 0-50
+x.range = 0:50 
+
+# PDF
+dbinom.W = dbinom(0:50, 50, pW)
+dbinom.W
+# CDF
+pbinom.W = pbinom(0:50, 50, pW)
+pbinom.W
+
+# make the plots (as above)
+plot(x = x.range, y = dbinom.W, type= "h",
+     main="PDF",
+     xlab="expected # of white moths", ylab="point probability")
+plot(x = x.range, y = pbinom.W, type= "s",
+     main="CDF",
+     xlab="expected # of white moths", ylab="total probability")
 ```
 
 f. What kind of data structure would you need to create in order to use the `hist()` function or `ggplot` instead?
 
 ```{r}
 # your answer here
-
-## You need to have a vector of the number of successes in each of the individual "observations" (replicates) drawn from a binomial distribution with n=sample size and p=probability of success.
-## This is why Bogdan made you go to the trouble to massage your spinner data in recitation! ;-)
+#dataframe 
 ```
 
 ---
@@ -304,18 +353,17 @@ f. What kind of data structure would you need to create in order to use the `his
 3. Then, call your function to find the total probability of seeing no more than 35/50 white moths, given the null distribution with P(W) = 0.11 or P(W) = 0.87. *Note that for both of the examples here, we considered W to be a success, we just changed p = P(W).*
 
 ```{r}
+# define the function
 cdf <- function(x,n,p) {
   result = numeric()
-  for (i in 0:x) {  # number of successes
-    f = n-i         # number of failures
-    q = 1-p         # probability of a failure (p = P(success))
-#    result[i] = choose(n,i)*(p^i)*(q^f)  # using binomial formula
-    result[i] = dbinom(i,n,p)
+  for (i in 0:x) { 
+    ...
   }
-  return(sum(result))
+  return( ... )
 }
-cdf(35,50,0.11)
-cdf(35,50,0.87)
+
+# call the function for two different probability values
+
 ```
 
 ---
@@ -341,16 +389,17 @@ Then, follow these steps:
 ```{r}
 # create variables for binomial sampling and initialize them with your choice of p
 sample.size = 50
-p.success = pW
+p.success = 
 
 # probability distribution
-ideal.sample = dbinom(0:sample.size, sample.size, p=p.success)
+ideal.sample = 
+#ideal.sample
 
 # convert probabilities to frequencies
 # (multiply by number of replicate experiments)
 replicates = 20
-ideal.freq = round(replicates * ideal.sample, digits = 0)
-ideal.freq
+ideal.freq = 
+#ideal.freq
 
 # convert frequencies to count vector of observed proportion of W cells
 # e.g. for freq.W = 0 0 1 2 3 4 3 3 2 1 1 0 0 ... we have
@@ -359,10 +408,10 @@ ideal.freq
 ideal.counts = c() # create an empty vector
 
 for (i in 0:sample.size) {
-  ideal.counts <- c(ideal.counts,
-              rep(i, ideal.freq[i+1]) )
+  ideal.counts <- 
+    
 }
-ideal.counts
+#ideal.counts
 
 bino_data <- data.frame("successes" = ideal.counts)
 
@@ -382,26 +431,15 @@ ggplot(data = bino_data, mapping = aes(x = successes)) +
 
 Now answer the following questions:
 ```{r}
-# here using p=0.11
-
 # What is the most frequent number of W observed out of a sample size of 50?
-## for p=0.11, 5
-## for p=0.87, 43-44
 
 # How does this gibe with the given probability P(W)?
-## 0.11*50  # 5.5
-## expect 5 or 6 depending on rounding error, this is consistent with expectation
-
-## 0.87*50 = 43.5, perfect
 
 # What is the total height of all the bars if you sum them all up?
-## sum(freq.W) # 20
 
 # What does this number correspond to?
-## The number of replicate experiments.
 
 # Where would you expect to the peak of the distribution to be if P(W)  = 0.35?
-## round(0.35*50)  # 18
 
 ```
 
