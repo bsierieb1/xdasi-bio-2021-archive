@@ -1,10 +1,8 @@
 ---
-title: 'Exercise: Exponential and Poisson'
-subtitle: XDASI Fall 2021
+title: "Exercise: Exponential and Poisson"
+subtitle: "XDASI Fall 2021"
 date: "10/21/2021"
-output:
-  html_document: default
-  pdf_document: default
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -19,15 +17,15 @@ For some animals, like lizards (or hydra), their mortality rate is independent o
 $\Rightarrow$ ***What is the expected number of deaths per year?***
 
 ```{r}
-# Poisson: E(X) = SD(X) = lambda = 0.05 per month
-0.05 * 12
+# Poisson: E(X) = SD(X) = lambda = 0.05
+0.05*12
 ```
 
 
 $\Rightarrow$ ***What is the expected lifespan of one of these lizards?*** (In other words, this is the typical "wait time" until one death occurs?)
 
 ```{r}
-# Exponential: E(X) = SD(X) = 1/lambda = 20 months
+# Exponential: E(X) = SD(X) = 1/lambda
 1/0.05
 ```
 
@@ -45,30 +43,32 @@ $$P_{pois}(X = 0 ) = e^{-\lambda t}\frac{\lambda t^x}{x!} = e^{-\mu}\frac{\mu^x}
 
 ```{r, collapse = T}
 # with exponential
-exp(-0.05*20)                       # manual calculation
-pexp(20, rate = 0.05, lower.tail=F) # with CDF
+exp(-0.05*20) # manual calculation
+pexp(20, rate=0.05, lower.tail=F)
 
-# with Poisson: need to multiply units out to mu = lambda * t = 0.05/month * 20 months => 1 new unit
-mu = 0.05*20 # number of deaths in t=20 months
-ppois(0, lambda = mu, lower.tail=T)
-dpois(0, lambda = mu) # same, since just one value for x
+# with Poisson
+mu = 0.05*20
+ppois(0, mu, lower.tail=T)
+dpois(0, mu)
 ```
 
 $\Rightarrow$ ***What is the probability an animal will survive 20 months or less?***
 
-Hint:
+Hint: 
 
-+ This is given by the lower-tail CDF of the exponential distribution
-+ This is equivalent to the upper-tail CDF of the Poisson distribution.
-
++ This is given by the lower-tail CDF of one distribution, and the upper-tail CDF of the other distribution.
 
 $$ P(X \le 20) = 1 - e^{-0.05*20} = 1 - 0.3679 = 0.6321 $$
 
-```{r, collapse = T}
-1-exp(-0.05*20) # manual calculation
-pexp(20,0.05)   # with CDF
 
-ppois(0, lambda = mu, lower.tail=F) # P(no death > 20 months)
+```{r, collapse = T}
+# using exponential
+1-exp(-0.05*20)
+pexp(20, rate=0.05, lower.tail=T)
+
+# using poisson
+ppois(0, mu, lower.tail=F)
+1-dpois(0, mu)
 ```
 
 
@@ -79,11 +79,11 @@ Hint:
 + To get the total probability across an interval, we subtract the total probability of the lower value from that of the higher value.
 + We can't answer this with Poisson, since can only vary # events (not time)!
 
-
 $$ P(10 \le X \le 15) = (1 - e^{-0.05*15}) - (1 - e^{-0.05*10}) = e^{-0.05*10} - e^{-0.05*15} =  0.165 $$
 
+
 ```{r, collapse = T}
-exp(-0.05*10) - exp(-0.05*15) # manual calculation
-pexp(15,0.05) - pexp(10,0.05) # with CDF
+exp(-0.05*10) - exp(-0.05*15) 
+pexp(15, rate=0.05) - pexp(10, rate=0.05)
 ```
 
