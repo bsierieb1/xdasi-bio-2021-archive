@@ -199,25 +199,81 @@ First let's inspect the two samples by making two strip charts showing the mean 
 
 ```{r}
 # make a data frame
-
+drug.placebo = data.frame(Treatment = rep(c("Placebo","Drug"),each=10), # experiment with params
+                          Value = c(Placebo, Drug))
 # reset levels (alphabetical by default)
-
-
-###
+drug.placebo$Treatment = factor(drug.placebo$Treatment, levels = c("Placebo","Drug"))
+drug.placebo
 
 # basic jitter plot
+p = ggplot(drug.placebo, aes(x=Treatment, y=Value)) + 
+  geom_jitter(position=position_jitter(0.1))
+p
 
+# jitter plot with stats
+# error bars, minmax
+# p + stat_summary(geom = "errorbar",
+#                  width = .1,
+#                  fun.min = min,
+#                  fun.max = max)
 
-# jitter plot with SE
-# calculate by hand (not sure if there is a function for this)
-
-
-# 95%CI with pointrange (pointrange is default)
-
+# Std error by hand (not sure if there is a function for this)
+p +  stat_summary(fun = mean,
+               geom = "pointrange",
+               fun.max = function(x) mean(x) + sd(x) / sqrt(length(x)),
+               fun.min = function(x) mean(x) - sd(x) / sqrt(length(x)),
+               color="blue")
 
 # 95%CI with error bars
+p +  stat_summary(fun.data = "mean_cl_normal",
+               geom = "errorbar",
+               width = .05, col="purple") +
+  stat_summary(fun = "mean", geom = "point", col="purple")
 
+# 95%CI with pointrange (pointrange is default)
+p +  stat_summary(fun.data = "mean_cl_normal", 
+                  geom = "pointrange", 
+                  col="magenta")
 
+# 95%CI by hand with pointrange (for comparison)
+p +  stat_summary(fun = mean,
+#               geom = "pointrange",
+               fun.max = function(x) mean(x) + qt(.975, df = length(x)) * sd(x) / sqrt(length(x)),
+               fun.min = function(x) mean(x) - qt(.975, df = length(x)) * sd(x) / sqrt(length(x)),
+               col="goldenrod")
+
+# 99%CI (if you want to change CI limits)
+p +  stat_summary(fun.data = "mean_cl_normal",
+               fun.args = list( conf.int = .99 )) # 99%CI
+
+# ============================================================================ #
+# other options
+
+# a) std deviation - note default is 2sd, need multiplier = 1
+# p +  stat_summary(fun.data = "mean_sdl",
+#                fun.args = list(
+#                  mult = 1
+#                ),
+#                color="red")
+# 
+# # b) std dev with error bars
+# p + stat_summary(fun.data = "mean_sdl",
+#                geom = "errorbar", 
+#                width = .05, col="purple",
+#                fun.args = list( mult = 1 ))+
+#   stat_summary(fun = "mean", geom = "point", col="purple")
+# 
+# # c) std deviation by hand, with point range
+# p +  stat_summary(fun = mean,
+#                geom = "pointrange",
+#                fun.max = function(x) mean(x) + sd(x),
+#                fun.min = function(x) mean(x) - sd(x),
+#                color="hotpink")
+
+# # c) boxplot with jitterplot overlaid
+# ggplot(drug.placebo, aes(x=Treatment, y=Value)) + 
+#   geom_boxplot() +
+#   geom_jitter(position=position_jitter(0.2))
 ```
 
 Using the rules of thumb given in your textbook, can you conclude by eye from the 95%CI that the samples come from different populations? Why or why not?

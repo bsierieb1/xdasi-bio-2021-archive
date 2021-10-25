@@ -33,7 +33,7 @@ nav_exclude: false
     + [**Exercise** (zipped RMD)](Class1/W9.C1-Exercise_Exp_Pois.Rmd.zip)
 
   + **Two-sample t-tests**:
-    + [**Exercise Part 2** (zipped RMD)](Class1/W9.C1-Exercise_t-tests_Part2.Rmd.zip) - [html](Class1/W9.C1-Exercise_t-tests_Part2.html){:target="blank"}
+    + [**Exercise Part 2** (zipped RMD)](Class1/W9.C1-Exercise_t-tests_Part2.Rmd.zip) - [HTML](Class1/W9.C1-Exercise_t-tests_Part2.html){:target="blank"}
 
 
 </details>
