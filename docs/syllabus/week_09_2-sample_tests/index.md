@@ -30,7 +30,7 @@ nav_exclude: false
 
   + **Poisson and Exponential**
     + ***See class notes from last Thursday***
-    + [**Exercise** (zipped RMD)](Class2/W8.C2-Exercise_Exp_Pois.Rmd.zip)
+    + [**Exercise** (zipped RMD)](Class1/W9.C1-Exercise_Exp_Pois.Rmd.zip)
 
   + **Two-sample t-tests**:
     + [**Exercise Part 2** (zipped RMD)](Class1/W9.C1-Exercise_t-tests_Part2.Rmd.zip)
