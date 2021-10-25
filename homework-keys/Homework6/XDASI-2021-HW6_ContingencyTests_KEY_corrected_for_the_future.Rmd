@@ -1,0 +1,271 @@
+---
+title: 'Homework 6: Contingency Tests'
+subtitle: "XDASI Fall 2021"
+author: "Florence Nightingale [YOUR NAME HERE]"
+date: "Due: 10/15/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error=TRUE)
+```
+
+
+# Association between obesity and genetic polymorphisms
+
+## Q0: Load BMI Data
+
+This is a published data set containing measurements of Body Mass Index (BMI) and single-nucleotide polymorphisms (SNPs) based on genotyping of 79 individuals. The data file provided contains the BMI (numeric) and the presence or absence of 7 SNPs (a factor, encoded as Y or N) for each individual.
+
+Our goal in this study is to determine whether any of the SNPs are associated with Obesity.
+
+#### a) Load the `HW6_SNP_Data.tsv` file into a dataframe called `hw6.data`.
+
+```{r}
+hw6.data <- read.delim("HW6_SNP_Data.tsv")
+```
+
+#### b) Briefly describe the structure of this observational data set. 
+
+What measurements have been taken, and what is the data type of those measurements?
+
+```{r}
+str(hw6.data)
+
+# your answer here
+```
+
+
+## Q1: $\chi^2$ Test
+
+#### a) Add an column for `Overweight` status
+
+The column should have binary values (e.g. TRUE/FALSE) according to whether the BMI for each individual is 25 or above, or under 25.
+
+
+```{r}
+hw6.data$Overweight <- hw6.data$BMI >= 25
+str(hw6.data)
+```
+
+#### b) How many individuals are overweight by this definition? How many are not overweight?
+
+```{r}
+table(hw6.data$Overweight)
+```
+
+#### c) Generate a contingency table for Overweight and SNP1.
+
+```{r}
+snp1.contingency.table <- table(hw6.data[, c("Overweight", "SNP1")])
+snp1.contingency.table
+```
+
+#### d) Generate a table of expected counts.
+
+Make a table showing the **expected** number of individuals in each cell for the Overweight / SNP1 contingency table, assuming independence:
+
+$$E_{A{\cap}B} = Pr_A * Pr_B * Total = n_A * n_B/ N$$
+
+```{r}
+# marginal totals
+obesity = table(hw6.data$Overweight)  # row margins
+snp1present=table(hw6.data$SNP1)      # column margins
+obesity
+snp1present
+
+# expected table
+expected_snp1 = matrix(NA, nrow=2,ncol=2)
+
+expected_snp1[1,1]=obesity[1]*snp1present[1]/sum(obesity)
+expected_snp1[2,1]=obesity[2]*snp1present[1]/sum(obesity)
+expected_snp1[1,2]=obesity[1]*snp1present[2]/sum(obesity)
+expected_snp1[2,2]=obesity[2]*snp1present[2]/sum(obesity)
+
+rownames(expected_snp1)=c("False","True")
+colnames(expected_snp1)=c("N","Y")
+
+expected_snp1
+```
+
+#### e) $\chi^2$ statistic
+
+Calculate the $\chi^2$ test statistic for association between Obesity and SNP1 based on the observed and expected counts.
+
+```{r}
+snp1_chisq_statistic = sum( (snp1.contingency.table - expected_snp1)**2 /expected_snp1)
+snp1_chisq_statistic
+```
+
+
+#### f) Compute a $p$-value for the test statistic
+
+Use the CDF for the $\chi^2$ distribution to compute the significance of the test statistic.
+
+```{r}
+pchisq(snp1_chisq_statistic, 1, lower.tail = F)
+```
+
+#### g) Confirm your results using R's Chi-squared test function
+
+*Note: Turn Yates' correction on or off depending on whether you used this for the manual calculation above.*
+
+```{r}
+chisq.test(snp1.contingency.table, correct=F)
+```
+
+#### h) What is the null hypothesis for this chi-squared test?
+
+```{r eval=FALSE}
+# your answer here
+The two variables (Overweight & SNP1) are independent.
+```
+
+#### i) Interpret the result of the Chi-squared test between the Overweight trait and SNP1.
+
+```{r eval=FALSE}
+# your answer here
+We fail to reject the null hypothesis; it appears that SNP1 is unlikely to have an effect on obesity.
+```
+
+
+## Q2: Fisher's exact test
+
+#### a) Describe the difference between Fisher's Exact Test and the Chi-Squared test.
+
+```{r eval=FALSE}
+# your answer here
+
+# Fisher's exact test is nonparametric and calculates p-values based on the hypergeometric distribution.
+
+# The Chi-squared test is parametric and uses the normal approximation for a binomial distribution.
+# The p-value for the test statistic, computed as sum((observed - expected)^2 / expected),
+#   is found using a Chi-squared distribution with (r-1)(c-1) degrees of freedom.
+```
+
+#### b) Test the relationship between the Overweight trait and SNP1 with a Fisher's Exact Test.
+
+```{r}
+snp1.fisher <- fisher.test(snp1.contingency.table)
+snp1.fisher
+```
+
+#### c) What is the null hypothesis for this Fisher's Exact Test?
+
+```{r eval=FALSE}
+# your answer here
+The two variables are independent.
+```
+
+
+#### d) Interpret the result of your Fisher's Exact test. Compare the p-values to the chi-squared test.
+
+```{r eval=FALSE}
+# your answer here
+
+# There is no significant association between Obesity and SNP1.
+# The p-values are not exactly the same, but both strongly reject the alternative hypothesis.
+```
+
+
+## Q3: Measures of Association
+
+#### a) How are the Relative Risk and Odds Ratio defined?
+
+```{r}
+# RR is Pr(SNP1 & overweight) / Pr(SNP1 & not overweight) =
+#  count(SNP1 & OW)/count(total OW) / count(SNP1 & not-OW)/count(total not-OW)
+#  i.e. the relative proportion of people with SNP1 in the two groups
+
+# OR is the ratio of the odds in the two groups, i.e.
+#  ( count(OW & SNP1) / count(OW & not SNP1) ) /
+#  ( count(non-OW & SNP1) / count(non-OW & not SNP1) ) /
+# This gives a measure of the relative enrichment of SNP1 in one group vs. the other
+
+# Higher RR and higher OR both mean that the overweight group is enriched for SNP1
+#  relative to the non-overweight group, so these two factors may be associated
+```
+
+#### b) Calculate the RR for the occurence of SNP1 in overweight vs. non-overweight groups.
+
+```{r}
+snp1.contingency.table
+
+# risk of SNP1 in non-OW group = count(non-OW & SNP1) / total(non-OW)
+risk1=snp1.contingency.table[1,2]/sum(snp1.contingency.table[1,])
+risk1
+
+# risk of SNP1 in OW group = count(OW & SNP1) / total(OW)
+risk2=snp1.contingency.table[2,2]/sum(snp1.contingency.table[2,])
+risk2
+
+# relative risk of SNP1 in OW vs. non-OW groups
+relrisk = risk2/risk1
+relrisk
+```
+
+#### c) Confirm your results using the `riskratio()` function in the `epitools` package.
+
+*Your use of Yates' correction should match whatever you did above.* ***Also, note that `riskratio()` is sensitive to how you arrange data in the contingency table!*** *Check out the help file to see the recommended way to arrange data. If your data are organized differently, you may want to either re-organize it manually, use `t()` to transform it, or play around with different `rev=` arguments.*
+
+```{r}
+#install.packages("epitools")  # do this once
+library(epitools)
+riskratio(snp1.contingency.table, correction = F)
+```
+
+#### d) Calculate the OR for SNP1 and Obesity manually.
+
+```{r}
+# odds of SNP1 in non-overweight group =
+#   count(non-OW & SNP1) / count(non-OW & not SNP1)
+odds1= snp1.contingency.table[1,2] / snp1.contingency.table[1,1] 
+odds1
+
+# odds of SNP1 in overweight group =
+#   count(OW & SNP1) / count(OW & not SNP1)
+odds2 =snp1.contingency.table[2,2]/ snp1.contingency.table[2,1]
+odds2
+
+# odds ratio is the ratio of the odds for SNP 1 in OW vs. non-OW
+odds_ratio = odds2/odds1
+odds_ratio
+```
+
+#### e) Confirm your results using the `oddsratio` function in the `epitools` package.
+
+Note: Use the `wald` method for maximum likelihood estimation.
+
+*Your use of Yates' correction should match whatever you did above.*
+
+```{r}
+oddsratio(snp1.contingency.table, method="wald")
+```
+
+#### e) How did the result of your Chi-squared and Fisher's tests line up with the report from the odds ratio function?
+
+```{r}
+# your answer here
+```
+
+
+## Q4: Check the other SNPs to see which SNP is most associated with obesity.
+
+#### a) Use Fisher's Exact Test to check for this.
+
+*Hint: You may want to use a loop to do this. Recall that you can extract the p-value from the test report using the `$p.value` notation.*
+
+```{r}
+for (i in 2:8) {
+  print(colnames(hw6.data)[i])
+  snp.contingency.table <- table(hw6.data[, c("Overweight", colnames(hw6.data)[i])])
+  snp.fisher <- fisher.test(snp.contingency.table)
+  print(snp.fisher$p.value)
+}
+```
+
+#### b) Are any of the SNPs significantly asociated with BMI?
+
+```{r eval=FALSE}
+# None of them are, at least at alpha = 0.05, but SNP7 has the p-value that is closest to the threshold.
+```
