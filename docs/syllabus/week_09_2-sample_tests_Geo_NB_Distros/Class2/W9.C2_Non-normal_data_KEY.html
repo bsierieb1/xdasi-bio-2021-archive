@@ -171,8 +171,6 @@ pre code {
 </div>
 
 
-<div id="testing-for-violations-of-normality" class="section level2">
-<h2>Testing for violations of normality</h2>
 <p>So far we have used <span class="math inline">\(t\)</span>-tests to compare two samples. These depend on the assumption that data are normally distributed. How do we know if this is the case?</p>
 <div id="drug-placebo-study" class="section level3">
 <h3>Drug-Placebo study</h3>
@@ -312,8 +310,11 @@ shapiro.test(log(pre))</code></pre>
 ## data:  log(post)
 ## W = 0.97437, p-value = 0.7742</code></pre>
 <p>What do you conclude from your inspection of the normality of the data?</p>
-<pre class="r"><code># your answer here
-# data are not normally distributed but log transform helps</code></pre>
+<pre class="r"><code># the &quot;post&quot; data are not normally distributed
+# log transformation makes it more normal, but the &quot;pre&quot; group gets a bit worse
+
+# however both are within acceptable limits for continuing on with a t-test on
+# the log-transformed data</code></pre>
 </div>
 <div id="t-tests" class="section level3">
 <h3><span class="math inline">\(t\)</span>-tests</h3>
@@ -345,56 +346,43 @@ t.test(log(post),log(pre),paired=T)
 ## mean of the differences 
 ##              -0.2692207</code></pre>
 <p>What are the most striking differences in the results of the <span class="math inline">\(t\)</span>-tests? Which <span class="math inline">\(t\)</span>-test is more appropriate, and why?</p>
-<pre class="r"><code># your answer here</code></pre>
-</div>
-<div id="confidence-intervals-by-hand" class="section level3">
-<h3>95% confidence intervals by hand</h3>
-<p>Compute the 95% CI for the post-treatment and pre-treatment samples. Do one of these by hand first (don’t forget to back-transform!)</p>
-<div id="pre-treatment" class="section level4">
-<h4>Pre-treatment</h4>
-<pre class="r"><code>
-## compute the 95% CI for the two samples in their original units
+<pre class="r"><code># results are actually similar, though of course the t-stats, CIs, and mean differences
+# are not the same
 
-#####################################################################
+# the transformed test is more correct based on normality tests above</code></pre>
+</div>
+<div id="confidence-intervals" class="section level3">
+<h3>95% confidence intervals</h3>
+<p>Compute the 95% CI for the post-treatment and pre-treatment samples using the log-transformed data.</p>
+<div id="manual-calculations" class="section level4">
+<h4>Manual calculations</h4>
+<p>First, do these “by hand” using the formulas you know for the 95%CI (don’t forget to back-transform into the original units!).</p>
+<p>Pre-treatment:</p>
+<pre class="r"><code># ============================================================================ #
 # pre-treatment -- by hand!
+
+# compute standard error
 mean_prime = mean(log(pre))
 sd_prime = sqrt( sum( (log(pre) - mean_prime)^2 /(length(pre)-1)) )
 se_prime = sd_prime/sqrt(length(pre))
+
+# get t-critical
 tcrit = qt(0.975,df=length(pre))
 tcrit
 ## [1] 2.063899
+
+# CI in log units
 ci_pre = c(mean_prime - tcrit*se_prime, mean_prime + tcrit*se_prime)
 ci_pre
 ## [1] 0.8365772 1.1556327
+
+# CI in original units
 ci_pre_orig = exp(ci_pre)
 ci_pre_orig
-## [1] 2.308452 3.176032
-
-# pre-treatment from t-test
-t_pre = t.test(log(pre),mu=mean(log(pre)))
-t_pre
-## 
-##  One Sample t-test
-## 
-## data:  log(pre)
-## t = 0, df = 23, p-value = 1
-## alternative hypothesis: true mean is not equal to 0.9961049
-## 95 percent confidence interval:
-##  0.8362093 1.1560005
-## sample estimates:
-## mean of x 
-## 0.9961049
-ci95_pre_log = t_pre$conf.int[1:2]
-ci95_pre_log
-## [1] 0.8362093 1.1560005
-ci95_pre = exp(ci95_pre_log)
-ci95_pre
-## [1] 2.307603 3.177201</code></pre>
-</div>
-<div id="post-treatment" class="section level4">
-<h4>Post-treatment</h4>
-<pre class="r"><code>#####################################################################
-# post-treatment -- by hand!
+## [1] 2.308452 3.176032</code></pre>
+<p>Post-treatment:</p>
+<pre class="r"><code># ============================================================================ #
+# 95%CI post-treatment -- by hand!
 mean_prime = mean(log(post))
 sd_prime = sqrt( sum( (log(post) - mean_prime)^2 /(length(post)-1)) )
 se_prime = sd_prime/sqrt(length(post))
@@ -407,7 +395,8 @@ ci_post</code></pre>
 <pre class="r"><code>ci_post_orig = exp(ci_post)
 ci_post_orig</code></pre>
 <pre><code>## [1] 1.811366 2.362422</code></pre>
-<pre class="r"><code># post-treatment from t-test
+<pre class="r"><code># ============================================================================ #
+# 95%CI post-treatment from t-test
 t_post = t.test(log(post),mu=mean(log(pre)))
 t_post</code></pre>
 <pre><code>## 
@@ -428,11 +417,11 @@ ci95_post_log</code></pre>
 ci95_post</code></pre>
 <pre><code>## [1] 1.810811 2.363145</code></pre>
 </div>
-</div>
-<div id="confidence-intervals-from-t-tests" class="section level3">
-<h3>95% confidence intervals from <span class="math inline">\(t\)</span>-tests</h3>
-<p>Now use the CI values from one-sample <span class="math inline">\(t\)</span>-tests to get both of these automatically (don’t forget to back-transform!)</p>
-<pre class="r"><code>#####################################################################
+<div id="extracted-from-t-test-output" class="section level4">
+<h4>Extracted from <span class="math inline">\(t\)</span>-test output</h4>
+<p>Now use the CI values from one-sample <span class="math inline">\(t\)</span>-tests to get both of these automatically (again, don’t forget to back-transform!) To get these, simply perform 1-sample tests for each group against a group mean.</p>
+<p>(Note: these tests should not be used for computing p-values, but the CI for each group is given in the output.)</p>
+<pre class="r"><code># ============================================================================ #
 # pre-treatment from t-test
 t_pre = t.test(log(pre),mu=mean(log(pre)))
 t_pre</code></pre>
@@ -453,27 +442,31 @@ ci95_pre_log</code></pre>
 <pre class="r"><code>ci95_pre = exp(ci95_pre_log)
 ci95_pre</code></pre>
 <pre><code>## [1] 2.307603 3.177201</code></pre>
-<pre class="r"><code>t_post = t.test(log(post),mu=mean(log(post)))
+<pre class="r"><code># ============================================================================ #
+# post-treatment from t-test
+t_post = t.test(log(post),mu=mean(log(pre)))
 t_post</code></pre>
 <pre><code>## 
 ##  One Sample t-test
 ## 
 ## data:  log(post)
-## t = 0, df = 23, p-value = 1
-## alternative hypothesis: true mean is not equal to 0.7268842
+## t = -4.184, df = 23, p-value = 0.000356
+## alternative hypothesis: true mean is not equal to 0.9961049
 ## 95 percent confidence interval:
 ##  0.5937748 0.8599936
 ## sample estimates:
 ## mean of x 
 ## 0.7268842</code></pre>
 <pre class="r"><code>ci95_post_log = t_post$conf.int[1:2]
+ci95_post = exp(ci95_post_log)
 ci95_post_log</code></pre>
 <pre><code>## [1] 0.5937748 0.8599936</code></pre>
-<pre class="r"><code>ci95_post = exp(ci95_post_log)
-ci95_post</code></pre>
+<pre class="r"><code>ci95_post</code></pre>
 <pre><code>## [1] 1.810811 2.363145</code></pre>
 <p>Did you get the same CI for the post-treatment sample when computing by hand and using the <code>t.test()</code>? What can you conclude from the 95% CI’s of the two samples?</p>
-<pre class="r"><code># your answer here</code></pre>
+<pre class="r"><code># yes, the CIs are exactly the same whether computed by hand or extracted from a t-test.
+
+# the CI&#39;s for the two samples barely overlap so the groups are most likely significantly different. The p-value for the paired two-sample test performed previously confirmed this.</code></pre>
 </div>
 </div>
 

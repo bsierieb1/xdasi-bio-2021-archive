@@ -11,7 +11,6 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Testing for violations of normality
 
 So far we have used $t$-tests to compare two samples. These depend on the assumption that data are normally distributed. How do we know if this is the case?
 
@@ -165,8 +164,11 @@ shapiro.test(log(post))
 What do you conclude from your inspection of the normality of the data?
 
 ```{r eval=FALSE}
-# your answer here
-# data are not normally distributed but log transform helps
+# the "post" data are not normally distributed
+# log transformation makes it more normal, but the "pre" group gets a bit worse
+
+# however both are within acceptable limits for continuing on with a t-test on
+# the log-transformed data
 ```
 
 ### $t$-tests
@@ -183,71 +185,81 @@ t.test(log(post),log(pre),paired=T)
 What are the most striking differences in the results of the $t$-tests? Which $t$-test is more appropriate, and why?
 
 ```{r eval=FALSE}
-# your answer here
+# results are actually similar, though of course the t-stats, CIs, and mean differences
+# are not the same
+
+# the transformed test is more correct based on normality tests above
 ```
 
 
-### 95% confidence intervals by hand
+### 95% confidence intervals
 
-Compute the 95% CI for the post-treatment and pre-treatment samples. Do one of these by hand first (don't forget to back-transform!)
+Compute the 95% CI for the post-treatment and pre-treatment samples using the log-transformed data.
 
-#### Pre-treatment
+#### Manual calculations
+
+First, do these "by hand" using the formulas you know for the 95%CI (don't forget to back-transform into the original units!).
+
+Pre-treatment:
 
 ```{r, collapse=TRUE}
-
-## compute the 95% CI for the two samples in their original units
-
-#####################################################################
+# ============================================================================ #
 # pre-treatment -- by hand!
+
+# compute standard error
 mean_prime = mean(log(pre))
 sd_prime = sqrt( sum( (log(pre) - mean_prime)^2 /(length(pre)-1)) )
 se_prime = sd_prime/sqrt(length(pre))
+
+# get t-critical
 tcrit = qt(0.975,df=length(pre))
 tcrit
+
+# CI in log units
 ci_pre = c(mean_prime - tcrit*se_prime, mean_prime + tcrit*se_prime)
 ci_pre
+
+# CI in original units
 ci_pre_orig = exp(ci_pre)
 ci_pre_orig
-
-# pre-treatment from t-test
-t_pre = t.test(log(pre),mu=mean(log(pre)))
-t_pre
-ci95_pre_log = t_pre$conf.int[1:2]
-ci95_pre_log
-ci95_pre = exp(ci95_pre_log)
-ci95_pre
 ```
 
-#### Post-treatment
+Post-treatment:
 
 ```{r}
-#####################################################################
-# post-treatment -- by hand!
+# ============================================================================ #
+# 95%CI post-treatment -- by hand!
 mean_prime = mean(log(post))
 sd_prime = sqrt( sum( (log(post) - mean_prime)^2 /(length(post)-1)) )
 se_prime = sd_prime/sqrt(length(post))
 tcrit = qt(0.975,df=length(post))
 tcrit
+
 ci_post = c(mean_prime - tcrit*se_prime, mean_prime + tcrit*se_prime)
 ci_post
 ci_post_orig = exp(ci_post)
 ci_post_orig
 
-# post-treatment from t-test
+# ============================================================================ #
+# 95%CI post-treatment from t-test
 t_post = t.test(log(post),mu=mean(log(pre)))
 t_post
+
 ci95_post_log = t_post$conf.int[1:2]
 ci95_post_log
 ci95_post = exp(ci95_post_log)
 ci95_post
 ```
 
-### 95% confidence intervals from $t$-tests
 
-Now use the CI values from one-sample $t$-tests to get both of these automatically (don't forget to back-transform!)
+#### Extracted from $t$-test output
+
+Now use the CI values from one-sample $t$-tests to get both of these automatically (again, don't forget to back-transform!) To get these, simply perform 1-sample tests for each group against a group mean.
+
+(Note: these tests should not be used for computing p-values, but the CI for each group is given in the output.)
 
 ```{r}
-#####################################################################
+# ============================================================================ #
 # pre-treatment from t-test
 t_pre = t.test(log(pre),mu=mean(log(pre)))
 t_pre
@@ -256,16 +268,20 @@ ci95_pre_log
 ci95_pre = exp(ci95_pre_log)
 ci95_pre
 
-t_post = t.test(log(post),mu=mean(log(post)))
+# ============================================================================ #
+# post-treatment from t-test
+t_post = t.test(log(post),mu=mean(log(pre)))
 t_post
 ci95_post_log = t_post$conf.int[1:2]
-ci95_post_log
 ci95_post = exp(ci95_post_log)
+ci95_post_log
 ci95_post
 ```
 
 Did you get the same CI for the post-treatment sample when computing by hand and using the `t.test()`? What can you conclude from the 95% CI's of the two samples?
 
 ```{r eval=FALSE}
-# your answer here
+# yes, the CIs are exactly the same whether computed by hand or extracted from a t-test.
+
+# the CI's for the two samples barely overlap so the groups are most likely significantly different. The p-value for the paired two-sample test performed previously confirmed this.
 ```
