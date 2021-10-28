@@ -23,13 +23,12 @@ nav_exclude: false
 
 # Class - Monday, Oct. 25
 
-## Exponential Distribution and Two-sample t-tests
+### Exponential Distribution and Two-sample t-tests
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-**Poisson and Exponential**
-
+**Poisson and Exponential**:
   + ***See class notes from last Thursday***
   + [**Exercise** (zipped RMD)](Class1/W9.C1-Exercise_Exp_Pois.Rmd.zip)
     + [Answer key (zipped RMD)](Class1/Answer_keys/W8.C2-Exercise_Exp_Pois_KEY.Rmd.zip) - [HTML](Class1/Answer_keys/W8.C2-Exercise_Exp_Pois_KEY.html){:target="blank"} - [PDF](Class1/Answer_keys/W8.C2-Exercise_Exp_Pois_KEY.pdf){:target="blank"}
@@ -48,12 +47,14 @@ nav_exclude: false
 
 # Class - Thursday, Oct. 28
 
+### Geometric and Negative Binomial Distributions and Tests for Non-Normality
+
 <details closed markdown="block">
   <summary>Details</summary>
 
 **Geometric and Negative Binomial** - [HTML](Class2/W9.C2_Geo_NegBinom_Distributions.html){:target="blank"} - [PDF](Class2/W9.C2_Geo_NegBinom_Distributions.pdf){:target="blank"}
 
-**Tests for non-normality** - [(zipped RMD)](Class2/W9.C2_Non-normal_data.Rmd.zip) - [HTML](Class2/W9.C2_Non-normal_data.html){:target="blank"}
+**Tests for Non-Normality** - [(zipped RMD)](Class2/W9.C2_Non-normal_data.Rmd.zip) - [HTML](Class2/W9.C2_Non-normal_data.html){:target="blank"}
 
 </details>
 
