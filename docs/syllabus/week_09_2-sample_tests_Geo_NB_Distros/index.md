@@ -5,7 +5,7 @@ has_children: false
 nav_exclude: false
 ---
 
-# Week 9: Title
+# Week 9: Exponential, Geometric, Negative Binomial Distributions, Two-sample t-tests, Tests for Non-normality
 {: .no_toc }
 
 <details closed markdown="block">
@@ -47,14 +47,14 @@ nav_exclude: false
 
 # Class - Thursday, Oct. 28
 
-### Geometric and Negative Binomial Distributions and Tests for Non-Normality
+### Geometric and Negative Binomial Distributions and Tests for Non-normality
 
 <details closed markdown="block">
   <summary>Details</summary>
 
 **Geometric and Negative Binomial** - [HTML](Class2/W9.C2_Geo_NegBinom_Distributions.html){:target="blank"} - [PDF](Class2/W9.C2_Geo_NegBinom_Distributions.pdf){:target="blank"}
 
-**Tests for Non-Normality** - [(zipped RMD)](Class2/W9.C2_Non-normal_data.Rmd.zip) - [HTML](Class2/W9.C2_Non-normal_data.html){:target="blank"}
+**Tests for Non-normality** - [(zipped RMD)](Class2/W9.C2_Non-normal_data.Rmd.zip) - [HTML](Class2/W9.C2_Non-normal_data.html){:target="blank"}
 
 </details>
 
