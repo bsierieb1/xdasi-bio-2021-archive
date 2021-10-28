@@ -1,0 +1,222 @@
+---
+title: "Tests for violations of normality"
+subtitle: XDASI Fall 2021
+date: "10/28/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE, error=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Testing for violations of normality
+
+So far we have used $t$-tests to compare two samples. These depend on the assumption that data are normally distributed. How do we know if this is the case?
+
+### Drug-Placebo study
+
+Let's return to our simple case study where a drug has been provided to 10 random patients (test subjects) and, as a control, a placebo pill was given to 10 other random patients. For each condition collected measurements and the question is:
+
+***Is there a significant difference between the subjects who were given the placebo and the those who were given the drug?***
+
+Let's first look at all the data together as a population. We will combine the values and draw a simple histogram.
+
+```{r}
+
+Placebo = c(54,51,58,44,55,52,42,47,58,46)
+Drug = c(54,73,53,70,73,68,52,65,65,60)
+
+# histogram of combined data
+
+```
+
+
+#### Quantile-Quantile plot
+
+We can check to see how well the theoretical values of a set of values match the observed.
+The `qqnorm` and `qqline` function create a plot assuming the data is normally distributed.
+
+
+```{r}
+
+```
+
+A more generic function is `qqplot` function where you can provide the theoretical values based on any distribution we want. 
+
+The `ppoints` function takes the number of values you want and it returns the probability spanned equally. We have 20 values so let's pick the 20 probabilities. We will then use the `qnorm` function to get the predicted values of the theoretical normal distribution.
+
+
+```{r}
+
+```
+
+Now to plot the corresponding values from the observed data, we can use the `quantile` function. In addition to the values, the quantile function also takes the probabilites for which it should provide the values, so we can use our `my_probs` again.
+
+```{r}
+
+```
+
+Now we are ready to plot the observed data (on the y-axis) vs. the theoretical data (on the x-axis).
+
+```{r}
+
+```
+
+#### Shapiro test for normality
+
+The Shapiro test performs a **goodness of fit** test using the mean and standard deviation of the data. The null hypothesis being that the data is normally distributed.
+
+```{r}
+
+```
+
+
+### Data tranformation
+
+In our example, there is not enough evidence to reject the $H_o$ that the data is normally distributed. So let's look at a different dataset. The R dataset `trees` provides `Girth`, `Height`, and `Volume` of different Black Cherry Trees. Let's look at the histogram of the volume data:
+
+```{r}
+
+```
+
+Hm. This dataset doesn't look like it is normally distributed. Performing a `shapiro.test` confirms this.
+
+```{r}
+
+```
+
+And the `QQ plot`:
+
+```{r}
+
+```
+
+We can see from the Shapiro test and the qqplot that these data don't seem to fit a normal distribution. In a QQplot, this is usually quite obvious because parts of the data veer pretty far off from the ideal line.
+
+When the data do not look to be sufficiently normal, we can try performing tests on data that have been **transformed** using functions such as the `log()`, `sqrt()`, or `arcsin()`. This can make data look more normal, so that parametric tests may be performed on them.
+
+#### Log transform
+
+In biology it is common that multiple factors influence our measurements. The effects may be additive or multiplicative. We know from probability theory that to find the cumulative probability of several independent variables, we can multiply them (product rule). This type of data often gives rise to log-distributed measurements. Taking the log of these stretches out the small values and compresses the larger ones, rendering the data more normal-looking.
+
+Many examples follow a log-normal distribution, such as exponential growth (cell count doubles with each division), systolic blood presssure, and the latency period for infectious diseases.
+
+We can use the *Shapiro-Wilk* test to see whether the data follow a normal distribution. Let's investigate the data shown below for plasma triglyceride levels using:
+
++ histograms
++ a test for normality
++ a `t.test()` on the transformed data
++ the 95% CI for the data in their original units
+  - we can compute by hand (hard), or extract from `t.test()$conf.int[1:2]` (easy)
+  - don't forget to back-transform using `exp()`
+
+*Note:* By default, the `log()` function uses the natural log. You can specify other bases with the `base` parameter; convenience functions such as `log10()` and `log2()` are also available.
+
+```{r, collapse=TRUE}
+#####################################################################
+# plasma triglyceride levels in the population (mg/ml)
+# borderline high = 2-4 vs. normal < 2
+# testing before and after diet and exercise changes (expect a decrease)
+pre = c(2.55,3.38,2.37,4.11,3.27,2.58,4.20,3.22,5.10,2.62,3.06,1.23,2.27,2.24,1.39,2.63,2.61,4.30,1.46,3.35,2.79,2.42,4.63,1.57)
+post = c(1.59,3.51,1.44,2.32,1.75,1.67,1.90,1.37,2.72,1.80,2.40,2.01,2.41,1.38,1.18,4.31,2.09,2.32,2.63,2.25,1.71,2.01,1.95,3.46)
+#####################################################################
+```
+
+### Histograms
+
+```{r, collapse=TRUE}
+
+# check distributions of original data with histograms (breaks = 10)
+par(mfrow=c(2,2))
+
+# pre-transformation histograms
+
+# after log-transformation histograms
+
+```
+
+### Shapiro-Wilk
+
+Test for normality before and after transformation.
+
+```{r}
+# Shapiro-Wilk tests - original
+
+
+# Shapiro-Wilk tests - log
+
+
+```
+
+
+What do you conclude from your inspection of the normality of the data?
+
+```{r eval=FALSE}
+# your answer here
+```
+
+### $t$-tests
+
+Perform $t$-tests using the original and the transformed data.
+
+```{r, collapse=TRUE}
+
+```
+
+What are the most striking differences in the results of the $t$-tests? Which $t$-test is more appropriate, and why?
+
+```{r eval=FALSE}
+# your answer here
+```
+
+
+### 95% confidence intervals by hand
+
+Compute the 95% CI for the post-treatment and pre-treatment samples. Do one of these by hand first (don't forget to back-transform!)
+
+#### Pre-treatment
+
+```{r, collapse=TRUE}
+
+## compute the 95% CI for the two samples in their original units
+
+#####################################################################
+# pre-treatment -- by hand!
+
+
+# pre-treatment from t-test
+
+```
+
+#### Post-treatment
+
+```{r}
+#####################################################################
+# post-treatment -- by hand!
+
+
+# post-treatment from t-test
+
+```
+
+### 95% confidence intervals from $t$-tests
+
+Now use the CI values from one-sample $t$-tests to get both of these automatically (don't forget to back-transform!)
+
+```{r}
+#####################################################################
+# pre-treatment from t-test
+
+
+# post-treatment from t-test
+
+
+```
+
+Did you get the same CI for the post-treatment sample when computing by hand and using the `t.test()`? What can you conclude from the 95% CI's of the two samples?
+
+```{r eval=FALSE}
+# your answer here
+```

@@ -46,12 +46,16 @@ nav_exclude: false
 
 <!-- ########################################################################### -->
 
-<!-- # Class - Thursday, Oct. 28
+# Class - Thursday, Oct. 28
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
+**Geometric and Negative Binomial** - [HTML](Class2/W9.C2_Geo_NegBinom_Distributions.html){:target="blank"} - [PDF](Class2/W9.C2_Geo_NegBinom_Distributions.pdf){:target="blank"}
+
+**Tests for non-normality** - [(zipped RMD)](Class2/W9.C2_Non-normal_data.Rmd.zip) - [HTML](Class2/W9.C2_Non-normal_data.html){:target="blank"}
+
+</details>
 
 <!-- ########################################################################### -->
 

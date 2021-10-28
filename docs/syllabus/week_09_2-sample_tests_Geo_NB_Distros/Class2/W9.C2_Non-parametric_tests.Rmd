@@ -1,7 +1,7 @@
 ---
-title: "Non-parametric tests"
-author: "Kris Gunsalus"
-date: "10/20/2021"
+title: "Tests for non-normality and non-parametric significance tests"
+subtitle: "XDASI Fall 2021"
+date: "10/28/2021"
 output: html_document
 ---
 
@@ -9,10 +9,99 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Testing for violations of normality
 
-## What if the data are not normally distributed?
+So far we have used $t$-tests to compare two samples. These depend on the assumption that data are normally distributed. How do we know if this is the case?
 
-### Transformation
+### Drug-Placebo study
+
+Let's return to our simple case study where a drug has been provided to 10 random patients (test subjects) and, as a control, a placebo pill was given to 10 other random patients. For each condition collected measurements and the question is:
+
+*** Is there a significant difference between the subjects who were given the placebo and the those who were given the drug? ***
+
+Let's first look at all the data together as a population. We will combine the values and draw a simple histogram.
+
+```{r}
+
+Placebo = c(54,51,58,44,55,52,42,47,58,46)
+Drug = c(54,73,53,70,73,68,52,65,65,60)
+
+Data = c(Placebo, Drug)
+Data_sd = sd(Data)
+Data_mean = mean(Data)
+hist(Data, breaks=10)
+```
+
+
+#### Quantile-Quantile plot
+
+We can check to see how well the theoretical values of a set of values match the observed.
+The `qqnorm` and `qqline` function create a plot assuming the data is normally distributed.
+
+
+```{r}
+qqnorm(Data)
+qqline(Data)
+```
+
+A more generic function is `qqplot` function where you can provide the theoretical values based on any distribution we want. 
+
+The `ppoints` function takes the number of values you want and it returns the probability spanned equally. We have 20 values so let's pick the 20 probabilities. We will then use the `qnorm` function to get the predicted values of the theoretical normal distribution.
+
+
+```{r}
+my_probs = ppoints(20)
+my_quant = qnorm(my_probs) #, mean=Data_mean, sd=Data_sd)
+my_quant
+```
+
+Now to plot the corresponding values from the observed data, we can use the `quantile` function. In addition to the values, the quantile function also takes the probabilites for which it should provide the values, so we can use our `my_probs` again.
+
+```{r}
+data_quant = quantile(Data, my_probs)
+data_quant
+```
+
+Now we are ready to plot the observed data (on the y-axis) vs. the theoretical data (on the x-axis).
+
+```{r}
+#plot(my_quant, data_quant)
+#abline(a=0,b=1)
+qqplot(my_quant, data_quant)
+qqline(Data)
+```
+
+#### Shapiro test for normality
+
+The Shapiro test performs a **goodness of fit** test using the mean and standard deviation of the data. The null hypothesis being that the data is normally distributed.
+
+```{r}
+shapiro.test(Data)
+```
+
+
+### Data tranformation
+
+In our example, there is not enough evidence to reject the $H_o$ that the data is normally distributed. So let's look at a different dataset. The R dataset `trees` provides `Girth`, `Height`, and `Volume` of different Black Cherry Trees. Let's look at the histogram of the volume data:
+
+```{r}
+hist(trees$Volume)
+```
+
+Hm. This dataset doesn't look like it is normally distributed. Performing a `shapiro.test` confirms this.
+
+```{r}
+shapiro.test(trees$Volume)
+```
+
+And the `QQ plot`:
+
+```{r}
+qqnorm(trees$Volume)
+qqline(trees$Volume)
+```
+
+We can see from the Shapiro test and the qqplot that these data don't seem to fit a normal distribution.
 
 When the data do not look to be sufficiently normal, we can try performing tests on data that have been **transformed** using functions such as the `log()`, `sqrt()`, or `arcsin()`. This can make data look more normal, so that parametric tests may be performed on them.
 
@@ -61,8 +150,12 @@ shapiro.test(post)
 
 What do you conclude from your inspection of the normality of the data?
 
-<!-- YOUR ANSWER HERE -->
+```{r eval=FALSE}
+# your answer here
+# data are not normally distributed
+```
 
+Perform $t$-tests using the original and the transformed data.
 
 ```{r, collapse=TRUE}
 
@@ -73,10 +166,12 @@ t.test(log(post),log(pre),paired=T)
 
 What are the most striking differences in the results of the $t$-tests? Which $t$-test is more appropriate, and why?
 
-<!-- YOUR ANSWER HERE -->
+```{r eval=FALSE}
+# your answer here
+```
 
 
-Compute the 95% CI for the post-treatment and pre-treatment samples. Do one of these by hand first, and then use the CI values from one-sample $t$-tests to get both of these automatically (don't forget to back-transform!)
+Compute the 95% CI for the post-treatment and pre-treatment samples. Do one of these by hand first (don't forget to back-transform!)
 
 ```{r, collapse=TRUE}
 
@@ -98,9 +193,15 @@ ci_post_orig
 t_post = t.test(log(post),mu=mean(log(pre)))
 t_post
 ci95_post_log = t_post$conf.int[1:2]
+ci95_post_log
 ci95_post = exp(ci95_post_log)
 ci95_post
+```
 
+
+Now use the CI values from one-sample $t$-tests to get both of these automatically (don't forget to back-transform!)
+
+```{r}
 #####################################################################
 # pre-treatment from t-test
 t_pre = t.test(log(pre),mu=mean(log(pre)))
@@ -113,18 +214,18 @@ ci95_pre
 
 Did you get the same CI for the post-treatment sample when computing by hand and using the `t.test()`? What can you conclude from the 95% CI's of the two samples?
 
-<!-- YOUR ANSWER HERE -->
+```{r eval=FALSE}
+# your answer here
+```
 
 
-## Non-parametric (rank-based) tests
+## Non-parametric (rank-based) tests for paired data
 
 When the sample data do not follow a normal distribution, we can use tests that look at the data in terms of their ranks (or ranked differences) instead of their magnitudes. 
 
-### Tests for paired data: Sign and Wilcoxon signed-rank tests
-
 For paired data, our null hypothesis is that the paired differences between the groups should end up with about the same number being positive or negative. This works well when the two differences have a similar skew and variance.
 
-#### Sign test
+### Sign test
 
 Instead of comparing **means** or mean differences, the **sign test** compares the **median** of a sample to a hypothesized value. For paired data, under the null hypothesis we would expect the medians of two samples to be the same. The hypotheses to be tested are:
 
@@ -132,7 +233,7 @@ $H_o$: The median difference between the groups is zero.
 
 $H_A$: The median difference between the groups is NOT zero.
 
-The sign test simply takes the signs of the paired differences and counts up the number of negative and positive deviations from zero. The $p$-value is then equivalent to the binomial probability for the observed number of negative deviations when the expected probability is 0.5.
+The sign test simply takes the signs of the paired differences and counts up the number of negative and positive deviations from zero. This generates binary data, so the $p$-value is then equivalent to the binomial probability for the observed number of negative deviations when the expected probability is 0.5.
 
 The steps are:
 
@@ -162,15 +263,15 @@ prob_obs = pbinom(test_stat, length(tri_diff), prob=0.5)
 ```
 
 
-#### Wilcoxon signed-rank test
+### Wilcoxon signed-rank test
 
-The **Wilcoxon signed-rank test** is similar to the sign test except that it takes the sum of all the signed ranks (see below), and it can easily be performed directly in R. 
+The Wilcoxon signed-rank test is similar to the sign test except that it takes the ***sum of all the signed ranks*** (see below), and it can easily be performed directly in R. 
 
-One caveat of this test is that it assumes a symmetric distribution, which limits its applicability. The test is often used when this assumption is violated, so keep this in mind and try not to make the same mistake.
+One caveat of this test is that it assumes a symmetric distribution about the median difference, which limits its applicability. The test is often used when this assumption is violated, so keep this in mind and try not to make the same mistake. In such cases, it's probably better to use resampling methods (see below).
 
 Here we will run the test on the log-transformed data, which is more symmetrical than the original data.
 
-##### Procedure
+#### Procedure
 
 The steps are:
 
@@ -191,7 +292,7 @@ w_stat = sum(sign(log_tri_diff) * rank_diff)
 w_stat
 ```
 
-##### Normal approximation
+#### Normal approximation
 
 $W$ has a specific expected distribution under the null. The population mean and variance are:
 
@@ -209,7 +310,7 @@ z_w = w_stat / sqrt(sigma_w)
 2*pnorm(z_w)
 ```
 
-##### Wilcoxon signed-rank test in R
+### Wilcoxon signed-rank test in R
 
 Use the `wilcox.test()` function to test the original and the log-transformed triglyceride data. Don't forget that we are doing paired tests here.
 
@@ -262,13 +363,15 @@ What do you notice about the differences in the results for the non-transformed 
 <!-- YOUR ANSWER HERE -->
 
 
-### Unpaired data: Mann-Whitney-Wilcoxon rank-sum test
+## Unpaired data: Mann-Whitney-Wilcoxon rank-sum test
 
-If our data are **not normal** and also **not paired**, we can use a **Mann-Whitney U-test** or the equivalent **Wilcoxon rank-sum** test. Some people therefore like to refer to this test as a **Mann-Whitney-Wilcoxon** test. The test is implemented in R as `wilcox.test()`, with the (default) unpaired option.
+What if  our data are **not normal** and also **not paired**? 
 
-This test is simlar to the paired signed-rank test, but instead of measuring paired differences and counting positive and negative differences, we compute the sum of ranks for each group in the combined data. This makes intuitive sense because if the data are drawn from a homogeneous population, we would expect the values of the measurements from two random samples to be relatively well interleaved (as if we had shuffled a deck of cards). So, we would expect that the overall sum of ranks should be about the same. 
+We can use a **Mann-Whitney U-test** or the equivalent **Wilcoxon rank-sum** test. Some people therefore like to refer to this test as a **Mann-Whitney-Wilcoxon** test. The test is implemented in R as `wilcox.test()`, with the (default) unpaired option.
 
-#### Procedure
+This test is simlar to the paired signed-rank test, but instead of measuring paired differences and counting positive and negative differences, we compute the ***sum of ranks for each group in the combined data***. This makes intuitive sense because if the data are drawn from a homogeneous population, we would expect the values of the measurements from two random samples to be relatively well interleaved (as if we had shuffled a deck of cards). So, we would expect that the overall sum of ranks should be about the same. 
+
+### Procedure
 
 The hypotheses to be tested are:
 
@@ -278,7 +381,7 @@ $H_A$: The sample distributions are NOT the same.
 
 The steps are:
 
-+ Assign ranks to the combined data, from lowest to highest.
++ Combine the data, and rank from lowest to highest.
 + Assign ties the midrank between them (the average of the ranks).
 + Compute the sum of ranks $R_1$ for Sample 1.
 + Compute the $U$-statistic for Samples 1 and 2.
@@ -287,7 +390,7 @@ The steps are:
 
 **Note**: The sum of ranks for a sequential set of numbers starting with 1 is $N(N+1)/2$. Check this out for yourself on some small sets of numbers (e.g. 1,2,3...). Intuitively, then, if all the measurements from Sample 1 are much smaller than those from Sample 2, then the minimum sum of ranks for Sample 1 would be $R_1 = n_1(n_1+1)/2$. 
 
-#### Computing the U-statistic
+### Computing the U-statistic
 
 The $U$_statistic measures the difference between the observed and minimum ranks. Note that the sum of the $U$-values equals the product of the length of the two samples: $U_1 + U_2 = n_1n_2$.
 
@@ -331,7 +434,7 @@ sd_w = sqrt(sigma_w)
 
 ```
 
-#### Normal approximation
+### Normal approximation
 
 Again, when the number of samples is ~20 or more, we can use the normal approximation. We have $n_1 = n_2 = 24$, so let's just calculate a $z$-score get our $p$-value.
 
@@ -364,6 +467,6 @@ How do the results from the raw and transformed data compare?
 
 ## Conclusions
 
-Finally, please reflect on the results from the different tests we have performed here. Summarize in a short paragraph below what you have learned from the analysis of the triglyceride dataset.
+Please reflect on the results from the different tests we have performed here. Summarize in a short paragraph below what you have learned from the analysis of the triglyceride dataset.
 
 <!-- YOUR ANSWER HERE -->

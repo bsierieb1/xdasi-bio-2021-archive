@@ -1,0 +1,57 @@
+---
+title: "random_tests"
+author: "Kris Gunsalus"
+date: "10/25/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# install.packages("mosaic")
+library(ggplot2)
+library(mosaic)
+
+```
+
+<!-- require(mosaic) -->
+<!-- options(digits = 3) -->
+
+<!-- This example is from: https://cran.r-project.org/web/packages/mosaic/vignettes/Resampling.html -->
+
+```{r}
+data(Sleep)
+
+boxplot(Words ~ Group, data = Sleep)
+
+ggplot(Sleep, aes(x=Group, y=Words)) +
+   geom_boxplot() +
+   geom_jitter(position=position_jitter(0.2))
+
+ggplot(Sleep, aes(x=Group, y=Words)) +
+  geom_jitter(position=position_jitter(0.2)) +
+  stat_summary(fun.data = "mean_cl_normal",
+               geom = "errorbar",
+               width = .05, col="blue") +
+  stat_summary(fun = "mean", geom = "point", col="blue")
+
+mean(Words ~ Group, data = Sleep)
+obs <- diff(mean(Words ~ Group, data = Sleep))
+obs
+
+t.test(Words ~ Group, Sleep, alternative="less") # test caffeine < sleep
+
+# permutation test: scramble Group with respect to outcome, Words
+diff(mean(Words ~ shuffle(Group), data = Sleep)) # 1x
+
+sleep_null <- do(2000) * diff(mean(Words ~ shuffle(Group), data = Sleep))
+
+# from ggformula package, included with mosaic
+gf_histogram(gformula = ~ Sleep, fill = ~ (Sleep >= obs), data = sleep_null, 
+  binwidth = 0.4,
+  xlab = "Distribution of difference in means under the null hypothesis")
+
+# empirical p-value
+sum(sleep_null >= obs) / 2000
+```
+
+
