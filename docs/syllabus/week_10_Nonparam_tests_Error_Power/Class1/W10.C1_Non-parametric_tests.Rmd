@@ -1,8 +1,15 @@
 ---
-title: "Tests for non-normality and non-parametric significance tests"
+title: "Permutation and non-parametric significance tests"
 subtitle: "XDASI Fall 2021"
 date: "10/28/2021"
-output: html_document
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    toc_depth: 4
+  pdf_document:
+    toc: yes
+    toc_depth: 4
 ---
 
 ```{r setup, include=FALSE}
