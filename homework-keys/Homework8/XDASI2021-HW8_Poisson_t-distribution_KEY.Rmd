@@ -1,5 +1,5 @@
 ---
-title: "XDAS2021 HW8: Poisson and t-distributions"
+title: "HW8: Poisson and t-distributions"
 subtitle: "XDASI Fall 2021"
 author: "ANSWER KEY"
 date: "`r format(Sys.time(), '%d %B, %Y')`"

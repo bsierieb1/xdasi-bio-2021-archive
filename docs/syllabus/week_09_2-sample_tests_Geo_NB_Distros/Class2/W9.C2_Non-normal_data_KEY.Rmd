@@ -14,8 +14,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 So far we have used $t$-tests to compare two samples. These depend on the assumption that data are normally distributed. How do we know if this is the case?
 
-### Drug-Placebo study
-
 Let's return to our simple case study where a drug has been provided to 10 random patients (test subjects) and, as a control, a placebo pill was given to 10 other random patients. For each condition collected measurements and the question is:
 
 ***Is there a significant difference between the subjects who were given the placebo and the those who were given the drug?***
@@ -34,54 +32,76 @@ hist(Data, breaks=10)
 ```
 
 
-#### Quantile-Quantile plot
+## Quantile-Quantile plots
 
-We can check to see how well the theoretical values of a set of values match the observed.
-The `qqnorm` and `qqline` function create a plot assuming the data is normally distributed.
+### Normal QQ plot
 
+We can check graphically to see how well an observed set of values matches a theoretical normal distribution using the `qqnorm` and `qqline` functions.
+
+Basically, this works by taking the observed values, calculating a mean and SD from them, generating the expected quantile / z-score for each data point assuming a normal distribution with these parameters, and then plotting the observed and expected values against each other. 
+
+The closer the observed data points fall on the "ideal" line, the more closely they resemble normally distributed data.
 
 ```{r}
 qqnorm(Data)
 qqline(Data)
 ```
 
-A more generic function is `qqplot` function where you can provide the theoretical values based on any distribution we want. 
+### More general QQ plot
 
-The `ppoints` function takes the number of values you want and it returns the probability spanned equally. We have 20 values so let's pick the 20 probabilities. We will then use the `qnorm` function to get the predicted values of the theoretical normal distribution.
+A more generic function is `qqplot` function, which can be used to compare data to theoretical values based on any distribution we want. To make such a plot requires a few steps:
 
+### `ppoints`
+
+The `ppoints` function takes the number of values you want and it returns equally spaced cumulative probabilities between 0 and 1. We can then use the `qnorm` function to get the predicted quantiles / z-scores of the theoretical normal distribution.
 
 ```{r}
 my_probs = ppoints(20)
-my_quant = qnorm(my_probs) #, mean=Data_mean, sd=Data_sd)
+my_probs
+my_quant = qnorm(my_probs)
 my_quant
 ```
 
-Now to plot the corresponding values from the observed data, we can use the `quantile` function. In addition to the values, the quantile function also takes the probabilites for which it should provide the values, so we can use our `my_probs` again.
+### `quantile`
+
+Now to plot the corresponding values from the observed data distribution, we can use the `quantile` function. 
+
+In addition to the sample data, the `quantile` function also takes the (evenly spaced) cumulative probabilites that we have stored in `my_probs`, which it will use to infer values based on the observed data.
 
 ```{r}
 data_quant = quantile(Data, my_probs)
 data_quant
 ```
 
-Now we are ready to plot the observed data (on the y-axis) vs. the theoretical data (on the x-axis).
+### `qqplot`
+
+When we now plot these against each other, we get a very similar plot to what we saw with `qqnorm`, except now we are using imputed values for data that are evenly spaced across a theoretical distribution.
+
+Again, values based on the observed data are plotted on the y-axis vs. the theoretical data on the x-axis. Both are shown below for easier comparison.
 
 ```{r}
-#plot(my_quant, data_quant)
-#abline(a=0,b=1)
-qqplot(my_quant, data_quant)
+par(mfrow = c(1,2))
+
+## qqnorm plot
+qqnorm(Data)
+qqline(Data)
+
+## qqplot plot
+qqplot(my_quant, data_quant, 
+       xlab="Theoretical quantiles", ylab="Quantiles inferred from data",
+       main="General Q-Q Plot")
 qqline(Data)
 ```
 
-#### Shapiro test for normality
+## Shapiro test for normality
 
-The Shapiro test performs a **goodness of fit** test using the mean and standard deviation of the data. The null hypothesis being that the data is normally distributed.
+The Shapiro test performs a **goodness of fit** test using the mean and standard deviation of the data. The null hypothesis is that the data are normally distributed.
 
 ```{r}
 shapiro.test(Data)
 ```
 
-
-### Data tranformation
+## Data tranformation
 
 In our example, there is not enough evidence to reject the $H_o$ that the data is normally distributed. So let's look at a different dataset. The R dataset `trees` provides `Girth`, `Height`, and `Volume` of different Black Cherry Trees. Let's look at the histogram of the volume data:
 

@@ -52,10 +52,14 @@ nav_exclude: false
 <details closed markdown="block">
   <summary>Details</summary>
 
-**Geometric and Negative Binomial** - [HTML](Class2/W9.C2_Geo_NegBinom_Distributions.html){:target="blank"} - [PDF](Class2/W9.C2_Geo_NegBinom_Distributions.pdf){:target="blank"}
+**Geometric and Negative Binomial**
 
-**Tests for Non-normality** - [(zipped RMD)](Class2/W9.C2_Non-normal_data.Rmd.zip) - [HTML](Class2/W9.C2_Non-normal_data.html){:target="blank"}
+  + **Notes** - [HTML](Class2/W9.C2_Geo_NegBinom_Distributions.html){:target="blank"} - [PDF](Class2/W9.C2_Geo_NegBinom_Distributions.pdf){:target="blank"}
 
+**Tests for Non-normality**
+
+  + **Exercise** - [(zipped RMD)](Class2/W9.C2_Non-normal_data.Rmd.zip) - [HTML](Class2/W9.C2_Non-normal_data.html){:target="blank"}
+    + [Answer key (zipped RMD)](Class2/W9.C2_Non-normal_data_KEY.Rmd.zip) - [HTML](Class2/W9.C2_Non-normal_data_KEY.html){:target="blank"} - [PDF](Class2/W9.C2_Non-normal_data_KEY.pdf){:target="blank"}
 </details>
 
 <!-- ########################################################################### -->
