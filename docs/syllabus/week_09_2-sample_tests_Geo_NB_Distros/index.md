@@ -66,11 +66,15 @@ nav_exclude: false
 
 <!-- ########################################################################### -->
 
-<!-- # Recitation - Friday, Oct. 29
+# Recitation - Friday, Oct. 29
+
+### Numerical Methods, Fitting Distribution Parameters
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
++ Answer key - [zipped .Rmd](Recitation/W9.R1_Exercise_ML_fitdistr_KEY.Rmd.zip) - [HTML](Recitation/W9.R1_Exercise_ML_fitdistr_KEY.html){: target="blank"}
+
+</details>
 
 <!-- ########################################################################### -->

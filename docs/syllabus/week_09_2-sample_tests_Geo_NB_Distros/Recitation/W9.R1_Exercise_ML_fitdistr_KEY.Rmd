@@ -1,0 +1,141 @@
+---
+title: "Numerical Methods: Maximum Likelihood Estimation of Distribution Parameters"
+date: "October 29, 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(fitdistrplus)
+```
+
+# Analytical vs. numerical solutions
+
+In principle, there are two approaches to solving mathematical problems. Finding an **analytical** solution requires formulating the problem in a certain well-understood way, which allows calculating an exact solution using formulas. An example is finding the mean and standard deviation of a normal distribution using the formulas you always find in statistics textbooks. A **numerical** solution is achieved by making a series of guesses and checking every time whether the solution looks better or worse than before. Once the problem is solved well enough (even if the solution is not *exactly* right!), a numerical solution is declared to be found. It is possible to guess the mean and standard deviation of a normal distribution numerically, but numerical methods are more often used in situations when the analytical solution is either too complicated or does not exist. For example, the very popular R function `lm()`, which fits parameters to a linear regression model, uses a numerical procedure to find the slope and the intercept that would result in a line describing the real data decently well.
+
+## Finding the probability of a Bernoulli trial: the analytical solution
+
+First, let us simulate 10 Bernoulli trials (e.g. flipping a coin) with an 80% probability of success:
+
+```{r}
+p_real <- 0.8 # the "real" probability of success
+
+set.seed(99) # set seed for reproducibility
+
+# Bernoulli distribution is a binomial distribution with number of trials (the size parameter) = 1
+my_distr <- rbinom(n = 10,
+                   size = 1,
+                   prob = p_real)
+
+my_distr
+```
+
+Now, for the rest of this exercise, let us forget that we know the "real" probability of success and formulate the question in the following way:
+
+```
+Given our data (heads-heads-heads-tails-heads-tails-heads-heads-heads-heads), what is the most likely probability of success in a single trial?
+```
+
+The analytical solution would be simply the mean of our 0 and 1 vector:
+
+```{r}
+mean(my_distr)
+```
+
+
+
+## Finding the probability of a Bernoulli trial: the numerical solution
+
+As you see, the analytical solution to the given problem is so simple that normally you would not need to use numerical analysis for it. However, we will go ahead and do this because this problem is simple enough to calculate the numerical solution using a relatively simple code, so we will easily see the general principle behind numerical analysis.
+
+The approach we will use is called maximum likelihood estimation. In simple words, **we need to estimate what is the likelihood of observing our data with different values of the probability parameter and then pick the probability value that maximizes the likelihood of observing our data.**
+
+First, let us write a function to calculate the likelihood of observing our data (the likelihood of observing a specific *combination* of outcomes) with a given probability of success:
+
+```{r}
+likelihood_function <- function(sequence, probability){
+  n_successes <- length(which(sequence == 1))
+  n_failures <- length(which(sequence == 0))
+  likelihood <- probability^n_successes * (1-probability)^n_failures
+  return(likelihood)
+}
+
+# does it perform as expected, i.e. is the likelihood the highest at probability = 0.8 and lower at other values?
+likelihood_function(sequence = my_distr,
+                    probability = 0.8)
+likelihood_function(sequence = my_distr,
+                    probability = 0.7)
+likelihood_function(sequence = my_distr,
+                    probability = 0.9)
+likelihood_function(sequence = my_distr,
+                    probability = 0)
+likelihood_function(sequence = my_distr,
+                    probability = 1)
+```
+
+Second, let us use the function above to calculate the likelihood of observing our data with a whole range of arbitrarily selected probabilities between 0 and 1:
+
+```{r}
+# generate an arbitrary sequence of probabilities between 0 and 1
+hypothetical_p_range <- seq(from = 0,
+                            to = 1,
+                            by = 0.01)
+
+# calculate the likelihood of observing our data with each of the probability values above
+likelihood_range <- c()
+for (p in hypothetical_p_range){
+  likelihood_p <- likelihood_function(sequence = my_distr,
+                                      probability = p)
+  likelihood_range <- c(likelihood_range,
+                        likelihood_p)
+}
+
+likelihood_range
+```
+
+Third, plot the probability of success in a single trial on the X axis and the likelihood of observing our data on the Y axis:
+
+```{r}
+my_data <- data.frame(likelihood_range, hypothetical_p_range)
+
+ggplot(my_data,
+       aes(x = hypothetical_p_range,
+           y = likelihood_range)) +
+  geom_point() +
+  xlab("Probability of success in a single trial") +
+  ylab("Likelihood of observing our data")
+```
+
+The solution is already pretty obvious, but how precise it will be is affected by the step size we used for the X axis. To find the solution that is as precise as possible, let us use the built-in function `optimize()`, which uses a modified version of [golden-section search](https://en.wikipedia.org/wiki/Golden-section_search) to find the value of X that minimizes or maximized the value of Y:
+
+```{r}
+# "fix" the parameter sequence inside likelihood_function() and make it always equal to my_distr
+# we have to do this because we only want the optimize() function below to find the probability parameter
+likelihood_function_for_optimization <- function(p){
+  likelihood_function(sequence = my_distr,
+                      probability = p)
+}
+
+optimize(f = likelihood_function_for_optimization,
+         interval = c(0,1), # search between 0 and 1
+         maximum = TRUE) # find the probability value that maximizes, and not minimizes, the likelihood
+```
+
+
+
+## Do the same using `fitdist()` from the `fitdistrplus` package
+
+The code above was just an illustration of the general idea behind maximum likelihood estimation and other numerical methods. In reality, you will likely not need to write a custom code for similar problems. Popular functions to fit distribution parameters are `fitdistr()` from the package `MASS` and `fitdist()` from `fitdistrplus`. We will use the latter.
+
+The parameter `distr` is either a custom density function, or the name of one of the "d/p/q/r" family functions (e.g. "binom", "nbinom", "norm" etc.). In the latter case, fixed and starting arguments are the arguments from the corresponding "d/p/q/r" function. For example, we have to pass `size = 1` to the list of fixed arguments because all of our trials are Bernoulli trials. Also, we have to pass `prob = <something>` to the list of starting values because we want the function to pick the best value of `prob`, and `fitdist()` may fail if it starts parameter search with a prob value close to either 0 or 1 (this is not always the case, but this is the case here).
+
+```{r}
+fitdist(data = my_distr,
+        distr = "binom",
+        fix.arg = list(size = 1),
+        start = list(prob = 0.5))
+```
+
+Importantly, `fitdist()` performs bootstrapping, so it also outputs the error of the parameter estimate.
+
