@@ -137,29 +137,38 @@ qqline(trees$Volume)
 
 We can see from the Shapiro test and the QQplot that these data don't seem to fit a normal distribution. In a QQplot, this is usually quite obvious because parts of the data veer pretty far off from the ideal line.
 
-When the data do not look to be sufficiently normal, we can try performing tests on data that have been **transformed** using functions such as the `log()`, `sqrt()`, or `arcsin()`. This can make data look more normal, so that parametric tests may be performed on them.
+When the data do not look to be sufficiently normal, we can try performing tests on data that have been **transformed** in such a way that they look more normal, so that parametric tests may be performed on them. Some functions that can accomplish this include the `log()`, `sqrt()`, or `arcsin()`. The log and square-root transformations are the most common. 
 
-### Log transform
+Any transformation that accomplishes the goal is ok, as long as you back-transform at the end in order to report statistics such as 95% confidence intervals (see Plasma Triglycerides example below).
+
+
+### Example: Trees
 
 In biology it is common that multiple factors influence our measurements. The effects may be additive or multiplicative. We know from probability theory that to find the cumulative probability of several independent variables, we can multiply them (product rule). This type of data often gives rise to log-distributed measurements. Taking the log of these stretches out the small values and compresses the larger ones, rendering the data more normal-looking.
 
 Many examples follow a log-normal distribution, such as exponential growth (cell count doubles with each division), systolic blood presssure, and the latency period for infectious diseases.
 
-How does the `trees` dataset look when we log-transform it?
+How does the `trees` dataset look when we transform it using the `log` or `sqrt` functions?
 
 ```{r}
 par(mfrow=c(1,2))
 
-qqnorm(trees$Volume)
-qqline(trees$Volume)
-
 qqnorm(log(trees$Volume))
 qqline(log(trees$Volume))
 
-shapiro.test(log(trees$Volume))
+qqnorm(sqrt(trees$Volume))
+qqline(sqrt(trees$Volume))
 ```
 
-Not perfect, but certainly closer to normality than the original data.
+How do these transformations stand up in a test for normality?
+
+```{r}
+shapiro.test(log(trees$Volume))
+shapiro.test(sqrt(trees$Volume))
+```
+
+
+The log transformation looks promising (and a lot better than the sqrt transform). It's not perfect, but certainly closer to normality than the original data, and suitable for proceeding with statistical methods that require normally distributed data.
 
 
 ## Example: Plasma triglyceride levels
