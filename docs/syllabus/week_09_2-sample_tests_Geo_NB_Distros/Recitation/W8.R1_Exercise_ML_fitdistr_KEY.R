@@ -89,7 +89,36 @@ fitdist(data = my_seq,
         fix.arg = list(size = 1),
         start = list(prob = 0.5))
 
-fitdist(data = rnorm(10,8,3),
-        distr = "norm",
-        start = list(mean = 1,
-                     sd = 1))
+
+
+###
+#my_distr <- rnorm(100,10,10)
+my_distr <- rnbinom(n = 1000,
+                    size = 2,
+                    mu = 50)
+hist(my_distr)
+
+my_distr_quantile <- quantile(x = my_distr,
+                              probs = seq(0,1,0.01))
+
+
+my_distr_fit_nbinom <- fitdist(data = my_distr,
+                               distr = "nbinom")
+
+my_distr_fit_nbinom_quantile <- qnbinom(p = seq(0,1,0.01),
+                                      size = my_distr_fit_nbinom$estimate['size'],
+                                      mu = my_distr_fit_nbinom$estimate['mu'])
+
+qqplot(x = my_distr_fit_nbinom_quantile,
+       y = my_distr_quantile)
+
+
+my_distr_fit_norm <- fitdist(data = my_distr,
+                             distr = "norm")
+
+my_distr_fit_norm_quantile <- qnorm(p = seq(0,1,0.01),
+                                    mean = my_distr_fit_norm$estimate['mean'],
+                                    sd = my_distr_fit_norm$estimate['sd'])
+
+qqplot(x = my_distr_fit_norm_quantile,
+       y = my_distr_quantile)
