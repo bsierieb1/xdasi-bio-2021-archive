@@ -1,0 +1,436 @@
+---
+title: "WilcoxTest"
+author: "Manpreet S. Katari"
+date: "10/19/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Simple case
+
+Here will discuss a simple case study where the a drug has been provided to 10 random patients (or test subjects) and, as a control, a placebo pill was given to 10 other random patients. Each condition collected measurements and the question is:
+
+## Is there a significant difference between the subjects who were given the placebo and the those who were given the drug?
+
+### The Population
+
+Let's first look at all values as a population. We will combine the values and draw a simple histogram.
+
+```{r}
+
+Placebo = c(54,51,58,44,55,52,42,47,58,46)
+Drug = c(54,73,53,70,73,68,52,65,65,60)
+
+Data = c(Placebo, Drug)
+Data_sd = sd(Data)
+Data_mean = mean(Data)
+hist(Data)
+```
+
+
+### What if the data is not normally distributed?
+
+#### Quantile-Quantile plot
+
+We can check to see how well the theoretical values of a set of values match the observed.
+The `qqnorm` and `qqline` function create a plot assuming the data is normally distributed.
+
+
+```{r}
+qqnorm(Data)
+qqline(Data)
+```
+
+A more generic function is `qqplot` function where you can provide the theoretical values based on any distribution we want. 
+
+The `ppoints` function takes the number of values you want and it returns the probability spanned equally. We have 20 values so let's pick the 20 probabilities. We will then use the `qnorm` function to get the predicted values of the theoretical normal distribution.
+
+
+```{r}
+my_probs = ppoints(20)
+my_quant = qnorm(my_probs) #, mean=Data_mean, sd=Data_sd)
+my_quant
+```
+
+Now to plot the corresponding values from the observed data, we can use the `quantile` function. In addition to the values, the quantile function also takes the probabilites for which it should provide the values, so we can use our `my_probs` again.
+
+```{r}
+data_quant = quantile(Data, my_probs)
+data_quant
+```
+
+Now we are ready to plot the points, theoretical on the x-axis
+
+```{r}
+#plot(my_quant, data_quant)
+#abline(a=0,b=1)
+qqplot(my_quant, data_quant)
+qqline(Data)
+```
+
+#### Shapiro test
+
+The shapiro test performs a **goodness of fit** test using the mean and standard deviation of the data. The null hypothesis being that the data is normally distributed.
+
+```{r}
+shapiro.test(Data)
+
+```
+
+#### Data tranformation
+
+In our example, there is not enough evidence to reject the $H_o$ that the data is normally distributed. So let's look at a different dataset, volume of `trees`. The R dataset `trees` provides `Girth`, `Height`, and `Volume` of different Black Cherry Trees. If we look at the histogram of the data, it is clear that it doesn't look like it is normally distributed.
+```{r}
+hist(trees$Volume)
+```
+
+Performing a `shapiro.test` confirms this.
+
+```{r}
+shapiro.test(trees$Volume)
+
+```
+
+And the `QQ plot`
+
+```{r}
+qqnorm(trees$Volume)
+qqline(trees$Volume)
+
+```
+
+A solution is to tranform the data in such a way that its transformation is normally distributed. Some transformations include: `log`, `square root` and `arcsine` transformation. The first two are much more common than the third. However any transformation is fine as long as you are able to work backwards to determine the original. Here are histograms of transformations:
+
+```{r}
+par(mfrow=c(1,2))
+hist(log(trees$Volume))
+hist(sqrt(trees$Volume))
+
+```
+
+The log transformation looks very promising.
+
+```{r}
+shapiro.test(log(trees$Volume))
+```
+
+We can now perform all our statistical methods that require data to be normally distributed. To compute confidence intervals, we just need to remember to back-transform into the original units before reporting them.
+
+
+#### Wilcoxon signed-rank test
+
+But suppose we don't want to transform our data and don't would rather not assume that the data is normally distributed. The **sign test** (Chapter 13.3, not discussed here) and the **Wilcoxon signed-rank test** can both be used instead of one-sample or paired t-tests when the data do not meet the assumptions of a t-test (i.e. the data are normally distributed).
+
+Instead of looking at the actual values, let's look at the **ranks** of the values. Since we are looking at ranks, our null hypothesis is that the sum of the ranks from one group is the same as the other groups. This is the **Wilcoxon signed-rank test**, which is a non-parametric equivalent to a paired t-test.
+
+***Note:*** *The sign test is simpler, and essentially takes the signed difference between paired samples (whether one is bigger or smaller than the other) and performs a binomial test on the differences, assuming p=0.5.*
+
+These tests both compare the ***medians*** of two samples instead of the *means*. The Wilcoxon signed-rank test additionally assumes that the sum of signed differences is **symmetric** about the median difference.
+
+The steps for the Wilcoxon signed-rank test are:
+
++ Calculate the differences between the pairs.
++ _**n**_ is the number of nonzero differences.
++ Rank the **absolute* values of _n_ differences. Assign the average if there is a tie.
++ Re-assign to a group based on whether it was positive or negative change.
++ The sum of the ranks that is lower ( positive or negative ) is the test statistic.
+
+```{r}
+Data
+
+DrugDiff = Placebo - Drug
+print(DrugDiff)
+
+DrugDiff = DrugDiff[which(DrugDiff != 0)]
+print(DrugDiff)
+
+DrugDiffRank = rank(abs(DrugDiff))
+print(DrugDiffRank)
+
+t_neg = sum(DrugDiffRank[DrugDiff < 0])
+t_neg
+
+t_pos = sum(DrugDiffRank[DrugDiff > 0])
+t_pos
+
+t_min = min(t_pos,t_neg)
+t_min
+
+n_diff = length(DrugDiff)
+n_diff
+```
+
+
+The population mean for the statistic is:
+
+$$ \mu_{v} = \frac{n(n+1)}{4}$$
+
+Since for us the n was 9 ( we had one zero diff ) ,
+
+$$ \mu_{v} = \frac{9(10)}{4} = 22.5$$
+```{r}
+mu_diff = n_diff*(n_diff+1)/4
+mu_diff
+```
+
+The population is a bit complicated for ties, so let's just focus on when there are no ties.
+
+$$ \sigma_{V}^2 = \frac{n(n+1)(2n+1)}{24} $$
+
+
+
+```{r}
+var_diff = n_diff*(n_diff + 1)*(2*n_diff + 1)/24
+var_diff
+```
+
+To get the standard deviation we simply take the square root.
+
+```{r}
+sd_diff = sqrt(var_diff)
+sd_diff
+```
+
+When there are plenty of samples (usually > 25), a normal approximation is used to estimate the p-value. Let's just assume we do this and calculate the *z-statistic* and determine our p-value.
+
+```{r}
+z_diff = (t_min - mu_diff)/sd_diff
+z_diff
+
+2*pnorm(z_diff, lower.tail = T)
+
+```
+```{r}
+t_neg
+t_pos
+```
+
+```{r}
+2*pnorm((t_neg-mu_diff)/sd_diff, lower.tail = F)
+
+```
+Let's confirm this
+
+```{r}
+wilcox.test(Placebo, Drug, paired = T)
+
+```
+
+
+### What is our data is not normal but also not paired?
+
+We can use the `wilcox.test` but instead of testing the positive and negative differences between **pairs** of values, we will compare the two **groups** by ranking the combined data, and then comparing the summed ranks between the two groups.
+
+This is called the **Wilcoxon ranks-sum test**. It is equivalent to the **Mann-Whitney U test**, but it performs the calculations in a slightly different way.
+
+The steps are as follows:
+
++ Combine the values and rank them together.
++ Rank them (smallest to largest where smallest gets a 1).
++ If there is a tie, provide the average as the rank for all.
++ $T_{1}$ is the sum of the ranks in group one and $T_{2}$ is the sum of the ranks 
+in group two.
++ Calculate W using the formulas below:
+
+$$ W_{1} = T_{1} - \frac{n_{1}(n_{1}+1)}{2} $$
+$$ W_{2} = T_{2} - \frac{n_{2}(n_{2}+1)}{2} $$
+where $n_{1}$ and $n_{2}$ are the sizes of the two groups.
+
+```{r}
+Data
+DataRank = rank(abs(Data))
+DataRank
+
+DataRankSums = tapply(DataRank,rep(c("P","D"),each=10),sum)
+DataRankSums
+
+n_placebo = length(Placebo)
+n_drug = length(Drug)
+
+t_P  = DataRankSums["P"]
+t_D  = DataRankSums["D"]
+
+w_P = t_P - (n_placebo*(n_placebo + 1)/2)
+w_P
+w_D = t_D - (n_drug*(n_drug + 1)/2)
+w_D
+```
+
+The population variance ( again, ignoring the term for ties for now ) is 
+
+$$ \sigma_{W}^2 = \frac{n_{1}n_{2}}{12} (n_1 + n_2 + 1)  $$
+```{r}
+
+sd_w_squared = (n_placebo*n_drug/12) * (n_placebo + n_drug + 1)
+sd_w = sqrt(sd_w_squared)
+sd_w
+```
+
+And the population mean is :
+
+$$ \mu_W = \frac{n_1n_2}{2}$$
+
+```{r}
+mu_w = n_placebo * n_drug / 2
+mu_w
+```
+
+Again, with a high number of samples we can approximate to normal distribution, so let's just calculate the z score and get our p-values.
+
+```{r, collapse=TRUE}
+# by convention, we use the group with the lower value
+z_w = (w_P-mu_w)/sd_w
+z_w
+
+2*pnorm(z_w, lower.tail = T)
+2*pnorm(w_P, mean=mu_w, sd=sd_w, lower.tail = T)
+
+# using the group with the upper value gives the same p-value
+# (but the sign of the z-score is reversed)
+z_w = (w_D-mu_w)/sd_w
+z_w
+
+2*pnorm(z_w, lower.tail = F)
+2*pnorm(w_D, mean=mu_w, sd=sd_w, lower.tail = F)
+```
+
+```{r}
+z_w = (w_P-mu_w)/sd_w
+z_w
+
+2*pnorm(z_w, lower.tail = T)
+2*pnorm(w_P, mean=mu_w, sd=sd_w, lower.tail = T)
+```
+
+Confirmation that our calculation is correct
+
+```{r}
+wilcox.test(Placebo, Drug)
+
+```
+
+### In-Class Exercise[^1]
+
+Researchers paired females sequentially with males of both types in random order. In other words, each female bred twice, once with a compatible male and once with an incompatible male.
+
+Each time, females produced a brood of young with the assigned male. For each pairing, the researchers measured the blood corticosterone concentration (in units of ng/ ml) as an index of the amount of stress the females experienced. The corticosterone data for 43 females are given in the accompanying table. Plot the distribution of differences in stress levels between females with compatible and incompatible mates. What trend is suggested? If we wished to carry out a test of the difference between treatment means, would a paired t-test be appropriate for these data? Why or why not? Would a paired t-test be appropriate after a log transformation of the differences between treatments? Would a sign test be appropriate for these data? Why or why not? 
+
+Test the hypothesis that stress levels are the same between females with compatible and incompatible mates. Use a Wilcoxon signed-rank test.
+
+```{r}
+female_data = c(10,130,10,105,39,91,30,82,6,77,21,65,0,64,4,60,16,56,10,51,23,45,22,50,8,49,19,48,22,44,10,44,10,44,11,42,22,41,19,37,21,37,14,37,11,36,6,36,1,35,2,32,9,31,11,30,12,30,3,30,3,30,4,30,6,29,5,29,7,29,6,28,8,26,8,25,21,25,7,25,8,24,7,21,8,7)
+
+female_matrix = matrix(female_data, ncol=2,byrow=T)
+colnames(female_matrix) = c("compatible","incompatible")
+tail(female_matrix)
+
+```
+
+- Q1) Plot the distribution of differences in stress levels between females with compatible and incompatible mates. What trend is suggested? 
+
+```{r}
+female_diff = female_matrix[,2] - female_matrix[,1]
+hist(female_diff)
+```
+
+```{r}
+shapiro.test(female_diff)
+
+```
+- Q2) If we wished to carry out a test of the difference between treatment means, would a paired t-test be appropriate for these data? Why or why not? 
+
+```{r}
+# yes it's paired. not t-test, because it requires data to be normal.
+
+```
+
+- Q3) Would a paired t-test be appropriate after a log transformation of the differences between treatments? 
+
+
+```{r}
+hist(log(female_diff))
+
+
+```
+
+```{r}
+shapiro.test(log(female_diff))
+
+log10(female_matrix[,1])
+```
+
+- Q4) Would a sign test be appropriate for these data? Why or why not? 
+
+```{r}
+#yes
+```
+
+- Q5) Test the hypothesis that stress levels are the same between females with compatible and incompatible mates. Use a sign test.
+
+```{r}
+female_diff = female_matrix[,1]-female_matrix[,2]
+wilcox.test(female_diff)
+
+```
+```{r}
+wilcox.test(female_matrix[,1], female_matrix[,2], paired=T)
+
+```
+
+
+### Exercise
+
+#### Perform a bootstrap analysis of non-parametric methods
+
++ Perform a permutation analysis demonstrating that the mean of the $W$ statistic in a two-sample Wilcoxon rank-sum test is correct.
+
+```{r}
+# Break the problem into discrete steps
+
+# Combine the values and rank them together.
+
+#Placebo = c(54,51,58,44,55,52,42,47,58,46)
+#Drug = c(54,73,53,70,73,68,52,65,65,60)
+#Data = c(Placebo, Drug)
+Data
+
+# create a factor
+DataGroup = factor(rep(c("P","D"),each=10))
+  
+# Create a loop that repeates 10,000 times
+for (i in 1:10000) {
+
+  # shuffle values
+  shuffled.values = sample(Data, replace=F)
+
+  # rank shuffled values (smallest to largest, with smallest = 1)
+  DataRank = rank(abs(Data))
+  DataRankSums = tapply(DataRank,DataGroup,sum)
+
+  # calculate T1 and T2
+  t_P  = DataRankSums["P"]
+  t_D  = DataRankSums["D"]
+
+  # calculate W1 and W2
+  n_placebo = length(Placebo)
+  n_drug = length(Drug)
+
+  w_P = t_P - (n_placebo*(n_placebo + 1)/2)
+  w_D = t_D - (n_drug*(n_drug + 1)/2)
+
+  # take the min(W1,W2) and save it in a growing vector
+  min(w_P,w_D)
+}
+
+```
+
+
+<!-- footnote -->
+
+[^1]:This exercise is taken from W&S Assignment Problem 20.
+

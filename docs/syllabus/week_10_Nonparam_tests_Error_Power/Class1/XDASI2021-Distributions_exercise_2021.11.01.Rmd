@@ -1,0 +1,63 @@
+---
+title: "Distributions in-class exercise"
+subtitle: "XDASI Fall 2021"
+author: "YOUR NAMES HERE"
+date: "11/1/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Scenario
+
+You want to clone a gene and you have some reporter for success of transformation in *E. coli*. Positive colonies are blue because they express $\beta$-galactosidase when plated on medium with IPTG. The probability of a successful transformation is $0 \le P(success) \le 1$. For the following exercise, you may consider one plate, many plates, or a truly gargantuan number of plates.
+
+## Exercise
+
+The class has been split into groups and each has taken one or two of the following distributions:
+
+- Bernoulli
+- Binomial
+- Hypergeometric
+- Geometric
+- Negative binomial
+- Poisson
+- Normal
+- Exponential
+
+For your assigned distribution, answer the following questions.
+
+#### a. What is your function? Describe it in terms of the kind of problem that it applies to. Is it discrete or continuous?
+
+<!-- Insert your answer below. -->
+
+
+#### b. Describe a question that you can ask with your distribution as applied to the transformation scenario given above.
+
+<!-- Insert your answer below. -->
+
+
+#### c. Describe the parameterization of the equation. What parameters does it take, and what do they mean?
+
+<!-- Insert your answer below. -->
+
+
+#### d. Pick some appropriate parameters for your distribution as applied to the transformation scenario and graph the PDF and CDF.
+
+```{r}
+```
+
+
+#### e. Compute a cumulative probability for some appropriate value and describe in words what it means.
+
+```{r}
+```
+
+<!-- Insert your answer below. -->
+
+
+#### f. Identify at least one other distribution that yours relates to and be prepared to discuss the relationship between them. This could be a special case, a limiting case, an approximation, or an inverse CDF (survival) relationship.
+
+<!-- Insert your answer below. -->

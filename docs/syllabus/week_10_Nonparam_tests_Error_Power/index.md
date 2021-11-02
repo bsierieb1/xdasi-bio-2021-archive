@@ -2,7 +2,7 @@
 title: Week 10
 parent: Syllabus
 has_children: false
-nav_exclude: true
+nav_exclude: false
 ---
 
 # Week 10: Title
@@ -21,23 +21,41 @@ nav_exclude: true
 
 <!-- ########################################################################### -->
 
-<!-- # Class - Monday, Nov. 1
+# Class - Monday, Nov. 1
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
+**Distributions Review**
+
++ [**Exercise: What's my question?**](https://docs.google.com/document/d/1D7xQ5qJ_x7e8xHDbkU8Vv7d0KoKRX-ueQ32dQJ1PMMY/edit?usp=sharing){: target="blank"}
++ [**Distributions Summary (Ken Aho)**](https://drive.google.com/file/d/1jHBCMtwRWYTj1op7_O87BKLX-J2ex5Z1/view?usp=sharing){: target="blank"}
+
+**Class Illustrations: Nonparametric Tests**
+
++ [**Paired Tests: Sign vs. Wilcoxon Signed Rank**](Class1/Nonparametric_paired_data_2021.11.02.png){: target="blank"}
++ [**Unpaired Test: Wilcoxon Rank Sum**](Class1/Wilcoxon_rank_sum_test.png){: target="blank"}
+
+</details>
 
 <!-- ########################################################################### -->
 
 <!-- ########################################################################### -->
 
-<!-- # Class - Thursday, Nov. 4
+# Class - Thursday, Nov. 4
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
+**Nonparametric Tests and Permutation (Shuffle) Test**
+
+<!-- + **Class Notes** - [(zipped .Rmd)](Class2/W10.C2_Non-parametric_tests.Rmd.zip) - [(html)](W10.C1_Non-parametric_tests.html){: target="blank"} -->
+
+**Error and Power**
+
+<!-- + **Class Notes** - [(zipped .Rmd)](Class2/W10.C2_Error_power.Rmd.zip) - [(html)](Class2/W10.C2_Error_power.html){: target="blank"} -->
+
+</details>
 
 <!-- ########################################################################### -->
 

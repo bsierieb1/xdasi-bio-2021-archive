@@ -1,0 +1,39 @@
+---
+title: "Untitled"
+author: "Kris Gunsalus"
+date: "11/1/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Wilcoxon signed rank test simulation
+
+```{r}
+# size of triglyceride dataset
+n=24
+
+# expected parameters for sampling distribution of W
+mu_v = n*(n+1)/4 # mu = max_t / 2
+mu_v
+
+sigma_v = sqrt(n*(n+1)*(2*n+1)/24)  # without ties
+sigma_v
+  
+# exact probability under W ~ Wsignrank(x, n=n)
+2*psignrank(1,n=24)
+
+# sampling distribution of the test statistic W
+set.seed(13000)                                          # Set seed for reproducibility
+N <- 100000                                              # Specify sample size
+y_rsignrank <- rsignrank(N, n = 24)                      # Draw N random values
+head(y_rsignrank)                                        # Print values to RStudio console
+hist(y_rsignrank,                                        # Plot of randomly drawn density
+     breaks = 50,
+     main = "")
+abline(v=mean(y_rsignrank), col="blue", lwd=3)
+```
+
