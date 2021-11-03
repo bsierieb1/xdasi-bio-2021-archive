@@ -3,6 +3,7 @@ title: Week 10
 parent: Syllabus
 has_children: false
 nav_exclude: false
+nav_order: 10
 ---
 
 # Week 10: Title

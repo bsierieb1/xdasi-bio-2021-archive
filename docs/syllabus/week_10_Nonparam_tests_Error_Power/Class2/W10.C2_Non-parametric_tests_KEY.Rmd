@@ -198,7 +198,7 @@ w_stat
 
 If there is no difference between the two samples, we would expect that $W=0$, since there should be no bias toward lower or higher ranks in either sample.
 
-#### Sampling distribution of $W$
+##### Sampling distribution of $W$
 
 The sampling distribution of the $W$ statistic has a specific expected distribution under the null. In the absence of tied ranks (which we ignore for now to keep things simple), the population mean and variance are:
 
@@ -233,7 +233,7 @@ hist(y_rsignrank,                                        # Plot of randomly draw
 abline(v=mean(y_rsignrank), col="blue", lwd=3)
 ```
 
-#### Normal approximation for the $p$-value
+##### Normal approximation for the $p$-value
 
 For the triglyceride data, the sample size is n=24, so we can use a normal approximation to compute a $z$-score, $z = W / \sigma_W$, and use this to obtain a $p$-value:
 
@@ -279,7 +279,7 @@ v_stat
 ```
 
 
-#### Normal approximation for the $p$-value
+##### Normal approximation for the $p$-value
 
 Just like for $W$, for larger sample sizes (> ~20-25 pairs of observations) the sampling distribution of $V$ is approximately normal, with the following parameters:
 
@@ -296,7 +296,9 @@ z_v = (v_stat - mean_v) / sqrt(sigma_v)
 ```
 
 
-#### Wilcoxon Signed Rank test in R
+#### R functions for Wilcoxon Signed Rank
+
+##### Wilcoxon Signed Rank test in R
 
 Now let's use the `wilcox.test()` function to perform a paired test on the triglyceride data. The test gives the same result when samples are entered in either order.
 
@@ -305,7 +307,7 @@ wilcox.test(post, pre, paired=T)  # post vs. pre
 wilcox.test(pre, post, paired=T)  # pre vs. post
 ```
 
-#### Wilcoxon Signed Rank Distribution in R
+##### Wilcoxon Signed Rank Distribution in R
 
 It turns out that R actually has a family of functions for the $V$ distribution. Let's see what `psignrank()` gives us for a two-tailed probability:
 

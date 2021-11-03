@@ -1,0 +1,48 @@
+---
+title: "FRAP curve fitting"
+author: "Kris Gunsalus"
+date: "10/30/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Load FRAP data
+
+```{r}
+
+```
+
+
+### e. Calculate recovery rates and test for significant differences
+
+These curves look pretty different. One way to quantify this is to calculate the recovery rates and compare them using a statistical test.
+
+```{r}
+# max recovery rates
+A.WT = frap %>% filter(strain == "WT") %>% summarize(max(norm.Intensity))
+
+```
+
+
+
+**a)** Fit the curves to an exponential distribution and retrieve the lambda parameter.
+
+```{r}
+library(fitdistrplus)
+
+wt.dist = frap.norm.summary %>% 
+  filter(strain == "WT" & Time >= 0)
+wt.dist = wt.dist$i.mean
+
+mut.dist = frap.norm.summary %>% 
+  filter(strain == "mip1uae1" & Time >= 0)
+mut.dist = mut.dist$i.mean
+
+
+
+```
+
