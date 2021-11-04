@@ -2,6 +2,7 @@
 title: Week 3
 parent: Syllabus
 has_children: false
+nav_order: 3
 ---
 
 # Week 3: Descriptive Statistics and Data Wrangling

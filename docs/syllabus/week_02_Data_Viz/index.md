@@ -2,6 +2,7 @@
 title: Week 2
 parent: Syllabus
 has_children: false
+nav_order: 2
 ---
 
 # Week 2: Data Visualization

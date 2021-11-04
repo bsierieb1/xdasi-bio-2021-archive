@@ -3,6 +3,7 @@ title: Week 16
 parent: Syllabus
 has_children: false
 nav_exclude: true
+nav_order: 16
 ---
 
 # Week 16: Final In-Class Exam

@@ -3,6 +3,7 @@ title: Week 11
 parent: Syllabus
 has_children: false
 nav_exclude: true
+nav_order: 11
 ---
 
 # Week 11: Title

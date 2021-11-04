@@ -3,6 +3,7 @@ title: Week 14
 parent: Syllabus
 has_children: false
 nav_exclude: true
+nav_order: 14
 ---
 
 # Week 14: Title

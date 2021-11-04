@@ -2,6 +2,7 @@
 title: Week 1
 parent: Syllabus
 has_children: false
+nav_order: 1
 ---
 
 # Week 1: Introduction

@@ -3,6 +3,7 @@ title: Week 15
 parent: Syllabus
 has_children: false
 nav_exclude: true
+nav_order: 15
 ---
 
 # Week 15: Title

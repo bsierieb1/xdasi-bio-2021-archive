@@ -3,6 +3,7 @@ title: Week 8
 parent: Syllabus
 has_children: false
 nav_exclude: false
+nav_order: 8
 ---
 
 # Week 8: Normal, t, Poisson, and Exponential Distributions

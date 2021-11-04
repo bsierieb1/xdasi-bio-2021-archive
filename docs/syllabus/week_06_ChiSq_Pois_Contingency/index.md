@@ -3,6 +3,7 @@ title: Week 6
 parent: Syllabus
 has_children: false
 nav_exclude: false
+nav_order: 6
 ---
 
 # Week 6: Goodness-of-fit Tests and Contingency Analysis

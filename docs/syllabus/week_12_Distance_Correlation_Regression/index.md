@@ -3,6 +3,7 @@ title: Week 12
 parent: Syllabus
 has_children: false
 nav_exclude: true
+nav_order: 12
 ---
 
 # Week 12: Title

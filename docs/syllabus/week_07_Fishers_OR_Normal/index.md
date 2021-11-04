@@ -3,6 +3,7 @@ title: Week 7
 parent: Syllabus
 has_children: false
 nav_exclude: false
+nav_order: 7
 ---
 
 # Week 7: Relative Risk, Odds Ratios, and Fisher's Exact Test

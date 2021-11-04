@@ -3,6 +3,7 @@ title: Week 4
 parent: Syllabus
 has_children: false
 nav_exclude: false
+nav_order: 4
 ---
 
 # Week 4: Probability
