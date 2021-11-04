@@ -1,21 +1,20 @@
 ---
-title: "Non-parametric and permutation tests"
+title: "Permutation and non-parametric significance tests"
 subtitle: "XDASI Fall 2021"
 date: "11/4/2021"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: 4
   html_document:
     toc: yes
     toc_float: yes
     toc_depth: 4
     code_folding: show
-  pdf_document:
-    toc: yes
-    toc_depth: 4
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-#install.packages("mosaic")  # do this once
 library(mosaic)
 library(ggplot2)
 ```
@@ -68,6 +67,7 @@ The intuition behind the null hypothesis for all of these tests is that the ***m
 
 + In addition, if we were to ***rank*** the differences between groups, or just the raw values in each group (depending on the test), they should somehow average out between the two groups. This works well when the two groups have a similar skew and variance.
 
+
 ## Test statistics for non-parametric tests
 
 Different tests use different methods to generate a ***test statistic*** that is used to obtain a $p$-value for observed differences. All of them compute a statistic for both positive and negative differences, and then one of these is chosen to compute the $p$-value. 
@@ -75,20 +75,6 @@ Different tests use different methods to generate a ***test statistic*** that is
 Since the amount of bias will be equally extreme in both directions, it doesn't matter which statistic is chosen, but it is important to choose the correct tail of an expected distribution for comparison. 
 
 + By default, the statistic that can be compared to a **lower-tail** of a distribution is chosen as the test statistic for obtaining a $p$-value.
-
-## Example: Plasma Triglyceride levels
-
-Last time we used log-transformed values of this dataset to perform $t$-tests. Here, we will use different non-parametric tests to compare the pre- and post- data.
-
-```{r, collapse=TRUE, class.source="fold-show"}
-#####################################################################
-# plasma triglyceride levels in the population (mg/ml)
-# borderline high = 2-4 vs. normal < 2
-# testing before and after diet and exercise changes (expect a decrease)
-pre = c(2.55,3.38,2.37,4.11,3.27,2.58,4.20,3.22,5.10,2.62,3.06,1.23,2.27,2.24,1.39,2.63,2.61,4.30,1.46,3.35,2.79,2.42,4.63,1.57)
-post = c(1.59,3.51,1.44,2.32,1.75,1.67,1.90,1.37,2.72,1.80,2.40,2.01,2.41,1.38,1.18,4.31,2.09,2.32,2.63,2.25,1.71,2.01,1.95,3.46)
-#####################################################################
-```
 
 
 ## Nonparametric tests for paired data
@@ -109,6 +95,24 @@ The steps are:
 + Count the number of nonzero differences $n$.
 + The test statistic, let's call it $k$, is the ***smaller*** number of the positive and negative differences.
 + Calculate the binomial probability of observing $k$ out of $n$ differences given an expected probability of $\pi = 0.5$.
+
+#### Binomial test in R
+
+Since the sign test is just a ***binomial exact test*** using the positive and negative counts, the probability can be computed either using `pbinom()` or using the binomial proportions test, `binom.test()`.
+
+#### Example: Plasma Triglyceride levels
+
+Last time we used log-transformed values of this dataset to perform $t$-tests. Here, let's use a sign test to compare the pre- and post- data.
+
+```{r, collapse=TRUE, class.source="fold-show"}
+#####################################################################
+# plasma triglyceride levels in the population (mg/ml)
+# borderline high = 2-4 vs. normal < 2
+# testing before and after diet and exercise changes (expect a decrease)
+pre = c(2.55,3.38,2.37,4.11,3.27,2.58,4.20,3.22,5.10,2.62,3.06,1.23,2.27,2.24,1.39,2.63,2.61,4.30,1.46,3.35,2.79,2.42,4.63,1.57)
+post = c(1.59,3.51,1.44,2.32,1.75,1.67,1.90,1.37,2.72,1.80,2.40,2.01,2.41,1.38,1.18,4.31,2.09,2.32,2.63,2.25,1.71,2.01,1.95,3.46)
+#####################################################################
+```
 
 First, let's compute the test statistic manually. This will be the smaller of the negative and positive counts.
 
@@ -131,9 +135,6 @@ pos_count
 test_stat = min(neg_count, pos_count)
 test_stat
 ```
-
-
-Since the sign test is just a ***binomial exact test*** using the positive and negative counts, the probability can be computed either using `pbinom()` or using the binomial proportions test, `binom.test()`.
 
 Now we use the test statistic to obtain a two-tailed $p$-value for the observed data under $H_o$. This is the two-tailed binomial probability of seeing a value as extreme as our test statistic (here, `neg_count`).
 
@@ -197,10 +198,59 @@ w_stat
 
 If there is no difference between the two samples, we would expect that $W=0$, since there should be no bias toward lower or higher ranks in either sample.
 
+##### Sampling distribution of $W$
 
-#### The V statistic
+The sampling distribution of the $W$ statistic has a specific expected distribution under the null. In the absence of tied ranks (which we ignore for now to keep things simple), the population mean and variance are:
 
-The R implementation of the Wilcoxon Rank Sum test uses something called a $V$-statistic, which is a little different than the $W$-statistic. The test will give the same $p$-value whether we use $W$ or $V$, since the formulations are equivalent.
+$$ \mu_{W} = 0 ;\ \sigma_{W}^2 = \frac{n(n+1)(2n+1)}{6} $$
+
+When the number of items sampled is more than ~20-25, the ***sampling distribution of W*** is approximately normal.
+
+We can simulate this distribution to illustrate this for ourselves:
+
+```{r collapse=TRUE, class.source="fold-hide", out.width='60%', fig.align='center'}
+# size of triglyceride dataset
+n=24
+
+# expected parameters for sampling distribution of W
+mu_v = n*(n+1)/4 # mu = max_t / 2
+mu_v
+
+sigma_v = sqrt(n*(n+1)*(2*n+1)/24)  # without ties
+sigma_v
+  
+# exact probability under W ~ Wsignrank(x, n=n)
+2*psignrank(1,n=24)
+
+# sampling distribution of the test statistic W
+set.seed(13000)                                          # Set seed for reproducibility
+N <- 100000                                              # Specify sample size
+y_rsignrank <- rsignrank(N, n = 24)                      # Draw N random values
+head(y_rsignrank)                                        # Print values to RStudio console
+hist(y_rsignrank,                                        # Plot of randomly drawn density
+     breaks = 50,
+     main = "")
+abline(v=mean(y_rsignrank), col="blue", lwd=3)
+```
+
+##### Normal approximation for the $p$-value
+
+For the triglyceride data, the sample size is n=24, so we can use a normal approximation to compute a $z$-score, $z = W / \sigma_W$, and use this to obtain a $p$-value:
+
+```{r}
+# w stat
+n = length(tri_diff)
+sigma_w = n*(n+1)*(2*n+1) / 6
+z_w = w_stat / sqrt(sigma_w)
+2*pnorm(z_w)
+```
+
+
+#### V Statistics
+
+The R implementation of the Wilcoxon Rank Sum test uses something called a $V$-statistic, which is a little different than the $W$-statistic. 
+
+The test will give the same $p$-value whether we use $W$ or $V$, since the formulations are equivalent.
 
 To compute $V$, instead of just adding up all the positive ranks and subtracting the negative ones to get our test statistic ($H_o: W=0$), we just look at the positive and negative summed ranks separately. If both groups are the from the same distribution, then we'd expect these to be pretty much the same. 
 
@@ -228,107 +278,52 @@ v_stat = min(t_neg,t_pos)
 v_stat
 ```
 
-#### Sampling distribution of Wilcoxon statistics
 
-When the number of items sampled is more than ~20-25, the ***sampling distributions*** of the $W$ and $V$ statistics have a specific expected distribution under the null that is ***well approximated by a normal distribution***.
+##### Normal approximation for the $p$-value
 
-We can simulate the sampling distribution for $V$ to illustrate this for ourselves. It turns out that R actually has a family of functions for the $V$ distribution! To generate the samples, we will use the `rsignrank()` function, which takes random samples from a Wilcoxon Sign Rank distribution for a certain sample size $n$.
-
-We will then plot a histogram of the sampling distribution with the mean overlaid in blue, and the value of our actual $V$-statistic overlaid in red.
-
-```{r collapse=TRUE, class.source="fold-hide", out.width='60%', fig.align='center'}
-n=24  # size of triglyceride dataset
-  
-# sampling distribution of the test statistic W
-set.seed(13000)                       # Set seed for reproducibility
-N <- 100000                           # Specify sample size
-y_rsignrank <- rsignrank(N, n = 24)   # Take N random samples from W(sample size=n) 
-head(y_rsignrank)                     # Print values to RStudio console
-hist(y_rsignrank,                     # Plot of randomly drawn density
-     breaks = 50,
-     main = "")
-abline(v=mean(y_rsignrank), col="blue", lwd=3)
-abline(v=mean(v_stat), col="red", lwd=3)
-```
-
-
-#### Normal approximations for the $p$-value
-
-In the absence of tied ranks (which we ignore for now to keep things simple), the population mean and variance of the $W$-statistic are:
-
-$$ \mu_{W} = 0 ;\ \sigma_{W}^2 = \frac{n(n+1)(2n+1)}{6} $$
-
-And for the $V$-statistic, they are:
+Just like for $W$, for larger sample sizes (> ~20-25 pairs of observations) the sampling distribution of $V$ is approximately normal, with the following parameters:
 
 $$ \mu_V = \frac{n(n+1)}{4}\ ;\ \ \sigma^2_V = \frac{n(n+1)(2n+1)}{24}$$
 
-For the triglyceride data, the sample size is $n=24$. Let's use the normal approximations to compute a $z$-score and a $p$-value using both $W$ and $V$:
-
-```{r}
-# p-value (2-tailed) with normal approximation for W
-n = length(tri_diff)
-sigma_w = n*(n+1)*(2*n+1) / 6
-z_w = w_stat / sqrt(sigma_w)
-2*pnorm(z_w)
-```
+Now we can compute a $p$-value $V$ using the normal approximation:
 
 ```{r}
 # p-value (2-tailed) with normal approximation for V
-mean_v = n*(n+1)/4              # mu = max_t / 2
-sigma_v = n*(n+1)*(2*n+1) / 24  # without ties
+mean_v = n*(n+1)/4
+sigma_v = n*(n+1)*(2*n+1) / 24
 z_v = (v_stat - mean_v) / sqrt(sigma_v)
 2*pnorm(z_v)
 ```
 
-We can also remake our histogram above as a density plot, with a normal curve using the mean and SD for the V-distribution:
 
-```{r collapse=TRUE, class.source="fold-hide", out.width='60%', fig.align='center'}
-hist(y_rsignrank,
-     breaks = 50, freq=FALSE,
-     main = "")
-abline(v=mean(y_rsignrank), col="blue", lwd=3)
-abline(v=mean(v_stat), col="red", lwd=3)
-curve(dnorm(x, mean_v, sqrt(sigma_v)),
-      col="darkblue", lwd=2, add=TRUE)
-```
+#### R functions for Wilcoxon Signed Rank
 
-This looks pretty good!
+##### Wilcoxon Signed Rank test in R
 
-
-#### Wilcoxon Signed Rank Test in R
-
-To compute a $p$-value for our test statistic, we can use the `wilcox.test()` function with the `paired=TRUE` option to perform a paired test on the triglyceride data. The test gives the same result when samples are entered in either order.
+Now let's use the `wilcox.test()` function to perform a paired test on the triglyceride data. The test gives the same result when samples are entered in either order.
 
 ```{r}
 wilcox.test(post, pre, paired=T)  # post vs. pre
 wilcox.test(pre, post, paired=T)  # pre vs. post
 ```
 
-Let's see what `psignrank()` gives us for a two-tailed probability:
+##### Wilcoxon Signed Rank Distribution in R
+
+It turns out that R actually has a family of functions for the $V$ distribution. Let's see what `psignrank()` gives us for a two-tailed probability:
 
 ```{r}
 2*psignrank(v_stat, n)
 ```
 
 
-Notice that $p$-values returned by the paired test and the CDF function are the same, and both methods gave us an "exact" probability, as reported by the output of the `wilcox.test()`.
-
-However, computing exact $p$-values for Wilcoxon statistics can become computationally expensive, especially for larger sample sizes, and particularly for the Rank Sum test for unpaired samples (see below).
-
-<div class="bluebox">
-By default, the `wilcoxtest()` will compute an exact $p$-value if the sample size is <50 and there are no ties. Otherwise, R will use a ***normal approximation*** with continuity correction to obtain a $p$-value.
-</div>
-
 #### Manual calculations vs. R functions
 
-How do the manual calculations for the $p$-value compare to those you got using the `wilcox.test()` and `psignrank()` functions in R? Why might these differ?
+How do the manual calculations compare to the $p$-values you got using the `wilcox.test()` and `psignrank()` functions in R? Why might these differ?
 
 ```{r eval=FALSE}
 # your answer here
-The manual computation used the normal approximation whereas the R functions 
-compute exact probabilities, since n<50 and there are no ties.
+The manual computation used the normal approximation whereas the R function performs and exact test.
 ```
-
 
 
 ## Unpaired data: Mann-Whitney U / Wilcoxon Rank Sum test
@@ -407,18 +402,20 @@ The population mean and variance (again, ignoring the term for ties) are:
 
 $$ \mu_W = \frac{n_1n_2}{2}\ ;\ \ \sigma_{W}^2 = \frac{n_{1}n_{2}}{12} (n_1 + n_2 + 1) $$
 
-
-Now we can calculate a $z$-score and use it to get a $p$-value. By convention, we use the group with the lower W (here that is `w_post`):
-
 ```{r collapse=TRUE}
-# mean and SD for W sampling distribution
+# mean for W sampling distribution
 mu_w = n_pre * n_post / 2
 mu_w
 
+# variance and standard deviation
 sd_w_squared = (n_pre*n_post/12) * (n_pre + n_post + 1)
 sd_w = sqrt(sd_w_squared)
 sd_w
+```
 
+Now we can calculate a $z$-score and use it to get a $p$-value. By convention, we use the group with the lower W (here that is `w_post`):
+
+```{r, collapse=TRUE}
 # z-score
 z_w = (w_post-mu_w)/sd_w
 z_w
@@ -439,35 +436,6 @@ z_w
 2*pnorm(z_w, lower.tail = F)
 2*pnorm(w_pre, mean=mu_w, sd=sd_w, lower.tail = F)
 ```
-
-
-### U-statistics
-
-The Mann-Whitney $U$-test uses a $U$-statistic instead, which measures the difference between the observed and minimum ranks. Mathematically, it is the same as the $W$-statistic, except the formulation is slightly different. The test statistic is the smaller of the rank sums.
-
-$$ U_1 = n_1n_2 + \frac{n_1(n_1+1)}{2} - T_1$$
-$$U_2 = n_1n_2 - U_1$$
-where $n_{1}$ and $n_{2}$ are the size of the two groups. 
-
-The population mean and variance (again, ignoring the term for ties for now) are:
-
-$$ \mu_U = \frac{n_1n_2}{2}\ ; \ \sigma_{U}^2 = \frac{n_{1}n_{2}}{12} (n_1 + n_2 + 1)  $$
-
-First, let's compute the $U$ statistics by hand:
-
-```{r collapse=TRUE}
-# see above for calculation of t_pre and t_post
-
-t_min = n*(n+1)/2 # minimum rank
-
-u_pre = n^2 + t_min - t_pre
-u_pre
-
-u_post = n^2 - u_pre
-u_post
-```
-
-You can see that the values for the $U$-statistics are the same as the $W$-statistics, so using the normal approximation to compute the $z$-score and $p$-value will give exactly the same results as above using $W$-statistics!
 
 
 ### Wilcoxon Rank Sum test in R
@@ -503,20 +471,73 @@ w_post
 
 The R documentation warns that the `wilcox` distribution functions are computationally inefficient and can sometimes crash R (!), so it is probably not a good idea to use them in general.
 
+
+### U-statistics
+
+The $U$-statistic measures the difference between the observed and minimum ranks. Mathematically, it is the same as the $W$-statistic, except the formulation is slightly different. The test statistic is the smaller of the rank sums.
+
+$$ U_1 = n_1n_2 + \frac{n_1(n_1+1)}{2} - T_1$$
+$$U_2 = n_1n_2 - U_1$$
+where $n_{1}$ and $n_{2}$ are the size of the two groups.
+
+#### Computing the $U$ statistic
+
+The population mean and variance (again, ignoring the term for ties for now) are:
+
+$$ \mu_U = \frac{n_1n_2}{2}\ ; \ \sigma_{U}^2 = \frac{n_{1}n_{2}}{12} (n_1 + n_2 + 1)  $$
+
+Below we will perform the Mann-Whitney-Wilcoxon test on the triglyceride data, pretending that they are not actually paired. First, we compute the statistics by hand:
+
+```{r collapse=TRUE}
+# see above for calculation of t_pre and t_post
+
+t_min = n*(n+1)/2 # minimum rank
+
+u_pre = n^2 + t_min - t_pre
+u_pre
+
+u_post = n^2 - u_pre
+u_post
+```
+
+You can see that the $U$-statistics are the same as the $W$-statistics, so using the normal approximation to compute the $z$-score and $p$-value will give exactly the same results as above using $W$-statistics.
+
+```{r collapse=TRUE}
+mu_u = n^2 / 2
+mu_u
+
+sigma_u = (n^2/12) * (2*n + 1)
+sd_u = sqrt(sigma_u)
+sd_u
+
+# using lower score (convention, lower tail)
+z_u = (u_pre-mu_u)/sd_u
+z_u
+
+2*pnorm(z_u, lower.tail = T)
+2*pnorm(u_pre, mean=mu_u, sd=sd_u, lower.tail = T)
+
+
+# using higher score (upper tail)
+z_u = (u_post-mu_u)/sd_u
+z_u
+
+2*pnorm(z_u, lower.tail = F)
+2*pnorm(u_post, mean=mu_u, sd=sd_u, lower.tail = F)
+```
+
+
 #### Manual calculations vs. R functions
 
 How do the manual results compare with the results from the R functions? Why are they not identical?
 
 ```{r eval=FALSE}
-The manual calculations use the normal approximation; the test wants to perform 
-an exact test, but because of ties it has to use a normal approximation with
-continuity correction.
+The manual calculations use the normal approximation; the test wants to perform an exact test, but because of ties it has to use continuity correction.
 ```
-
 
 ## What if we were to use the log-transformed data?
 
-Try this out and see what you find. First, draw a histogram of the transformed data.
+Try this out and see what you find. 
 
 ```{r out.width='60%', fig.align='center'}
 log_tri_diff = log(post) - log(pre)
@@ -524,23 +545,17 @@ hist(log_tri_diff, breaks=10)
 abline(v = median(log_tri_diff), lwd=2, col="blue")
 ```
 
-Now perform the test in R.
-
 ```{r}
 wilcox.test(pre,post)
 wilcox.test(log(pre),log(post))
 ```
 
-How do the results compare with those for the untransformed data?
 
 ```{r eval=FALSE}
 # your answer here
-The differences in the log-transformed data actually do not look symmetrical 
-about the mean difference. The p-value nevertheless comes out the same because
-the ranks do not change!
+The differences in the log-transformed data actually do not look symmetrical about the mean difference. The p-value nevertheless comes out the same because the ranks don not change!
 
-So the test still works pretty well even when the assumption of a symmetric
-distribution of mean differences does not hold that well.
+So the test still works pretty well even when the assumption of a symmetric distribution does not hold very well.
 ```
 
 

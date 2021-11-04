@@ -14,7 +14,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, error=TRUE)
 #install.packages("mosaic")  # do this once
 library(mosaic)
 library(ggplot2)
@@ -45,7 +45,7 @@ h4 {color: mediumblue; font-style: italic}
 
 So far we have used $t$-tests to compare two samples, and we've explored transforming our data to make it look more normal so that we can proceed with standard parametric tests.
 
-Two other important approaches are also available that do not assume the data are normally distributed: ***non-parametric*** tests and ***distribution-free*** tests, which look at empirical distributions using ***resampling methods***.
+Two other important approaches are also available that do not assume the data are normally distributed ("distribution-free" methods): ***non-parametric*** tests and ***permutation*** tests, which look at empirical distributions using ***resampling methods***.
 
 Now that computing power is plentiful and cheap, resampling methods are becoming more common in biology, but standard statistical tests are still the go-to methods for many comparisons.
 
@@ -114,21 +114,21 @@ First, let's compute the test statistic manually. This will be the smaller of th
 
 ```{r collapse=TRUE}
 # difference in the two samples
-tri_diff = post - pre
+tri_diff = 
 
 # count of negative differences
-neg_count = sum(tri_diff < 0)
+neg_count = 
 neg_count
 
 # count of positive differences
-pos_count = sum(tri_diff > 0)
+pos_count = 
 pos_count
 ```
 
 ```{r, class.source="code-show"}
 # test statistic
 # will be used to get p(X <= x) using lower tail of expected distribution
-test_stat = min(neg_count, pos_count)
+test_stat = 
 test_stat
 ```
 
@@ -140,10 +140,10 @@ Now we use the test statistic to obtain a two-tailed $p$-value for the observed 
 ```{r, class.source="code-show"}
 # since pbinom(..., lower.tail=TRUE) gives p(X <= x), 
 # for a 2-tailed test we multiply the probability by 2
-2 * pbinom(test_stat, length(tri_diff), prob=0.5)
+
 
 # binomial test for counts (default is 2-sided)
-binom.test(x=test_stat, n=length(tri_diff), p=0.5)
+
 ```
 
 
@@ -162,8 +162,8 @@ Let's see if the distribution of paired differences for the triglyceride data lo
 ```{r out.width='60%', fig.align='center', class.source="fold-hide"}
 tri_diff = post - pre
 hist(tri_diff, breaks=10)
-abline(v = median(tri_diff), lwd=2, col="blue")
-abline(v = mean(tri_diff), lwd=2, col="red")
+abline(v = ... , lwd=2, col="blue")
+abline(v = ... , lwd=2, col="red")
 ```
 
 Well, these differences look sort of symmetrical, but not clearly so. However, what we are actually interested in here is symmetry under $H_o$, so we can use this test even when the actual paired differences are not symmetric about the mean/median.
@@ -187,10 +187,12 @@ $$ W = \sum_{i=1}^Nsgn(x_{2i} - x_{1i}) * R_i $$
 ```{r, class.source="code-show"}
 # compute paired differences
 tri_diff = post - pre
-rank_diff = rank(abs(tri_diff))
+
+# rank absolute values
+rank_diff = 
 
 # Calculate the Wilcoxon W statistic
-w_stat = sum(sign(tri_diff) * rank_diff)
+w_stat = 
 w_stat
 ```
 
@@ -214,17 +216,17 @@ Let's go ahead and compute the $V$ statistic and a corresponding $p$-value using
 
 ```{r collapse=TRUE}
 # negative rank sums
-rank_diff[tri_diff < 0] 
-t_neg = sum(rank_diff[tri_diff < 0])
+
+t_neg = 
 t_neg
 
 # positive rank sums
-rank_diff[tri_diff > 0]
-t_pos = sum(rank_diff[tri_diff > 0])
+
+t_pos = 
 t_pos
 
 # V statistic
-v_stat = min(t_neg,t_pos)
+v_stat = 
 v_stat
 ```
 
@@ -241,14 +243,14 @@ n=24  # size of triglyceride dataset
   
 # sampling distribution of the test statistic W
 set.seed(13000)                       # Set seed for reproducibility
-N <- 100000                           # Specify sample size
-y_rsignrank <- rsignrank(N, n = 24)   # Take N random samples from W(sample size=n) 
+N = 100000                            # Specify sample size
+y_rsignrank =  ...    # Take N random samples from W(sample size=n) 
 head(y_rsignrank)                     # Print values to RStudio console
 hist(y_rsignrank,                     # Plot of randomly drawn density
      breaks = 50,
      main = "")
-abline(v=mean(y_rsignrank), col="blue", lwd=3)
-abline(v=mean(v_stat), col="red", lwd=3)
+abline(v=mean(y_rsignrank), col="blue", lwd=3)  # mean of sampling distribution
+abline(v=mean(v_stat), col="red", lwd=3)        # V-statistic for comparison
 ```
 
 
@@ -266,18 +268,25 @@ For the triglyceride data, the sample size is $n=24$. Let's use the normal appro
 
 ```{r}
 # p-value (2-tailed) with normal approximation for W
-n = length(tri_diff)
-sigma_w = n*(n+1)*(2*n+1) / 6
-z_w = w_stat / sqrt(sigma_w)
-2*pnorm(z_w)
+n = length(tri_diff)           # sample size
+sigma_w = n*(n+1)*(2*n+1) / 6  # expected std dev of W statistic
+
+z_w =   # z-stat
+
+
+# p-value (2-tailed probability)
+  
 ```
 
 ```{r}
 # p-value (2-tailed) with normal approximation for V
 mean_v = n*(n+1)/4              # mu = max_t / 2
-sigma_v = n*(n+1)*(2*n+1) / 24  # without ties
-z_v = (v_stat - mean_v) / sqrt(sigma_v)
-2*pnorm(z_v)
+sigma_v = n*(n+1)*(2*n+1) / 24  # sigma without ties
+
+z_v =   # z-stat
+
+# p-value (2-tailed probability)
+  
 ```
 
 We can also remake our histogram above as a density plot, with a normal curve using the mean and SD for the V-distribution:
@@ -288,7 +297,9 @@ hist(y_rsignrank,
      main = "")
 abline(v=mean(y_rsignrank), col="blue", lwd=3)
 abline(v=mean(v_stat), col="red", lwd=3)
-curve(dnorm(x, mean_v, sqrt(sigma_v)),
+
+# overlay normal distribution with expected mean and SD
+curve(dnorm(x, mean= ... , sd= ... ),
       col="darkblue", lwd=2, add=TRUE)
 ```
 
@@ -300,14 +311,16 @@ This looks pretty good!
 To compute a $p$-value for our test statistic, we can use the `wilcox.test()` function with the `paired=TRUE` option to perform a paired test on the triglyceride data. The test gives the same result when samples are entered in either order.
 
 ```{r}
-wilcox.test(post, pre, paired=T)  # post vs. pre
-wilcox.test(pre, post, paired=T)  # pre vs. post
+# wilcoxon signed rank test
+  # post vs. pre
+  # pre vs. post
 ```
 
 Let's see what `psignrank()` gives us for a two-tailed probability:
 
 ```{r}
-2*psignrank(v_stat, n)
+# 2-tailed p-value with CDF
+
 ```
 
 
@@ -325,8 +338,7 @@ How do the manual calculations for the $p$-value compare to those you got using 
 
 ```{r eval=FALSE}
 # your answer here
-The manual computation used the normal approximation whereas the R functions 
-compute exact probabilities, since n<50 and there are no ties.
+
 ```
 
 
@@ -377,9 +389,10 @@ n_post = length(post)
 n = n_pre  # here, n is the same for both sets
   
 # rank the combined data
-DataRank = rank(Data)
+DataRank = 
 DataRank
 
+# assign ranks to groups and take the sum
 DataRankSums = tapply(DataRank,rep(c("pre","post"),each=n),sum)
 DataRankSums
 ```
@@ -387,14 +400,15 @@ DataRankSums
 Test statistics: 
 
 ```{r collapse=TRUE}
-t_pre  = DataRankSums["pre"]
-t_post  = DataRankSums["post"]
+# compute t-values (used to get W)
+t_pre   = 
+t_post  = 
 
 t_min = n*(n + 1)/2      # here n and t_min are the same for both groups
 
-w_pre = t_pre - t_min    # or t_pre_min = n_pre*(n_pre + 1)/2
+w_pre = 
 w_pre
-w_post = t_post - t_min  # or t_post_min = n_post*(n_post + 1)/2
+w_post = 
 w_post
 ```
 
@@ -419,25 +433,24 @@ sd_w_squared = (n_pre*n_post/12) * (n_pre + n_post + 1)
 sd_w = sqrt(sd_w_squared)
 sd_w
 
-# z-score
-z_w = (w_post-mu_w)/sd_w
+# z-score for lower W value
+z_w = 
 z_w
 
-# p-value
-2*pnorm(z_w, lower.tail = T)
-2*pnorm(w_post, mean=mu_w, sd=sd_w, lower.tail = T)
+# p-value with CDF
+  # using z-score
+  # using W-stat
 ```
 
 Note that using the upper-tail probability for the higher $W$ gives the same $p$-value:
 
 ```{r collapse=TRUE}
-# z-score
-z_w = (w_pre - mu_w)/sd_w
+# z-score for higher W value
+z_w =
 z_w
 
 # p-value (since the sign of the z-score is reversed, we use the opposite tail)
-2*pnorm(z_w, lower.tail = F)
-2*pnorm(w_pre, mean=mu_w, sd=sd_w, lower.tail = F)
+
 ```
 
 
@@ -460,10 +473,10 @@ First, let's compute the $U$ statistics by hand:
 
 t_min = n*(n+1)/2 # minimum rank
 
-u_pre = n^2 + t_min - t_pre
+u_pre = 
 u_pre
 
-u_post = n^2 - u_pre
+u_post = 
 u_post
 ```
 
@@ -475,8 +488,8 @@ You can see that the values for the $U$-statistics are the same as the $W$-stati
 The test is implemented in R as `wilcox.test()`, with the (default) unpaired option. The $p$-value is the same when the groups are supplied in either order.
 
 ```{r}
-wilcox.test(pre, post)  # paired=FALSE is the default
-wilcox.test(post, pre)  # the p-value is the same in either orientation
+  # paired=FALSE is the default
+  # the p-value is the same in either orientation
 ```
 
 R also has the `wilcox` family of functions for the **distribution of the Wilcoxon Rank Sum statistic**. Since this is a discrete distribution, the presence of ties in the data makes the $p$-values inexact, as non-integer values are simply truncated.
@@ -508,9 +521,7 @@ The R documentation warns that the `wilcox` distribution functions are computati
 How do the manual results compare with the results from the R functions? Why are they not identical?
 
 ```{r eval=FALSE}
-The manual calculations use the normal approximation; the test wants to perform 
-an exact test, but because of ties it has to use a normal approximation with
-continuity correction.
+# your answer here
 ```
 
 
@@ -519,28 +530,23 @@ continuity correction.
 Try this out and see what you find. First, draw a histogram of the transformed data.
 
 ```{r out.width='60%', fig.align='center'}
-log_tri_diff = log(post) - log(pre)
-hist(log_tri_diff, breaks=10)
-abline(v = median(log_tri_diff), lwd=2, col="blue")
+# histogram as above, but using log-transformed data
+
 ```
 
 Now perform the test in R.
 
 ```{r}
-wilcox.test(pre,post)
-wilcox.test(log(pre),log(post))
+# Wilcoxon rank sum test
+  # untransformed
+  # log-transformed
 ```
 
 How do the results compare with those for the untransformed data?
 
 ```{r eval=FALSE}
 # your answer here
-The differences in the log-transformed data actually do not look symmetrical 
-about the mean difference. The p-value nevertheless comes out the same because
-the ranks do not change!
 
-So the test still works pretty well even when the assumption of a symmetric
-distribution of mean differences does not hold that well.
 ```
 
 
@@ -555,14 +561,14 @@ Let's make a boxplot of these data and take a look at them.
 ```{r out.width='60%', fig.align='center', class.source="code-hide"}
 data(Sleep)
 
-ggplot(Sleep, aes(x=Group, y=Words)) +
-   geom_boxplot(width=0.3) +
-   geom_jitter(position=position_jitter(0.1))
+# simple boxplot with base R (formula syntax)
+
+
+# ggplot strip plot with boxplot
+
 ```
 
 ```{r echo=FALSE}
-#boxplot(Words ~ Group, data = Sleep)
-
 # with 95%CI
 # ggplot(Sleep, aes(x=Group, y=Words)) +
 #   geom_jitter(position=position_jitter(0.2)) +
@@ -588,14 +594,14 @@ Note that here we use the **formula** syntax for the `mean()` and `t.test()` fun
 
 ```{r collapse=TRUE}
 # scramble Group with respect to outcome, Words
-mean(Words ~ Group, data = Sleep)              # means of the two samples
-obs = diff(mean(Words ~ Group, data = Sleep))  # observed difference
+        # means of the two samples
+obs =   # observed difference
 obs
 ```
 
 ```{r}
-# t-test
-t.test(Words ~ Group, Sleep, alternative="less") # test caffeine < sleep
+# t-test for HA: caffeine < sleep
+
 ```
 
 Looks like getting some sleep is better for your memory than taking caffeine!
@@ -604,7 +610,7 @@ If we randomly shuffle the group labels, we will get a different mean between th
 
 ```{r}
 # one shuffle
-diff(mean(Words ~ shuffle(Group), data = Sleep))
+
 ```
 
 Now let's try the permutation test and look at the results. 
@@ -613,16 +619,16 @@ Now let's try the permutation test and look at the results.
 # permutation test: scramble Group with respect to outcome, Words
 
 # 2,000 shuffles
-sleep_null <- do(2000) * diff(mean(Words ~ shuffle(Group), data = Sleep))
+sleep_null =
 
 # from ggformula package, included with mosaic, enables formula-style expressions in ggplot
 # here we just have one variable, but we can also use this to look at two variables
-gf_histogram(gformula = ~ Sleep, fill = ~ (Sleep >= obs), data = sleep_null, 
+gf_histogram(gformula = ... , fill = ... , data = sleep_null, 
   binwidth = 0.4,
   xlab = "Distribution of difference in means under the null hypothesis")
 
 # empirical p-value
-sum(sleep_null >= obs) / 2000
+
 ```
 
 This is our empirical $p$-value for the difference in the sample means! How does it compare to the results of the $t$-test above?
