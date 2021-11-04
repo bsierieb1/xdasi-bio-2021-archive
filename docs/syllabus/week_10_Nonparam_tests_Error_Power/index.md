@@ -58,7 +58,7 @@ nav_order: 10
 
 **Error and Power**
 
-+ [**Class Notes**](Class2/W10.C2_Error_power.html){: target="blank"}
++ [**Class Notes**](Class2/W10.C2-Notes_Error_Power.html){: target="blank"}
 + **In-Class Exercise** - [(zipped .Rmd)](Class2/W10.C2-Exercise_Power.Rmd.zip) - [(html)](Class2/W10.C2-Exercise_Power.html){: target="blank"}
 
 </details>
