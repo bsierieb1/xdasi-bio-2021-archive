@@ -6,7 +6,7 @@ nav_exclude: false
 nav_order: 10
 ---
 
-# Week 10: Title
+# Week 10: Nonparametric Tests, Error and Power
 {: .no_toc }
 
 <details closed markdown="block">
@@ -23,6 +23,8 @@ nav_order: 10
 <!-- ########################################################################### -->
 
 # Class - Monday, Nov. 1
+
+### Review of Distributions, Nonparametric Tests
 
 <details closed markdown="block">
   <summary>Details</summary>
@@ -44,6 +46,8 @@ nav_order: 10
 <!-- ########################################################################### -->
 
 # Class - Thursday, Nov. 4
+
+### Nonparametric Tests Cont'd, Error and Power
 
 <details closed markdown="block">
   <summary>Details</summary>
