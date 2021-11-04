@@ -14,7 +14,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, error=TRUE)
+knitr::opts_chunk$set(echo = TRUE)
 #install.packages("mosaic")  # do this once
 library(mosaic)
 library(ggplot2)
