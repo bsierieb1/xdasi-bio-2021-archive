@@ -202,7 +202,7 @@ Which concentration produces the largest number of droplets with one cell?
 
 ```{r eval=FALSE}
 # your answer here
-200 cells / microliter gives the largest number of droplets with exactly one cell.
+2000 cells / microliter gives the largest number of droplets with exactly one cell.
 ```
 
 
@@ -246,8 +246,7 @@ ggplot(q1g.plot.data, aes(x=Concentration, y=Expected_droplets, fill=Cell_count)
 
 Which experimental concentration has the lowest doublet rate? Which concentration would you choose for your experiment?
 
-```{r eval=FALSE}
-# your answer here
+```
 The 100 cells / microliter concentration has the lowest doublet rate. Even though you get a lot more droplets with one cell/ul at 1000 or 2000 cells, the rate of doublets is also higher.
 
 Since the goal is to minimize doublets, we will take a hit in total droplets with 1 cell. This tradeoff is worth it because otherwise we will not be able to deconvolute the data.
@@ -320,8 +319,7 @@ chisq.test( chisq.data )$p.value
 
 How do your sampled data compare to the ideal data in the Chi-squared test? 
 
-```{r eval=FALSE}
-# your answer here
+```
 Even though the distributions look pretty close by eye, for most samples they will be highly statistically different. In fact sometimes the sampled data will contain even fewer samples with o or 2+ cells (even though the lambda is a little bit higher), just due to differences between random samples.
 
 However, it looks like there should still be very few droplets with more than one cell, so you can probably go ahead with the experiment anyway (or you could just dilute your sample a little bit instead.)

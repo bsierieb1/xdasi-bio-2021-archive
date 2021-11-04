@@ -1,5 +1,5 @@
 ---
-title: Week 9
+title: Week  9
 parent: Syllabus
 has_children: false
 nav_exclude: false
