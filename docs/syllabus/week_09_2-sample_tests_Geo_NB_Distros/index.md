@@ -1,8 +1,9 @@
 ---
-title: Week 09
+title: Week 9
 parent: Syllabus
 has_children: false
 nav_exclude: false
+nav_order: 9
 ---
 
 # Week 9: Exponential, Geometric, Negative Binomial Distributions, Two-sample t-tests, Tests for Non-normality

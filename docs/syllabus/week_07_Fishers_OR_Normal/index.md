@@ -1,5 +1,5 @@
 ---
-title: Week 07
+title: Week 7
 parent: Syllabus
 has_children: false
 nav_exclude: false
