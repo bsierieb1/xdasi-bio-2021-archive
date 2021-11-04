@@ -50,7 +50,7 @@ nav_order: 10
 
 **Nonparametric Tests and Permutation (Shuffle) Test**
 
-+ **Class Notes & Exercise** - [(zipped .Rmd)](Class2/W10.C2_Non-parametric_tests.Rmd.zip) - [(html)](W10.C1_Non-parametric_tests.html){: target="blank"}
++ **Class Notes & Exercise** - [(zipped .Rmd)](Class2/W10.C2_Non-parametric_tests.Rmd.zip) - [(html)](Class2/W10.C2_Non-parametric_tests.html){: target="blank"}
 
 **Error and Power**
 
