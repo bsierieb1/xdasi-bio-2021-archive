@@ -1,0 +1,157 @@
+---
+title: "homework"
+author: "Michelle"
+date: "11/3/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+```
+
+## Hypothesis testing
+
+"NYC_covid_cases_by_age.csv" contains weekly data of cases in NYC over the course of the pandemic. 
+
+1) Import and tidy the data
+```{r}
+
+nyc_cases<- read.csv("NYC_covid_cases_by_age.csv")
+nyc_cases_long <- nyc_cases %>% gather("age_group", "cases", -week_ending)
+nyc_cases_long$age_group<- as.factor(nyc_cases_long$age_group)
+nyc_cases_long$week_ending <- as.Date(nyc_cases_long$week_ending, "%m/%d/%Y")
+```
+
+2) Create a plot that shows the trajectory of cases over the course of the pandemic for each of the age groups and for all ages combined. (If you have not already created a dataframe with a long data format, will need to reformat the data to use ggplot.)
+
+```{r}
+cases_weekly_plot<- ggplot(nyc_cases_long, aes(x=week_ending, y = cases, 
+                                               color= age_group, group= age_group))+
+  geom_line() +
+  theme(panel.background=element_blank(), 
+        strip.background = element_blank(),
+        strip.placement = "outside",
+        strip.text=element_blank(),
+        panel.border=element_rect(colour="black",fill=NA),
+        legend.title = element_blank())  
+cases_weekly_plot
+
+```
+
+How would you determine whether there was a statistically significant difference in cases among people aged 25-34 vs. those aged 75 and over?  
+
+First, test for normality. Use histogram and qq plots to visualize the data.
+
+```{r}
+hist(nyc_cases$age_25_34)
+hist(nyc_cases$age_75up)
+
+qqnorm(nyc_cases$age_25_34)
+qqnorm(nyc_cases$age_75up)
+
+shapiro.test(nyc_cases$age_25_34)  
+shapiro.test(nyc_cases$age_75up)
+```
+
+If the data looks highly skewed, it might be useful to normalize the data.
+```{r}
+nyc_cases_prop<- nyc_cases_long %>%
+  filter(age_group != "age_all_ages")
+
+nyc_cases_prop<- nyc_cases_prop %>%
+  drop_na()%>%
+  group_by(week_ending) %>% 
+  mutate(prop = cases/sum(cases))
+
+cases_25_34<-nyc_cases_prop %>%
+  filter(age_group == "age_25_34")
+
+cases_75up<-nyc_cases_prop %>%
+  filter(age_group == "age_75up")
+
+
+hist(cases_25_34$prop)
+qqnorm(cases_25_34$prop)
+shapiro.test(cases_25_34$prop) 
+
+hist(cases_75up$prop)
+qqnorm(cases_75up$prop)
+shapiro.test(cases_75up$prop)
+```
+Better, but still not normal. 
+Based on these results, run the appropriate two-sample test.
+```{r}
+wilcox.test(cases_25_34$prop, cases_75up$prop, paired = F)
+```
+
+Is there a significant difference between the proportion of infections among 25-34 year-olds before and after the rise of the Delta strain? (Delta strain appeared 6/21/21.)
+
+-check for normality and choose the appropriate test
+```{r}
+cases_25_34<- cases_25_34%>%
+  mutate(Delta= ifelse(week_ending < "0021-06-26", "Before Delta", "After Delta"))
+
+cases_25_34_before <- cases_25_34 %>%
+  filter(Delta == "Before Delta")
+
+cases_25_34_after <- cases_25_34 %>%
+  filter(Delta == "After Delta")
+
+hist(cases_25_34_before$prop)
+qqnorm(cases_25_34_before$prop)
+shapiro.test(cases_25_34_before$prop) 
+
+hist(cases_25_34_after$prop)
+qqnorm(cases_25_34_after$prop)
+shapiro.test(cases_25_34_after$prop) 
+
+cases_before_after_delta_plot<- ggplot(cases_25_34, aes(x=prop, color= Delta,
+                                                        group= Delta))+
+  geom_density() +
+  theme(panel.background=element_blank(), 
+        strip.background = element_blank(),
+        strip.placement = "outside",
+        strip.text=element_blank(),
+        panel.border=element_rect(colour="black",fill=NA),
+        legend.title = element_blank())  
+cases_before_after_delta_plot
+
+t.test(cases_25_34_before$prop, cases_25_34_after$prop)
+
+```
+#Chi Square and fishers exact test  
+Consider the following data of the number of NYC documented Covid cases, hospitalizations, and deaths among vaccinated and unvaccinated individuals:
+
+Cases:
+vaccinated: 820
+unvaccinated: 4140  
+
+Hospitalizations:
+vaccinated: 32
+unvaccinated: 349
+
+Deaths:
+vaccinated: 4
+unvaccinated: 39
+
+Use this data to create a contingency table, and then perform the appropriate test to determine whether there is a significant difference between the vaccinated and unvaccinated groups.
+
+```{r}
+vaccinated<- c(820,32,4)
+unvaccinated<- c(4140,349,39)
+
+breakthrough<- data.frame(vaccinated, unvaccinated)
+rownames(breakthrough)<- c("cases", "hospitalizations", "deaths")
+
+chisq.test(breakthrough)
+```
+
+
+
+
+
+
+
