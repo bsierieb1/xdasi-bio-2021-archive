@@ -27,11 +27,13 @@ Convert the data to long format.
   + Make sure the `week_ending` column is properly formatted as a Date type.
   
 ```{r}
-
+# import file
 nyc_cases<- read.csv("NYC_covid_cases_by_age.csv")
+# convert to long format
 nyc_cases_long <- nyc_cases %>% gather("age_group", "cases", -week_ending)
+# format age_group as factor and week_ending as date
 nyc_cases_long$age_group<- as.factor(nyc_cases_long$age_group)
-nyc_cases_long$week_ending <- as.Date(nyc_cases_long$week_ending, "%m/%d/%Y")
+nyc_cases_long$week_ending <- as.Date(nyc_cases_long$week_ending, "%m/%d/%y")
 ```
 
 
@@ -40,12 +42,10 @@ nyc_cases_long$week_ending <- as.Date(nyc_cases_long$week_ending, "%m/%d/%Y")
 Create a plot that shows the trajectory of cases over the course of the pandemic for each of the age groups and for all ages combined.
 
 ```{r}
-# simple plot
-ggplot(nyc_cases_long, aes(x=week_ending, y = cases, color= age_group)) +
-  geom_line()
-
-  cases_weekly_plot<- ggplot(nyc_cases_long, aes(x=week_ending, y = cases, 
-                                               color= age_group)) + # , group= age_group)
+cases_weekly_plot<- ggplot(nyc_cases_long,
+                           aes(x=week_ending,
+                               y = cases,
+                               color= age_group)) +
   geom_line() +
   theme(panel.background=element_blank(), 
         strip.background = element_blank(),
@@ -53,8 +53,8 @@ ggplot(nyc_cases_long, aes(x=week_ending, y = cases, color= age_group)) +
         strip.text=element_blank(),
         panel.border=element_rect(colour="black",fill=NA),
         legend.title = element_blank())  
-cases_weekly_plot
 
+cases_weekly_plot
 ```
 
 
@@ -65,57 +65,64 @@ How would you determine whether there was a statistically significant difference
 a) Explore the data visually using a boxplot, histograms, and qq plots, and perform a test for normality.
 
 ```{r}
+# how are the data in both age categories distributed - boxplot
 boxplot(nyc_cases$age_25_34, nyc_cases$age_75up)
 
+# how are the data in both age categories distributed - histograms and qqnorm plots
 par(mfrow = c(2,2))
-hist(nyc_cases$age_25_34)
-hist(nyc_cases$age_75up)
+hist(nyc_cases$age_25_34,
+     breaks = 10)
+hist(nyc_cases$age_75up,
+     breaks = 10)
 
 qqnorm(nyc_cases$age_25_34)
 qqnorm(nyc_cases$age_75up)
 
+# do the data in each age category pass the normality test?
 shapiro.test(nyc_cases$age_25_34)  
 shapiro.test(nyc_cases$age_75up)
 ```
 
 
-b) If the data look highly skewed, it might be useful to normalize the data. Do this by converting the total number of cases in each group to a proportion of total cases. Then, rplot and retest for normality.
+b) If the data look highly skewed, it might be useful to normalize the data. Do this by converting the total number of cases in each group to a proportion of total cases in all age groups that week. Then, replot and retest for normality.
 
 ```{r}
-nyc_cases_prop<- nyc_cases_long %>%
-  filter(age_group != "age_all_ages")
-
-nyc_cases_prop<- nyc_cases_prop %>%
-  drop_na()%>%
+nyc_cases_prop <- nyc_cases_long %>%
+  drop_na() %>%
   group_by(week_ending) %>% 
   mutate(prop = cases/sum(cases))
 
-cases_25_34<-nyc_cases_prop %>%
-  filter(age_group == "age_25_34")
+cases_25_34 <- nyc_cases_prop %>%
+  filter(age_group == "age_25_34") %>%
+  pull(prop)
 
-cases_75up<-nyc_cases_prop %>%
-  filter(age_group == "age_75up")
+cases_75up <- nyc_cases_prop %>%
+  filter(age_group == "age_75up") %>%
+  pull(prop)
 
-boxplot(cases_25_34$prop, cases_75up$prop)
+# how are the data in both age categories distributed - boxplot
+boxplot(cases_25_34, cases_75up)
 
+# how are the data in both age categories distributed - histograms and qqnorm plots
 par(mfrow=c(2,2))
 
-hist(cases_25_34$prop)
-qqnorm(cases_25_34$prop)
-qqline(cases_25_34$prop)
+hist(cases_25_34)
+qqnorm(cases_25_34)
+qqline(cases_25_34)
 
-hist(cases_75up$prop)
-qqnorm(cases_75up$prop)
-qqline(cases_75up$prop)
+hist(cases_75up)
+qqnorm(cases_75up)
+qqline(cases_75up)
 
-shapiro.test(cases_25_34$prop) 
-shapiro.test(cases_75up$prop)
+# do the data in each age category pass the normality test?
+shapiro.test(cases_25_34)
+shapiro.test(cases_75up)
 ```
 
 c) Did this help at all? Based on these results, run the appropriate statistical test to compare the proportional distributions of cases in these two groups.
 
 ```{r}
-wilcox.test(cases_25_34$prop, cases_75up$prop, paired = F)
+wilcox.test(cases_25_34, cases_75up)
 ```
 
 ### 4) Delta strain
