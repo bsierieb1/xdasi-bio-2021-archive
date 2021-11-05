@@ -1,0 +1,259 @@
+---
+title: "Homework 10: Hypothesis Testing"
+subtitle: "XDASI Fall 2021"
+author: "YOUR NAME HERE"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(knitr)
+library(mosaic)
+```
+
+## COVID-19 cases in NYC
+
+"NYC_covid_cases_by_age.csv" contains weekly data of cases in NYC over the course of the pandemic. 
+
+### 1) Import and tidy the data
+
+Convert the data to long format.
+
+  + You should preserve the `week_ending` column.
+  + Get rid of the `age_all_ages` column.
+  + Convert the rest of the columns to two new columns containing the `age_group` and `cases` information.
+  + Turn the `age_groups` column into a factor.
+  + Make sure the `week_ending` column is properly formatted as a Date type.
+  
+```{r}
+# import file
+nyc_cases<- read.csv("NYC_covid_cases_by_age.csv")
+
+# check structure
+str(nyc_cases)
+
+# convert to long format
+nyc_cases_long <- nyc_cases %>% gather("age_group", "cases", -week_ending)
+# get rid of what used to be the age_all_ages column
+nyc_cases_long <- nyc_cases_long %>% filter(age_group != "age_all_ages")
+# format age_group as factor and week_ending as date
+nyc_cases_long$age_group<- as.factor(nyc_cases_long$age_group)
+nyc_cases_long$week_ending <- as.Date(nyc_cases_long$week_ending, "%m/%d/%y")
+```
+
+
+### 2) Plot cases over time by age group
+
+Create a plot that shows the trajectory of cases over the course of the pandemic for each of the age groups and for all ages combined.
+
+```{r}
+cases_weekly_plot<- ggplot(nyc_cases_long,
+                           aes(x=week_ending,
+                               y = cases,
+                               color= age_group)) +
+  geom_line() +
+  theme(panel.background=element_blank(), 
+        strip.background = element_blank(),
+        strip.placement = "outside",
+        strip.text=element_blank(),
+        panel.border=element_rect(colour="black",fill=NA),
+        legend.title = element_blank())  
+
+cases_weekly_plot
+```
+
+
+### 3) Significance testing
+
+The plot above shows that the number of cases over time forms "waves". Did the first and the second wave have a similar number of weekly recorded cases in all age groups?
+
+a) Subset the data that corresponds to the first wave. You have to decide for yourself where to draw the cutoffs on the time axis. Then, calculate the total weekly number of cases (sum them up across all age groups). Do the same for the second wave.
+
+```{r}
+first_wave_all_ages <- nyc_cases_long %>%
+  filter(week_ending < as.Date("9/1/20", "%m/%d/%y")) %>%
+  group_by(week_ending) %>%
+  summarize(cases_all_ages = sum(cases))
+
+second_wave_all_ages <- nyc_cases_long %>%
+  filter(week_ending >= as.Date("9/1/20", "%m/%d/%y") & week_ending < as.Date("6/1/21", "%m/%d/%y")) %>%
+  group_by(week_ending) %>%
+  summarize(cases_all_ages = sum(cases))
+```
+
+
+b) Explore the weekly number of cases for the two waves visually using a boxplot, histograms, and qq plots, and perform a test for normality.
+
+```{r}
+# boxplot
+boxplot(first_wave_all_ages$cases_all_ages, second_wave_all_ages$cases_all_ages)
+
+# histograms and qqnorm plots
+par(mfrow = c(2,2))
+hist(first_wave_all_ages$cases_all_ages,
+     breaks = 10)
+hist(second_wave_all_ages$cases_all_ages,
+     breaks = 10)
+
+qqnorm(first_wave_all_ages$cases_all_ages)
+qqnorm(second_wave_all_ages$cases_all_ages)
+
+# normality test
+shapiro.test(first_wave_all_ages$cases_all_ages)  
+shapiro.test(second_wave_all_ages$cases_all_ages)
+```
+
+c) If the data look highly skewed, it might be useful to log-transform the data. Repeat b) for log-transformed data.
+
+```{r}
+# boxplot
+boxplot(log(first_wave_all_ages$cases_all_ages), log(second_wave_all_ages$cases_all_ages))
+
+# histograms and qqnorm plots
+par(mfrow = c(2,2))
+hist(log(first_wave_all_ages$cases_all_ages),
+     breaks = 10)
+hist(log(second_wave_all_ages$cases_all_ages),
+     breaks = 10)
+
+qqnorm(log(first_wave_all_ages$cases_all_ages))
+qqnorm(log(second_wave_all_ages$cases_all_ages))
+
+# normality test
+shapiro.test(log(first_wave_all_ages$cases_all_ages))
+shapiro.test(log(second_wave_all_ages$cases_all_ages))
+```
+
+d) Did the transformation help at all? Run the appropriate statistical test to compare the number of cases in the first and second wave.
+
+```{r}
+wilcox.test(first_wave_all_ages$cases_all_ages, second_wave_all_ages$cases_all_ages)
+```
+
+### 4) Delta strain
+
+We cannot directly compare the number of cases in each age category because we do not know the total number of population in each category (e.g. are there more cases among 75+ year olds than among 0-4 year olds because they get sick more or because there are more of them to begin with?) But we can look whether the **proportion** of cases that fall within each age group (out of the total number of weekly cases summed up across all age groups) differs with time. For example, is there a significant difference between the proportion of infections among 25-34 year-olds before and after the rise of the Delta strain? The Delta strain became prevalent - i.e. started accounting for >50% all cases - on 6/23/21.
+
+a) Convert the weekly number of cases in each group to a proportion of weekly number of cases in all age groups combined. Then, subset the 25-34 age group.
+
+```{r}
+cases_25_34 <- nyc_cases_long %>%
+  drop_na() %>%
+  group_by(week_ending) %>% 
+  mutate(prop = cases/sum(cases)) %>%
+  filter(age_group == "age_25_34")
+```
+
+b) Make a violin plot of the proportion of cases observed per week in the 25-34-year old group before and after the appearance of the Delta variant.
+
+```{r}
+# filter the data
+cases_25_34 = cases_25_34 %>%
+  mutate(Delta = ifelse(week_ending < as.Date("6/23/21", "%m/%d/%y"), "Before_Delta", "After_Delta"))
+cases_25_34$Delta = factor(cases_25_34$Delta,
+                           levels=c("Before_Delta","After_Delta"))
+
+# violin plot
+ggplot(cases_25_34, aes(x= Delta, y=prop, fill= Delta)) +
+  geom_violin() +
+  geom_boxplot(width=0.1, fill="white") +
+  theme(panel.background=element_blank(), 
+        strip.background = element_blank(),
+        strip.placement = "outside",
+        strip.text=element_blank(),
+        panel.border=element_rect(colour="black",fill=NA),
+        legend.title = element_blank())  
+```
+
+c) Perform a permutation test for the observed median difference in infection rates in the 25-34 year-old age group before- and after-Delta. Do this using the rates in percentages instead of proportions. What's the $p$-value you get from the shuffle test?
+ 
+```{r}
+# convert proportions to percentages
+cases_25_34$percent = cases_25_34$prop * 100
+
+# observed difference in rates
+obs = diff(mosaic::median(percent ~ Delta, data = cases_25_34))
+obs
+
+# shuffle test
+permute_25_34 = mosaic::do(1000) * diff(mosaic::median(percent ~ shuffle(Delta), data = cases_25_34))
+permute_25_34 = permute_25_34 %>% rename(percent = After_Delta)
+
+# draw a histogram
+gf_histogram(gformula = ~ percent, fill = ~ (percent >= obs), data = permute_25_34, 
+  binwidth = 0.4,
+  xlab = "Distribution of difference in medians under the null hypothesis")
+
+# p-value
+p_val = sum(permute_25_34 > obs) / 1000
+p_val
+```
+
+### 5) Breakthrough cases
+
+Consider the following data of the number of NYC documented Covid cases, hospitalizations, and deaths among vaccinated and unvaccinated individuals:
+
++ Cases:
+  + Vaccinated: 820
+  + Unvaccinated: 4140  
+
++ Hospitalizations:
+  + Vaccinated: 32
+  + Unvaccinated: 349
+
++ Deaths:
+  + Vaccinated: 4
+  + Unvaccinated: 39
+
+
+What is an appropriate test you could use to analyze these data? Explain.
+
+```
+# your answer here
+Either a Fishers Exact Test or a Chi-square test would work here.
+
+Since the numbers are not so big, it is feasible to perform Fishers 
+and not too computationally intensive. (People tend to forget that Fishers can
+be performed on tables that are larger than two-by-two, but it works fine when
+the numbers are not too big).
+```
+
+Use this data to create a contingency table, and then perform the appropriate test to determine whether there is a significant difference between the vaccinated and unvaccinated groups.
+
+```{r}
+breakthrough_cases = data.frame(Cases = c(820,4140),
+                                Hospitalizations = c(32, 349),
+                                Deaths = c(4, 39))
+row.names(breakthrough_cases) = c("Vaccinated","Unvaccinated")
+breakthrough_cases
+
+knitr::kable(breakthrough_cases)
+
+fisher.test(breakthrough_cases)
+chisq.test(breakthrough_cases)
+```
+
+The tests work the same either way the table is constructed. By convention, we put the groups we want to compare in the rows with the "focal" group first, and the conditions in the columns.
+
+```{r eval=FALSE}
+vaccinated<- c(820,32,4)
+unvaccinated<- c(4140,349,39)
+
+breakthrough<- data.frame(vaccinated, unvaccinated)
+rownames(breakthrough)<- c("cases", "hospitalizations", "deaths")
+
+fisher.test(breakthrough)
+chisq.test(breakthrough)
+```
+
+
+
+
+
+
+
+
