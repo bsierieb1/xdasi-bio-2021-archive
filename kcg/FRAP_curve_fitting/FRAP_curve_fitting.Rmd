@@ -7,12 +7,62 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(MASS)
 ```
 
 
-Load FRAP data
+Load FRAP data and normalize
 
 ```{r}
+##load frap data
+glh_frap<- as.data.frame(read.csv("glh_frap.csv"))
+
+##normalization
+affine <- function(x){(x-min(x))/(1-min(x))}
+
+frap_glh_norm <- glh_frap %>%
+  group_by(ID,strain, rep) %>%
+  #filter(Time >= 0)%>%
+  mutate(intensity_norm = affine(Intensity))
+
+frap_glh_norm_sum<-frap_glh_norm %>%
+  group_by(ID, Time, strain) %>%
+  summarise(mean= mean(intensity_norm), sd= sd(intensity_norm),
+            se=sd(intensity_norm)/sqrt(length(intensity_norm)))
+
+frap_renorm = frap_glh_norm_sum %>% transmute(ID, Time, strain, mean)
+frap_renorm$mean = ifelse(frap_renorm$strain == "mip1uae1" & 
+                            frap_renorm$mean != min(frap_renorm$mean),  
+                          frap_renorm$mean / max(frap_renorm$mean), 
+                          frap_renorm$mean)
+
+ggplot(frap_renorm, aes(x=Time, y=mean, col=strain)) +
+  geom_line()
+  
+frap_pdf_test = data.frame(intensity = 1 - frap_renorm$mean,
+                           time = frap_renorm$Time,
+                           strain = frap_renorm$strain)
+frap_pdf_test = frap_pdf_test %>% filter(time >= 0)
+
+ggplot(frap_pdf_test, aes(x=time, y=intensity, col=strain)) +
+  geom_line()
+```
+
+
+curve fitting
+
+```{r}
+WT.data = frap_renorm %>% filter(strain == "WT")
+mip.data = frap_renorm %>% filter(strain == "mip1uae1")
+
+WT.quantile.data <- quantile(WT.data$mean, ppoints(57))
+mip.quantile.data <- quantile(mip.data$mean, ppoints(57))
+
+
+WT.fit <- MASS::fitdistr(WT.data, densfun = "exp")
+mip1.fit <- MASS::fitdistr(WT.data, densfun = "exp")
 
 ```
 
