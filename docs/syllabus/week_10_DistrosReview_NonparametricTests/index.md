@@ -51,11 +51,7 @@ nav_order: 10
 **Nonparametric Tests and Permutation (Shuffle) Test**
 
 + **Class Notes & Exercise** - [(zipped .Rmd)](Class2/W10.C2_Non-parametric_tests.Rmd.zip) - [(html)](Class2/W10.C2_Non-parametric_tests.html){: target="blank"}
-
-**Error and Power**
-
-+ [**Class Notes**](Class2/W10.C2_Error_power.html){: target="blank"}
-+ **In-Class Exercise** - [(zipped .Rmd)](Class2/W10.C2-Exercise_Power.Rmd.zip) - [(html)](W10.C2-Exercise_Power.html){: target="blank"}
+  + Answer key - [[zipped .Rmd]](Class2/W10.C2_Non-parametric_tests_KEY.Rmd.zip) - [[HTML]](Class2/W10.C2_Non-parametric_tests_KEY.html){: target="blank"} - [[PDF]](Class2/W10.C2_Non-parametric_tests_KEY.pdf){: target="blank"}
 
 </details>
 

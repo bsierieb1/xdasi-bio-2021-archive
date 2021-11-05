@@ -3,14 +3,14 @@ title: "Non-parametric and permutation tests"
 subtitle: "XDASI Fall 2021"
 date: "11/4/2021"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: 4
   html_document:
     toc: yes
     toc_float: yes
     toc_depth: 4
     code_folding: show
-  pdf_document:
-    toc: yes
-    toc_depth: 4
 ---
 
 ```{r setup, include=FALSE}
@@ -302,6 +302,13 @@ To compute a $p$-value for our test statistic, we can use the `wilcox.test()` fu
 ```{r}
 wilcox.test(post, pre, paired=T)  # post vs. pre
 wilcox.test(pre, post, paired=T)  # pre vs. post
+```
+
+Also, note that the paired two-sample test is equivalent to doing a one-sample test on the paired differences (thanks Omar for pointing this out!):
+
+```{r}
+# one-sample test using the paired differences
+wilcox.test(tri_diff)
 ```
 
 Let's see what `psignrank()` gives us for a two-tailed probability:

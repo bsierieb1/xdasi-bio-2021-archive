@@ -503,6 +503,15 @@ curve(dnorm(x, mean_v, sqrt(sigma_v)),
 ## data:  pre and post
 ## V = 238, p-value = 0.01051
 ## alternative hypothesis: true location shift is not equal to 0</code></pre>
+<p>Also, note that the paired two-sample test is equivalent to doing a one-sample test on the paired differences (thanks Omar for pointing this out!):</p>
+<pre class="r"><code># one-sample test using the paired differences
+wilcox.test(tri_diff)</code></pre>
+<pre><code>## 
+##  Wilcoxon signed rank exact test
+## 
+## data:  tri_diff
+## V = 62, p-value = 0.01051
+## alternative hypothesis: true location is not equal to 0</code></pre>
 <p>Let’s see what <code>psignrank()</code> gives us for a two-tailed probability:</p>
 <pre class="r"><code>2*psignrank(v_stat, n)</code></pre>
 <pre><code>## [1] 0.01050782</code></pre>

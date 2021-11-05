@@ -52,7 +52,8 @@ Create a plot that shows the trajectory of cases over the course of the pandemic
 ggplot(nyc_cases_long, aes(x=week_ending, y = cases, color= age_group)) +
   geom_line()
 
-  cases_weekly_plot<- ggplot(nyc_cases_long, aes(x=week_ending, y = cases, 
+# fancy plot
+cases_weekly_plot<- ggplot(nyc_cases_long, aes(x=week_ending, y = cases, 
                                                color= age_group)) +
   geom_line() +
   theme(panel.background=element_blank(), 
