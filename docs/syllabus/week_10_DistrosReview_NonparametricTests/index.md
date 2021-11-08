@@ -63,11 +63,15 @@ nav_order: 10
 
 <!-- ########################################################################### -->
 
-<!-- # Recitation - Friday, Nov. 5
+# Recitation - Friday, Nov. 5
+
+### Bootstrapping
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
++ Answer key - [zipped .Rmd](Recitation/W10R1_Bootstrap_KEY.Rmd.zip) - [HTML](Recitation/W10R1_Bootstrap_KEY.html){: target="blank"}
+
+</details>
 
 <!-- ########################################################################### -->
