@@ -6,7 +6,7 @@ nav_exclude: false
 nav_order: 10
 ---
 
-# Week 10: Nonparametric Tests
+# Week 10: Nonparametric Tests, Permutation Test, Bootstrapping
 {: .no_toc }
 
 <details closed markdown="block">
