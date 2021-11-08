@@ -47,7 +47,7 @@ nav_order: 10
 
 # Class - Thursday, Nov. 4
 
-### Nonparametric Tests, Permutation Test
+### Nonparametric Tests Cont'd, Permutation Test
 
 <details closed markdown="block">
   <summary>Details</summary>
