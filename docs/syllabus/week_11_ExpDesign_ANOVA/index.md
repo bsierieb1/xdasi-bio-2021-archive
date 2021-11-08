@@ -2,7 +2,7 @@
 title: Week 11
 parent: Syllabus
 has_children: false
-nav_exclude: true
+nav_exclude: false
 nav_order: 11
 ---
 
@@ -22,17 +22,22 @@ nav_order: 11
 
 <!-- ########################################################################### -->
 
-<!-- # Class - Monday, Nov. 8
+# Class - Monday, Nov. 8
 
 <details closed markdown="block">
   <summary>Details</summary>
 
+**Experimental Design**
+
++ [**Class Notes**](Class1/W11.C1-Notes_Experimental_Design.html){: target="blank"}
+
 **Error and Power**
 
-  + [**Class Notes**](Class2/W10.C2_Error_power.html){: target="blank"}
-  + **In-Class Exercise** - [(zipped .Rmd)](Class2/W10.C2-Exercise_Power.Rmd.zip) - [(html)](W10.C2-Exercise_Power.html){: target="blank"}
+  + [**Class Notes**](Class1/W11.C1-Notes_Error_Power.html){: target="blank"}
+  + **In-Class Exercise** - [(zipped .Rmd)](Class1/W11.C1-Exercise_Power.Rmd.zip) - [(html)](Class1/W11.C1-Exercise_Power.html){: target="blank"}
+  + [*Additional reference: Aho, Chapter 6.3-6.5*](https://drive.google.com/file/d/1ciWta1gVMPgwrTLjIeGO-4__SqNz1KqK/view?usp=sharing){: target="blank"}
 
-</details> -->
+</details>
 
 <!-- ########################################################################### -->
 

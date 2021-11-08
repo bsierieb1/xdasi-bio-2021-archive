@@ -1,9 +1,11 @@
 ---
-title: "Homework 10: Hypothesis Testing"
-subtitle: "XDASI Fall 2021"
-author: "YOUR NAME HERE"
+title: 'Homework 10: Hypothesis Testing'
+author: "ANSWER KEY"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
+subtitle: XDASI Fall 2021
 ---
 
 ```{r setup, include=FALSE}

@@ -9,7 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="YOUR NAME HERE" />
+<meta name="author" content="ANSWER KEY" />
 
 
 <title>Homework 10: Hypothesis Testing</title>
@@ -166,7 +166,7 @@ pre code {
 
 <h1 class="title toc-ignore">Homework 10: Hypothesis Testing</h1>
 <h3 class="subtitle">XDASI Fall 2021</h3>
-<h4 class="author">YOUR NAME HERE</h4>
+<h4 class="author">ANSWER KEY</h4>
 <h4 class="date">06 November, 2021</h4>
 
 </div>
@@ -447,7 +447,7 @@ median_first_under34 = do(1000) * median(sample(first_wave_under34$pct_cases,
                                                 replace=T))
 quantile(median_first_under34$median,c(0.025,0.5,0.975))</code></pre>
 <pre><code>##      2.5%       50%     97.5% 
-##  8.866523 11.628024 13.406394</code></pre>
+##  8.866523 11.628024 13.394029</code></pre>
 <pre class="r"><code>median_second_under34 = do(1000) * median(sample(second_wave_under34$pct_cases,
                                                 nrow(second_wave_under34), 
                                                 replace=T))
@@ -462,13 +462,13 @@ median_first_65up = do(1000) * median(sample(first_wave_65up$pct_cases,
                                              replace=T))
 quantile(median_first_65up$median,c(0.025,0.5,0.975))</code></pre>
 <pre><code>##      2.5%       50%     97.5% 
-##  8.127892 13.337152 21.278431</code></pre>
+##  8.129593 13.227076 21.136087</code></pre>
 <pre class="r"><code>median_second_65up = do(1000) * median(sample(second_wave_65up$pct_cases,
                                               length(second_wave_65up),
                                               replace=T))
 quantile(median_second_65up$median,c(0.025,0.5,0.975))</code></pre>
 <pre><code>##     2.5%      50%    97.5% 
-## 5.571613 7.389053 9.169171</code></pre>
+## 5.575086 7.298348 9.106845</code></pre>
 <pre class="r"><code># ============================================================================ #
 # take a look at the bootstrap distributions for the sample medians
 # par(mfrow=c(2,2))

@@ -1,0 +1,115 @@
+---
+title: "Distributions in-class exercise"
+subtitle: "XDASI Fall 2021"
+author: "YOUR NAMES HERE"
+date: "11/1/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+## Scenario
+
+You want to clone a gene and you have some reporter for success of transformation in *E. coli*. Positive colonies are blue because they express $\beta$-galactosidase when plated on medium with IPTG. The probability of a successful transformation is $0 \le P(success) \le 1$. For the following exercise, you may consider one plate, many plates, or a truly gargantuan number of plates.
+
+## Exercise
+
+The class has been split into groups and each has taken one or two of the following distributions:
+
+- Bernoulli
+- Binomial
+- Hypergeometric
+- Geometric
+- Negative binomial
+- Poisson
+- Normal
+- Exponential
+
+For your assigned distribution, answer the following questions.
+
+#### a. What is your function? Describe it in terms of the kind of problem that it applies to. Is it discrete or continuous?
+
+<!-- Insert your answer below. -->
+```{r}
+"geometric:pdf=(1-p)^x*p . In a series of bernulli trails, the probability of have x number of failures before 1 success. Discrete.
+
+negative binomial:combine(r+x-1,r)*(1-p)^x*p^r. In a series of bernulli trails, the probability of have x number of failures before r successes. Discrete"
+
+```
+
+#### b. Describe a question that you can ask with your distribution as applied to the transformation scenario given above.
+
+<!-- Insert your answer below. -->
+```{r}
+"geometric:Find the probability of some number of non-transformed colonies per one transformed colony
+
+negative binomial:How many trials do we need before x number of transformed colonies per plate. "
+
+```
+
+
+#### c. Describe the parameterization of the equation. What parameters does it take, and what do they mean?
+
+<!-- Insert your answer below. -->
+```{r}
+"geometric:p, probability of success
+
+negative binomial:p, probability of success;r, number of successes "
+
+```
+
+
+#### d. Pick some appropriate parameters for your distribution as applied to the transformation scenario and graph the PDF and CDF.
+
+```{r}
+xrange=1:30
+pgeom=data.frame(x=rep(xrange,3),y=c(dgeom(xrange, 0.2),dgeom(xrange, 0.4),dgeom(xrange, 0.6)),
+                p=c(rev(rep("p=0.2",30)),rev(rep("p=0.4",30)),rev(rep("p=0.6",30))))
+ggplot(pgeom,
+       aes(x,y,col=p))+
+  geom_line()+
+  labs(title = "geom_pdf")
+cgeom=data.frame(x=rep(xrange,3),y=c(pgeom(xrange, 0.2),pgeom(xrange, 0.4),pgeom(xrange, 0.6)),
+                p=c(rev(rep("p=0.2",30)),rev(rep("p=0.4",30)),rev(rep("p=0.6",30))))
+ggplot(cgeom,
+       aes(x,y,col=p))+
+  geom_line()+
+  labs(title = "geom_cdf")
+
+pnb=data.frame(x=rep(xrange,3),y=c(dnbinom(xrange, 3,0.4),dnbinom(xrange,6, 0.4),dnbinom(xrange,9, 0.4)),
+                p=c(rev(rep("r=3",30)),rev(rep("r=6",30)),rev(rep("r=9",30))))
+ggplot(pnb,
+       aes(x,y,col=p))+
+  geom_line()+
+  labs(title = "nbinom_pdf,p=0.4")
+cnb=data.frame(x=rep(xrange,3),y=c(pnbinom(xrange, 3,0.4),pnbinom(xrange,6, 0.4),pnbinom(xrange,9, 0.4)),
+                p=c(rev(rep("r=3",30)),rev(rep("r=6",30)),rev(rep("r=9",30))))
+ggplot(cnb,
+       aes(x,y,col=p))+
+  geom_line()+
+  labs(title = "nbinom_cdf,p=0.4")
+```
+
+
+#### e. Compute a cumulative probability for some appropriate value and describe in words what it means.
+
+```{r}
+pgeom(5,0.5)
+pnbinom(5,5,0.5)
+"The probability of getting a success with no more than 5 number of failures when probability for success is 0.5
+The probability of getting 5 successes with no more than 5 failures before when probability for success is 0.5"
+```
+
+<!-- Insert your answer below. -->
+
+
+#### f. Identify at least one other distribution that yours relates to and be prepared to discuss the relationship between them. This could be a special case, a limiting case, an approximation, or an inverse CDF (survival) relationship.
+
+<!-- Insert your answer below. -->
+```{r}
+"geometric distribution is a limiting case of negative binomial when we set the size of negative binomial to 1"
+```
+
