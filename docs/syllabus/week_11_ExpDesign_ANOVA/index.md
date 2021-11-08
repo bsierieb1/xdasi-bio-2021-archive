@@ -6,7 +6,7 @@ nav_exclude: false
 nav_order: 11
 ---
 
-# Week 11: Title
+# Week 11: Experimental Design, Error and Power, ANOVA
 {: .no_toc }
 
 <details closed markdown="block">
@@ -23,6 +23,8 @@ nav_order: 11
 <!-- ########################################################################### -->
 
 # Class - Monday, Nov. 8
+
+### Experimental Design, Error and Power
 
 <details closed markdown="block">
   <summary>Details</summary>
