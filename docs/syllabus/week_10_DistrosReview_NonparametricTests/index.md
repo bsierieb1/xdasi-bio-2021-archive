@@ -70,7 +70,7 @@ nav_order: 10
 <details closed markdown="block">
   <summary>Details</summary>
 
-+ Answer key - [zipped .Rmd](Recitation/W10R1_Bootstrap_KEY.Rmd.zip) - [HTML](Recitation/W10R1_Bootstrap_KEY.html){: target="blank"}
++ Answer key - [zipped .Rmd](Recitation/W10.R1_Bootstrap_KEY.Rmd.zip) - [HTML](Recitation/W10.R1_Bootstrap_KEY.html){: target="blank"}
 
 </details>
 
