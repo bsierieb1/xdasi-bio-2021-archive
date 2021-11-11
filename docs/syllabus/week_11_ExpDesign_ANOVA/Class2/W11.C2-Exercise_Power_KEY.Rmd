@@ -1,14 +1,14 @@
 ---
 title: "In-Class Exercise: Power Analysis"
 subtitle: "XDASI Fall 2021"
-date: "11/4/2021"
+date: "11/8/2021"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: 4
   html_document:
     toc: no
     toc_float: yes
-    toc_depth: 4
-  pdf_document:
-    toc: yes
     toc_depth: 4
 ---
 
@@ -27,7 +27,9 @@ library(pwr)
 
 Surprisingly, the incidence of Alzheimer's disease is negatively associatd with moderate smoking, possibly because nicotine may reduce apoptosis (programmed cell death) of neurons. The description of the problem is as follows:
 
+<div align="center">
 ![](Images/Aho_Ex_6.10.png){width="60%"}
+</div>
 
 ### What is the question?
 
@@ -52,63 +54,60 @@ First, compute the power by hand:
 ```{r, collapse=T}
 # =================================================== #
 # set up variables
-# =================================================== #
 
-effect.size =   # effect size = Exp(X) under H_A
-n = 
-sigma = 
-alpha = 
-type =  # one or two sample
-alt =   # one- or two-sided
+effect.size = -7  # effect size = Exp(X) under H_A
+n = 200
+sigma = 45
+alpha = 0.05
+type = "one.sample" # one or two sample
+alt = "one.sided"  # one- or two-sided
 
 # set Exp(X) = 0 under null H_o
 
 # critical value (z*) for lower-tail test at alpha=0.05
-z.crit = 
+z.crit = qnorm(alpha)  # -1.644854
 
 # check alpha using standard normal distribution
+pnorm(0,abs(z.crit),lower.tail=T)  # 0.05
 
-  
 # compute SEM for sample size
-sem = 
+sem = sigma/sqrt(n)
 sem
 
 # =================================================== #
 # manual power calculation
-# =================================================== #
 
 # compute power using area under the curve for H_A
 
 # get value of critical x at z.crit for H_A
 # want P( X.bar  <= z.crit * sem)
 # percent difference for lower-tail significance
-x.crit =    # x-value at critical z-score 
+x.crit = z.crit*sem  # x-value at critical z-score 
 x.crit
 
 # Expected X.bar (pop. mean) under H_A is (mu_o - mu_A): Exp(X) = -7
-pwr =  
+pwr = pnorm(x.crit, mean = effect.size, sd = sem)  # power = 0.71
 pwr
 
 # check z-score for H_A at expected power
-   # alpha = P(X.bar <= -5.24)
+qnorm(pwr, effect.size, sem)  # alpha = P(X.bar <= -5.24)
 ```
 
 ### Compute power in R
 
 Given any 4 of the 5 variables that go into the power equation, we can use `power.t.test()` to compute the missing value. Since $n$ is large, we could also use the `power.z.test()` command from the `asbio` package. These give slightly different results, as the $t$-test is a bit more conservative. (They also use different names for their arguments, and the objects the produce are also different.)
 
-**NOTE:** *Effect size used for these functions should be given as a positive number, otherwise these 
-functions will not work as expected.*
+**NOTE:** *Effect size used for these functions should be given as a positive number, otherwise these functions will not work as expected.*
 
 ```{r}
 # ================================================== #
 # provide expected effect size as a positive number
-power.t.test(n, delta =  , sd =  , sig.level =  ,
-             type= , alternative= , strict=T)
+power.t.test(n, delta = abs(effect.size), sd = sigma, sig.level = alpha,
+             type="one.sample", alternative="one.sided", strict=T)
 
 # note that arguments for this command differ
-power.z.test(n, effect =  , sigma =  , 
-             alpha =  , test= , strict=T)
+power.z.test(n, effect = abs(effect.size), sigma = sigma, 
+             alpha = alpha, test="one.tail", strict=T)
 ```
 
 
@@ -126,8 +125,10 @@ We can compute the new power by hand, or use the `power.z.test()` command:
 # ================================================== #
 # what happens if E = -8? => increase power
 # (keep alpha the same)
+pnorm(x.crit, effect.size - 1, sem)  # power = 0.81
 
-
+power.z.test(n, effect = -(effect.size-1), sigma = sigma, 
+             alpha = alpha, test="one.tail", strict=T)
 
 # ================================================== #
 # increase sample size
@@ -137,14 +138,16 @@ We can compute the new power by hand, or use the `power.z.test()` command:
 n = 300
 
 # get x-bar and SEM
-sem = 
+sem = sigma / sqrt(n)
 sem
-x.crit = 
+x.crit = qnorm(0.05)*sem
 x.crit
 
-# ================================================== #
 # power
+pnorm(x.crit, effect.size, sem)  # power = 0.85
 
+power.z.test(n, effect = -effect.size, sigma = sigma, 
+             alpha = alpha, test="one.tail", strict=T)
 
 # ================================================== #
 # relax stringency: raise alpha
@@ -152,23 +155,22 @@ x.crit
 # raising alpha increases Type I error
 # what happens to power? => power goes down
 alpha = 0.2
-z.crit = 
+z.crit = qnorm(alpha)  # -0.842
 
 # check alpha2 using standard normal distribution
 pnorm(0,abs(z.crit),lower.tail=T)
 
-x.crit = 
+x.crit = z.crit*sem
 x.crit
 
-pwr = 
+pwr = pnorm(x.crit, mean = effect.size, sd = sem)  # power = 0.913
 pwr
 
-# =================================================== #
-# check power
-
+qnorm(pwr, effect.size, sem) # check power
 
 # power is the same with the z-test power function
-
+power.z.test(n, effect = -effect.size, sigma = sigma, 
+             alpha = alpha, test="one.tail", strict=T)
 ```
 
 
@@ -183,24 +185,25 @@ size and effect size? What is the Type II error? What happens to the Type I erro
 # ================================================== #
 # if raise desired power without increasing effect size,
 #   => alpha goes up (less stringent)
-x.bar2 = 
+x.bar2 = qnorm(0.8, effect.size, sem) # effect size -4.32
 x.bar2
 
 # what significance level is this?
-alpha2 = 
+alpha2 = x.bar2 / sem
 alpha2
-
-# probability
+pnorm(0,abs(alpha2),lower.tail=T)  # 0.087
 
 # what significance level is this?
-alpha2 = 
+alpha2 = x.bar2 / sem
 alpha2
-
-# probability
+pnorm(0,abs(alpha2),lower.tail=T)  # 0.087
 
 # ================================================== #
 # using power.t.test command
 # now supply power and ask what new alpha is
-
+power.t.test(n, delta = -effect.size, sd = sigma, 
+             sig.level = NULL, power = 0.8,
+            type="one.sample", alternative="one.sided", strict=T)
+# gives alpha = 0.088
 ```
 
