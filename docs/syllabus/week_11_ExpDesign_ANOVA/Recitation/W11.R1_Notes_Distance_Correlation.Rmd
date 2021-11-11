@@ -120,8 +120,7 @@ b <- a + rnorm(n = 10,
 plot(x = a,
      y = b,
      xlim = c(-10,5),
-     ylim = c(-10,8),
-     asp = 1)
+     ylim = c(-10,8))
 ```
 
 Now, let us find a way to assess whether:
@@ -141,8 +140,7 @@ Here is one (rather simple and smart) way of doing this:
 plot(x = a,
      y = b,
      xlim = c(-10,5),
-     ylim = c(-10,8),
-     asp = 1)
+     ylim = c(-10,8))
 
 #plot the mean
 points(x = mean(a),
