@@ -46,6 +46,8 @@ nav_order: 11
 
 # Class - Thursday, Nov. 11
 
+### Error and Power Cont'd, ANOVA
+
 <details closed markdown="block">
   <summary>Details</summary>
 
