@@ -54,13 +54,13 @@ nav_order: 11
 **Error and Power**
 
 + **In-Class Exercise** - [(zipped .Rmd)](Class2/W11.C2-Exercise_Power.Rmd.zip) - [(html)](Class2/W11.C2-Exercise_Power.html){: target="blank"}
-  + Answer key: [(zipped .Rmd)](Class1/W11.C2-Exercise_Power_KEY.Rmd.zip) - [(html)](Class2/W11.C2-Exercise_Power_KEY.html){: target="blank"}
+  + Answer key: [(zipped .Rmd)](Class2/W11.C2-Exercise_Power_KEY.Rmd.zip) - [(html)](Class2/W11.C2-Exercise_Power_KEY.html){: target="blank"}
 
 **ANOVA**
 
 + **Class Notes** - [(html)](Class2/W11.C2-Notes_ANOVA.html){: target="blank"} - [(pdf)](Class2/W11.C2-Notes_ANOVA.pdf){: target="blank"}
 + **In-Class Exercise** - [(zipped .Rmd)](Class2/W11.C2-Demo_ANOVA.Rmd.zip) - [(html)](Class2/W11.C2-Demo_ANOVA.html){: target="blank"}
-  + Answer key: [(zipped .Rmd)](Class1/W11.C2-Demo_ANOVA_KEY.Rmd.zip) - [(html)](Class2/W11.C2-Demo_ANOVA_KEY.html){: target="blank"}
+  + Answer key: [(zipped .Rmd)](Class2/W11.C2-Demo_ANOVA_KEY.Rmd.zip) - [(html)](Class2/W11.C2-Demo_ANOVA_KEY.html){: target="blank"}
 
 </details>
 
