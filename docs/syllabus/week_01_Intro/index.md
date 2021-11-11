@@ -102,7 +102,7 @@ We will use three main resources for the course:
 
 # Recitation - Friday, Sept. 3
 
-### Introduction, continued
+### Introduction, Cont'd
 
 <details closed markdown="block">
   <summary>Details</summary>

@@ -58,7 +58,7 @@ Please complete the following and hand in through Brightspace:
 
 # Recitation - Friday, Sept. 10
 
-### Data visualization, continued
+### Data visualization, Cont'd
 
 <details closed markdown="block">
   <summary>Details</summary>

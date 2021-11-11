@@ -57,7 +57,7 @@ nav_order: 3
 
 # Recitation - Friday, Sept. 17
 
-### Data Manipulation
+### Data Manipulation Using dplyr
 
 <details closed markdown="block">
   <summary>Details</summary>
