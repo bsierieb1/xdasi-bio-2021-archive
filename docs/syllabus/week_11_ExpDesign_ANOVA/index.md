@@ -53,7 +53,8 @@ nav_order: 11
 
 **Error and Power**
 
-  + **In-Class Exercise** - [(zipped .Rmd)](Class2/W11.C2-Exercise_Power.Rmd.zip) - [(html)](Class2/W11.C2-Exercise_Power.html){: target="blank"}
++ **In-Class Exercise** - [(zipped .Rmd)](Class2/W11.C2-Exercise_Power.Rmd.zip) - [(html)](Class2/W11.C2-Exercise_Power.html){: target="blank"}
+  + Answer key: [(zipped .Rmd)](Class1/W11.C2-Exercise_Power_KEY.Rmd.zip) - [(html)](Class2/W11.C2-Exercise_Power_KEY.html){: target="blank"}
 
 **ANOVA**
 
