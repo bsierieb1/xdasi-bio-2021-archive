@@ -36,7 +36,6 @@ nav_order: 11
 **Error and Power**
 
   + [**Class Notes**](Class1/W11.C1-Notes_Error_Power.html){: target="blank"}
-  + **In-Class Exercise** - [(zipped .Rmd)](Class1/W11.C1-Exercise_Power.Rmd.zip) - [(html)](Class1/W11.C1-Exercise_Power.html){: target="blank"}
   + [*Additional reference: Aho, Chapter 6.3-6.5*](https://drive.google.com/file/d/1ciWta1gVMPgwrTLjIeGO-4__SqNz1KqK/view?usp=sharing){: target="blank"}
 
 </details>
@@ -45,12 +44,21 @@ nav_order: 11
 
 <!-- ########################################################################### -->
 
-<!-- # Class - Thursday, Nov. 11
+# Class - Thursday, Nov. 11
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
+**Error and Power**
+
+  + **In-Class Exercise** - [(zipped .Rmd)](Class2/W11.C2-Exercise_Power.Rmd.zip) - [(html)](Class2/W11.C2-Exercise_Power.html){: target="blank"}
+
+**ANOVA**
+
+  + **Class Notes** - [(html)](Class2/W11.C2-Notes_ANOVA.html){: target="blank"} - [(pdf)](Class2/W11.C2-Notes_ANOVA.pdf){: target="blank"}
+  + **In-Class Exercise** - [(zipped .Rmd)](Class2/W11.C2-Demo_ANOVA.Rmd.zip) - [(html)](Class2/W11.C2-Demo_ANOVA.html){: target="blank"}
+
+</details>
 
 <!-- ########################################################################### -->
 

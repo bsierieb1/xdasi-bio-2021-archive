@@ -3,12 +3,12 @@ title: "Experimental Design"
 subtitle: "XDASI Fall 2021"
 date: "11/8/2021"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: 4
   html_document:
     toc: yes
     toc_float: yes
-    toc_depth: 4
-  pdf_document:
-    toc: yes
     toc_depth: 4
 ---
 
