@@ -58,8 +58,9 @@ nav_order: 11
 
 **ANOVA**
 
-  + **Class Notes** - [(html)](Class2/W11.C2-Notes_ANOVA.html){: target="blank"} - [(pdf)](Class2/W11.C2-Notes_ANOVA.pdf){: target="blank"}
-  + **In-Class Exercise** - [(zipped .Rmd)](Class2/W11.C2-Demo_ANOVA.Rmd.zip) - [(html)](Class2/W11.C2-Demo_ANOVA.html){: target="blank"}
++ **Class Notes** - [(html)](Class2/W11.C2-Notes_ANOVA.html){: target="blank"} - [(pdf)](Class2/W11.C2-Notes_ANOVA.pdf){: target="blank"}
++ **In-Class Exercise** - [(zipped .Rmd)](Class2/W11.C2-Demo_ANOVA.Rmd.zip) - [(html)](Class2/W11.C2-Demo_ANOVA.html){: target="blank"}
+  + Answer key: [(zipped .Rmd)](Class1/W11.C2-Demo_ANOVA_KEY.Rmd.zip) - [(html)](Class2/W11.C2-Demo_ANOVA_KEY.html){: target="blank"}
 
 </details>
 
