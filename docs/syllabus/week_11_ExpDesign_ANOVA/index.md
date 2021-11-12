@@ -6,7 +6,7 @@ nav_exclude: false
 nav_order: 11
 ---
 
-# Week 11: Experimental Design, Error and Power, ANOVA, Distance, Correlation
+# Week 11: Experimental Design, ANOVA, Distance, and Correlation
 {: .no_toc }
 
 <details closed markdown="block">
@@ -70,7 +70,7 @@ nav_order: 11
 
 # Recitation - Friday, Nov. 12
 
-### Measures of Distance and Similarity
+### Measures of Distance, Correlation
 
 <details closed markdown="block">
   <summary>Details</summary>
