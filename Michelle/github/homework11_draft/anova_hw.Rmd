@@ -1,0 +1,245 @@
+---
+title: "Anova Homework"
+author: ""
+date: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+```
+
+## ANOVA
+# Data description:
+For this exercise, we will be looking at brood size and fertilization in *C. elegans*. The measurements taken were:  
+
+**Brood size**- number of progeny laid by one worm in one day  
+**Fertilized**- number of progeny laid that are fertilized embryos
+
+For this first part, we will be looking at the brood sizes in the WT N2 strain (WT), in single mutants (A), and in double mutants(A;B). There are 30 replicates of each condition.
+
+# Q1  
+First, load the data and create subsets of the individual genotypes. Calculate the percent fertilization ($fertilized/brood size$).
+```{r}
+anova_data <- as.data.frame(read.csv("hw_anova.csv"))
+anova_data$genotype<- as.factor(anova_data$genotype)
+anova_data$brood_size<- as.numeric(anova_data$brood_size)
+anova_data$fertilized<- as.numeric(anova_data$fertilized)
+anova_data$percent_fertilized<- round(anova_data$fertilized/anova_data$brood_size, digits=2)
+
+anova_wt<- subset(anova_data, genotype=="WT")
+anova_A<- subset(anova_data, genotype=="A")
+anova_AB<- subset(anova_data, genotype=="A;B")
+```
+
+Use boxplots to plot the data. For readability, make sure that the WT is the leftmost boxplot, followed by the single mutant and then the double mutant.
+
+```{r}
+anova_data$genotype<- factor(anova_data$genotype, levels=c("WT", "A", "A;B"))
+
+anova_data_boxplot<- ggplot(anova_data, aes(x= genotype, y= brood_size, 
+                                       color= genotype))+
+  geom_boxplot()+
+  geom_jitter()+
+  theme(panel.background=element_blank(), 
+        strip.background = element_blank(),
+        strip.placement = "outside",
+        strip.text=element_blank(),
+        panel.border=element_rect(colour="black",fill=NA))
+anova_data_boxplot
+```
+.    
+In order to be able to utilize an ANOVA, two requirements must be fulfilled:   
+1) the data must be normally distributed.  
+2) the variation must be the same between groups. 
+
+Use the `shapiro.test()` function to determine if the measurements from the different groups are normally distributed. Use histogram plots to visualize the distributions. 
+```{r}
+shapiro.test(anova_wt$brood_size)
+shapiro.test(anova_A$brood_size)
+shapiro.test(anova_AB$brood_size)
+hist(anova_wt$brood_size)
+hist(anova_A$brood_size)
+hist(anova_AB$brood_size)
+```
+.    
+Determine if the variation is the same between the groups. You can use the `var.test()` function.
+```{r}
+var.test(anova_wt$brood_size, anova_A$brood_size)
+var.test(anova_wt$brood_size, anova_AB$brood_size)
+var.test(anova_A$brood_size, anova_AB$brood_size)
+```
+⇒
+ **What is the statistic used by var.test()? What is the null hypothesis of this test?**
+
+*The function performs an F test that compares the variances of two samples from normal populations.*
+
+⇒
+ **Are the assumptions regarding data being normally distributed and variance being equal met?**
+
+*Yes, the data are normally distributed and the variances are similar.*
+
+## Q2: Planned vs unplanned
+⇒
+ **Explain whether this experiment should be treated as a PLANNED or UNPLANNED dataset. How would the analysis differ between these two scenarios?**
+
+*Datasets that contain a “control” treatments are treated as “planned” experiments, in which different treatments are compared to the control as a reference.*
+
+*Analysis for an “unplanned” dataset looks for total variation, followed by a Tukey Honest Significant Difference test, which makes all pairwise comparisons to determine which pairs of samples, if any, show a significant difference.*
+
+## Q3: Sum of Squares and F-statistic  
+
+Calculate the sum of squares for $SS_{error}$ and $SS_{group}$. Recall the formulas:
+
+$$SS_{total}~=SS_{error}+SS_{group}$$ 
+
+$$SSerror=\sum_{i}\sum_{j}(Y−\overline{Y}_i)^{2}$$    
+$$SS_{group}=\sum_{i}n_{i}(\overline{Y}_i−\overline{Y})^{2}$$
+```{r}
+anova_wt_sum<- sum((anova_wt$brood_size - mean(anova_wt$brood_size))^2)
+anova_A_sum <- sum((anova_A$brood_size - mean(anova_A$brood_size))^2)
+anova_AB_sum <- sum((anova_AB$brood_size - mean(anova_AB$brood_size))^2)
+
+SS_error <- anova_wt_sum + anova_A_sum + anova_AB_sum
+
+SS_group <- length(anova_wt$brood_size) * (mean(anova_wt$brood_size) - mean(anova_data$brood_size))^2 +
+  length(anova_A$brood_size) * (mean(anova_A$brood_size) - mean(anova_data$brood_size))^2 +
+  length(anova_AB$brood_size) * (mean(anova_AB$brood_size) - mean(anova_data$brood_size))^2 
+```
+
+Calculate the F-statistic and the p-value using the `pf() function.` Recall that:
+
+$$F=\frac{MS_{groups}}{MS_{error}}$$
+$$MS_{groups}=\frac{SS_{groups}}{df_{groups}}$$
+$$MS_{error}=\frac{SS_{error}}{df_{error}}$$
+```{r}
+df_error <- ( length(anova_wt$brood_size) - 1 
+                      + length(anova_A$brood_size) - 1 
+                      + length(anova_AB$brood_size) - 1)
+MS_error <- SS_error/df_error
+
+df_group <- 3-1
+MS_group <- SS_group/df_group
+
+Fstat <- MS_group/MS_error
+
+# p-value using CDF for F-statistic
+pf(Fstat,df_group, df_error, lower.tail = F )
+```
+## Q4: Planned
+Assume the data is a planned experiment. Use the `lm()` function to perform the analysis. Remember to use the summary() function on the results of the `lm()` function to look at the p-values of the model and also the individual comparisons.
+
+```{r}
+# summary for lm of brood_size ~ genotype
+summary(lm(anova_data$brood_size ~ anova_data$genotype))
+```
+Use the `anova()` function on the results of the `lm()` function to look at the different $SS$ values and the p-value of the results.
+```{r}
+# anova on lm
+anova(lm(anova_data$brood_size ~ anova_data$genotype))
+```
+⇒
+ **Is the model significant overall? How about the different groups: are they significantly different from the control? If not, explain how this is possible.**
+
+*The model is significant overall, and all the groups are significantly different from each other.*
+
+## Q5: Unplanned  
+Assume the data are from an unplanned experiment. Use the `aov()` function to perform the analysis.
+
+```{r}
+# aov for brood_size ~ genotype
+aov(anova_data$brood_size ~ anova_data$genotype)
+```
+
+Use the `tukeyHSD()` function on the results of `aov()` to perform the Tukey-Kramer test to look at all pairwise comparisons.
+
+```{r}
+# tukey's honest significant difference test
+TukeyHSD(aov(anova_data$brood_size ~ anova_data$genotype))
+```
+⇒
+ **What do these results tell you?**
+ 
+ ⇒
+ **What is a possible biological interpretation of these results?**
+ *The single mutant has a reduced brood size phenotype that is significantly different than the N2. The double mutant significantly rescues the reduced brood size phenotype, but is still significantly lower than the N2 brood size.*   
+Once you have performed the ANOVA, you can check your assumption of normality by checking to see if the ANOVA residuals are normally distributed.
+```{r}
+res_aov <- aov(brood_size ~ genotype,
+               data = anova_data)
+
+hist(res_aov$residuals)
+shapiro.test(res_aov$residuals)
+```
+
+## Q6 
+Now we will look at the fertilization phenotype. 
+
+Plot the percent fertilization:
+```{r}
+percent_fertilized_boxplot<- ggplot(anova_data, aes(x= genotype, y= percent_fertilized,
+                                       color= genotype))+
+  geom_boxplot()+
+  geom_jitter()+
+  theme(panel.background=element_blank(), 
+        strip.background = element_blank(),
+        strip.placement = "outside",
+        strip.text=element_blank(),
+        panel.border=element_rect(colour="black",fill=NA))
+percent_fertilized_boxplot
+```
+.   
+Check for normality:
+
+```{r}
+shapiro.test(anova_wt$percent_fertilized)
+shapiro.test(anova_A$percent_fertilized)
+shapiro.test(anova_AB$percent_fertilized)
+hist(anova_wt$percent_fertilized)
+hist(anova_A$percent_fertilized)
+hist(anova_AB$percent_fertilized)
+
+```
+.  
+⇒
+ **Are the assumptions regarding data being normally distributed and variance being equal met? If not, what test is appropriate here instead?**  
+Note, if the data is not normal, the Kruskal-Wallace test can be used (`kruskal.test(variable ~ group, data = dat)`). This will work even when the variances are unequal. 
+If the data is normal, but the variances are unequal, the Welch ANOVA can be used (`oneway.test(variable ~ group, var.equal = FALSE)`)
+
+```{r}
+kruskal.test(anova_data$percent_fertilized ~ anova_data$genotype)
+
+pairwise.wilcox.test(anova_data$percent_fertilized, anova_data$genotype,
+                 p.adjust.method = "BH")
+```
+ 
+## Error and Power
+Recall that the power is $1−β$, where $β$ is the Type II error. We can calculate the power of the ANOVA test using the `command power.anova.test()`. The arguments for the command are:
+
+**groups** = the number of groups in the dataset  
+**n** = the number of observations per group  
+**between.var** = sum of squares for between groups, $SS_{group}$  
+**within.var** = sum of squares for within groups, $SS_{error}$  
+**sig.level** = significance cutoff $α$ (Type I error)  
+**power** = power of the test ($1−β = 1$ - Type II error)  
+Given all of the arguments except for one, this function will return a value for the missing argument.
+
+## Q7: Power of the ANOVA analysis
+Given the data that we have been provided and the p-value we obtained, 6.17e-36, what is the power of our dataset? Remember to use the `power.anova.test()` function provided in the base R package (do NOT use the function from the pwr package).
+
+```{r}
+# first, check the documentation
+help(power.anova.test)
+
+# compute the power
+power.anova.test(groups=3, n=30, within.var=SS_error, between.var=SS_group, sig.level=6.17e-36)
+```
+#  Q8: Sample size
+If we are happy with a power of $1−β=0.8$ and want to use a Type I error rate (significance cutoff) of $α=0.05$, how many observations for each group would we need?
+
+```{r}
+# compute the required sample size
+power.anova.test(groups=3, within.var=SS_error, between.var=SS_group, sig.level=0.05, power=0.8)
+```
