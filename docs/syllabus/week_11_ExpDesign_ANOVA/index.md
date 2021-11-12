@@ -68,18 +68,15 @@ nav_order: 11
 
 <!-- ########################################################################### -->
 
-<!-- # Recitation - Friday, Nov. 12
+# Recitation - Friday, Nov. 12
 
 ### Measures of Distance and Similarity
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-+ [**Class notes**](Class1/W3.C1_Notes_SummaryStats.html){: target="blank"}
-+ [**Class exercise and dataset**](Class1/W3.C1_Exercise_mouse_genes/mouse_genes.zip)
-  + Answer key: [RMD+DATA zipped](Class1/W3.C1_Exercise_mouse_genes/mouse_genes_KEY.zip) - [HTML](Class1/W3.C1_Exercise_mouse_genes/mouse_genes_KEY.html){: target="blank"}
-  + Note that the key was reorganized a little bit to make the presentation clearer.
++ **Class Notes** - [(html)](Recitation/W11.R1_Notes_Distance_Correlation.html){: target="blank"}
 
-</details> -->
+</details>
 
 <!-- ########################################################################### -->
