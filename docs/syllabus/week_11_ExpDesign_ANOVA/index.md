@@ -75,7 +75,7 @@ nav_order: 11
 <details closed markdown="block">
   <summary>Details</summary>
 
-+ **Class Notes** - [(html)](Recitation/W11.R1_Notes_Distance_Correlation.html){: target="blank"}
++ **Class Notes** - [(html)](Recitation/W11.R1_Notes_Distance_Correlation.html){: target="blank"} - [(zipped .Rmd)](Recitation/W11.R1_Notes_Distance_Correlation.Rmd.zip)
 
 </details>
 
