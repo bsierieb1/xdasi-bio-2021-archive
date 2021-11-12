@@ -6,7 +6,7 @@ nav_exclude: false
 nav_order: 11
 ---
 
-# Week 11: Experimental Design, Error and Power, ANOVA
+# Week 11: Experimental Design, Error and Power, ANOVA, Distance, Correlation
 {: .no_toc }
 
 <details closed markdown="block">
