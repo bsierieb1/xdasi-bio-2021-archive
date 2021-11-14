@@ -1,0 +1,490 @@
+---
+title: "Homework 11: ANOVA"
+subtitle: "XDASI Fall 2021"
+author: "ANSWER KEY"
+date: "November 13, 2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+```
+
+
+# Q0: Load the data set and examine it
+
+For this exercise, we will be looking at brood size and fertilization defects in a *C. elegans* gene called *mel-28*, alone and in combination with a mutation in a second gene that suppresses these phenotypes. There are 30 biological replicates for each condition. The measurements taken were:  
+
++ **Brood size** - number of eggs laid by one worm in one day  
++ **Fertilized** - number of eggs laid that were fertilized embryos
+
+First, load the data and take a look at it. Make sure that the `genotype` column is a factor and that you set "WT" as the reference level.
+
+*Hint: you can use either the `factor()` or `relevel()` commands to set/reorder the levels; what weird thing happens if you use `level()` instead?*
+
+```{r}
+anova_data <- read.csv("Ce_mel28_Emb_Ste.csv")
+anova_data$genotype = factor(anova_data$genotype, levels=c("WT", "A", "A;B"))
+
+# anova_data <- read.csv("Ce_mel28_Emb_Ste.csv", stringsAsFactors = TRUE)
+# relevel(anova_data$genotype,"WT")
+
+str(anova_data)
+head(anova_data)
+```
+
+
+# Q1: Brood size
+
+For this first part, we will be looking just at the ***brood sizes*** in the wild-type N2 strain (WT), in single mutants (A), and in double mutants (A;B).
+
+### a) Strip chart / boxplot
+
+Plot the brood size data, including the individual data points. For readability, make sure that the WT is the leftmost boxplot, followed by the single mutant and then the double mutant.
+
+```{r}
+ggplot(anova_data, aes(x= genotype, y= brood_size, color= genotype)) +
+  geom_boxplot() +
+  geom_jitter() +
+  theme_classic() +
+  theme(panel.border=element_rect(colour="black",fill=NA))
+```
+
+### b) Histograms
+
+Use histogram plots to visualize the distributions. and perform an appropriate statistical test to determine if the measurements from the different groups are normally distributed.  
+
+```{r}
+ggplot(anova_data, aes(x = brood_size, fill = genotype)) +
+  geom_histogram() +
+  # theme_classic() +
+  # theme(panel.border=element_rect(colour="black",fill=NA)) + 
+  facet_grid(genotype ~ .)
+```
+
+### c) ANOVA assumptions
+
+In order to proceed with ANOVA, what two requirements should the data fulfill?
+
+```{r eval=FALSE}
+# your answer here
+1) the data must be normally distributed.  
+2) the variation must be the same between groups. 
+```
+
+### d) Check for normality
+
+Perform statistical tests to determine whether the data are normally distributed. (You may find it easier to subset the data at this point.)
+
+```{r}
+anova_WT = anova_data[anova_data$genotype == "WT","brood_size"]
+anova_A  = anova_data[anova_data$genotype == "A","brood_size"]
+anova_AB = anova_data[anova_data$genotype == "A;B","brood_size"]
+
+shapiro.test(anova_WT)
+shapiro.test(anova_A)
+shapiro.test(anova_AB)
+```
+
+
+### e) Check for homoscedasticity
+
+Determine if the variation is the same between the groups. This is called ***"homoscedasticity"***.
+
++ First, use the `var.test()` function to make pairwise comparisons between groups.
++ Then, use `bartlett.test()` to perform Bartlett's test on all of the groups at once.
+
+```{r}
+var.test(anova_WT, anova_A)
+var.test(anova_WT, anova_AB)
+var.test(anova_A, anova_AB)
+
+bartlett.test(brood_size ~ genotype, anova_data)
+```
+
+
+What is the test statistic used by `var.test()`? What is the value of the statistic when the null hypothesis is true?
+
+```{r eval=FALSE}
+# your answer here
+The function performs an F test that compares the variances of two samples from normal populations. F=1 when variances are equal.
+```
+
+
+What distribution does Bartlett's test statistic follow?
+
+```{r eval=FALSE}
+# your answer here
+The K statistic follows a Chi-square distribution.
+```
+
+
+Are the assumptions for performing ANOVA met for this dataset?
+
+```{r eval=FALSE}
+# your answer here
+Yes, the data are normally distributed and the variances are similar.
+```
+
+
+# Q2: Sum of Squares and F-statistic  
+
+### a) SSE and SSG
+
+Calculate the sum of squares for $SS_{error}$ and $SS_{group}$ (you may use either base R methods or dplyr, as you prefer). Recall the formulas:
+
+$$SS_{total} = SS_{error}+SS_{group}$$ 
+$$SS_{error} = \sum_{i}\sum_{j}(Y−\overline{Y}_i)^{2}$$    
+$$SS_{group} = \sum_{i}n_{i}(\overline{Y}_i−\overline{Y})^{2}$$
+```{r}
+## Base R methods =========================================================== ##
+# SS_error
+anova_WT_sum <- sum((anova_WT - mean(anova_WT))^2)
+anova_A_sum  <- sum((anova_A  - mean(anova_A))^2)
+anova_AB_sum <- sum((anova_AB - mean(anova_AB))^2)
+
+SS_error <- anova_WT_sum + anova_A_sum + anova_AB_sum
+
+## SS_group
+mean_all = mean(anova_data$brood_size) # total mean for all data points
+
+SS_group <- length(anova_WT) * (mean(anova_WT) - mean_all)^2 +
+  length(anova_A) * (mean(anova_A) - mean_all)^2 +
+  length(anova_AB) * (mean(anova_AB) - mean_all)^2 
+
+## dplyr methods ============================================================ ##
+
+# SS_error: first get individual values, then sum across them
+#   (could do this in one step, but a bit less confusing this way)
+SSE = anova_data %>% 
+  group_by(genotype) %>%
+  summarize(ss = (brood_size - mean(brood_size))^2)
+
+SSE = SSE %>%
+  group_by(genotype) %>% summarize(sum = sum(ss)) %>% 
+  select(sum) %>% sum
+
+## SS_group
+mean_all = mean(anova_data$brood_size) # total mean for all data points
+
+SSG = anova_data %>% 
+  group_by(genotype) %>% 
+  summarize(ss = length(brood_size)*(mean(brood_size) - mean_all)^2) %>% 
+  select(ss) %>% sum
+```
+
+### b) F-statistic and p-value
+
+Calculate the F-statistic and the p-value using the `pf() function.` Recall that:
+
+$$F=\frac{MS_{groups}}{MS_{error}} = \frac{SS_{groups}/df_{groups}}{SS_{error}/df_{error}}$$
+
+```{r}
+## general method to get df for any number of groups from long data ========= ##
+# degrees of freedom for SS_error (30*3 - 3 = 87)
+df_error = anova_data %>% 
+  group_by(genotype) %>% 
+  summarize(df = (length(brood_size) - 1)) %>% 
+  select(df) %>% 
+  sum %>% 
+  unlist
+df_error
+
+# degrees of freedom for SS_groups (3 - 1 = 2)
+df_group = anova_data %>% 
+  select(genotype) %>% 
+  unique %>% nrow - 1
+df_group
+
+# F-statistic
+MS_error <- SS_error/df_error # same as sum(per-group variance)
+MS_error
+MS_group <- SS_group/df_group
+MS_group
+
+Fstat <- MS_group/MS_error
+Fstat
+
+# p-value using CDF for F-statistic
+pf(Fstat, df_group, df_error, lower.tail = F )
+```
+
+# Q3: Planned and Unplanned ANOVA
+
+### a) Planned vs. Unplanned
+
+Explain whether this experiment should be treated as a PLANNED or an UNPLANNED dataset. How would the analysis differ between these two scenarios?
+
+```{r eval=FALSE}
+# your answer here
+
+Datasets that contain a “control” treatment are treated as “planned” experiments, in which different treatments are compared to the control as a reference.
+
+Analysis for an “unplanned” dataset looks for total variation, followed by a Tukey Honest Significant Difference test, which makes all pairwise comparisons to determine which pairs of samples, if any, show a significant difference.
+```
+
+
+### b) Planned experiment
+
+Assume the data is a planned experiment. Use the `lm()` function to perform the analysis. 
+
+First, use the `anova()` function on the results of of the `lm()` function to look at the overall result. *Note: you can use the special notation `$"Pr(>F)" to get the exact p-value from the `anova()` function.*
+
+```{r}
+# anova for lm of brood_size ~ genotype
+anova_lm = lm(anova_data$brood_size ~ anova_data$genotype)
+anova(anova_lm)
+anova(anova_lm)$"Pr(>F)"
+```
+
+How do the $SS_error$, $SS_group$, $MS_error$, $MS_group$, $Fstat$, and $p$-value compare to the ones you calculated by  hand?
+
+```{r eval=FALSE}
+# your answer here
+These should be exactly the same.
+```
+
+
+Now, use the `summary()` function on the results of the the linear model.
+
+```{r}
+summary(anova_lm)
+```
+
+What do the different parts of the `summary()` output tell you? What is R-squared and what does it mean?
+
+```{r eval=FALSE}
+# your answer here
+
+```
+
+
+Is the model significant overall? How about the different groups: are they significantly different from the control?
+
+```{r eval=FALSE}
+# your answer here
+The model is significant overall, and all the groups are significantly different from each other.
+```
+
+
+### c) Unplanned experiment
+
+Now assume the data are from an unplanned experiment. Use the `aov()` function to perform the analysis, and then use the `tukeyHSD()` function on the results of `aov()`.
+
+```{r}
+# aov for brood_size ~ genotype
+aov(anova_data$brood_size ~ anova_data$genotype)
+```
+
+Use the `tukeyHSD()` function on the results of `aov()` to perform the Tukey-Kramer test to look at all pairwise comparisons.
+
+```{r}
+# Tukey's honest significant difference test
+TukeyHSD(aov(anova_data$brood_size ~ anova_data$genotype))
+```
+
+What does Tukey's HSD test do? What do these results tell you? What is the biological interpretation of these results?
+
+```{r eval=FALSE}
+# your answer here
+Tukey's HSD tests all pairwise combinations for possible significant differences. The results here indicate that all three groups are significantly different from each other.
+
+The single mutant has a reduced brood size phenotype that is significantly different from WT. The double mutant significantly rescues the reduced brood size phenotype, but is still significantly lower than the WT brood size.
+```
+
+
+### d) Residuals
+
+Once you have performed an ANOVA, you can also check your assumption of normality by checking to see if the ANOVA residuals are normally distributed. 
+
++ Do this by first assigning the results of your `aov()` function to a variable (e.g. `res_aov`.
++ Then, make a histogram of the residuals, which can be found in `res_aov$residuals`.
++ Finally, perform a test for normality on the residuals.
+
+```{r}
+res_aov <- aov(brood_size ~ genotype, data = anova_data)
+hist(res_aov$residuals)
+shapiro.test(res_aov$residuals)
+```
+
+
+### e) ANOVA for unequal variances
+
+If the data look normal, but the variances are unequal, what kind of ANOVA could you do instead?
+
+```{r eval=FALSE}
+# your answer here
+Welch's ANOVA: This can be used when the data are normal, but the variances are unequal.
+```
+
+Perform this test below. Also extract the exact $p$-value from the test.
+
+```{r}
+oneway.test(brood_size ~ genotype, data = anova_data, var.equal = FALSE)
+oneway.test(brood_size ~ genotype, data = anova_data, var.equal = FALSE)$p.value
+```
+
+How does the $p$-value compare with the ANOVA you performed above? Explain.
+
+```{r eval=FALSE}
+# your answer here
+The p-value is highly significant but slightly larger than for the ANOVA assuming
+equal variances. This is because a little bit of power is lost when the data are
+not treated as homoscedastic (in which case they are called "heteroscedastic").
+```
+
+
+# Q4: Fertilization phenotype
+
+Now we will look at the fertilization phenotype. 
+
+### a) Percent fertilization
+
++ Add a column to your original data frame containing the ***percent fertilization***.
++ Take a look at the percent fertilization using a stip chart / boxplot (as you did for Q1).
+
+```{r}
+anova_data = anova_data %>% mutate(percent_fertilized = fertilized/brood_size)
+
+ggplot(anova_data, aes(x= genotype, y= percent_fertilized, 
+                       color= genotype)) +
+  geom_boxplot() +
+  geom_jitter() +
+  theme_classic() +
+  theme(panel.border=element_rect(colour="black",fill=NA))
+```
+
+
+### b) Check assumptions for ANOVA
+
+Perform the appropriate tests to check whether you can perform an ANOVA on these data and draw histograms to visualize the distributions. (You may again find it useful at this point to subset the data by group.)
+
+```{r}
+anova_WT = anova_data[anova_data$genotype == "WT","percent_fertilized"]
+anova_A  = anova_data[anova_data$genotype == "A","percent_fertilized"]
+anova_AB = anova_data[anova_data$genotype == "A;B","percent_fertilized"]
+
+shapiro.test(anova_WT)
+shapiro.test(anova_A)
+shapiro.test(anova_AB)
+
+ggplot(anova_data, aes(x = percent_fertilized, fill = genotype)) +
+  geom_histogram() +
+  facet_grid(genotype ~ .)
+
+```
+
+Do these data meet the assumptions required for ANOVA? If not, what alternative tests could you perform? Explain the conditions under which either test would be appropriate.
+
+```{r eval=FALSE}
+# your answer here
+If the data are not normal, a non-parametric version of ANOVA can be performed instead. 
+
+1) Data are normal but the variances are unequal: Welch's ANOVA
+2) Data are not normal, and variances may not be unequal:
+  a) Kruskal-Wallace test
+  b) Pairwise Wilcoxon Rank Sum test, with adjustment for multiple hypothesis testing (e.g. Benjamini-Hochberg)
+```
+
+
+### c) Statistical test
+
+Perform an appropriate alternative to ANOVA for these data.
+
+```{r}
+kruskal.test(percent_fertilized ~ genotype, data = anova_data)
+kruskal.test(percent_fertilized ~ genotype, data = anova_data)$p.value
+
+pairwise.wilcox.test(anova_data$percent_fertilized, anova_data$genotype,
+                     p.adjust.method = "BH")
+```
+ 
+ 
+# Q5: Error, Power, and Sample size
+
+Recall that the power is $1−\beta$, where $\beta$ is the Type II error. We can calculate the power of the ANOVA test using the command `power.anova.test()`, which is contained in the base `stats` package. The arguments for the command are:
+
++ **groups** = the number of groups in the dataset  
++ **n** = the number of observations per group  
++ **between.var** = between-group variance, $SS_{group}$
++ **within.var** = within-group variance, $SS_{error}$  
++ **sig.level** = significance cutoff $\alpha$ (Type I error)  
++ **power** = power of the test ($1−\beta = 1$ - Type II error)  
+
+Given all of the arguments except for one, this function will return a value for the missing argument.
+
+### a) Power of ANOVA for this dataset
+
+Given the data that we have been provided and the $p$-value we obtained for the `brood_size`, what is the power of our dataset, given a Type I error rate (significance cutoff) of $\alpha=0.05$?
+
+```{r}
+# first, check the documentation
+help(power.anova.test)
+
+# compute the power
+power.anova.test(groups=3, 
+                 n=30, 
+                 within.var=SS_error, 
+                 between.var=SS_group, 
+                 power=NULL,
+                 sig.level=0.05)
+```
+
+### b) Sample size
+
+If we would like to achieve a power of 95% with a Type I error rate of $\alpha=0.05$, how many observations for each group would we need?
+
+```{r}
+# compute the required sample size
+power.anova.test(groups=3, 
+                 n=NULL,
+                 within.var=SS_error, 
+                 between.var=SS_group,
+                 power=0.95,
+                 sig.level=0.05)
+
+# sample size needed = 3 (round up to the nearest integer)
+```
+How do you feel about this result?
+
+```{r eval=FALSE}
+# your answer here
+This seems like a pretty small sample size to rely on, especially if it's
+not that hard to collect the data ... but if it is, then we could make do with
+quite a bit fewer observations and still do really well with this effect size.
+
+Personally, I'd feel more comfortable with at least 10-12 biological replicates
+for this experiment.
+```
+
+### c) Effect size
+
+The ratio of the between-groups variation to the within-groups variation ($SS_{group}/SS_{error}$) gives us an approximate effect size.
+
+The `brood_size` data here has a pretty big effect size, and we have a lot of power because of this. 
+
+If the effect size were 10 times smaller, how many animals would we need to get a power of 95% at a Type I error threshold of 5%?
+
+```{r}
+power.anova.test(groups=3, 
+                 n=NULL,
+                 within.var=SS_error, 
+                 between.var=SS_group/10,
+                 power=0.95,
+                 sig.level=0.05)
+
+power.anova.test(groups=3, 
+                 n=NULL,
+                 within.var=SS_error*10, 
+                 between.var=SS_group,
+                 power=0.95,
+                 sig.level=0.05)
+
+# we would need ~16 animals per group (round up to nearest integer)
+```
+
+<!-- That's it! Yay! ======================================================= -->

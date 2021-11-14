@@ -1,18 +1,20 @@
 ---
-title: 'Example: Analysis of Variance (ANOVA)'
+title: 'Example: Analysis of Variance (ANOVA) and alternative methods'
 subtitle: "XDASI Fall 2021"
-date: "November 11, 2021"
+date: "November 15, 2021"
 output:
   pdf_document:
     toc: no
   html_document:
-    toc: no
+    toc: yes
+    toc_float: yes
 ---
 
-<!-- from Manny Katari; ed. KCG -->
+<!-- v1 from Manny Katari; ed. KCG -->
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
 ```
 
 ## ANOVA Example
@@ -44,6 +46,8 @@ boxplot(as.data.frame(anova_mat)) # plot it as a data frame
 ```
 
 Looking at the boxplots above, it is clear to see that their means are indeed different. So the question we want to ask is whether the differences are ***significant***.
+
+## Sums of squares
 
 Instead of looking at the difference between the sample means, as we did with $t$-test, we will compare variances. There are three different variances that we can calculate:
 
@@ -106,7 +110,6 @@ $$SSB = \sum_{j=1}^m n_j(\bar{X}_j - \bar{X})^2$$
 
 ```{r}
 SSB = 0
-
 for ( i in 1:length(anova_mat_col_mean)) {
  SSB = SSB + (nrow(anova_mat)*(anova_mat_col_mean[i]-anova_mat_mean)^2)
 }
@@ -119,6 +122,8 @@ For calculating between group degree of freedom, remember that if we have ***m**
 SSB_df = ncol(anova_mat)-1
 SSB_df
 ```
+
+## F-statistic and p-value
 
 Finally since our variance calculations are sums of squares, they can be considered to follow a $\chi^2$ distribution. If the variance within the groups is the same and if the means of the groups are the same, then the variance between the groups should be the same as within the groups. 
 
@@ -133,6 +138,8 @@ Fstat
 pf(Fstat, 2, 6, lower.tail = F)  # df1 = df(B) = 2; df2 = df(W) = 6 
 ```
 
+## aov function
+
 We can confirm our results using the **aov** function. 
 
 ```{r}
@@ -146,10 +153,60 @@ anova_mat.melt = melt(anova_mat)
 anova_mat.melt  # look at this new data structure
 
 # look at the result of the ANOVA command `aov`
-# the formula syntax evaluates the values in response to the factors (groups a,b,c)
+# the formula syntax analyzes the values in response to the factors (groups a,b,c)
 aov(anova_mat.melt$value ~ anova_mat.melt$Var2)
 
-# applying the summary function to the aov output also gives the F-stat and p-value
+# summary of the aov model with F-stat and p-value
 summary(aov(anova_mat.melt$value ~ anova_mat.melt$Var2))
 ```
+
+## ANOVA with linear model
+
+Alternatively, we can make a linear model using `lm()` and then view the results using `anova()`.
+
+```{r}
+anova_lm = lm(value ~ Var2, data = anova_mat.melt)
+anova(anova_lm)
+```
+
+Here we can see that the overall model is significant, and the values for the sums of squares, mean sums of squares, F-statistic, and p-value are exactly the same as the values we computed by hand.
+
+With the linear model, when applying `summary()` to the linear model allows us to look at the individual contributions from the groups.
+
+```{r}
+summary(anova_lm)
+```
+
+Here we can see that groups b and c are evaluated for their contributions to the model with respect to group a, which is treated as the reference, or control sample. Both groups appear to contribute to the overall model, though group c seems more significant.
+
+## Tukey's HSD
+
+If we have an unplanned experiment, in which we do not have a control, we can apply Tukey's Honest Significant Differences (Tukey's HSD) Test to an `aov()` model to look at all pairwise differences between the groups:
+
+```{r}
+TukeyHSD(aov(anova_mat.melt$value ~ anova_mat.melt$Var2))
+```
+
+Now we can see that groups a and c are significantly different from each other, but group b (which is in the middle) is not significantly different from either of the other groups.
+
+## Unequal variances
+
+When we did t-tests, we saw that we could use Welch's t-test when the variances between groups are not the same. There is also a Welch's version of ANOVA that we can use when the variances between groups differ.
+
+```{r}
+oneway.test(value ~ Var2, data = anova_mat.melt, var.equal = FALSE)
+```
+
+## Non-normal data with unequal variances
+
+If the data are neither normally distributed nor do they have approximately equal variances, two other options are available: a Kruskal-Wallace test and a pairwise Wilcoxon Rank Sum test using p-value adjustment for multiple hypothesis testing. Options are Bonferroni (which controls for the family-wise error, FWR) correction, which is the most conservative, or Benjamini-Hochberg (which controls for the false discovery rate, FDR).
+
+```{r}
+kruskal.test(value ~ Var2, data = anova_mat.melt)
+
+pairwise.wilcox.test(anova_mat.melt$value, anova_mat.melt$Var2,
+                     p.adjust.method = "BH")
+```
+
+Note that these will all give different results, with the tests requiring more assumptions being more restrictive, but giving greater power when the assumptions are met.
 

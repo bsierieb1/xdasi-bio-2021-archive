@@ -1,0 +1,246 @@
+---
+title: "Analysis of Variance (ANOVA)"
+subtitle: XDASI Fall 2021
+date: "November 11, 2021"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 3
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+<!-- initial version from Manny Katari ; edited by KCG -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Suggested reading
+
++ Whitlock & Schluter, Ch 15 and  <a href="https://whitlockschluter3e.zoology.ubc.ca/RLabs/R_tutorial_ANOVA.html" target="blank">  online lab </a>
++ Online tutorials
+  + Antoine Soetewey (UCLouvain, Belgium) -  <a href="https://statsandr.com/blog/anova-in-r/#anova-in-r" target="blank"> Stats and R blog: ANOVA (2020-10-02) </a>
+  + (Steven Doogue, 2019-07-09) - <a href="  https://statsandr.com/blog/anova-in-r/#anova-in-r" target="blank"> Chapter 7.1: One-way ANOVA </a>
+
+## Introduction
+
+We've previously used $t$-tests and non-parametric methods to compare two samples. What if we need to compare more than two samples? The problem with just performing multiple $t$-tests is that each test has a certain Type I error rate, and when we perform multiple tests this error simply compounds. This issue can be addressed by ***correction for multiple hypothesis testing***, which we will cover later.
+
+If doing all pairwise $t$-tests between groups is not a good approach, what can we do instead? ANOVA to the rescue! ANOVA extends $t$-tests to more than two groups by allowing the comparison of the means between multiple groups. However, instead of simply comparing the groups using the difference in their means and their SD, ANOVA compares the ***overall variation between groups*** to the ***variation within each group***. If the overall variation is significantly greater than the individual variation, then we consider the groups to be different.
+
+The simplest form of ANOVA is ***one-way ANOVA***, which we will discuss here. 
+
+## Assumptions
+
+Like $t$-tests, ANOVA assumes that the distributions of the samples are relatively normal, and also that their variances are similar. When these do not hold, a non-parametric analog ANOVA can be performed called the ***Kruskall-Wallace test***.
+
+## Partitioning the variation
+
+The basic idea behind ANOVA is illustrated in Figures 15.1-1 and 15.1-2:
+
+```{r, echo=FALSE, fig.align='center'}
+library(cowplot)
+ggdraw() + 
+  draw_image("Images/WS _Fig_15.1-1.png", width = 0.30) + 
+  draw_image("Images/WS _Fig_15.1-2.png", width = 0.60, x = 0.4)
+``` 
+
+To determine whether there is a significant difference between groups, the variation is decomposed into three parts:
+
++ Total variation with respect to the grand mean
++ Variation between group means and the grand mean
++ Variation within each group w.r.t. its group mean
+
+These differences are calculated using the ***sum of squares*** of the difference between each data point and the mean used for comparison:
+
++ Total sum of squares (SST): all data points vs. the grand mean
+
+$$SST = \sum_{i=1}^n\sum_{j=1}^m(x_{ij} - \bar{X})^2$$
+
++ Between-groups sum of squares (SSB): the means of the groups vs. the grand mean (note that we multiply each term by the number of points in each group)
+
+$$SSB = \sum_{j=1}^m n_j(\bar{X}_j - \bar{X})^2$$
+
++ Within-groups sum of squares (SSW):
+
+$$SSW = \sum_{i=1}^n\sum_{j=1}^m(x_{ij} - \bar{X}_j)^2$$
+
+where $n$ is the number of data points in each group and $m$ is the total number of groups.
+
+The ***total sum of squares (SST)*** equals the ***within-group SS (SSW)***, also called the ***error SS (SSE)***, plus the ***between-group SS (SSB or SSG)***:
+
+$$SST = SSW + SSB$$
+
+Notations differ between different sources. Table 10.1 from Ken Aho's book summarizes the equations involved as follows:
+
+<div align="center">
+![](Images/Aho_ANOVA_SS.png){width="70%"}
+</div>
+
+### Mean sums of squares
+
+To compare between-group and within-group differences, we will compare their ***mean sums of squares***.
+
+As usual, we need to take into account the ***degrees of freedom***, which is just the number of data points in each equation minus one (the mean used for comparison).
+
+$$MSB = \frac{SSB}{m - 1}$$
+
+$$MSW = \frac{SSW}{N - m}$$
+
+### F-statistic
+
+If there is no difference between the groups, we would expect the total variation between the groups to be the same as the variation within the groups, so the ratio of these should be 1. When this is not true, then we know our samples are different, and the ratio should be >1. This ratio is called the $F$-statistic:
+
+$$F = \frac{MSB}{MSW}$$
+
+Below we will see that the $F$-statistic follows an expected distribution under $H_o$, so we can use this to find a $p$-value for the observed differences in the mean sums of squares.
+
+
+## The $\chi^2$ distribution
+
+Since we are measuring differences using ***sums of squares***, the differences will follow a $\chi^{2}$ distribution, which represents the **sum of squared random values** selected from a **normal distribution**. The degrees of freedom, $k$, is simply the number of random values.
+
+$$Q = \sum\limits_{i=1}^{k} Z_{i}^{2}$$
+
+### $\chi^2$ with different sample sizes
+
+Let's simulate some data to see what it looks like when k = 10, 5, and 1 and the values are retrieved from a standard normal distribution. (We have also done this in a previous class.)
+
+```{r echo=F}
+#################
+
+# Sample size k = 10 ==> Chi-squared degrees of freedom = 10
+chik=10
+normval=numeric()
+for (i in 1:10000) {  # repeat this 10000 times
+  
+  # Randomly sample k items from the standard normal distribution
+  # then take the sum of squared values of the random samples
+  normval[i]=sum(rnorm(chik)**2)
+}
+
+# make a histogram of the results
+hist(normval, breaks=100, # make 100 bins on the x-axis
+     col=rgb(1,0,0,.25),  # make it red, with 25% transparency
+                          # this allows us to show multiple histograms on the same plot
+     ylim=c(0,2000),      # set the limits of the y-axis
+     main = "Chi-square samples from the standard normal dist"
+    )
+# Sample size k = 5 ==> Chi-squared degrees of freedom = 5
+chik=5
+normval=numeric()
+for (i in 1:10000) {
+  normval[i]=sum(rnorm(chik)**2)
+}
+
+# the `add` directive adds the new histogram to the old plot
+hist(normval, breaks=75,          # reduce the number of bins since this distribution
+                                  # is squished to the left
+     col=rgb(0,1,0,.25), add=T)   # green, with 25% transparency
+
+# Sample size k = 1 ==> Chi-squared degrees of freedom = 1
+chik=1
+normval=numeric()
+for (i in 1:10000) {
+  normval[i]=sum(rnorm(chik)**2)
+}
+
+hist(normval, breaks=50,          # use even fewer bins
+     col=rgb(0,0,1,.25), add=T)   # blue, with 25% transparency
+```
+
+It is clear to see that as $k$ increases, the distribution begins to look like a **normal distribution**. 
+
+This only happens when the **sample size is at least 10**, which is why it is not recommended to use the $\chi^{2}$ test for small values of $k$ (<10).
+
+
+## The $F$-statistic
+
+To ***compare two $\chi^{2}$ distributions***, we can simply take a ***ratio*** of them (taking into account their respective degrees of freedom). 
+
+This distribution is called an **$F$-distribution** and the ***observed ratio*** is the ***$F$-statistic***. (The $F$-distribution is named after the statistician Ron Fisher.)
+
+### F-distribution for samples from the same population
+
+If we take two random samples of the same size from a normal distribution, square them, and then take the ratio of the mean sums of squares (taking into account the degrees of freedom), we will get an F-distribution.
+
+Let's first see what it would look like if the the means of the two populations that are being sampled are **equal**. 
+
+```{r echo=F}
+
+chik=10
+normval=numeric()
+normval2=numeric()
+for (i in 1:10000) {
+   normval[i]=sum(rnorm(chik)**2)
+   normval2[i]=sum(rnorm(chik)**2) 
+  
+}
+
+# since the values are sampled from the same distribution, 
+# the ratios are centered around 1
+hist((normval/chik)/(normval2/chik),
+     main = "Histogram of F-distribution",
+     breaks=100, col=rgb(1,0,0,.25))
+```
+
+Note that since we are taking random samples, the histogram will vary slightly each time we take new samples.
+
+
+### F-distribution for populations with different means
+
+What if the means of our normal distributions are different? 
+
+We can make a second histogram showing the same ratio for data sampled from two normal distributions with different means: the standard normal and a normal distribution with mean = 2 and sd = 1.
+
+Now, the ratio of the sums of the two samples will look quite different. Let's try this and superimpose the two histograms for comparison.
+
+```{r echo=FALSE}
+# same as above -- sample two sums of squares from the same dist
+chik=10
+normval=numeric()
+normval2=numeric()
+for (i in 1:10000) {
+  # take two sets of sample of size 10 from the standard normal distribution
+   normval[i]=sum(rnorm(chik)**2)
+   normval2[i]=sum(rnorm(chik)**2) 
+}
+
+# plot the ratios
+# note that we didn't bother to store the intermediate result
+# since we don't need to do anything with it later.
+hist(((normval2/chik)/(normval/chik)),
+     main = "Histogram of F-distribution",
+     breaks=75, ylim=c(0,1500), 
+     xlim=c(0,30),
+     col=rgb(1,0,0,.25))
+
+## now compare sums of squares when the means are different
+chik=10
+normval=numeric()
+normval2=numeric()
+for (i in 1:10000) {
+   normval[i]=sum(rnorm(chik)**2)
+   normval2[i]=sum(rnorm(chik, mean=2)**2)
+}
+
+hist(((normval2/chik)/(normval/chik)), 
+     breaks = 320, col=rgb(1,1,0,.25), add=T)
+```
+
+Remember that ***variance*** is essentially a sum of squares as discussed above. So now we have the ability to compare two different variances and use a statistic to determine if they are significantly different.
+
+### $p$-values
+
+We can use the value of $F$ to find a $p$-value using the $F$-distribution for a particular sample size, given the degrees of freedom for each sample:
+
+```{r}
+Fstat = sum(rnorm(chik, mean=2)**2)/sum(rnorm(chik)**2)
+Fstat
+pf(Fstat, chik, chik, lower.tail=F)
+```
+
+
+
