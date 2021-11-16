@@ -1,0 +1,451 @@
+---
+title: "Homework 9: Exponential and Negative Binomial Distributions"
+subtitle: "XDASI Fall 2021"
+author: "Shaili Regmi"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(ggpubr)
+```
+
+## Q1: FRAP Experiment
+
+Fluorescence Recovery After Photobleaching (FRAP) allows the measurement of how fast molecules can move around in cells. When a fluorophore located in a particular region of a cell is bleached out with a laser, the rate at which fluorescence reappears provides a measure of how fast the molecule can diffuse back into the bleached spot under different conditions.
+
+Germ granules play a role in specifying the germline and in maintaining germline immortality in animals. In *Drosophila*, recruitment of the Vasa RNA helicase to germ plasm is needed for proper germline development. 
+
+An experiment to determine whether a *C. elegans* protein, MIP-1, helps anchor GLH-1 (a Vasa RNA helicase homolog) in germ granules of the *C. elegans* early embryo was performed. The experiment used FRAP to compare recovery rates of GLH-1::GFP within germ granules in WT and *mip-1* mutant embryos.[^1]
+
+### a. Load the dataset and examine it
+
+The data file "glh_frap.csv" contains FRAP data for GLH-1::GFP in WT or *mip-1* mutant embryos. Load the dataset and take a look at it.
+
+<!-- Hint: Do you want to make strings into factors? -->
+
+```{r}
+frap = read.csv("glh_frap.csv",
+                stringsAsFactors = TRUE)
+str(frap)
+head(frap)
+tail(frap)
+```
+
+
+### b. Make a quick line plot
+
+To check how the data look, first make a summary table of the mean `Intensity` for each timepoint across the 8 replicates for each strain. Then, use the summary table to plot `Intensity` vs. `Time` with `ggplot2` (color the lines by `strain`).
+
+<!-- (Hint: use `dplyr` to group the data by `Time` and `strain`, and then add a column with the mean Intensity using `summarise`). -->
+
+```{r}
+# summary table
+frap.summary = frap %>% 
+  group_by(Time, strain) %>%
+  summarise(mean.Intensity = mean(Intensity))
+head(frap.summary)
+# View(frap.summary)
+
+# plot
+ggplot(data = frap.summary,
+       mapping = aes(x = Time,
+                     y = mean.Intensity,
+                     col = strain)) +
+  geom_line()
+
+```
+
+
+### c. Normalize the data and replot
+
+This looks like a good start, but we need to normalize the data in order to be able to compare the recovery rates. To do this we will rescale the data so that the minimum value for both strains is 0, and the intensities are relative to the starting value of 1.
+
+***(i) Rescale the data***
+
+First, create a very small function to normalize the Intensity using the formula `(x-min(x))/(1-min(x))`. The function should take a single numerical argument and return the result of the formula.
+
+```{r}
+# normalization function
+normalize = function(x)
+{
+  result = (x-min(x))/(1-min(x))
+  return(result)
+}
+```
+
+Next, add a new column to the original data table containing the normalized Intensity. To get this right, you will need to do the normalization separately for each set of replicate measurements for each strain. 
+
+<!-- Hint: The easiest way to do this is using the `dplyr` package:  -->
+<!--   First, pipe the data frame to `group_by()` the desired combination of columns (strain and rep), and then pipe to `mutate()` to add the new column.  -->
+<!--   Inside `mutate()` you will give the new column a name (e.g. `norm.Intensity`) and set the values by directly applying the normalization function to the corresponding `Intensity` values. -->
+
+```{r}
+# add normalized intensity column
+frap = frap %>%
+  group_by(strain, rep) %>%
+  mutate(norm.Intensity = normalize(Intensity))
+head(frap)
+# View(frap)
+```
+
+Check your work by examining the values in the `norm.Intensity` column. These should be `1` at time `-1.0`, and `0` at time `0.0` for each of the 8 replicates from both strains. 
+
+<!-- Hint: In the table viewer, you can sort the rows automatically in ascending or descending order by clicking on the column name. -->
+
+
+***ii) Replot using the normalized data***
+
+Make a new summary table and make the same plot as in part (b) using the normalized data.
+
+```{r}
+# summary table
+normalized.frap.summary = frap %>% 
+  group_by(Time, strain) %>%
+  summarise(mean.norm.Intensity = mean(norm.Intensity))
+head(normalized.frap.summary)
+
+# plot
+ggplot(data = normalized.frap.summary,
+       mapping = aes(x = Time,
+                     y = mean.norm.Intensity,
+                     col = strain)) +
+  geom_line()
+
+```
+
+You will notice that the maximum intensity upon recovery in the mutant strain seems to be slightly above 1. Don't worry about this for now.
+
+
+### d. SD, SEM, and 95%CI
+
+***i) First, add 3 new columns containing the SD, SEM, and number of repeats per condition to the summary table.***
+
+<!-- Hint: You will need to start with the original table in order to get the SD and SEM. To add the new columns, just remake the summary table from scratch with the mean column, plus these 3 new columns as well. -->
+
+<!-- Hint: For the SEM, you will need to pay attention to the number of replicates per condition. You can use `max(rep)` to get this number for each group. -->
+
+```{r}
+frap.norm.summary = frap %>% 
+  group_by(Time, strain) %>%
+  summarise(i.mean = mean(norm.Intensity),
+            i.sd   = sd(norm.Intensity),
+            i.se   = sd(norm.Intensity) / sqrt(max(rep)),
+            rep    = max(rep))
+head(frap.norm.summary)
+# View(frap.norm.summary)
+```
+
+***ii) Add columns containing the upper and lower bounds for the SD, SEM, and 95%CI to the summary table.***
+
+<!-- Hint: For the 95%CI, you should use `qt()` to get the needed quantiles instead of `qnorm()`. You will need to supply the degrees of freedom, which should be one less than the number of replicates (hence, why we added a column for the number of replicates to the summary table above). -->
+
+```{r}
+# SD.upper and SD.lower
+frap.norm.summary$sd.upper = frap.norm.summary$i.mean + frap.norm.summary$i.sd
+frap.norm.summary$sd.lower = frap.norm.summary$i.mean - frap.norm.summary$i.sd
+
+# SE.upper and SE.lower
+frap.norm.summary$se.upper = frap.norm.summary$i.mean + frap.norm.summary$i.se
+frap.norm.summary$se.lower = frap.norm.summary$i.mean - frap.norm.summary$i.se
+
+# CI.upper and CI.lower
+frap.norm.summary$ci.upper = frap.norm.summary$i.mean + 
+  qt(0.975, df = (frap.norm.summary$rep - 1)) * frap.norm.summary$i.se
+frap.norm.summary$ci.lower = frap.norm.summary$i.mean - 
+  qt(0.975, df = (frap.norm.summary$rep - 1)) * frap.norm.summary$i.se
+
+head(frap.norm.summary)
+# View(frap.norm.summary)
+```
+
+***iii) Make 3 ribbon plots showing the normalized recovery curves plus the SD, SEM, and 95%CI.***
+
+```{r}
+# SD plot
+sd.plot = ggplot(data = frap.norm.summary,
+                 mapping = aes(x = Time,
+                               y = i.mean,
+                               col = strain)) +
+  geom_line() +
+  geom_ribbon(mapping = aes(x = Time,
+                            ymin = sd.lower,
+                            ymax = sd.upper,
+                            fill = strain),
+                            alpha = 0.4) +
+  theme_classic() +
+  ggtitle("FRAP with SD")
+
+# SEM plot
+se.plot = ggplot(data = frap.norm.summary,
+                 mapping = aes(x = Time,
+                               y = i.mean,
+                               col = strain)) +
+  geom_line() +
+  geom_ribbon(mapping = aes(x = Time,
+                            ymin = se.lower,
+                            ymax = se.upper,
+                            fill = strain),
+                            alpha = 0.4) +
+  theme_classic() +
+  ggtitle("FRAP with SEM")
+
+# 95%CI plot
+ci.plot = ggplot(data = frap.norm.summary,
+                 mapping = aes(x = Time,
+                               y = i.mean,
+                               col = strain)) +
+  geom_line() +
+  geom_ribbon(mapping = aes(x = Time,
+                            ymin = ci.lower,
+                            ymax = ci.upper,
+                            fill = strain),
+                            alpha = 0.4) +
+  theme_classic() +
+  ggtitle("FRAP with 95%CI")
+
+ggarrange(sd.plot, se.plot, ci.plot, nrow=1, common.legend=TRUE)
+```
+
+***iv) Which graph would you prefer to show in your paper, and why?***
+
+```{r eval=FALSE}
+# Since we are comparing the effect of a mutant as compared to a WT control, I'd prefer to show the 95% CI because it shows that for most time points, the mean of the two groups do not overlap showing that the two means are significantly different hence the mutant has some obvious effects as compared to WT.
+```
+
+
+### e. Test for significant differences in recovery rates
+
+These curves look pretty different. One way to quantify this is to calculate the recovery rates and compare them using a statistical test.
+
+The FRAP curves follow the equation $I(t) = A(1-e^{-kt})$, where I(t) is the measured intensity as a function of time t and A is the maximum recovered intensity. The file "rates_glh.csv" contains the recovery rates computed by a FRAP software package.
+
+***i) Boxplot + strip chart***
+
+Load this dataset and make a boxplot of the rates, grouped by strain. Overlay the data actual points onto these. (What happens if you overlay the boxes on top of the points instead?)
+
+```{r}
+# load FRAP rates
+rates = read.csv("rates_glh.csv",
+                 stringsAsFactors = TRUE)
+# changing the default alphabetical order of the treatment to put WT first
+rates$Treatment = factor(rates$Treatment, levels = c("WT","mip1uae1"))
+
+rates
+
+# make the plot
+ggplot(data = rates,
+       mapping = aes(x = Treatment,
+                     y = Rate)) +
+  geom_boxplot() +
+  geom_jitter(position = position_jitter(0.1))
+
+# If you overlay the boxes on top of the points instead, the boxes will cover some of the points.
+```
+
+
+***ii) Use an appropriate statistical test to compare the differences in the rates between the WT and mutant strains.***
+
+```{r}
+# get WT and mutant rates separately
+wt.rate = filter(rates, Treatment == "WT")$Rate 
+wt.rate
+mut.rate = filter(rates, Treatment == "mip1uae1")$Rate
+mut.rate
+
+shapiro.test(wt.rate)
+shapiro.test(mut.rate)
+# The WT data violates the normality assumption
+
+shapiro.test(log(wt.rate))
+shapiro.test(log(mut.rate))
+# Transforming the data using log gives a normal distribution for both data sets so t test can be used on the transformed data to test for significance. Since the two groups are different strains, the individuals are independent to each other so an unpaired t-test will be used. Also, the test will be one-sided (upper tail) because if MIP-1 helps anchor GLH-1, the mip-1 mutant is expected to have less anchoring of GLH-1 hence greater diffusion (recovery) rate. So we want to find the probability of getting a diffusion rate as great as or greater than the observed rate in the mutant, to check whether this can occur by chance.
+
+# test for significance
+test = t.test(log(mut.rate), log(wt.rate), alternative = "greater")
+test
+test$p.value
+```
+
+
+***iii) What can you conclude about the effect of the MIP-1 protein on GLH-1 within germ granules?***
+
+```{r eval=FALSE}
+# Since the p-value is less than the significance level of 0.05, the difference between the means of the two groups is significant (the null hypothesis is rejected). The alternative hypothesis that 'true difference in means is greater than 0' is accepted which means that the mean of the recovery rate in the mutant is significantly greater than that in the WT. Hence, MIP-1 helps anchor GLH-1 within germ granules since the mip-1 mutant loses this ability and has a significantly higher diffusion/recovery rate.
+```
+
+
+## Q2: Stress Response
+
+Expression of many genes is controlled at the translational level. One example is the stress response gene ATF4. In unstressed conditions, ribosomes bind to an ATF4 transcript at the 5' end, and then translate an upstream Open Reading Frame (uORF), which is a short sequence that does not produce functional protein. 
+
+At the stop codon of this uORF, in unstressed conditions, the ribosome dissociates from the transcript **98% of the time**. If the ribosome does not dissociate, it re-initiates translation and produces a functional ATF4 protein.
+
+### a. Probability mass function for 1 "success"
+
+Recall that the negative binomial PMF describes the probability of $r$ 'successes' after $x$ 'failures.' The random variable for this distribution is $X_r$, the number of unsuccessful trials before getting a desired number of successes.
+
+***i) What is the probability of 'success' in this experiment?***
+
+Hint: To set this problem up correctly for the NB distribution, here we define "failures" to be the number of correct dissociations, and "success" to be the production of a functional ATF4 protein.
+
+```{r}
+p_success = 0.02
+# The probability of success is 0.02 because functional protein is produced only 2% of the time and the ribosome dissociates 98% of the time which is considered a failure here.
+```
+
+
+***ii) Density Plot***
+
+Plot the PMF for the ***number of ribosomes*** that correctly dissociate from the ATF4 transcript before a ribosome erroneously produces ***one functional ATF4 protein molecule***. 
+
+**Note: For the plots in this question, we use LINE plots (even though the NB is a discrete distribution) to make it easy to visualize the shape of the distribution.**
+
+Recall that the `binom` family of functions takes three parameters:
+
++ x = The total number of failures before r successes
++ size = r (the target for the number of successes)
++ prob = probability of SUCCESS
+
+```{r}
+# Create the "ideal" NB probability mass function over the range x=0:200.
+range = 0:200
+atf4.unstressed.pmf <- dnbinom(x = range, size = 1, prob = p_success)
+
+# Create a data frame with two columns: the range vector, and
+# the corresponding PMF values.
+atf4.unstressed.pmf.df <- data.frame(PMF = atf4.unstressed.pmf,
+                                     Correctly_Dissociated = range)
+
+# Make a density plot (the range goes on the x-axis, the density goes on the y-axis).
+ggplot(data = atf4.unstressed.pmf.df,
+       mapping = aes(x = Correctly_Dissociated,
+                     y = PMF)) +
+  geom_line()
+
+```
+
+***iii) This particular NB example may also be modeled by another distribution we talked about in class. What is it, and why? Explain.***
+
+```{r eval=FALSE}
+# Since we are only taking about the number of failures before ONE success, this can be modeled by Geometric distribution since it gives the probability that x independent failures occur before the first success.
+```
+
+
+### b. Activation rate for stress response
+
+Each ATF4 transcript must produce **10 functional ATF4 protein molecules** to activate the cellular stress response program. Here we will examine the _**rate of activation**_ of the cellular stress response program. 
+
+***i) PMF plot: ribosome binding events upon activation of the stress response***
+
+First, plot the PMF for the **number of ribosome binding events** that will occur before **10 functional ATF4 protein molecules** are made.
+
+```{r}
+# Create the probability mass function over the range 0:1000 (ribosome bindings)
+# for r=10 "successes"
+atf4.response.activation.pmf <- dnbinom(x = 0:1000, size = 10, prob = p_success)
+
+# Create a data.frame with the data
+atf4.response.activation.pmf.df = data.frame(PMF = atf4.response.activation.pmf, 
+                                             Ribosome_Bindings = 0:1000)
+
+# Make a density plot 
+ggplot(data = atf4.response.activation.pmf.df,
+       mapping = aes(x = Ribosome_Bindings,
+                     y = PMF)) +
+  geom_line()
+
+```
+
+***ii) PMF plot: time to activation of the stress response***
+
+Ribosomes bind to the transcript at a rate of **1 every 10 seconds**. Plot the PMF for the expected number of **MINUTES** it will take to activate the cellular stress response program.
+
+First, add a Time column to your data frame containing the corresponding number of minutes across the range of ribosome bindings. Then, plot the PMF for the time to activation.
+
+<!-- Hint: The probability for the time to activation is simply the probability of producing 10 active ATF molecules, given a certain number of ribosome bindings per minute. -->
+
+```{r}
+# Add a Time column to this data frame giving the number of minutes to activation.
+
+# Ribosome binding rate of 1 every 10 seconds is 6 per minute. So 1 ribosome binding time is 1/6 min.
+atf4.response.activation.pmf.df$Time = atf4.response.activation.pmf.df$Ribosome_Bindings / 6
+atf4.response.activation.pmf.df
+
+# Make a density plot of the TIME to activate the response
+# (time goes on the x-axis, density goes on the y-axis).
+ggplot(data = atf4.response.activation.pmf.df,
+       mapping = aes(x = Time,
+                     y = PMF)) +
+  geom_line()
+
+```
+
+
+### c. Post-translational regulation of ATF4
+
+ATF4 is also regulated post-translationally; it is degraded with a half-life of 20 minutes. 
+
+Based on the graph above, would you expect that the cellular stress response program is likely to activate by chance in unstressed conditions, due to leakage through the regulatory mechanisms? If the protein were very stable, how would your answer change?
+
+Answer qualitatively in ~2-3 sentences (you do not need to create any additional mathematical models to answer this).
+
+<!-- Hint: Where is the maximum of the PDF for the time to activation? How long is this relative to the half-life? -->
+
+```{r eval=FALSE}
+# The time of activation is ~75 minutes. This is much greater than the half-life of 20 minutes. So, even if a few ATFs are translated, they would be degraded before reaching the total number of 10 required for the response. So, it is highly unlikely that the response occurs by chance. However, if the protein was very stable, then the response can occur by chance because total 10 molecules can be translated before any of them are degraded.
+```
+
+
+### d. Regulation by signaling
+
+You add 4 micrograms per milliliter of tunicamycin to the culture, causing signalling pathways to phosphorylate eIF2alpha.
+
+The ribosome now dissociates from the uORF 60% of the time and re-initiates to create a functional ATF4 protein 40% of the time. (Note that it still takes 10 productive ATF protein molecules to activate the stress response, but the probability of re-initiation is now much higher.)
+
+On the same plot, draw the PMF for the **TIME** it takes to activate the stress response program in the presence of tunicamycin and in unstressed conditions.
+
+```{r}
+# First, add a 'Condition' column to the "activated" data frame and set it to
+# "Unstressed"
+atf4.response.activation.pmf.df$Condition = "Unstressed"
+
+# Create the PMF for the stressed condition over the range 0:1000 ribosome bindings
+stressed_pmf = dnbinom(x = 0:1000, size = 10, prob = 0.4)
+
+
+# Create a data.frame with the data for the stressed condition.
+# Add columns for Ribosome_Bindings, Time, and Condition.
+stressed_pmf_df = data.frame(PMF = stressed_pmf, 
+                             Ribosome_Bindings = 0:1000,
+                             Time = (0:1000)/6,
+                             Condition = "Stressed")
+
+# Row bind the unstressed and stressed data to create a full data set.
+combined_data = rbind(atf4.response.activation.pmf.df, stressed_pmf_df)
+head(combined_data)
+tail(combined_data)
+
+# Make a combined density plot with 'Time' as the independent variable, and
+# map the color to Condition.
+
+ggplot(data = combined_data,
+       mapping = aes(x = Time,
+                     y = PMF,
+                     col = Condition)) +
+  geom_line()
+
+```
+
+
+### e. Do you expect that the cell will activate the cellular stress response program now? Why or why not? Answer in no more than one paragraph (5 sentences).
+
+```{r eval=FALSE}
+# Yes, in the stressed condition, very few number of ribosome binding events need to occur to translate 10 proteins and activate the stress response. The time of activation from the "stressed" plot is less than 10 minutes which is smaller than the half-life of the protein. So, degradation does not happen fast enough to overcome the activation of the stress response. Hence, the cell will activate the cellular stress response program within 10 minutes as 10 molecules can easily be translated within this time.
+```
+
+
+[^1]: Cipriani et al., Novel LOTUS-domain proteins are organizational hubs that recruit *C. elegans* Vasa to germ granules. *eLife*, 2021 | doi:10.7554/eLife.60833

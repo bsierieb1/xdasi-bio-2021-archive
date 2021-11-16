@@ -1,0 +1,548 @@
+---
+title: "XDAS2021 HW8: Poisson and t-distributions"
+subtitle: "XDASI Fall 2021"
+author: "Salvador Luria [Omar Qassab]"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 3
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy.opts=list(width.cutoff=80), tidy=TRUE)
+
+# Load libraries
+require(ggplot2)
+require(reshape2)
+require(scales)
+require(dplyr)
+```
+
+
+## Q1: Single-cell sequencing
+
+Single-cell sequencing uses tiny nanoliter droplets that are created using microfluidics. Ideally, each droplet contains one individual cell and one bead that has a molecular barcode, used to uniquely label transcripts from that cell.
+
+```{r echo=FALSE, out.width = '49%'}
+knitr::include_graphics(c("dropseq.png","McCarroll_DropSeq.gif"))
+```
+
+<p>
+
+#### a. Rate of cells per droplet
+
+If the volume of each droplet is 0.5 nanoliter, and cells are present at a constant concentration of 100 cells per microliter, what is the rate of cells included per droplet? (Hint: Remember to convert units!!!)
+```{r}
+# Calculate the rate of the event (a cell being present in a droplet)
+# Convert ul to nl: conc = (100/ul)/(1000/nl) = 0.1 cell / nl
+cell.droplet.rate = 0.05
+print(paste("Rate is", cell.droplet.rate, "cells per droplet"))
+```
+
+What is the expected percentage of droplets that don't have even a single cell?
+```{r}
+print(paste0( 95 , "% of droplets do not contain a cell."))
+```
+
+Typically, an experiment might start out with around one million cells. Is the Poisson distribution a good model for these data?
+```{r eval=FALSE}
+# Yes this is a good model for this data. We use Poisson when looking at a distribution of a rare event. The chance of a cell being in a droplet is really low.
+```
+
+
+#### b. Probability mass function
+
+Plot the PMF for the Poisson distribution using this rate (the PMF is a PDF for a discrete distribution):
+
++ Use one of R's `pois` family of functions to generate an ideal Poisson PMF with the appropriate `lambda` parameter across a range of 0-10 cells.
++ Check that the total sum of the densities is equal to 1.
++ Turn this into a data frame with two columns: `Cell_count` and `Density`.
++ Use `ggplot` to plot a histogram of the probability distribution of cell counts per droplet.
+  + Use `stat="identity"` in the geom layer
+  + Use `scale_x_continuous(breaks=pretty_breaks())` (pretty breaks is from the `scales` package)
+  + Add whatever other bells and whistles you like (colors, themes, axis labels, title etc.)
+
+```{r}
+# ideal probability mass function
+range = c(0:10)
+cell.droplet.pmf = dpois(range,0.05)
+
+
+# Check the sum of the PMF
+sum(cell.droplet.pmf)
+
+# Create the data frame
+cell_droplet_df=data.frame("Cell_count"=range, "Density"=cell.droplet.pmf)
+
+# Plot the distribution using ggplot
+ggplot(data=cell_droplet_df,
+       mapping=aes(x=Cell_count,y=Density))+
+  geom_histogram(stat="identity") +
+  scale_x_continuous(breaks=pretty_breaks())
+```
+
+
+#### c. PMF for different concentrations
+
+The experimentalist can control the concentration of cells in this experiment. Plot the distribution of cell counts for experiments with 100, 1000, or 2000 cells/microliter. 
+
++ Generate PDF data for each concentration of cells/ul
++ Make a data frame containing the distributions
+
++ Convert the data frame to long format before plotting
+  + there are several functions to do this; try using `melt` from the `reshape` package:
+    + 'id.vars'       : independent variable (for x-axis)
+    + 'value.name'    : dependent variable (for y-axis)
+    + 'variable.name' : category to which each datapoint belongs
+
++ Use `ggplot2` to make a histogram showing all three distributions:
+  + use `stat="identity"` in the histogram layer
+  + use `position="dodge2"` to position the bars next to each other instead of superimposed
+  + use some transparency if you don't like super bright colors
+  + add any other bells and whistles you want
+
+```{r}
+# original rate per droplet (for 100 cells/ul)
+mu = cell.droplet.rate
+mu
+
+# generate the PDFs
+cell.droplet.pmf.n100  = dpois(range, lambda = 0.05) # 100
+cell.droplet.pmf.n1000 = dpois(range, lambda = .5)   # 1k
+cell.droplet.pmf.n2000 = dpois(range, lambda = 1)    # 2k
+
+# Create a data frame with one column for the range vector and one for each dataset
+cell_droplet_df_full = data.frame(cbind(range, cell.droplet.pmf.n100, cell.droplet.pmf.n1000, cell.droplet.pmf.n2000))
+colnames(cell_droplet_df_full) = c("Cell_count", "100 cell/uL", "1,000 cell/uL", "2,000 cell/uL")
+
+# look at the first few lines of the data.frame
+head(cell_droplet_df)
+  
+# Melt the dataframe for ggplot to convert the data to "long" format using melt
+# This allows us to group the data by Concentration for plotting
+# Specify the column names for id.vars, value.name, variable.name
+melt_df = melt(cell_droplet_df_full, 
+               id.vars = "Cell_count",
+               value.name =  "Density",
+               variable.name = "Concentration")
+
+# look at the first few lines of the melted data frame
+head(melt_df)
+
+# Make the plot
+ggplot(data = melt_df,
+       mapping=aes(x=Cell_count,
+                   y=Density,
+                   fill=Concentration))+
+  geom_histogram(stat="identity",
+                 alpha=0.6,
+                 position = "dodge2")
+
+
+```
+
+
+#### d. Droplets per experiment
+
+Assuming experiment produces one million (1e6) droplets, convert the density plot above to a histogram showing the ***number of droplets*** per experiment that contain 0-10 cells per droplet for each concentration. Add a label to the y-axis indicating that it now represents the number of droplets instead of the density.
+
++ Hint: You can change the scale of the y-axis directly in ggplot without changing your data frame! 
+
+```{r}
+# Make the plot
+ggplot(data = melt_df,
+       mapping=aes(x=Cell_count,
+                   y=Density*1e6,
+                   fill=Concentration))+
+  geom_histogram(stat="identity",
+                 alpha=0.6,
+                 position = "dodge2")+
+  ylab("Number of Droplets")+
+  xlab("Cells/Droplet")
+
+```
+
+#### e. Expected droplet counts per experiment
+
+To make the next few steps easier, now go ahead and add a column to your melted data frame containing the number of droplets out of 1e6 corresponding to the density for each datapoint. Check the sum of the droplet counts for each concentration to make sure this column adds up correctly.
+
+```{r}
+# add a column for cell counts out of 1e6
+melt_df_1e6 = melt_df %>% mutate( "Droplets" = Density * 1e6)
+head(melt_df_1e6)
+
+# check sum of counts
+melt_df_1e6 %>% group_by(Concentration) %>% summarise("totals" = sum(Droplets))
+```
+
+
+#### f. How many droplets are expected to contain exactly 1 cell?
+
+Select just the rows with 1 cell, and then plot the number of droplets that are expected to contain only one cell for each concentration. Instead of using `geom_histogram()`, try using `geom_col()`.
+
+```{r}
+# filter the data
+melt_filter_df = melt_df_1e6 %>% filter(Cell_count == 1) %>% mutate(Cell_count = as.character(Cell_count))
+
+# Plot the data as a bar plot
+ggplot(data=melt_filter_df,
+       mapping=aes(x=Concentration,
+                   y=Droplets))+
+  geom_col()
+
+```
+
+
+Which concentration produces the largest number of droplets with one cell?
+
+```{r eval=FALSE}
+# 2000cell/uL
+```
+
+
+#### g. Minimizing doublets
+
+The optimal cell concentration maximizes the number of droplets with a single cell while at theh same time minimizing the rate of 'doublets', which have 2 or more cells in a single droplet. 
+
+Plot the number of droplets that have 1 cell and the number that have 2+ cells for each experimental concentration. To do this, we suggest the following steps (but you can do this any way you want):
+
++ Extract the rows containing more than one cell from the melted data frame, and create a new data frame containing just those rows with 2+ cells.
++ Convert this to a data frame containing just the sum totals for each concentration.
+  + Try using the `aggregate` function to do this, using the formula `. ~ Concentration`.
++ Create a new data frame with the combined 1-cell and 2+ cell totals for each concentration.
+  + You'll notice that the "Cell_count" column contains the sum of the cell counts, so change all the values in this column to "2+" instead.
++ Plot the results using ggplot as per the last question above.
+
+Whatever way you choose to do this, make sure to comment your code!
+
+```{r}
+# filter the data
+melt_df_2 = melt_df_1e6 %>% filter(Cell_count > 1)
+
+# sum up the totals by group using the aggregate function
+melt_df_2_aggr = aggregate(formula = Droplets ~ Concentration, data = melt_df_2, FUN = "sum")
+
+# relabel the cell counts as "2+"
+melt_df_2_aggr = melt_df_2_aggr  %>% mutate("Cell_count" = "2+")
+
+# combine the 1 and 2+ data
+combined_df = bind_rows(melt_filter_df, melt_df_2_aggr)
+
+# Plot the combined data as a bar plot
+ggplot(data = combined_df,
+       mapping=aes(x=Concentration,
+                   y=Droplets,
+                   fill=Cell_count)) +
+  geom_col(position="dodge2")
+```
+
+Which experimental concentration has the lowest doublet rate? Which concentration would you choose for your experiment?
+
+```{r eval=FALSE}
+# #The 100cell/uL has the lowest doublet rate. I would be more inclined to pick the 1000 cell/uL to maximize singles, and minimize multiples. 
+```
+
+
+#### h. Chi-square goodness-of-fit test
+
+Above, we simulated idealized data for this experiment for the purposes of illustration. If we could optically measure the number of cells per droplet in an actual experiment, then we could see whether the data actually fit the expected distribution.
+
+Let's say that you've used a cell counter at the start of the experiment to estimate the concentration of cells. You targeted to get a concentration of 100 cells per microliter, but the actual concentration was 110 cells per microliter.
+
+Now you want to see how well the actual distribution of cells per droplet will match the expected distribution.
+
++ First, take 1e6 samples from a Poisson with a rate constant based on the actual concentration of cells per microliter (instead of the ideal 100 cells/ul).
++ Make a table of the observed number of cells per droplet.
++ Use `xtabs()` to make a table of the expected number of cells per droplet for the ideal n100 distribution.
+  + You can use the formula `Expected_droplets ~ Cell_count` here.
+
+```{r}
+# sample 1M droplets from the Poisson distribution
+sample = rpois(1e6, lambda = 0.055)
+
+# make a frequency table from the sampled data
+freq_table_obs= table(sample)
+
+# filter the n100 data from the ideal distributions
+n100 = melt_df_1e6 %>% filter(Concentration == "100 cell/uL")
+
+# use xtabs to make a table of the ideal n100 data
+xtabs_table = xtabs(formula = Droplets ~ Cell_count, data = n100)
+xtabs_table
+
+```
+
+Since the sampled data will have only up to 3 or 4 cells per droplet, you will notice that the two tables are not the same size! To generate the table we need for the Chi-square test, you will need to truncate the "ideal" table to match the length of the sampled data.
+
+Go ahead and this, and then join them together into a single contingency table. You should end up with a table containing two rows and around 3-4 columns.
+
+```{r}
+# truncate the table with the ideal data to the correct length
+trunc_table= xtabs_table[1:4]
+
+# bind the data together into a single table
+combined_table = rbind(freq_table_obs, trunc_table)
+combined_table
+```
+
+Plot the distribution of cell counts per droplet for the observed and expected data. How different do they look?
+
+```{r}
+# make a bar plot to compare these visually
+combined_freq_df = data.frame(t(combined_table))
+
+combined_freq_df$cell_count = c(0:3)
+combined_freq_df
+
+ideal_obs = melt(combined_freq_df,
+                 id.vars = "cell_count",
+                 value.name = "frequency",
+                 variable.name = "observation")
+
+ggplot(data = ideal_obs,
+       mapping = aes(x = cell_count,
+                     y = frequency,
+                     fill = observation)) +
+  geom_bar(stat = "identity",
+           position = "dodge2")
+
+```
+
+Finally, perform a Chi-squared test of the observed vs. expected cell counts. 
+
+```{r}
+# do the chi-squared test
+chisq.test(combined_table)
+
+```
+
+How do your sampled data compare to the ideal data in the Chi-squared test? 
+
+```{r eval=FALSE}
+# The sampled data is different than the ideal data according to the chi-squared test
+```
+
+Over the last few years continuous improvements in single-cell technology have been made to increase the proportion of droplets containing a single cell as well as throughput. Alternative methods such as split-pooling have also been developed that can be scaled to accommodate very large samples, and a variety of methods have been developed to allow multiplexing of multiple samples.
+
+
+## Q2: Mice high-fat diet study
+
+In a previous homework, we looked at the mouse high-fat diet dataset and computed confidence intervals for multiple samples of 12 mice from the control population. Since we didn't know about the $t$-distribution, we just used a $z$-distribution to calculate confidence intervals.
+
+You may or may not have noticed that when you re-ran the code for finding the 95% CI for samples from the control population, that usually slightly more than 5 samples out of 100 did not contain the true population mean. This is because 95%CIs for the $z$-distribution were too narrow and did not take into account the variability of small samples!
+
+The dataset attached to this homework contains the cleaned dataset we made in that homework. First, load the dataset and create a vector containing just the weights for the male control population.
+
+```{r}
+# load the dataset
+mice.pheno = read.csv("mice.pheno.cleaned.csv")
+
+# subset the bodyweights of the **male** mice fed the **chow** diet
+chow = mice.pheno %>% filter(Diet == "chow" & Sex == "M")
+```
+
+Below is reproduced the code from that homework for visualizing 100 95% confidence intervals, using just the chow data:
+
+```{r fig.width=5, fig.height=7, collapse=TRUE}
+# ============================================================================ #
+n.samples = 100   # number of random samples
+N = 12   # sample size
+Q = qnorm(0.975)  # z-score for +/- 47.5% of a normal distribution
+
+# set up a plot showing a vertical line with the true mean for each population
+# rename chow and hf to reflect that we are using these as the population
+chowPop = chow$Bodyweight
+plot(mean(chowPop)+c(-7,7),c(1,1),type="n",
+     xlab="weight",ylab="interval",ylim=c(1,n.samples))
+abline(v=mean(chowPop))
+
+# display the 95% CI for a bunch of random samples
+#ci_range = c() # initialize empty vector
+for (i in 1:n.samples) {
+  chow.sample = sample(chowPop,N)          # take a random sample
+  se = sd(chow.sample)/sqrt(N)             # compute SEM
+  interval = c(mean(chow.sample)-Q*se, mean(chow.sample)+Q*se) # compute 95% CI
+#  ci_range[i] = interval[2] - interval[1]  # record size of ci interval
+  
+  # draw the 95% CI -- color it green if it contains the true population mean, or red if not
+  covered = mean(chowPop) <= interval[2] & mean(chowPop) >= interval[1]
+  color = ifelse(covered,"forestgreen","red")
+  lines(interval, c(i,i), col=color)
+}
+#summary(ci_range)  # display summary of the distribution of CI ranges
+# ============================================================================ #
+```
+
+Re-run the above code block a bunch of times. Do you notice that usually more than 5 CI's don't contain the true mean?
+
+#### a. Create a function to count the number of 95%CI's that do not contain the true population mean
+
+Now turn the `for` loop above into a function called `ci.fail.counter`. Instead of having the code add a line to a graph, modify it so that all it does is return the number of CI's out of 100 that DO NOT contain the true population mean.
+
+The function should take the following parameters:
+
++ `chowPop`: Data for an entire population (vector)
++ `N`: the sample size (default = 12)
++ `n.samples`: the number of samples to take (default = 100)
+
+Note:
+
++ You should create a counter variable to hold the total number of CI's that don't contain the population mean; each time you find one, add 1 to this counter.
+  + To do this, define an integer variable outside the loop and set it to 0.
++ You should define and set `Q` inside the function so it doesn't depend on any other outside information.
+
+```{r}
+ci.fail.counter = function( chowPop = NA, N=12, n.samples=100 ) {
+
+  # initialize variables
+  counter = 0  # create a counter
+  Q = qnorm(.975)        # z-score for +/- 47.5% of a normal distribution
+
+  for (i in 1:n.samples) {
+    chow.sample = sample(chowPop,N)          # take a random sample
+    se = sd(chow.sample)/sqrt(N)             # compute SEM
+    interval = c(mean(chow.sample)-Q*se, mean(chow.sample)+Q*se) # compute 95% CI
+    
+    # flag the 95% CI as either covering or not covering the true population mean
+    covered = mean(chowPop) <= interval[2] & mean(chowPop) >= interval[1]
+    
+    # add to counter if CI doesn't cover the population mean
+    if ( covered == F ) { counter = counter+1 }
+  }
+
+  # return the total number of CI's that don't contain the population mean
+  return( counter )
+}
+```
+
+#### b. Test the function and tally up the failed CI's
+
+Below, test your function by calling it once. 
+
+When everything looks ok, run the function 100 times and record the number of CI's that don't cover the true population mean each time. 
+
++ Hint: you  may do this in a couple of different ways; do whatever makes the most sense to you.
+
+Check the results by making a table of the counts.
+
+```{r}
+# call the function once
+ci.fail.counter(chowPop = chowPop)
+
+# initialize an empty vector to hold the counts
+ci.fail.count = c()
+
+# run the function 100 times and fill up the fail count vector with the results from each run
+for (i in 1:100) {
+  ci.fail.count[i] = ci.fail.counter(chowPop = chowPop)
+}
+
+  
+# take a peek at the first few rows of the vector
+head(ci.fail.count)
+# make a table to check the results
+ci_fail_table = table(ci.fail.count)
+ci_fail_table
+```
+
+#### c. Make a histogram of the CI failure rate
+
+Make a quick plot of the number of 95%CIs per 100 CI's that don't contain the true population mean. How does the distribution look? What are the  mean and median failed CI's using the $z$-distribution?
+
+```{r}
+# histogram of failed 95% CI's per 100 CI's
+
+ci_fail_df= data.frame(ci_fail_table)
+ggplot(data=ci_fail_df,
+       mapping=aes(x=ci.fail.count,
+                   y=Freq))+
+  geom_histogram(stat="identity")
+
+mean(ci.fail.count)
+median(ci.fail.count)
+```
+
+#### d. Modify your function using a $t$-distribution
+
+Copy your function above and modify it so that instead of using the $z$-distribution, it uses the 95% quantiles for a $t$-distribution with the right number of d.f.
+
+```{r}
+# modified function using Q for t-distribution
+ci.fail.counter.t = function( chowPop = chowPop, N=12, n.sample = 100 ) {
+
+  # initialize variables
+  counter = 0  # create a counter
+  Q = qt(.975, df = N-1)        # z-score for +/- 47.5% of a normal distribution
+
+  for (i in 1:n.samples) {
+    chow.sample = sample(chowPop,N)          # take a random sample
+    se = sd(chow.sample)/sqrt(N)             # compute SEM
+    interval = c(mean(chow.sample)-Q*se, mean(chow.sample)+Q*se) # compute 95% CI
+    
+    # flag the 95% CI as either covering or not covering the true population mean
+    covered = mean(chowPop) <= interval[2] & mean(chowPop) >= interval[1]
+    
+    # add to counter if CI doesn't cover the population mean
+    if ( covered == F ) { counter = counter+1 }
+  }
+
+  # return the total number of CI's that don't contain the population mean
+  return( counter )
+}
+```
+
+#### e. Compute the rate of failed CI's
+
+Repeat part (b) using the new version of your function.
+
+```{r}
+# call the function once
+ci.fail.counter.t(chowPop = chowPop)
+
+# initialize an empty vector to hold the counts
+ci.fail.count.t = c()
+
+# run the function 100 times and fill up the fail count vector with the results from each run
+for (i in 1:100) {
+  ci.fail.count.t[i] = ci.fail.counter.t(chowPop = chowPop)
+}
+
+  
+# take a peek at the first few rows of the vector
+head(ci.fail.count.t)
+
+# make a table to check the results
+ci_fail_table.t = table(ci.fail.count.t)
+ci_fail_table.t
+```
+
+#### f. Make a histogram of the results.
+
+Repeat part (c) using the new data based on the $t$-distribution.
+
+```{r}
+# histogram of failed 95% CI's per 100 CI's
+
+ci_fail_df.t= data.frame(ci_fail_table.t)
+ggplot(data=ci_fail_df.t,
+       mapping=aes(x=ci.fail.count.t,
+                   y=Freq))+
+  geom_histogram(stat="identity")
+
+mean(ci.fail.count.t)
+median(ci.fail.count.t)
+```
+
+How do these results look in comparison to your earlier results?
+
+```{r eval=FALSE}
+# #The t-distribution has a failed count closer to 5, which is what we expect
+# in a CI of 95%. The z-distribution produces a failed count closer to 7. 
+# This means that the t-distribution is better job at estimating the CIs.
+```
+
+
