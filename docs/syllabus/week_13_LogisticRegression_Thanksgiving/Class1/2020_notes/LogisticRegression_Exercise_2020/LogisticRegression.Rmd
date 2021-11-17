@@ -1,0 +1,267 @@
+---
+title: "LogisticRegression"
+author: "Manpreet S. Katari"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+Logistic regression is a form of machine learning where a generalized linear model can be created using a training set and then tested using another dataset. Logistic regression method is very similar to linear regression but the output variable is binary instead of continuous and the variance does not have to be equal. In this example we will use a breast cancer dataset containing 15,000 observations (patients) to create a model which can be used to predict the output variable, in this case whether the patient will die. The output variable is alivestatus and the input variables are nodespos (number of positive nodes, size size of the tumor, and grade tumor grade. Tumor cells are classiﬁed into 4 diﬀerent grades:
+
+*  Grade 1) low-grade: cells are well diﬀerentiated.
+*  Grade 2) intermediate-grade: moderately well diﬀerentiated,
+*  Grade 3) poorly diﬀerentiated and
+*  Grade 4) undiﬀerentiated. 
+
+Grades 3 and 4 are generally associated with poor prognosis.
+
+Example data and scripts in this exercise are taken from [1].
+
+
+## Analysis
+
+### Loading the data
+
+First make sure working directory is set correctly. Then read the ﬁle into the variable called data.10yr.
+
+```{r}
+read.table("all.15k.patients.txt", header=T, row.names=1)->data.10yr
+```
+
+Make sure the data has been loaded correctly using the head() command. The summary() command gives a hint to the mode of data represented in the diﬀerent columns of the dataset. Columns with characters are loaded as factors which are presented as counts of the diﬀerent levels and numeric vectors are presented with some descriptive statistics.
+
+```{r}
+head(data.10yr)
+
+```
+
+
+```{r}
+summary(data.10yr)
+
+```
+
+
+Notice that due to the coding of some of the variables, some of the columns were not loaded in the correct mode. make sure the columns are of the correct mode.
+
+
+```{r}
+data.10yr[,"alivestatus"] = as.factor(data.10yr[,"alivestatus"])
+data.10yr[,"grade"] = as.numeric(data.10yr[,"grade"])
+data.10yr[,"nodespos"] = as.numeric(data.10yr[,"nodespos"])
+data.10yr[,"size"] = as.numeric(data.10yr[,"size"]) 
+```
+
+
+### Performing Logistic Regression
+
+Creating a logistic regression model is very similar to creating a linear regression model. Setting the parameter “family” to “binomial”tells the **glm()** function to create a logistic regression model.
+
+```{r}
+
+lr.glm = glm(alivestatus ~ size + nodespos + grade,
+             data = data.10yr,
+             family="binomial")
+
+summary(lr.glm)
+
+```
+
+Note that the summary output of logistic regression model is very similar to that of linear regression. 
+
+The **predict()** function can be used to determine the probability of getting the value 1. The parameter "type" speciﬁes which results to return. In order to retrieve the predicted probability of the outcome "1" ( 1 in the output variable alivestatus means death. ) use "response".
+
+```{r}
+pr<-predict(lr.glm, newdata=data.10yr, type="response")
+
+```
+
+From the prediction results, a probability greater than 0.5 will most likely be dead (have a value of 1). Using this cutoﬀ, a predicted result vector can be created names pr.perf which can be compared to the actual result. In order to compare the predicted with actual results there are certain terminologies that are important to understand:
+
+* TP: True positive: Predictions of TRUE event and it is actually TRUE
+* TN: True negative: Prediction of FALSE event and it is actually FALSE.
+* FP: False positive: Prediction of TRUE even, but it is actually FALSE.
+* FN: False negative: Prediction of FALSE even and it is TRUE
+
+These numbers in combination can provide useful statistics to judge the quality of the model.
+
+* accuracy: total number of correct predictions divided by all possible predictions and events.
+* recall: of all actual TRUE events, how many were predicted to be TRUE. Also known as **Sensitivity** and TPR (true positive rate)
+* precision: of all predicted TRUE, how many were actually true
+* TNR: True negative rate: Of all actual FALSE events, how many were predicted FALSE. Also known as **Specificity**
+
+```{r}
+
+pr.perf=as.numeric(pr>0.5)
+
+confmat<-table(data.10yr[,"alivestatus"], pr.perf, dnn=c("actual", "predicted")) 
+confmat
+```
+
+```{r}
+TP=confmat["1","1"]
+TN=confmat["0","0"]
+FP=confmat["0","1"]
+FN=confmat["1","0"]
+
+accuracy = (TP+TN)/(TP+TN+FP+FN)
+accuracy
+
+
+```
+
+```{r}
+recall = TP/(TP+FN)
+recall
+
+
+```
+
+```{r}
+precision = TP/(TP+FP)
+precision
+
+```
+
+```{r}
+
+TNR = TN/(TN+FP)
+TNR
+
+```
+
+
+Recall is also often referred to as the measurement of how speciﬁc the method is and Precision is the measurement of sensitivity. We can use the AUC package to see how the sensitive and specity change as the cutoﬀ is changed. We can also plot the ROC curve which is widely used as the metric to determine the overall performance of the method. It is a plot that considers sensitivity and speciﬁcity.
+
+### AUC
+
+
+```{r}
+#install.packages("pROC")
+library(pROC)
+ndf = data.frame(response = data.10yr$alivestatus,
+                 prob = pr)
+data_proc = roc(data = ndf, 
+                response="response", 
+                predictor = "prob")
+```
+
+
+```{r}
+proc_df = data.frame(cutoff=data_proc$thresholds,
+                     sensitivity=data_proc$sensitivities,
+                     specificity=data_proc$specificities)
+
+subset(proc_df, cutoff>0.499 & cutoff < 0.501)
+```
+
+```{r}
+library(reshape2)
+proc_df_melt = melt(proc_df,id.vars=c("cutoff"),
+                    measure.vars=c("sensitivity","specificity"))
+
+library(ggplot2)
+ggplot(proc_df_melt) + geom_line(mapping=aes(x=cutoff, y=value, color=variable))
+
+```
+```{r}
+ggplot(proc_df) + geom_line(mapping=aes(x=1-specificity, y=sensitivity))
+```
+
+```{r}
+auc(data_proc)
+
+```
+
+
+### Holdout method
+
+Another common practice is to train the model on a subset and test it on the remaining. This approach is called the holdout method. First combine the alive and dead datasets and then randomly select 70% for training and then test on the remaining 30%. The performance of the balanced dataset can now be tested.
+
+
+```{r}
+split<-sample(nrow(data.10yr), floor(nrow(data.10yr) * 0.7))
+split.train<-data.10yr[split,]
+split.test<-data.10yr[-split,]
+lr.split<-glm(formula = alivestatus ~ size + nodespos + grade,
+              family="binomial",
+              data=split.train)
+pr.split<-predict(lr.split, newdata=split.test, type="response")
+
+ndf = data.frame(response = split.test$alivestatus,
+                 prob = pr.split)
+data_proc = roc(data = ndf, 
+                response="response", 
+                predictor = "prob")
+
+auc(data_proc)
+
+```
+
+
+
+### Balancing the dataset
+
+A quick inspection of the data reveals that the dataset is quite unbalanced. This can create a bias in the model by putting more weight on the population that is better represented, in this case Alive. In order to balance the dataset simply select equal number of patients, randomly, from both alivestatus levels.
+
+```{r}
+table(data.10yr[,"alivestatus"])
+```
+
+```{r}
+allAlive<-data.10yr[which(data.10yr[,"alivestatus"] == 0),]
+allDead<-data.10yr[which(data.10yr[,"alivestatus"] == 1),] 
+sample(1:nrow(allAlive), nrow(allDead))->rand.0
+allAlive[rand.0,]->alive
+allDead->dead
+
+```
+
+#### Holdout method with Reduced Dataset
+
+
+```{r}
+training.split<-rbind(alive, dead) 
+split<-sample(nrow(training.split), floor(nrow(training.split) * 0.7))
+split.train<-training.split[split,]
+split.test<-training.split[-split,]
+lr.split<-glm(formula = alivestatus ~ size + nodespos + grade, 
+              family="binomial", 
+              data=split.train)
+
+pr.split<-predict(lr.split, newdata=split.test, type="response")
+
+ndf = data.frame(response = split.test$alivestatus,
+                 prob = pr.split)
+data_proc = roc(data = ndf, 
+                response="response", 
+                predictor = "prob")
+
+auc(data_proc)
+
+```
+
+
+### K-fold cross-validation
+A more robust method of holdout is to use K-fold cross-validation . In this method the data is split into 10 parts (K=10) where 9/10 parts are used for training and the other 1 is used for testing. The method does this 10 times for all 10 parts and comes up with a performance score. The DAAG package provides a simple interface for K-fold cross-validation. CVbinary performs a cross-validation of the model and return the accuracy of the model.
+
+```{r eval=F}
+install.packages("DAAG")
+
+```
+
+```{r}
+lr.fold<-glm(formula = alivestatus ~ size + nodespos + grade, 
+             family="binomial", 
+             data=data.10yr) 
+library("DAAG") 
+CVbinary(lr.fold)
+
+```
+
+
+

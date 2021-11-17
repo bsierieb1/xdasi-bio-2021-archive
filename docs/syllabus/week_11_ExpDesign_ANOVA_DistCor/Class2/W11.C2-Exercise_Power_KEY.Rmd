@@ -1,0 +1,209 @@
+---
+title: "In-Class Exercise: Power Analysis"
+subtitle: "XDASI Fall 2021"
+date: "11/8/2021"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: 4
+  html_document:
+    toc: no
+    toc_float: yes
+    toc_depth: 4
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#install.packages("asbio")
+#install.packages("pwr")
+library(asbio)
+library(pwr)
+```
+
+
+## Example
+
+**Aho, Ex. 6.10 (also see Fig. 6.7)**
+
+Surprisingly, the incidence of Alzheimer's disease is negatively associatd with moderate smoking, possibly because nicotine may reduce apoptosis (programmed cell death) of neurons. The description of the problem is as follows:
+
+<div align="center">
+![](Images/Aho_Ex_6.10.png){width="60%"}
+</div>
+
+### What is the question?
+
+Researchers were interested in being able to detect a 7% reduction in Alzheimer's for patients smoking 10-20 cigarettes a day, given that $\sigma=45\%$.
+
+Is a sample size of 200 sufficient to detect this effect size given $\alpha=0.05$?
+
++ What are $H_o$ and $H_A$?
++ Can we assume that the sampling distribution of the sample mean, $\bar{X}$, is normal?
++ What type of test should we use?
++ What is the critical value for the test?
+
+```{r}
+# your answer here
+```
+
+
+### Manual power calculation
+
+First, compute the power by hand:
+
+```{r, collapse=T}
+# =================================================== #
+# set up variables
+
+effect.size = -7  # effect size = Exp(X) under H_A
+n = 200
+sigma = 45
+alpha = 0.05
+type = "one.sample" # one or two sample
+alt = "one.sided"  # one- or two-sided
+
+# set Exp(X) = 0 under null H_o
+
+# critical value (z*) for lower-tail test at alpha=0.05
+z.crit = qnorm(alpha)  # -1.644854
+
+# check alpha using standard normal distribution
+pnorm(0,abs(z.crit),lower.tail=T)  # 0.05
+
+# compute SEM for sample size
+sem = sigma/sqrt(n)
+sem
+
+# =================================================== #
+# manual power calculation
+
+# compute power using area under the curve for H_A
+
+# get value of critical x at z.crit for H_A
+# want P( X.bar  <= z.crit * sem)
+# percent difference for lower-tail significance
+x.crit = z.crit*sem  # x-value at critical z-score 
+x.crit
+
+# Expected X.bar (pop. mean) under H_A is (mu_o - mu_A): Exp(X) = -7
+pwr = pnorm(x.crit, mean = effect.size, sd = sem)  # power = 0.71
+pwr
+
+# check z-score for H_A at expected power
+qnorm(pwr, effect.size, sem)  # alpha = P(X.bar <= -5.24)
+```
+
+### Compute power in R
+
+Given any 4 of the 5 variables that go into the power equation, we can use `power.t.test()` to compute the missing value. Since $n$ is large, we could also use the `power.z.test()` command from the `asbio` package. These give slightly different results, as the $t$-test is a bit more conservative. (They also use different names for their arguments, and the objects the produce are also different.)
+
+**NOTE:** *Effect size used for these functions should be given as a positive number, otherwise these functions will not work as expected.*
+
+```{r}
+# ================================================== #
+# provide expected effect size as a positive number
+power.t.test(n, delta = abs(effect.size), sd = sigma, sig.level = alpha,
+             type="one.sample", alternative="one.sided", strict=T)
+
+# note that arguments for this command differ
+power.z.test(n, effect = abs(effect.size), sigma = sigma, 
+             alpha = alpha, test="one.tail", strict=T)
+```
+
+
+### What if you change different variables that influence power?
+ 
++ Increase effect size => increase power (reduce Type II error)
++ Increase sample size => increase power (reduce Type II error)
++ Raise $\alpha$       => lower stringency (increase Type I error)
+
+We can compute the new power by hand, or use the `power.z.test()` command:
+
+```{r}
+# ================================================== #
+# increase effect size
+# ================================================== #
+# what happens if E = -8? => increase power
+# (keep alpha the same)
+pnorm(x.crit, effect.size - 1, sem)  # power = 0.81
+
+power.z.test(n, effect = -(effect.size-1), sigma = sigma, 
+             alpha = alpha, test="one.tail", strict=T)
+
+# ================================================== #
+# increase sample size
+# ================================================== #
+# what if sample size = 300? => more power for same E
+# (keep alpha the same)
+n = 300
+
+# get x-bar and SEM
+sem = sigma / sqrt(n)
+sem
+x.crit = qnorm(0.05)*sem
+x.crit
+
+# power
+pnorm(x.crit, effect.size, sem)  # power = 0.85
+
+power.z.test(n, effect = -effect.size, sigma = sigma, 
+             alpha = alpha, test="one.tail", strict=T)
+
+# ================================================== #
+# relax stringency: raise alpha
+# ================================================== #
+# raising alpha increases Type I error
+# what happens to power? => power goes down
+alpha = 0.2
+z.crit = qnorm(alpha)  # -0.842
+
+# check alpha2 using standard normal distribution
+pnorm(0,abs(z.crit),lower.tail=T)
+
+x.crit = z.crit*sem
+x.crit
+
+pwr = pnorm(x.crit, mean = effect.size, sd = sem)  # power = 0.913
+pwr
+
+qnorm(pwr, effect.size, sem) # check power
+
+# power is the same with the z-test power function
+power.z.test(n, effect = -effect.size, sigma = sigma, 
+             alpha = alpha, test="one.tail", strict=T)
+```
+
+
+### Design for a targeted power
+
+What if you want to design the experiment for power = 0.8, for the same sample
+size and effect size? What is the Type II error? What happens to the Type I error?
+
+```{r}
+# ================================================== #
+# increase desired power to 0.8
+# ================================================== #
+# if raise desired power without increasing effect size,
+#   => alpha goes up (less stringent)
+x.bar2 = qnorm(0.8, effect.size, sem) # effect size -4.32
+x.bar2
+
+# what significance level is this?
+alpha2 = x.bar2 / sem
+alpha2
+pnorm(0,abs(alpha2),lower.tail=T)  # 0.087
+
+# what significance level is this?
+alpha2 = x.bar2 / sem
+alpha2
+pnorm(0,abs(alpha2),lower.tail=T)  # 0.087
+
+# ================================================== #
+# using power.t.test command
+# now supply power and ask what new alpha is
+power.t.test(n, delta = -effect.size, sd = sigma, 
+             sig.level = NULL, power = 0.8,
+            type="one.sample", alternative="one.sided", strict=T)
+# gives alpha = 0.088
+```
+

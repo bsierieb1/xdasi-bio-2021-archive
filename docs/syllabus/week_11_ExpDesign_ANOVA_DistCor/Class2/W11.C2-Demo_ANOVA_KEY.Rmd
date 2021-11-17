@@ -1,0 +1,155 @@
+---
+title: 'Example: Analysis of Variance (ANOVA)'
+subtitle: "XDASI Fall 2021"
+date: "November 11, 2021"
+output:
+  pdf_document:
+    toc: no
+  html_document:
+    toc: no
+---
+
+<!-- from Manny Katari; ed. KCG -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## ANOVA Example
+
+The following example is from these Khan Academy videos:
+
+- [Calculating SST](https://www.youtube.com/watch?v=EFdlFoHI_0I)
+- [Calculating SSW and SSB](https://www.youtube.com/watch?v=j9ZPMlVHJVs)
+- [Hypothesis Testing](https://www.youtube.com/watch?v=Xg8_iSkJpAE)
+
+We previously discussed how we can use the $t$-test to determine if two sample distributions come from populations with the same mean (in which case, assuming equal variances, we can say that they come from the same population). 
+
+In many cases, we will have _**multiple**_ sample groups and we will want to ask a similar question: 
+
+***Are the means of the different samples the same ?***
+
+To answer this question we will look at a very simple case with three conditions -- $a$, $b$, and $c$ -- and ask if their means are significantly different.
+
+```{r}
+# measurements for three conditions
+a=c(3,2,1)
+b=c(5,3,4)
+c=c(5,6,7)
+
+anova_mat = cbind(a,b,c)  # combine the data into a 3x3 matrix
+anova_mat                 # take a look at the matrix
+
+boxplot(as.data.frame(anova_mat)) # plot it as a data frame
+```
+
+Looking at the boxplots above, it is clear to see that their means are indeed different. So the question we want to ask is whether the differences are ***significant***.
+
+Instead of looking at the difference between the sample means, as we did with $t$-test, we will compare variances. There are three different variances that we can calculate:
+
+- ***SST*** ( Total Sum of Squares ) = variation of all the points to the overall mean.
+- ***SSW*** ( Within Group Sum of Squares ) = variation of the data within each group.
+- ***SSB*** ( Between Group Sum of Squares ) = variation of the group mean to the overall mean.
+
+We also need the _**degrees of freedom**_. Given that you know the average, how many values you need to know? It's simply one less than the number of items being considered for each comparison, because using the mean you can always calculate the last value.
+
+To calculate **SST**, we simply take the difference of all the values from the overall mean, square them, and then take the sum.
+
+$$SST = \sum_{i=1}^n\sum_{j=1}^m(x_{ij} - \bar{X})^2$$
+
+```{r}
+# overall mean of the data
+anova_mat_mean = mean(anova_mat)
+
+# total variation = sum of squared deviations 
+#                   of each data point from the overall mean
+SST = sum((anova_mat - anova_mat_mean)**2)
+SST
+```
+
+Since this is a sample of the entire population, our degrees of freedom equal the total number of values minus one.
+
+```{r}
+# total degrees of freedom = (# of data points) - 1
+SST_df = length(anova_mat)-1
+SST_df
+
+```
+
+**SSW** ( Within Group Sum of Squares ) = variation of the data within each group. Here we calculate the variation of each point relative to the mean of its own group and simply add up the squared differences across all the groups:
+
+$$SSW = \sum_{i=1}^n\sum_{j=1}^m{(x_{ij} - \bar{X}_j)^2}$$
+
+where $n$ is the number of measurements in each group, and $m$ is the number of groups
+
+```{r}
+anova_mat_col_mean = colMeans(anova_mat)
+anova_mat_col_mean
+
+SSW=0
+for ( i in 1:nrow(anova_mat)) {
+  SSW = SSW + sum((anova_mat[i,]-anova_mat_col_mean)**2)
+}
+SSW
+```
+
+When calculating the degree of freedom, remember that we calculated the sum of squared differences relative every group's mean, so if we have *m* groups and *n* samples in each group, then ``df = m*(n-1)``.
+
+```{r}
+SSW_df = ncol(anova_mat)*(nrow(anova_mat)-1)
+SSW_df
+```
+
+**SSB** ( Between Group Sum of Squares ) = variation of the group mean to the overall mean. First, we find the sum of squared differences for each group mean compared to the overall mean. We also multiply by the number of values in the group to create a SS comparison for each of the original datapoints.
+
+$$SSB = \sum_{j=1}^m n_j(\bar{X}_j - \bar{X})^2$$
+
+```{r}
+SSB = 0
+
+for ( i in 1:length(anova_mat_col_mean)) {
+ SSB = SSB + (nrow(anova_mat)*(anova_mat_col_mean[i]-anova_mat_mean)^2)
+}
+SSB
+```
+
+For calculating between group degree of freedom, remember that if we have ***m*** groups, so it is simply ***m-1***.
+
+```{r}
+SSB_df = ncol(anova_mat)-1
+SSB_df
+```
+
+Finally since our variance calculations are sums of squares, they can be considered to follow a $\chi^2$ distribution. If the variance within the groups is the same and if the means of the groups are the same, then the variance between the groups should be the same as within the groups. 
+
+We can take this one step further and say that if the variance *between* the groups is *greater* than *within* the groups, then the means of the groups are different. Any change in the ratio would fit an *F-distribution* and a $p$-value can be calculated.
+
+```{r}
+# F statistic
+Fstat = (SSB/SSB_df) / (SSW/SSW_df)  # (24/2) / (6/6)
+Fstat
+
+# p-value - note that df(between) comes before df(within)
+pf(Fstat, 2, 6, lower.tail = F)  # df1 = df(B) = 2; df2 = df(W) = 6 
+```
+
+We can confirm our results using the **aov** function. 
+
+```{r}
+library(reshape2)
+
+# we use the melt function to reshape the data frame into three columns:
+# Var1 = the three groups, indexed as 1, 2, 3
+# Var2 = the three groups, indexed by their variable name
+# value = the value of each data point
+anova_mat.melt = melt(anova_mat)
+anova_mat.melt  # look at this new data structure
+
+# look at the result of the ANOVA command `aov`
+# the formula syntax evaluates the values in response to the factors (groups a,b,c)
+aov(anova_mat.melt$value ~ anova_mat.melt$Var2)
+
+# applying the summary function to the aov output also gives the F-stat and p-value
+summary(aov(anova_mat.melt$value ~ anova_mat.melt$Var2))
+```
+

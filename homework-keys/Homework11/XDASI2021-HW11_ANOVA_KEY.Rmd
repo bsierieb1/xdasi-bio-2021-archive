@@ -138,8 +138,8 @@ Yes, the data are normally distributed and the variances are similar.
 Calculate the sum of squares for $SS_{error}$ and $SS_{group}$ (you may use either base R methods or dplyr, as you prefer). Recall the formulas:
 
 $$SS_{total} = SS_{error}+SS_{group}$$ 
-$$SS_{error} = \sum_{i}\sum_{j}(Y−\overline{Y}_i)^{2}$$    
-$$SS_{group} = \sum_{i}n_{i}(\overline{Y}_i−\overline{Y})^{2}$$
+$$SS_{error} = \sum_{i}\sum_{j}(Y - \overline{Y}_i)^{2}$$    
+$$SS_{group} = \sum_{i}n_{i}(\overline{Y}_i - \overline{Y})^{2}$$
 ```{r}
 ## Base R methods =========================================================== ##
 # SS_error
@@ -179,7 +179,7 @@ SSG = anova_data %>%
 
 ### b) F-statistic and p-value
 
-Calculate the F-statistic and the p-value using the `pf() function.` Recall that:
+Calculate the F-statistic and the p-value using the `pf()` function. Recall that:
 
 $$F=\frac{MS_{groups}}{MS_{error}} = \frac{SS_{groups}/df_{groups}}{SS_{error}/df_{error}}$$
 
@@ -232,7 +232,7 @@ Analysis for an “unplanned” dataset looks for total variation, followed by a
 
 Assume the data is a planned experiment. Use the `lm()` function to perform the analysis. 
 
-First, use the `anova()` function on the results of of the `lm()` function to look at the overall result. *Note: you can use the special notation `$"Pr(>F)" to get the exact p-value from the `anova()` function.*
+First, use the `anova()` function on the results of of the `lm()` function to look at the overall result. *Note: you can use the special notation `$"Pr(>F)"` to get the exact p-value from the `anova()` function.*
 
 ```{r}
 # anova for lm of brood_size ~ genotype
@@ -337,6 +337,7 @@ equal variances. This is because a little bit of power is lost when the data are
 not treated as homoscedastic (in which case they are called "heteroscedastic").
 ```
 
+***Note: If you want to add annotations to your boxplots to show p-values or significance levels for various statistical tests, the `ggpubr()` package offers a variety of options that you can read about on the <a href="https://www.r-bloggers.com/2017/06/add-p-values-and-significance-levels-to-ggplots/" target="blank">R-bloggers website</a>.***
 
 # Q4: Fertilization phenotype
 
@@ -406,14 +407,14 @@ pairwise.wilcox.test(anova_data$percent_fertilized, anova_data$genotype,
  
 # Q5: Error, Power, and Sample size
 
-Recall that the power is $1−\beta$, where $\beta$ is the Type II error. We can calculate the power of the ANOVA test using the command `power.anova.test()`, which is contained in the base `stats` package. The arguments for the command are:
+Recall that the power is $1 - \beta$, where $\beta$ is the Type II error. We can calculate the power of the ANOVA test using the command `power.anova.test()`, which is contained in the base `stats` package. The arguments for the command are:
 
 + **groups** = the number of groups in the dataset  
 + **n** = the number of observations per group  
 + **between.var** = between-group variance, $SS_{group}$
 + **within.var** = within-group variance, $SS_{error}$  
 + **sig.level** = significance cutoff $\alpha$ (Type I error)  
-+ **power** = power of the test ($1−\beta = 1$ - Type II error)  
++ **power** = power of the test ($1 - \beta = 1$ - Type II error)  
 
 Given all of the arguments except for one, this function will return a value for the missing argument.
 
