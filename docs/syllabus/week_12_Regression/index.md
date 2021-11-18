@@ -6,7 +6,7 @@ nav_exclude: false
 nav_order: 12
 ---
 
-# Week 12: Title
+# Week 12: Linear Regression
 {: .no_toc }
 
 <details closed markdown="block">
@@ -35,6 +35,8 @@ nav_order: 12
 
 # Class - Thursday, Nov. 18
 
+### ANOVA and Linear Regression
+
 <details closed markdown="block">
   <summary>Details</summary>
 
@@ -48,6 +50,8 @@ nav_order: 12
 **Linear Models and Regression**
 
 + **Class Notes** - [(html)](Class2/W12.C2-Notes_LinearModels.html){: target="blank"} - [(pdf)](Class2/W12.C2-Notes_LinearModels.pdf){: target="blank"}
+
++ **Class Exercise (answer key)** - [(zipped .R)](Class2/W12.C2-Exercise_Linear_Regression.R.zip) - [(html)](Class2/W12.C2-Exercise_Linear_Regression.html){: target="blank"}
 
 </details>
 
