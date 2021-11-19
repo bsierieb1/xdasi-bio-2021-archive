@@ -59,11 +59,15 @@ nav_order: 12
 
 <!-- ########################################################################### -->
 
-<!-- # Recitation - Friday, Nov. 19
+# Recitation - Friday, Nov. 19
+
+### Multiple Linear Regression and ANOVA
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
++ **Class Exercise** - [(DATA)](Recitation/Data_Elephants.csv) - [(zipped .Rmd)](Recitation/W12.R1_Exercise_Interactions.Rmd.zip)
+
+</details>
 
 <!-- ########################################################################### -->

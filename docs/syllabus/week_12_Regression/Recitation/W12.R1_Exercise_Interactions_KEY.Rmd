@@ -10,6 +10,10 @@ library(car)
 library(interactions)
 ```
 
+## Primer on interactions
+
+![](Images/interactions.png)
+
 ## Primer on model formulae in R
 
 Let Y be the dependent (response) variable, and A and B two independent (predictor) variables.
@@ -71,13 +75,35 @@ We will work with the [data set](https://www.kaggle.com/mostafaelseidy/elephants
 First, load and plot the data.
 
 ```{r}
+# load the data
+elephants <- read.csv('Data_Elephants.csv')
 
+# look at the data
+str(elephants)
+head(elephants)
+
+# plot Height as the function of Age, and color the two sexes separately
+ggplot(data = elephants,
+       mapping = aes(x = Age,
+                     y = Height,
+                     color = Sex)) +
+  geom_point() +
+  scale_color_manual(values = c("darkgreen", "cornflowerblue"))
 ```
 
 The relationship is obviously not linear. Try transforming one or both variables to make the relationship (sort of) linear.
 
 ```{r}
+# add a new column that contains the square root of Age
+elephants$sqrt_Age <- sqrt(elephants$Age)
 
+# plot the data
+ggplot(data = elephants,
+       mapping = aes(x = sqrt_Age,
+                     y = Height,
+                     color = Sex)) +
+  geom_point() +
+  scale_color_manual(values = c("darkgreen", "cornflowerblue"))
 ```
 
 ## Effect of age and sex on height in young elephants
@@ -85,7 +111,53 @@ The relationship is obviously not linear. Try transforming one or both variables
 First, let us subset young elephants, defined as 11 years old or younger. Let us examine the combined effect of age and sex on the body height in this age cohort.
 
 ```{r}
+# subset individuals that are <=11 years old
+indices_of_young_individuals <- elephants$Age <= 11
+elephants_young <- elephants[indices_of_young_individuals,]
 
+# plot the data
+ggplot(data = elephants_young,
+       mapping = aes(x = sqrt_Age,
+                     y = Height,
+                     color = Sex)) +
+  geom_point() +
+  scale_color_manual(values = c("darkgreen", "cornflowerblue"))
+
+# perform type I ANOVA with Age first and Sex second
+anova(lm(formula = Height ~ sqrt_Age * Sex,
+         data = elephants_young))
+
+# perform type I ANOVA with Sex first and Age second - note the different p-values!
+anova(lm(formula = Height ~ Sex * sqrt_Age,
+         data = elephants_young))
+
+# perform type II ANOVA with Age first and Sex second
+Anova(lm(formula = Height ~ sqrt_Age * Sex,
+         data = elephants_young),
+      type = "II")
+
+# perform type II ANOVA with Sex first and Age second - note that the result is the same as above
+Anova(lm(formula = Height ~ Sex * sqrt_Age,
+         data = elephants_young),
+      type = "II")
+
+# perform type III ANOVA with Age first and Sex second - note the higher p-value for Sex than with type II
+Anova(lm(formula = Height ~ sqrt_Age * Sex,
+         data = elephants_young),
+      type = "III")
+
+# again, the order does not matter
+Anova(lm(formula = Height ~ Sex * sqrt_Age,
+         data = elephants_young),
+      type = "III")
+
+# running summary() produces p-values equivalent to type III ANOVA, but it uses t-statistics
+summary(lm(formula = Height ~ sqrt_Age * Sex,
+         data = elephants_young))
+
+# again, the order does not matter
+summary(lm(formula = Height ~ Sex * sqrt_Age,
+         data = elephants_young))
 ```
 
 Summary: the order of factors matters for type I ANOVA - only use type I if you have a **really** good reason to do so (it is also fine if you are testing an interaction between two categorical variables with a fully balanced experimental design). In this case, there is no significant interaction between age and sex, so applying type II ANOVA provided a more sensitive test for the effect of sex than type III.
@@ -95,7 +167,53 @@ Summary: the order of factors matters for type I ANOVA - only use type I if you 
 Now, let us subset more mature elephants, defined as 12.5 years old or older Let us examine the combined effect of age and sex on the body height in this age cohort.
 
 ```{r}
+# subset individuals that are >=12.5 years old
+indices_of_mature_individuals <- elephants$Age >= 12.5
+elephants_mature <- elephants[indices_of_mature_individuals,]
 
+# plot the data
+ggplot(data = elephants_mature,
+       mapping = aes(x = sqrt_Age,
+                     y = Height,
+                     color = Sex)) +
+  geom_point() +
+  scale_color_manual(values = c("darkgreen", "cornflowerblue"))
+
+# perform type I ANOVA with Age first and Sex second
+anova(lm(formula = Height ~ sqrt_Age * Sex,
+         data = elephants_mature))
+
+# perform type I ANOVA with Sex first and Age second - note the different p-values!
+anova(lm(formula = Height ~ Sex * sqrt_Age,
+         data = elephants_mature))
+
+# perform type II ANOVA with Age first and Sex second
+Anova(lm(formula = Height ~ sqrt_Age * Sex,
+         data = elephants_mature),
+      type = "II")
+
+# perform type II ANOVA with Sex first and Age second - note that the result is the same as above
+Anova(lm(formula = Height ~ Sex * sqrt_Age,
+         data = elephants_mature),
+      type = "II")
+
+# perform type III ANOVA with Age first and Sex second - note the higher p-value for Sex than with type II
+Anova(lm(formula = Height ~ sqrt_Age * Sex,
+         data = elephants_mature),
+      type = "III")
+
+# again, the order does not matter
+Anova(lm(formula = Height ~ Sex * sqrt_Age,
+         data = elephants_mature),
+      type = "III")
+
+# running summary() produces p-values equivalent to type III ANOVA, but it uses t-statistics
+summary(lm(formula = Height ~ sqrt_Age * Sex,
+         data = elephants_mature))
+
+# again, the order does not matter
+summary(lm(formula = Height ~ Sex * sqrt_Age,
+         data = elephants_mature))
 ```
 
 Summary: the order of factors matters for type I ANOVA - only use type I if you have a **really** good reason to do so (it is also fine if you are testing an interaction between two categorical variables with a fully balanced experimental design). In this case, there is a significant interaction between age and sex, so applying type III ANOVA provides a more appropriate test of main effects than type II.
@@ -106,25 +224,27 @@ Library `interactions` provides a handy function `interact_plot()` to plot regre
 
 ```{r}
 # specify the linear regression models
-elephants_young_model <- 
+elephants_young_model <- lm(formula = Height ~ sqrt_Age * Sex,
+                            data = elephants_young)
 
-elephants_mature_model <- 
+elephants_mature_model <- lm(formula = Height ~ sqrt_Age * Sex,
+                             data = elephants_mature)
 
 # plot
 interact_plot(elephants_young_model,
-              pred = ,
-              modx = ,
+              pred = sqrt_Age,
+              modx = Sex,
               plot.points = TRUE)
 
 interact_plot(elephants_mature_model,
-              pred = ,
-              modx = ,
+              pred = sqrt_Age,
+              modx = Sex,
               plot.points = TRUE)
 
 # this is a ggplot object, so you can modify it using the syntax you already know
 interact_plot(elephants_mature_model,
-              pred = ,
-              modx = ,
+              pred = sqrt_Age,
+              modx = Sex,
               plot.points = TRUE) +
   scale_color_manual(values = c("darkgreen", "cornflowerblue")) +
   theme_grey()
