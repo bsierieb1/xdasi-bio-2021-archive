@@ -67,6 +67,7 @@ nav_order: 12
   <summary>Details</summary>
 
 + **Class Exercise** - [(DATA)](Recitation/Data_Elephants.csv) - [(zipped .Rmd)](Recitation/W12.R1_Exercise_Interactions.Rmd.zip)
++ **Class Exercise (answer key)** - [zipped .Rmd](Recitation/W12.R1_Exercise_Interactions_KEY.Rmd.zip) - [HTML](Recitation/W12.R1_Exercise_Interactions_KEY.html){: target="blank"}
 
 </details>
 
