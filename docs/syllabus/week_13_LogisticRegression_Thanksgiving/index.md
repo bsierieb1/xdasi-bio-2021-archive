@@ -2,7 +2,7 @@
 title: Week 13
 parent: Syllabus
 has_children: false
-nav_exclude: true
+nav_exclude: false
 nav_order: 13
 ---
 
@@ -12,12 +12,17 @@ nav_order: 13
 
 <!-- ########################################################################### -->
 
-<!-- # Class - Monday, Nov. 22
+# Class - Monday, Nov. 22
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
+**Logistic Regression**
+
++ **Class Notes** - [(zipped .Rmd)](Class1/W13.C1-Notes_LogisticRegression.Rmd.zip) - [(html)](Class1/W13.C1-Notes_LogisticRegression.htmll){: target="blank"} 
+
+
+</details>
 
 <!-- ########################################################################### -->
 
