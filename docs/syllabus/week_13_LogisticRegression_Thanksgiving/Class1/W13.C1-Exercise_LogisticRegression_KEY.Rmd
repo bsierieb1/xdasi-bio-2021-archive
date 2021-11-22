@@ -1,10 +1,15 @@
 ---
 title: "Logistic Regression"
-output: html_document
+subtitle: "XDASI Fall 2021"
+author: "Answer KEY"
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+#install.packages("pROC")
 library(pROC)
 library(reshape2)
 ```

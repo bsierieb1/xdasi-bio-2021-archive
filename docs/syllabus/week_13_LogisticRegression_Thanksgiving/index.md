@@ -19,7 +19,7 @@ nav_order: 13
 
 **Logistic Regression**
 
-+ **Class Notes** - [(zipped .Rmd)](Class1/W13.C1-Notes_LogisticRegression.Rmd.zip) - [(html)](Class1/W13.C1-Notes_LogisticRegression.html){: target="blank"} 
++ **Class Notes (full)** - [(zipped .Rmd)](Class1/W13.C1-Notes_LogisticRegression_KEY.Rmd.zip) - [(html)](Class1/W13.C1-Notes_LogisticRegression_KEY.html){: target="blank"} - [(pdf)](Class1/W13.C1-Notes_LogisticRegression_KEY.pdf){: target="blank"}
 
 + **Class Exercise** - [(DATA)](Class1/Data_all.15k.patients.txt) - [(zipped .Rmd)](Class1/W13.C1-Exercise_LogisticRegression.Rmd.zip)
 

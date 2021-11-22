@@ -4,13 +4,13 @@ subtitle: "XDASI Fall 2021"
 author: "Kris Gunsalus"
 date: "11/22/2021"
 output:
-  pdf_document:
-    toc: yes
-    toc_depth: 3
   html_document:
     toc: yes
     toc_depth: 3
     toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: 3
 ---
 
 ```{r setup, include=FALSE}
@@ -268,8 +268,20 @@ In the left-hand panel, we see that students have a higher overall rate of defau
 
 Thus, students tend to have higher debt overall, which is associated with higher default rates, but for any given level of debt, they are less likely to default than their non-student peers. 
 
-***What do we predict as the default rate for people with $40k income and different rates of debt, given student status?***
+### Interactions
 
+Is there an ***interaction*** between balance and student? In other words, does balance have a big effect on whether students default or not? Let's see:
+
+```{r}
+summary(glm(default ~ income + balance*student, data = Default, family = "binomial"))
+```
+
+Now the student factor doesn't look that significant, but we also see that there is no significant interaction between student and balance, so we should use the simpler model that does not include the interaction term.
+
+
+### Prediction
+
+***What do we predict as the default rate for people with $40k income and different rates of debt, given student status?***
 
 ```{r}
 # full model
