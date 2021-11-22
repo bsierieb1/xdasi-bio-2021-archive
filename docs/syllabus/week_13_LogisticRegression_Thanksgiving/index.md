@@ -6,7 +6,7 @@ nav_exclude: false
 nav_order: 13
 ---
 
-# Week 13: Title
+# Week 13: Logistic Regression
 
 ---
 
