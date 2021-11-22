@@ -19,7 +19,7 @@ nav_order: 13
 
 **Logistic Regression**
 
-+ **Class Notes** - [(zipped .Rmd)](Class1/W13.C1-Notes_LogisticRegression.Rmd.zip) - [(html)](Class1/W13.C1-Notes_LogisticRegression.htmll){: target="blank"} 
++ **Class Notes** - [(zipped .Rmd)](Class1/W13.C1-Notes_LogisticRegression.Rmd.zip) - [(html)](Class1/W13.C1-Notes_LogisticRegression.html){: target="blank"} 
 
 
 </details>
