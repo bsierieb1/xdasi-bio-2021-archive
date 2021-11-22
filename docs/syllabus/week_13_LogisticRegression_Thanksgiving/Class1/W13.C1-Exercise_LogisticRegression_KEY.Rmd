@@ -1,0 +1,130 @@
+---
+title: "Logistic Regression"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(pROC)
+library(reshape2)
+```
+
+## Introduction
+
+Logistic regression is a form of machine learning where a generalized linear model can be created using a training set and then tested using another dataset. Logistic regression method is very similar to linear regression but the output variable is binary instead of continuous and the variance does not have to be equal. In this example we will use a breast cancer dataset containing 15,000 observations (patients) to create a model which can be used to predict the output variable, in this case whether the patient will die. The output variable is alivestatus and the input variables are nodespos (number of positive nodes, size size of the tumor, and grade tumor grade. Tumor cells are classiﬁed into 4 diﬀerent grades:
+
+*  Grade 1) low-grade: cells are well diﬀerentiated.
+*  Grade 2) intermediate-grade: moderately well diﬀerentiated,
+*  Grade 3) poorly diﬀerentiated and
+*  Grade 4) undiﬀerentiated. 
+
+Grades 3 and 4 are generally associated with poor prognosis.
+
+Example data and scripts in this exercise are taken from [1].
+
+
+## Analysis
+
+### Loading the data
+
+First make sure working directory is set correctly. Then read the ﬁle into the variable called my_data.
+
+```{r}
+my_data <- read.table("Data_all.15k.patients.txt")
+
+head(my_data)
+str(my_data)
+```
+
+
+### Performing Logistic Regression
+
+Creating a logistic regression model is very similar to creating a linear regression model. Setting the parameter “family” to “binomial” tells the **glm()** function to create a logistic regression model.
+
+```{r}
+my_lr <- glm(alivestatus ~ size + nodespos + grade,
+             data = my_data,
+             family = "binomial")
+
+summary(my_lr)
+
+```
+
+Note that the summary output of logistic regression model is very similar to that of linear regression. 
+
+The **predict()** function can be used to determine the probability of getting the value 1. The parameter "type" speciﬁes which results to return. In order to retrieve the predicted probability of the outcome "1" ( 1 in the output variable alivestatus means death. ) use "response".
+
+```{r}
+predicted_alivestatus <- predict(my_lr,
+                                 newdata = my_data,
+                                 type = "response")
+
+my_data$predicted_alivestatus <- predicted_alivestatus
+
+head(my_data)
+```
+
+From the prediction results, a probability greater than 0.5 will most likely be dead (have a value of 1). Using this cutoff, a predicted result vector can be created which can be compared to the actual result. In order to compare the predicted with actual results there are certain terminologies that are important to understand:
+
+* TP: True positive: Predictions of TRUE event and it is actually TRUE
+* TN: True negative: Prediction of FALSE event and it is actually FALSE.
+* FP: False positive: Prediction of TRUE even, but it is actually FALSE.
+* FN: False negative: Prediction of FALSE even and it is TRUE
+
+These numbers in combination can provide useful statistics to judge the quality of the model.
+
+* accuracy = (TP + TN) / (TP + TN + FP + FN)
+* precision = TP / (TP + FP)
+* sensitivity = recall = true positive rate = TP / (TP + FN)
+* specificity = true negative rate = TN / (TN + FP)
+
+```{r}
+my_data$predicted_alivestatus_binary <- ifelse(test = predicted_alivestatus >= 0.5,
+                                               yes = 1,
+                                               no = 0)
+
+confmat <- table(my_data[,c("alivestatus","predicted_alivestatus_binary")]) 
+confmat
+```
+
+```{r}
+TP <- confmat[2,2]
+TN <- confmat[1,1]
+FP <- confmat[1,2]
+FN <- confmat[2,1]
+
+accuracy <- (TP + TN) / (TP + TN + FP + FN)
+accuracy
+
+precision <- TP / (TP + FP)
+precision
+
+sensitivity <- TP / (TP + FN)
+sensitivity
+
+specificity <- TN / (TN + FP)
+specificity
+
+```
+
+Recall is also often referred to as the measurement of how speciﬁc the method is and Precision is the measurement of sensitivity. We can use the AUC package to see how the sensitive and specity change as the cutoﬀ is changed. Several performance characteristics plotted against each other is called receiver operating characteristic curve, or ROC curve.
+
+### ROC curve
+
+```{r}
+my_roc <- roc(data = my_data,
+              response = alivestatus, 
+              predictor = predicted_alivestatus)
+
+plot(x = my_roc$thresholds,
+     y = my_roc$sensitivities,
+     col = "blue",
+     type = "l")
+
+points(x = my_roc$thresholds,
+       y = my_roc$specificities,
+       col = "red",
+       type = "l")
+```
+
+

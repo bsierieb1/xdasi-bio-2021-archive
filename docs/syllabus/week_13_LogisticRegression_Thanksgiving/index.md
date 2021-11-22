@@ -21,6 +21,7 @@ nav_order: 13
 
 + **Class Notes** - [(zipped .Rmd)](Class1/W13.C1-Notes_LogisticRegression.Rmd.zip) - [(html)](Class1/W13.C1-Notes_LogisticRegression.html){: target="blank"} 
 
++ **Class Exercise** - [(DATA)](Class1/Data_all.15k.patients.txt) - [(zipped .Rmd)](Class1/W13.C1-Exercise_LogisticRegression.Rmd.zip)
 
 </details>
 
