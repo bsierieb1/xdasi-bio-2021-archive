@@ -49,9 +49,9 @@ The course assumes no previous background in statistics or programming. Students
 
 # Meetings
 
-+ One 120-minute lecture/lab (Mondays 9:00am-11:00am)
-+ One 75-minute recitation (Tuesdays 1:00pm-2:15pm)
-+ One 120-minute lecture/lab (Thursdays 9:00am-11:00am)
++ One 120-minute lecture/lab (Mondays 9:30am-11:30am)
++ One 120-minute lecture/lab (Thursdays 9:30am-11:30am)
++ One 75-minute recitation (Fridays 2:00pm-3:15pm)
 
 All classes will take place in **Room 805, CGSB** (12 Waverly Place). Office hours may be requested by appointment.
 
