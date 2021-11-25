@@ -32,6 +32,6 @@ nav_order: 13
 
 <!-- ########################################################################### -->
 
-# :turkey: THANKSGIVING - No Class Thursday or Friday, Nov. 25-26
+# THANKSGIVING - No Class Thursday or Friday, Nov. 25-26
 
 <!-- ########################################################################### -->
