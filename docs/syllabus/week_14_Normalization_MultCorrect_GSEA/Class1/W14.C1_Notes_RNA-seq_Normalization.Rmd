@@ -61,7 +61,7 @@ Next GEM Single Cell 3ʹ Kit by 10X), where a small region located several hundr
 
 Another alternative is to downsample reads in all cells to the same total number of reads. Single-cell data are plagued with so-called "dropouts", i.e. absence of any reads mapping to a specific gene in a specific cell for technical, rather than biological, reasons. Downsampling can approximate this artifact, painting a more realistic representation of what gene expression profiles would look like at similar count depths.
 
-Finally, there are some low-throughput single-cell methods that do involve sequencing the entire transcripts (e.g. SMART-Seq). In suc cases, it is more appropriate to use normalization methods that take into account transcript length, e.g. **TPM**.
+Finally, there are some low-throughput single-cell methods that do involve sequencing the entire transcripts (e.g. SMART-Seq). In such cases, it is more appropriate to use normalization methods that take into account transcript length, e.g. **TPM**.
 
 
 **Assumptions and caveats:**
