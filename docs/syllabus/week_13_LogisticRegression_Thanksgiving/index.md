@@ -14,10 +14,10 @@ nav_order: 13
 
 # Class - Monday, Nov. 22
 
+### Logistic Regression
+
 <details closed markdown="block">
   <summary>Details</summary>
-
-**Logistic Regression**
 
 + **Class Notes (full)** - [(zipped .Rmd)](Class1/W13.C1-Notes_LogisticRegression_KEY.Rmd.zip) - [(html)](Class1/W13.C1-Notes_LogisticRegression_KEY.html){: target="blank"} - [(pdf)](Class1/W13.C1-Notes_LogisticRegression_KEY.pdf){: target="blank"}
 
