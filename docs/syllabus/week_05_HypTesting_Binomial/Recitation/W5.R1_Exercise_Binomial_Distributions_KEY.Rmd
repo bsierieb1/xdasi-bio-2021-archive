@@ -1,5 +1,6 @@
 ---
 title: "Binomial Distributions Pt. I: Simulation, PDF, CDF"
+author: "Bogdan Sieriebriennikov"
 date: "October 1, 2021"
 output: html_document
 ---

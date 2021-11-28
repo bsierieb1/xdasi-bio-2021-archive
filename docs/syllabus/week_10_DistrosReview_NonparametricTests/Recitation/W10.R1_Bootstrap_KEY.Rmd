@@ -1,5 +1,6 @@
 ---
 title: "Bootstrapping"
+author: "Bogdan Sieriebriennikov"
 date: "November 5, 2021"
 output: html_document
 ---

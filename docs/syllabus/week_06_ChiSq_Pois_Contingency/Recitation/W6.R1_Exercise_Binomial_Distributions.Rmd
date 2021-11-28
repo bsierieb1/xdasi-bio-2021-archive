@@ -1,5 +1,6 @@
 ---
 title: "Binomial Distributions Pt. II: Hypothesis Testing"
+author: "Bogdan Sieriebriennikov"
 date: "October 8, 2021"
 output: html_document
 ---

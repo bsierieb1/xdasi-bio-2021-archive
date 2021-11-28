@@ -1,0 +1,273 @@
+---
+title: "Multiple Hypothesis Testing Correction"
+author: "Bogdan Sieriebriennikov"
+date: "November 29, 2021"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(ggpubr)
+library(dplyr)
+```
+
+Let us simulate comparing expression values of 1,000 genes in two samples, each with five replicates. Let us draw the expression values of the two samples **from the same distribution** (i.e. these 1,000 genes are expressed at the same level in reality) and perform a t-test for each gene. How are the resulting p-values distributed?
+
+```{r}
+# create an empty data frame with a single column to store p-values
+data_same_distr <- data.frame("pvalues" = rep(NA, 1000))
+
+# repeat 1,000 times (= the number of rows in data_same_distr):
+for (i in 1:nrow(data_same_distr)) {
+  # draw 5 observations with a mean value of 1
+  sample1 <- rnorm(n = 5,
+                   mean = 1)
+  # draw another 5 observations with a mean value of 1
+  sample2 <- rnorm(n = 5,
+                   mean = 1)
+  # perform a t-test and record the p-value
+  pvalue <- t.test(sample1, sample2)$p.value
+  data_same_distr$pvalues[i] <- pvalue
+}
+
+# plot the p-values
+ggplot(data = data_same_distr,
+       mapping = aes(x = pvalues)) +
+  geom_histogram(breaks = seq(from = 0,
+                              to = 1,
+                              by = 0.05))
+
+```
+
+The p-values are distributed uniformly. For example, approximately half (50%, or 0.5) of p-values are equal or smaller than 0.5, approximately 0.05 of p-values are equal or smaller than 0.05 etc. In other words, if we draw the cutoff for rejecting the null hypothesis at 0.05, meaning that you accept a 5% chance of a false positive result, approximately 5% of all t-tests will reject the null hypothesis in this case. So far everything makes sense! Let us go ahead and mark all of the p-values <= 0.05 as **false positives** and the rest as **true negatives** (remember, we know that the expression levels of these 1,000 genes are the same in the two samples because we drew them from the same distribution). 
+
+```{r}
+# create a new column in the data frame and classify the p-values as false positive or true negatives
+data_same_distr$classification <- NA
+data_same_distr$classification[data_same_distr$pvalues <= 0.05] <- "FP"
+data_same_distr$classification[data_same_distr$pvalues > 0.05] <- "TN"
+
+# color the bars by classification
+ggplot(data = data_same_distr,
+       mapping = aes(x = pvalues,
+                     fill = classification)) +
+  geom_histogram(breaks = seq(from = 0,
+                              to = 1,
+                              by = 0.05))
+```
+
+Now, let us repeat the same, but this time let us draw the expression values of the replicates of sample 1 and 2 **from different distributions**.
+
+```{r}
+# create an empty data frame with a single column to store p-values
+data_diff_distr <- data.frame("pvalues" = rep(NA, 1000))
+
+# repeat 1,000 times (= the number of rows in data_diff_distr):
+for (i in 1:nrow(data_diff_distr)) {
+  # draw 5 observations with a mean value of 1
+  sample1 <- rnorm(n = 5,
+                   mean = 1)
+  # draw another 5 observations with a mean value of 3
+  sample2 <- rnorm(n = 5,
+                   mean = 3)
+  # perform a t-test and record the p-value
+  pvalue <- t.test(sample1, sample2)$p.value
+  data_diff_distr$pvalues[i] <- pvalue
+}
+
+# plot the p-values
+ggplot(data = data_diff_distr,
+       mapping = aes(x = pvalues)) +
+  geom_histogram(breaks = seq(from = 0,
+                              to = 1,
+                              by = 0.05))
+```
+
+This time, the majority of p-values are rather small. However, there are still some that are above the chosen p-value cutoff. Let us classify those as **false negatives** and the rest as **true positives**.
+
+```{r}
+# create a new column in the data frame and classify the p-values as false negatives or true positive
+data_diff_distr$classification <- NA
+data_diff_distr$classification[data_diff_distr$pvalues > 0.05] <- "FN"
+data_diff_distr$classification[data_diff_distr$pvalues <= 0.05] <- "TP"
+
+# plot the p-values
+ggplot(data = data_diff_distr,
+       mapping = aes(x = pvalues,
+                     fill = classification)) +
+  geom_histogram(breaks = seq(from = 0,
+                              to = 1,
+                              by = 0.05))
+```
+
+Now, let us simulate working with a real RNA-seq sample, where differentially expressed genes are mixed with genes that are not differentially expressed. In other words, let us simply stack the two data frames on top of each other and see how the p-values are distributed among the classes.
+
+```{r}
+# stack the two data frames on top of each other
+data_combined <- rbind(data_same_distr, data_diff_distr)
+
+# convert classification to a factor and set the levels in a specific order (helps with visualization)
+data_combined$classification <- factor(data_combined$classification,
+                                       levels = c("TP", "FP", "FN", "TN"))
+
+# plot the p-values
+ggplot(data = data_combined,
+                     mapping = aes(x = pvalues,
+                                   fill = classification)) +
+  geom_histogram(breaks = seq(from = 0,
+                              to = 1,
+                              by = 0.05))
+```
+
+We see that a certain fraction of p-values that are lower than 0.05 are false positives in the mixed data set. And if you look carefully, you will realize that the number of false positive p-values is similar to the number of all p-values in bins on the right side of the plot (those are mostly true negatives).
+
+```{r}
+ggplot(data = data_combined,
+                     mapping = aes(x = pvalues,
+                                   fill = classification)) +
+  geom_histogram(breaks = seq(from = 0,
+                              to = 1,
+                              by = 0.05)) +
+  geom_hline(yintercept = 50,
+             linetype = 'dotted')
+```
+
+Now, it would be great if we were able to shift the p-values in such a way that ~50 p-values that used to be to the left of the 0.05 cutoff ended up to the right of it. But how do we make sure that we push the false positives over the cutoff and not the true positives? The answer is quite simple: false positive p-values are uniformly distributed, while true positive p-values are skewed to the left, so shifting **all** p-values to the right should more strongly affect the false positives!
+
+```{r}
+# limit the x range by changing breaks in geom_histogram
+ggplot(data = data_combined,
+                    mapping = aes(x = pvalues,
+                                  fill = classification)) +
+  geom_histogram(breaks = seq(from = 0,
+                              to = 0.05,
+                              by = 0.005))
+```
+
+A simple and effective procedure to shift the p-values to the right is called **F**alse **D**iscovery **R**ate (**FDR**) correction, introduced by Yoav Benjamini and Yosef Hochberg in [1995](https://doi.org/10.1111/j.2517-6161.1995.tb02031.x). Here is the algorithm:
+
+```
+Step 1: rank all p-values from smallest (rank 1) to largest (rank N).
+
+Step 2: start with the p-value that has the highest rank (N). The adjusted p-value for this observation equals the original p-value for this observation. This is an exception.
+
+Step 3: proceed to the second largest rank (N-1) and repeat the same for every other rank top-to-bottom. Compare two numbers: (original p-value * number of observations / rank) vs. the adjusted p-value of the *previous* (higher ranked) observation. Pick the smaller number and use it as the adjusted p-value for the given observation.
+```
+
+Let us implement this algorithm in code.
+
+```{r}
+# step 1 - arrange p-values in descending order and assign rank values from what equals the number of rows down to 1
+data_combined <- data_combined %>%
+  arrange(desc(pvalues)) %>%
+  mutate(rank = nrow(data_combined):1)
+
+# create a new column for adjusted p-values
+data_combined$pvalues_adj_manual <- NA
+
+# step 2 - the p-value with the highest rank (the first one) stays the same
+data_combined$pvalues_adj_manual[1] <- data_combined$pvalues[1]
+
+# step 3 - repeat the same for all p-values except the first one
+for (i in 2:nrow(data_combined)) {
+  # extract the adjusted p-value of the observation with a higher rank
+  previous_adjusted <- data_combined$pvalues_adj_manual[i-1]
+  # calculate current p-value * number of observations / current rank
+  current_adjusted <- data_combined$pvalues[i] * nrow(data_combined) / data_combined$rank[i]
+  # pick the smaller of the two numbers and store the result
+  current_adjusted <- min(current_adjusted, previous_adjusted)
+  data_combined$pvalues_adj_manual[i] <- current_adjusted
+}
+
+# look at the data
+head(data_combined)
+tail(data_combined)
+```
+
+In R, this can be done using the function `p.adjust()`.
+
+```{r}
+data_combined$pvalues_adj_r <- p.adjust(data_combined$pvalues,
+                                        method = "fdr")
+
+# are the results the same as what we calculated manually?
+# note that rounding is necessary because of the floating point error - purely a computational problem
+table(round(data_combined$pvalues_adj_manual,10) == round(data_combined$pvalues_adj_r,10))
+```
+
+Finally, let us see how adjustment shifted the distribution of p-values of different classes.
+
+```{r}
+plot1 <- ggplot(data = data_combined,
+                mapping = aes(x = pvalues,
+                              fill = classification)) +
+  geom_histogram(breaks = seq(from = 0,
+                              to = 1,
+                              by = 0.05))
+
+plot2 <- ggplot(data = data_combined,
+                mapping = aes(x = pvalues_adj_r,
+                              fill = classification)) +
+  geom_histogram(breaks = seq(from = 0,
+                              to = 1,
+                              by = 0.05))
+
+ggarrange(plot1, plot2,
+          labels = c("before", "after"))
+```
+
+As you see, the proportion of false positives in the first bin has decreased, so it has worked. However, we have also lost a lot of true positives (we got rid of ~300 and not ~50 genes in the "significant" bin). This is an unfortunate side effect! In fact, things get way worse if instead of mixing 1,000 differentially expressed genes with 1,000 not differentially expressed genes, you try using, say, 5,000 not differentially expressed genes.
+
+```{r}
+# create an empty data frame with a single column to store p-values
+data_same_distr <- data.frame("pvalues" = rep(NA, 5000))
+
+# repeat 1,000 times (= the number of rows in data_same_distr):
+for (i in 1:nrow(data_same_distr)) {
+  # draw 5 observations with a mean value of 1
+  sample1 <- rnorm(n = 5,
+                   mean = 1)
+  # draw another 5 observations with a mean value of 1
+  sample2 <- rnorm(n = 5,
+                   mean = 1)
+  # perform a t-test and record the p-value
+  pvalue <- t.test(sample1, sample2)$p.value
+  data_same_distr$pvalues[i] <- pvalue
+}
+
+# create a new column in the data frame and classify the p-values as false positive or true negatives
+data_same_distr$classification <- NA
+data_same_distr$classification[data_same_distr$pvalues <= 0.05] <- "FP"
+data_same_distr$classification[data_same_distr$pvalues > 0.05] <- "TN"
+
+# stack the two data frames on top of each other
+data_combined <- rbind(data_same_distr, data_diff_distr)
+
+# convert classification to a factor and set the levels in a specific order (helps with visualization)
+data_combined$classification <- factor(data_combined$classification,
+                                       levels = c("TP", "FP", "FN", "TN"))
+
+# adjust p-values
+data_combined$pvalues_adj_r <- p.adjust(data_combined$pvalues,
+                                        method = "fdr")
+
+plot1 <- ggplot(data = data_combined,
+                mapping = aes(x = pvalues,
+                              fill = classification)) +
+  geom_histogram(breaks = seq(from = 0,
+                              to = 1,
+                              by = 0.05))
+
+plot2 <- ggplot(data = data_combined,
+                mapping = aes(x = pvalues_adj_r,
+                              fill = classification)) +
+  geom_histogram(breaks = seq(from = 0,
+                              to = 1,
+                              by = 0.05))
+
+ggarrange(plot1, plot2,
+          labels = c("before", "after"))
+```
+
+Here, we lost almost all true positives! And the number of genes in most animal genomes is >15,000. For this reason, both `DESeq2` and `edgeR` try to minimize this overcorrection effect by filtering out genes **before** differential expression testing. For example, if a gene is lowly expressed in both conditions, it is more beneficial to **not** perform differential expression testing for it at all. The p-value will likely not be significant anyway due to high variance, and doing an extra test would reflect badly on the recovery of true positives. In `DESeq2`, this filtering is done automatically, but you may need to adjust the expression cutoffs in `edgeR`.
+

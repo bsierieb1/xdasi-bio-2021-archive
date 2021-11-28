@@ -1,5 +1,6 @@
 ---
 title: "Central limit theorem exercise: NYC street trees"
+author: "Bogdan Sieriebriennikov"
 date: "9/16/2021"
 output: html_document
 ---

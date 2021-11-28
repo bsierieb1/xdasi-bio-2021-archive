@@ -1,5 +1,6 @@
 ---
 title: "Empirical Probability Distributions"
+author: "Bogdan Sieriebriennikov"
 date: "September 24, 2021"
 output: html_document
 ---

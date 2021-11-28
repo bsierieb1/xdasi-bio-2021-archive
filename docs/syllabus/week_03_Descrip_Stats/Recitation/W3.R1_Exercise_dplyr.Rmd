@@ -1,5 +1,6 @@
 ---
 title: "Data Manipulation using `dplyr`"
+author: "Bogdan Sieriebriennikov"
 date: "September 17, 2021"
 output: html_document
 ---

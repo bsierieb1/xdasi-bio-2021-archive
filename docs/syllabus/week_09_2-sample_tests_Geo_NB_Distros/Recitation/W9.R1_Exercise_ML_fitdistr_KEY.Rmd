@@ -1,5 +1,6 @@
 ---
 title: "Numerical Methods: Maximum Likelihood Estimation of Distribution Parameters"
+author: "Bogdan Sieriebriennikov"
 date: "October 29, 2021"
 output: html_document
 ---
