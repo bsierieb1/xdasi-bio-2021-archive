@@ -11,6 +11,9 @@ output:
   pdf_document: default
 ---
 ```{r setup, include=FALSE}
+#knitr::opts_chunk$set(echo = TRUE, error=TRUE)
+knitr::opts_chunk$set(echo = TRUE)
+
 #install.packages("tidyverse")
 #install.packages("ggpubr")
 library(tidyverse)
@@ -23,7 +26,7 @@ rm(list = ls())
 
 ---
 
-# Q1: SARS-CoV-2 Diagnostics
+# SARS-CoV-2 Diagnostics
 
 ## Background
 
@@ -40,6 +43,9 @@ lab. The results of this study have been published:
 [**Xie et al., _Processes_ 2020** (PDF)](data/processes-08-01425.pdf) - 
 [Supplement (PDF)](data/processes-08-01425-s001.pdf)
 
+As for many real-world datasets, in this homework you will see that most of your 
+effort will be devoted to checking and cleaning the data before you get to the fun
+part! Unfortunately, that's just the way the cookie crumbles. ;-)
 
 <!-- ======================================================================= -->
 ### The assays
@@ -128,7 +134,7 @@ there are a total of 24 assays)
     + `RP`: Human RP gene (6 replicates)
 + **Value**: Number of PCR cycles at which a signal was detected (numerical)
   + ***NOTE: This is the $C_t$ value, or "Cycles to threshold". A value of 999
-  means that NOTHING WAS DETECTED***
+  means that NOTHING WAS DETECTED.***
 + **Quality**: Quality score for assay (**you can ignore this**)
 + **Call**: `Pass` (good assay) or `Flag` (bad assay or Value = 999)
 + **Threshold**: Quality cutoff for `Pass` (**you can ignore this**)
@@ -161,7 +167,7 @@ contamination, etc.)
 <br>
 
 <!-- *********************************************************************** -->
-## Q0: Prepare the data
+## Q1: Prepare the data
 
 Below you will organize the data to make it easier for you to work with it.
 Feel free to delete any columns you don't need to use, or to add columns that
@@ -174,7 +180,7 @@ Read in the Fluidigm data file and take a look at it.
 
 ```{r}
 # Import massaged Fluidigm data file
-fluid.all = read.csv("data/Fluidigm_1691207281.csv", stringsAsFactors = TRUE)
+fluid.all = 
 head(fluid.all)
 ```
 
@@ -192,19 +198,19 @@ are not interested in anymore. You should keep the sample ID and/or SampleName,
 AssayName, Value, Call, and Plate columns. You will also need to keep rConc
 for the Standards.
 
+**Hint**: You can do this any way you like. One convenient method is to use the `dplyr` paradigm `filter %>% select %>% arrange`.
+
 ```{r}
 # ============================================================================ #
 # negative controls ("RX QC" and "NT QC")
-neg.ctls = fluid.all %>% filter(SampleName %in% c("RX QC", "NT QC")) %>% 
-  select(ID,SampleName,AssayName,Value,Call,Plate) %>% 
-  arrange(Plate,ID)
+neg.ctls = 
+
 
 # ============================================================================ #
 # standards ("CoV 50", "CoV 500", "CoV 5000")
-std.ctls = fluid.all %>% filter(!rConc == 1) %>%  # shortcut
-  select(ID,SampleName,rConc,AssayName,Value,Call,Plate) %>% 
-  arrange(Plate,ID)
-
+std.ctls = 
+  
+  
 ```
 
 
@@ -224,7 +230,7 @@ should be 999. This automatically raises a value of "Flag" in the "Call" column.
 
 #### Negative controls
 
-First, use `ggplot` to take a look at the negative controls. 
+First, use `ggplot` to take a look at the negative controls.
 
 + Make a boxplot or violin plot using `SampleName` and `Value`.
 + Use `facet_grid(Plate ~ AssayName)` to show the data for each assay separated by plate.
@@ -235,86 +241,62 @@ Once you get the syntax working, you can use the same template to plot the stand
 # take a look at the data ...
 # View(neg.ctls)
 
-# the Value for all of the negative controls should be 999
-ggplot(neg.ctls, aes(x=SampleName, y=Value, fill=SampleName)) + 
-  geom_violin() +
-  geom_boxplot(width=0.05, fill="white") +
-  facet_grid(Plate ~ AssayName)
+# plot Ct for all negative controls
+
+
 ```
 
 
-Do all of the **negative** controls all look ok? Why or why not? 
-If not, what could explain the results?
+Do all of the **negative** controls all look ok? Why or why not? If not, what could explain the results?
+
+**Hint**: Check the description of the data file above to remind yourself what the Ct value for the negative controls should be.
 
 ```{r eval=FALSE}
 # Your answer here
-
-No -- there should be no N1, N2, or RP detected for the QC wells, so 
-we would expect to see Value = 999 and Call = "Flag".
-
-However, some of them amplify something on Plate 2.
-This is probably due to cross-contamination or errors during plate loading.
-
-RX controls (RNA extraction):
-all three probes show some signal, so it's possible that one of the
-positive clinical samples got loaded in the wrong place (prior to RNA extraction).
-
-NT controls (RT and pre-amplifcation):
-N1 and N2 are negative, but RP amplified -- possible contamination
-from a negative lab sample, or one of the lab people?
-
 ```
 
 Do you think you proceed with the analysis using the data on one of the two plates? Explain.
 
 ```{r eval=FALSE}
 # your answer here
-
-Yes, Plate 1 looks ok
 ```
 
 
 #### Standard controls
 
-Now take a look at the standards (you can probably repeat what you just did above using the standard controls instead of the negative controls, but you might want to do a second pass where you just look at N1 and N2 after you look at all 3 assays). Note that the standards should amplify at PCR cycles below 20, and the number of cycles to amplify should decrease with increasing concentration of the control plasmid.
+Now take a look at the standards.
+
+Note that the Value for all of the positive controls for the N gene should be some number below 100 and for the human RP gene should be 999 (since no human RNA should be amplified using the N gene plasmid).
 
 ```{r}
 # take a look at the data ...
 # View(std.ctls)
 
-# the Value for all of the positive controls for the N gene should be some number below 100 and for RP should be 999
-ggplot(std.ctls, aes(x=SampleName, y=Value, fill=SampleName)) + 
-  geom_violin() +
-  geom_boxplot(width=0.05, fill="white") +
-  facet_grid(Plate ~ AssayName) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+# ggplot for all standard controls
 
+
+```
+
+After looking at all 3 assays, make a new data frame that contains only the N1 and N2 assays for the Standards (remove the RP data from the dataset) and replot the subsetted data. Note that the Ct values for the standards should be under 20, and the number of cycles should decrease with increasing concentration of the control plasmid (since it takes fewer cycles to amplify a larger amount of starting material).
+
+```{r}
 # look more closely at just the N1 and N2 results
-n1n2.std.ctls = std.ctls[std.ctls$AssayName != "RP",]
+std.ctls.n1.n2 = 
 
-ggplot(n1n2.std.ctls, aes(x=SampleName, y=Value, fill=SampleName)) + 
-  geom_violin() +
-  geom_boxplot(width=0.05, fill="white") +
-  facet_grid(Plate ~ AssayName) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+# ggplot for just N1 and N2
+
 ```
 
 Do the **standard** controls all look ok? Why or why not?
 
 ```{r eval=FALSE}
 # Your answer here
-
-No -- there should be no RP detected, but some of the RP also amplify on Plate 2.
-Again, this reflects some kind of contamination somewhere along the line.
-
 ```
 
 Based on the standard controls, do you think you can proceed with the analysis for at least one of the plates? Explain.
 
 ```{r eval=FALSE}
 # your answer here
-
-Yes, Plate 1 looks ok
 ```
 
 
@@ -323,7 +305,7 @@ Yes, Plate 1 looks ok
 
 #### Subset Fluidigm data and add Clinical results
 
-+ Extract the sample data from the Fluidigm file.
++ Extract the sample data from the Fluidigm file (again, `filter %>%  select %>%  arrange` could be useful here.)
 + Load the PHD result data and merge the two files using the sample barcode IDs.
   + To join the tables, you can use the `inner_join()` command.
 
@@ -331,18 +313,18 @@ Yes, Plate 1 looks ok
 # ============================================================================ #
 # samples
 
-# subset fluid.all
-samples = fluid.all %>% 
-  filter(! SampleName %in% c("RX QC", "NT QC", "Cov 50", "CoV 500", "CoV 500"))  %>% 
-  select(ID,SampleName,rConc,AssayName,Value,Call,Plate) %>% 
-  arrange(Plate,ID)
+# filter fluid.all to keep just the samples and none of the controls
+samples = 
 
-# Import PHD results
-phd.calls = read.csv("data/PHD_results.csv", stringsAsFactors = FALSE)
+# Import PHD results from .csv file
+phd.calls = 
 
 # Add a column to the Fluidigm file containing the PHD results
 # use the inner_join() function to do this
-samples = inner_join(samples, phd.calls, by.x = c("SampleName"), by.y = c("Sample_barcode"), row.names = FALSE)
+samples = inner_join( <df1> , <df2> , 
+                     by.x = c("SampleName"), 
+                     by.y = c("Sample_barcode"), 
+                     row.names = FALSE)
 
 # clean up
 rm(phd.calls)
@@ -360,66 +342,47 @@ that we will fill up as we go along.
 
 ```{r}
 # Add a column to sample for NYUAD classes and rename Class to PHD_Class
-samples = samples %>%  rename(PHD_Class = Class) %>% mutate(NYUAD_Class = NA)
-
+samples = 
+head(samples)
 ```
 
 <br>
 
 <!-- *********************************************************************** -->
-## Q1: Quality Control for Standard Dilution Series
+## Q2: Quality Control for Standard Dilution Series
 
 <!-- ======================================================================= -->
 ### A. Standard curves
 
-In order to quantify viral load, we want to make sure that the dilution series for our standards look good, since we will depend on these to quantify our samples later.
+In order to quantify viral load, we want to make sure that the dilution series for our standards look suitable for quantification of the viral load in our samples.
 
-First, use `ggplot` to plot the data with a simple linear regression line of Ct
-against the concentration.
+First, use `ggplot` to plot just the N1 and N2 control data with a simple linear regression line of Ct against the concentration (recall we subsetted these above as `std.ctls.n1.n2`).
 
 ***Hints***: 
 
-+ If you have not already done so, you may find it convenient to make a new data frame that contains only the N1 and N2 assays for the Standards (remove the RP data from the dataset).
 + Map `color` to **AssayName** and facet the plot by **Plate** to visualize the
-results for N1 and for N2 separately on each plate.
-+ Since the units are in PCR cycles, you will need to do the regression using a transformation of the data. Since you have a 10-fold dilution series (50, 500, 5000 copies/ul), you can use a log transformation with base 10 (`log10()`).
-+ Plot the individual data points, and then add a simple regression line using `geom_smooth(method="lm")`.
+results for N1 and for N2 separately on each plate (you can use `facet_wrap(~Plate)`).
+
++ Note that Ct units are in PCR cycles, so you will need to do the aesthetic mapping using a transformation of the data. 
+  + Since you have a 10-fold dilution series (50, 500, 5000 copies/ul), you can use a log transformation with base 10 (`log10()`) on the x-axis instead of using `rConc` directly.
+
++ Plot the individual data points, and then add the regression lines using `geom_smooth(method="lm")`.
+
+*Optional: if you want to show the original concentrations instead of the log10 values on the graph, you can use this function inside the ggplot command (I think there may be easier ways to do this, but this works):*
+`scale_x_continuous(label = function(x){return(round(10^x,1))})`
 
 ```{r}
-# subset N1 and N2 assays from standard control set
-std.ctls.n1.n2 = std.ctls %>% filter(AssayName %in% c("N1","N2"))
-
 # side-by-side graphs for N1 and N2 on Plate 1 and Plate 2
-ggplot(std.ctls.n1.n2, aes(x=log10(rConc), y=Value, color=AssayName)) +
-  geom_point() +
-  geom_smooth(method="lm") +
-  ggtitle("SARS-CoV-2 dilution series by plate (N1 & N2 probe sets)") +
-  xlab("log10(viral copies/ul)") + ylab("Ct") +
-  facet_wrap(~Plate)
+# using subsetted N1 and N2 assays from standard control set (already done above)
 
-## NOTE: If you want to show the original concentrations instead of the
-  # log10 concentrations on the graph, you can use this function inside
-  # the ggplot command
-#  scale_x_continuous(label = function(x){return(round(10^x,1))})
-
-# with original concentrations
-ggplot(std.ctls.n1.n2, aes(x=log10(rConc), y=Value, color=AssayName)) +
-  geom_point() +
-  geom_smooth(method="lm") +
-  ggtitle("SARS-CoV-2 dilution series by plate (N1 & N2 probe sets)") +
-  scale_x_continuous(label = function(x){return(round(10^x,1))}) +
-  xlab("Viral copies/ul") + ylab("Ct") +
-  facet_wrap(~Plate)
 ```
 
 
-+ How do the standard regression lines look? Does everything look consistent
+How do the standard regression lines look? Does everything look consistent
 between the N1 and N2 assays? How about between Plates?
 
-```
+```{r eval=FALSE}
 # Your answer here
-
-No -- the N1 and N2 assays look similar, but the lines from the two plates are really different.
 ```
 
 
@@ -436,21 +399,14 @@ results using `summary()`
 ```{r}
 # lm for standards with Plate interaction term
 # you may do this for N1, N2, or both combined
-summary(lm(Value ~ log10(rConc) * Plate, data = filter(std.ctls, AssayName == "N1")))
-summary(lm(Value ~ log10(rConc) * Plate, data = filter(std.ctls, AssayName == "N2")))
-summary(lm(Value ~ log10(rConc) * Plate, data = std.ctls.n1.n2))
+
 ```
 
-+ What is the difference in slopes between the slopes for the standards on Plate
+What is the difference in slopes between the slopes for the standards on Plate
 1 vs. Plate 2? Is the interaction term significant?
 
-```
+```{r eval=FALSE}
 # Your answer here
-
-Yes, the difference in slopes is -2.7 or -2.8 (depending on whether one uses N1,
-N2, or both in the model).
-
-The P-values for the interaction terms are very small.
 ```
 
 
@@ -471,40 +427,36 @@ In practice, it is computed this way:
 $$Eff = 10^{-1/slope} - 1$$
 
 where the slope is derived from a linear regression of Cycles to Threshold (Ct) values 
-plotted against the $log_{10}$ values of the template amounts. A slope of -3.32 indicates 
-an amplification efficiency of 100%.
+plotted against the $log_{10}$ values of the template amounts. 
 
-**Efficiency between 90% and 110% is generally considered to be acceptable.** 
-This corresponds to a slope between approximately -3.1 and -3.6.
+A slope of -3.32 indicates an amplification efficiency of 100%, and **efficiency between 90% and 110% is generally considered to be good.** This corresponds to a slope between approximately -3.1 and -3.6.
 
 Below, you will try to figure out which dilution series looks ok and which one does not.
 
-+ Subset the dilution series by AssayName (N1 or N2) and Plate.
-+ Generate linear models for each combination separately (e.g. N1 on Plate 1, N2
-on Plate 1, etc.)
-  + Note: the above can be done in one step instead if you like.
-  
++ First, subset the dilution series by AssayName (N1 or N2) and Plate, and generate linear models for each combination separately (e.g. N1 on Plate 1, N2 on Plate 1, etc.)
+  + **Hint**: You can use `data = filter(std.controls, ... )` inside the lm, instead of creating separate data frame for each combination of plate and assay, but do whatever you feel most comfortable with.
+
+```{r}
+# make 4 separate linear models for N1 and N2 on Plate 1 or Plate 2
+lm.n1.p1 = 
+lm.n2.p1 = 
+lm.n1.p2 = 
+lm.n2.p2 = 
+
+# look at the summaries of the models
+
+```
+
+To evaluate the models, we will do the following:
+
 + Extract the R-squared value from each lm summary (accessible as
 `summary(your.model)$r.squared`).
 + Examine the slope and efficiency from each model (slope is available as one of
 the model coefficients).
 
-**Note**: you may choose to put these into a tabular format to make them easier
-to compare (but this is not needed to answer the question).
+Below this has been done for you and the results put into a tabular format to make them easier to compare. ***Note that I called the data frame containing just the standard controls `std.ctls`. If you used a different name, just substitute the name of your data frame below.***
 
 ```{r}
-# make 4 separate linear models for N1 and N2 on Plate 1 or Plate 2
-lm.n1.p1 = lm(Value ~ log10(rConc), data = filter(std.ctls, Plate == "Plate1" & AssayName == "N1"))
-lm.n2.p1 = lm(Value ~ log10(rConc), data = filter(std.ctls, Plate == "Plate1" & AssayName == "N2"))
-lm.n1.p2 = lm(Value ~ log10(rConc), data = filter(std.ctls, Plate == "Plate2" & AssayName == "N1"))
-lm.n2.p2 = lm(Value ~ log10(rConc), data = filter(std.ctls, Plate == "Plate2" & AssayName == "N2"))
-
-# look at the summaries of the models
-summary(lm.n1.p1)
-summary(lm.n2.p1)
-summary(lm.n1.p2)
-summary(lm.n2.p2)
-
 # Look at the slope/efficiency and R^2
 # Here is an outline for a data frame containing these data, if you want to use it
 # (but you don't have to)
@@ -528,15 +480,11 @@ These fits don't look perfect, but one plate looks a lot better than the other.
 So, you will need to choose one of these to use for quantifying your viral
 samples.
 
-+ Which plate's dilution series should you choose to quantify viral titers in
+Which plate's dilution series should you choose to quantify viral titers in
 the clinical samples, and why?
 
-```
+```{r eval=FALSE}
 # Your answer here
-
-We will use the standards from Plate 1:
-- R-squared is above 0.975
-- The slope/efficiency is not in the ideal range, but it's better than for Plate 2.
 ```
 
 ***NOTE: We indeed verified later that there were some problems with a bunch of
@@ -546,7 +494,7 @@ errors / contamination.***
 <br>
 
 <!-- *********************************************************************** -->
-## Step 3 - QC and clean data for clinical samples
+## Q3: QC and clean data for clinical samples
 
 Now we need to check on the N1/N2/RP Assays for the clinical samples.
 
@@ -555,35 +503,19 @@ Now we need to check on the N1/N2/RP Assays for the clinical samples.
 
 #### Distribution of Ct values
 
-+ Make a violin plot of the clinical sample data for **just the host RP gene**.
++ Make a violin plot of the clinical sample data for **just the host RP gene** (again, you can use `data = filter(...)` rather than make a separate data frame first, but do whatever you feel most comfortable with).
 + Separate the data by PHD diagnosis ("PHD_Class"), and facet by Plate.
 
 ```{r}
 # distribution of Ct values for RP genes in clinical samples
-ggplot(filter(samples, AssayName == "RP"), 
-       aes(x=PHD_Class, y=Value, fill=PHD_Class)) + 
-  geom_violin() +
-  geom_boxplot(width=0.05, fill="white") +
-  facet_wrap(~as.factor(Plate), nrow=1) +
-  scale_fill_manual(values=c("#00BFC4","#F8766D")) +
-  labs(title="Clincal samples: Amplification of host RP gene",
-       x="Sample Group", 
-       y = "Ct for human RP gene")
+
 ```
 
-
-+ What should we expect to see for the RP assays in the clinical samples? Does
+What should we expect to see for the RP assays in the clinical samples? Does
 everything look ok here?
 
-```
+```{r eval=FALSE}
 # Your answer here
-
-If a sample is good, then the human control gene should be detectable at least.
-If not, then we will have to take another sample because a negative result will
-be uninformative.
-
-Some of the samples on Plate 2 look invalid (Ct = 999).
-
 ```
 
 #### Filter samples for RP quality
@@ -597,7 +529,7 @@ proceeding to the quantification.
 + Also flag the assays that were removed by labeling them as "Inconclusive" in
 the `samples` dataframe (set `NYUAD_Class` to "Inconclusive").
 
-**Note**: Since this is tedious, we have filled in this part for you.
+**Note**: Since this is tedious, I have filled in this part for you.
 
 ```{r, collapse=TRUE}
 # ============================================================================ #
@@ -623,42 +555,23 @@ samples$NYUAD_Class[ ! samples$SampleName %in% valid.samples$SampleName ] = "Inc
 You should now have a filtered list with a full set of assays (N1, N2, and RP)
 for samples that you deem to be of "good quality".
 
-+ How many samples are left?
+How many samples are left?
 
-```
+```{r eval=FALSE}
 # Your answer here
-
-171 samples are left.
 ```
 
-+ Make a new plot of the Ct values for the RP gene from the filtered data.
+Make a new violin plot of the Ct values for the RP gene assays for the remaining samples.
+
++ Filter the RP data from `valid.samples`
++ Make a plot with the data separated by "PHD_class" (i.e. use this for the aesthetic mapping instead of "AssayName" to create a separate violin for the "Negative" and "Positive" results according to the diagonstic lab)
++ Facet by "Plate"
 
 ```{r}
-# get just the RP gene assays
-samples.rp = filter(valid.samples, AssayName == "RP")
+# subset the rp data from the valid samples (we will also need this below)
+samples.rp =
 
-# violin plot of RP Ct values in filtered data
-
-# all samples
-ggplot(filter(valid.samples, AssayName == "RP"), 
-       aes(x=AssayName, y=Value, fill=AssayName)) + 
-  geom_violin() +
-  geom_boxplot(width=0.05, fill="white") +
-  facet_wrap(~as.factor(Plate), nrow=1) +
-  scale_fill_manual(values=c("#00BFC4","#F8766D")) +
-  labs(title="Clincal samples: Amplification of host RP gene",
-       x="Probe set", 
-       y = "Ct for human RP gene")
-
-# by PHD diagnosis
-ggplot(samples.rp, aes(x=PHD_Class, y=Value, fill=PHD_Class)) + 
-  geom_violin() +
-  geom_boxplot(width=0.05, fill="white") +
-  facet_wrap(~as.factor(Plate), nrow=1) +
-  scale_fill_manual(values=c("#00BFC4","#F8766D")) +
-  labs(title="Clincal samples: Amplification of host RP gene",
-       x="Sample Group", 
-       y = "Ct for human RP gene")
+# violin plot of Ct values for valid assays, filtered for RP gene, by PHD diagnosis
 
 ```
 
@@ -668,52 +581,49 @@ ggplot(samples.rp, aes(x=PHD_Class, y=Value, fill=PHD_Class)) +
 If we want to use standards from only one of the plates for quantification, we
 should probably make sure that the samples amplified similarly on both plates,
 even though it looks like something went wrong with the standards on one of the
-plates.
+plates. (In other words, since we only have one good set of controls, we want to
+make sure we can use the standards to quantify the clinical samples on both plates).
 
-+ First, make a QQ plot for the CT values on both plates to see if the data look
-sort of normal.
++ First, get just the Ct data for Plate1 and Plate2 separately.
+
++ Make QQ plots for the Ct values on both plates to see if the data look sort of normal.
+  + Note that the `ggpubr` package contains a nice command called `ggqqplot()` for making QQ plots, if you want to try it out.
+
 + Next, perform a test for normality to see if the distributions on both plates
 look approximately normal.
+
 + Finally, identify and use an appropriate test to see whether these samples
 likely came from the same distribution.
 
 ```{r}
+## Plate 1 and Plate 2 Ct values
+rp.p1 = 
+rp.p2 = 
+  
+  
 ## QQ plots
 
 # Plate 1
-rp.p1 = samples.rp %>% filter(Plate == "Plate1") %>% select(Value)
-qqnorm(rp.p1$Value)
-qqline(rp.p1$Value)
 
 # Plate 2
-rp.p2 = samples.rp %>% filter(Plate == "Plate2") %>% select(Value)
-qqnorm(rp.p2$Value)
-qqline(rp.p2$Value)
+
 
 ## Test for normality
-shapiro.test(rp.p1$Value)
-shapiro.test(rp.p2$Value)
 
-## Test for difference in sample distributions
-#t.test(rp.p1$Value,rp.p2$Value) # not valid since data don't look normal
 
-# tests for non-normal distributions
-ks.test(rp.p1$Value,rp.p2$Value)
-wilcox.test(rp.p1$Value,rp.p2$Value)
+# Test for equality of normal distributions
+
 
 ```
 
-+ Based on these results, and using a p-value cutoff of 0.05, does it seem ok to
+Based on these results, and using a p-value cutoff of 0.05, does it seem ok to
 use the standards from only one of the plates to quantify the viral load in all
 the samples?
 
-```
+```{r eval=FALSE}
 # Your answer here
-
-Both KS and Wilcoxon rank sum test give P-values close to 0.05, but they are a
-little above it, so we will go ahead and use the standards from Plate 1 (we
-don't really have a good alternative choice anyway...)
 ```
+
 
 
 <!-- ======================================================================= -->
@@ -757,46 +667,33 @@ samples$NYUAD_Class[ samples$SampleName %in% nyuad.pos.samples$SampleName ] = "P
 samples$NYUAD_Class[which(is.na(samples$NYUAD_Class))] = "Negative"
 ```
 
-+ How many samples are left?
+How many samples are left?
 
-```
+```{r eval=FALSE}
 # Your answer here
-
-102 samples are left.
 ```
 
-+ Make a new violin plot with the cleaned data, showing the Ct values for the N1
-and N2 genes by plate.
+Make a new violin plot with the cleaned data, showing the Ct values for the N1
+and N2 genes faceted by plate.
 
 ```{r}
-# violin plot of N1 and N2 Ct distributions in cleaned data
+# violin plot of N1 and N2 Ct distributions in cleaned data, by assay
+```
 
-# by assay
-ggplot(nyuad.pos.samples, aes(x=AssayName, y=Value, fill=AssayName)) + 
-  geom_violin() +
-  geom_boxplot(width=0.05, fill="white") +
-  facet_wrap(~as.factor(Plate), nrow=1) +
-  scale_fill_manual(values=c("#00BFC4","#F8766D")) +
-  labs(title="Clincal samples: Amplification of N1 and N2 genes",
-       x="Assay (Probe Set)", 
-       y = "Ct")
+We can also plot the N1 and N2 assays based on whether they gave a positive or negative result in the clinical diagnostic assays performed at PHD. Modify your ggplot above to do this:
 
-# by negative and positive classes
-p.violin.plate.by.assay = function (df, p.title, x.label, y.label) {
-  ggplot(df, aes(x=PHD_Class, y=Value, fill=PHD_Class)) + 
-    geom_violin() +
-    geom_boxplot(width=0.05, fill="white") +
-    facet_grid(Plate ~ AssayName) +
-    labs(title = p.title,
-         x = x.label, 
-         y = y.label)
-}
++ Instead of using "AssayName" as the aesthetic mapping, use "PHD_class".
++ Instead of using `facet_wrap()`, use `facet_grid(Plate ~ AssayName)`.
 
-p.violin.plate.by.assay(nyuad.pos.samples,
-                        p.title="Valid clinical samples (virus detected at NYUAD)",
-                        x.label = "Sample Group",
-                        y.label = "Ct" )
+```{r}
+# by PHD diagnosis
 
+```
+
+Do you notice anything interesting bout the Ct values for the samples that PHD called "Negative" vs. "Positive"?
+
+```{r eval=FALSE}
+# your answer here
 ```
 
 
@@ -806,62 +703,52 @@ We also want to discard samples that showed high variability between replicates,
 since these wouldn't give us much confidence in our estimate of viral load;
 those samples would need to be re-analyzed again later.
 
-Below you will compare the variation in the original N1/N2 data vs. the
-variation in your cleaned up data.
+Below you will compare the variation in the original N1/N2 data vs. the variation in your cleaned up data. To help out with this, I already filtered the data for you below using the following steps:
 
-**Note**: To help out with this, we have completed the initial steps below for
-you already.
-
-+ Filter the original `samples` data frame for N1 and/or N2 assays with Ct Value
-< 999. 
-+ Compute the **mean** and **standard deviation** across the replicates for each
++ Filter the original `samples` data frame and keep just the N1 and/or N2 assays with Ct Value < 999 (these are "good" samples)
++ Compute the **mean** and **st.andard deviation** across the replicates for each
 assay (N1 and N2), and save this summary data in a new data frame (there will
 now be one row per sample.)
+  + Hint: you can use the very convenient `dplyr` paradigm `filter %>% group_by %>% summarise` for this.)
 + Do the same for the filtered "Positives" dataset (`nyuad.pos.samples`).
 
 ```{r, collapse=TRUE}
 # sample variation (all clinical samples with Ct < 999)
-sample.var = samples %>% filter(AssayName %in% c("N1","N2") & Value < 999) %>% 
-  group_by(SampleName,AssayName,PHD_Class,Plate) %>%
+sample.clean.var = samples %>% 
+  filter(AssayName %in% c("N1","N2") & Value < 999) %>% 
+  group_by(SampleName, AssayName, PHD_Class,Plate) %>%
   summarise(Ct.mean = mean(Value), Ct.sd = sd(Value), n = length(Value)) 
 
 # sample variation (all "NYUAD Positive" samples)
-nyuad.var = nyuad.pos.samples %>%
-  group_by(SampleName,AssayName,PHD_Class,Plate) %>%
+nyuad_pos.clean.var = nyuad.pos.samples %>%
+  group_by(SampleName, AssayName, PHD_Class,Plate) %>%
   summarise(Ct.mean = mean(Value), Ct.sd = sd(Value), n = length(Value))
 ```
 
 Your task is to draw some graphs to visually compare the variation in Ct values
 in these two datasets.
 
-+ For each of the two datasets we just made, add a column containing the SEM for
-the Ct values.
-+ Then, for each dataset, make a plot of the SEM(Ct) on the y-axis vs. the
-samples on the x-axis.
-  + Include a horizontal line at SEM(Ct) = 0.5 on each of the graphs.
-  + Hint: you can use the expression `seq(some_column_name)` for the x-axis
-  aesthetic mapping in order to plot the samples along the x-axis.
++ First, for each of the two datasets we just made (cleaned sample data and NYUAD "Positive" samples), add a column containing the SEM for the Ct values.
 
 ```{r}
 ## Add SEM(Ct) column to each dataset
-sample.var = sample.var %>% mutate(Ct.se = Ct.sd/sqrt(n))
-nyuad.var = nyuad.var %>% mutate(Ct.se = Ct.sd/sqrt(n))
+sample.clean.var = 
+nyuad_pos.clean.var = 
+```
 
+Then, for each dataset, make a plot of the SEM(Ct) on the y-axis vs. the
+samples on the x-axis.
+  + Include a horizontal line at SEM(Ct) = 0.5 on each of the graphs.
+  + Hint: for the x-axis aesthetic mapping, you can use the expression `seq(SampleName)` in order to plot the samples along the x-axis.
+
+```{r}
 ## Plot variation as SEM(Ct) vs. sample index
 
 # All samples with N1/N2 detected
-p1 = ggplot(data=sample.var, aes(x=seq(SampleName), y=Ct.se)) +
-  geom_point() +
-  geom_hline(yintercept=0.5, linetype="dashed", color = "red") +
-  xlab("Sample") + ylab("SEM(Ct)") +
-  ggtitle("Variation among replicates (all samples)")
+p1 = 
 
 # Cleaned data
-p2 = ggplot(data=nyuad.var, aes(x=seq(Ct.se), y=Ct.se)) +
-  geom_point() +
-  geom_hline(yintercept=0.5, linetype="dashed", color = "red") +
-  xlab("Sample") + ylab("SEM(Ct)") +
-  ggtitle("Variation among replicates (cleaned samples)")
+p2 = 
 
 ggarrange(p1,p2,nrow=2)
 ```
@@ -876,7 +763,9 @@ So luckily, you don't need to do any more filtering for this step!!!
 <br>
 
 <!-- *********************************************************************** -->
-## Step 4 - Compare Results and Estimate Viral Load
+## Q4: Compare Results and Estimate Viral Load
+
+Finally! Now we've gotten to th fun part!!!
 
 <!-- ======================================================================= -->
 ### A. Compare sample classification from PHD and NYUAD
@@ -884,38 +773,31 @@ So luckily, you don't need to do any more filtering for this step!!!
 Now that you have a clean set of samples with reliable data, let's see how we
 did compared to PHD.
 
-+ Make a summary table containing the sample names, PHD class, and NYUAD class
-for the samples in the original `sample` dataset.
-+ Make a contingency table comparing the Positive / Negative / Inconclusive
-calls according to NYUAD vs. PHD.
++ First, make a 3-column summary table containing the sample names, PHD class, and NYUAD class for the samples in the original `sample` dataset.
+  + **Hint**: you need to collapse all the replicates first in order to answer this
+question properly. You can use `group_by %>% summarize` to make a data frame with just one row per sample that you can then use to make your table.
 
-**Hint**: you need to collapse all the replicates first in order to answer this
-question properly. You can use `group_by()` and `summarize()` to make a data
-frame with just one row per sample that you can then use to make your table.
++ Next, make a contingency table comparing NYUAD's Positive / Negative / Inconclusive calls vs. PHD's Negative / Positive calls (this has been done for you below.)
 
 ```{r}
 # get summary table of classifications for each sample (one row per sample)
-sample.classes = samples %>% group_by(SampleName, PHD_Class, NYUAD_Class) %>% summarise
+sample.classes = 
+head(sample.classes)
 
 # make a contingency table
 with(sample.classes, table(PHD_Class, NYUAD_Class, dnn = c("PHD","NYUAD")))
 ```
 
-+ How many samples that were called "Positive" by PHD did NYUAD fail to detect?
+How many samples that were called "Positive" by PHD did NYUAD fail to detect?
 
-```
+```{r eval=FALSE}
 # Your answer here
-
-Two were negative and 4 were inconclusive.
 ```
 
-+ How many samples that were called "Negative" by PHD did NYUAD detect as positive?
+How many samples that were called "Negative" by PHD did NYUAD detect as positive?
 
-```
+```{r eval=FALSE}
 # Your answer here
-
-NYUAD detected virus in 17 samples that PHD called as Negative. NYUAD also had
-inconclusive results for 7 of the negative samples from PHD.
 ```
 
 _**NOTE**: In our analysis we actually included an additional class for
@@ -928,148 +810,100 @@ only one Negative that was reported as Positive by PHD._
 <!-- ======================================================================= -->
 ### B. Linear model for prediction
 
-+ Use the "good" standard dilution series you identified above, create a linear
+Use the "good" standard dilution series you identified above, create a linear
 model for viral load based on the Ct values for the standards. 
 
 **Note**: Even though the N1 and N2 didn't amplify **exactly** the same, they
-were pretty close, so just combine them for the purpose of making the model.
+were pretty close, so just combine them as replicates for the purpose of making the model.
 
 ```{r}
+# filter out N1 and N2 controls from Plate 1
+std.ctls.p1 = 
+
 # linear model for rConc based on combined N1 and N2 Ct from "good" plate
-std.ctls.n1n2.p1 = std.ctls.n1.n2 %>% filter(Plate == "Plate1")
-lm.std.rConc = lm(log10(rConc) ~ Value, std.ctls.n1n2.p1)
+lm.std.rConc = 
 ```
 
-+ Plot the linear model with a 95% CI.
+Plot the linear model with a 95% CI (remember that you can use `geom_smooth` for this). 
+
+**Hint**: Remember that you could use the function provided above to convert back to original units instead of showing the log10 units on the x-axis.
 
 ```{r}
 ## ggplot of linear model for Ct vs. conc, with regression line and CI bands
 
-# ============================================================================ #
-## KCG METHOD 1 -- just plot the data for Plate 1 with geom_smooth
-
-# simple plot
-ggplot(std.ctls.n1n2.p1, aes(x=log10(rConc), y=Value)) +
-  geom_point(aes(color=AssayName)) +
-  geom_smooth(method="lm", color="black", size=0.5) +
-  ggtitle("SARS-CoV-2 dilution series (Plate 1, N1 & N2 probe sets)") +
-  xlab("log10(viral copies/ul)") + ylab("Ct")
-
-# with original concentrations
-ggplot(std.ctls.n1n2.p1, aes(x=log10(rConc), y=Value)) +
-  geom_point(aes(color=AssayName)) +
-  geom_smooth(method="lm", color="black", size=0.5) +
-  ggtitle("SARS-CoV-2 dilution series (Plate 1, N1 & N2 probe sets)") +
-  scale_x_continuous(label = function(x){return(round(10^x,1))}) +
-  xlab("Viral copies/ul") + ylab("Ct")
-
-# ============================================================================ #
-## KCG METHOD 2 -- use the model to make predictions on the control data, using
-#  "confidence", then predict the CI for the individual points and plot them
-
-# use lm for prediction on controls to get CIs for them
-pred.std.rConc = predict(lm.std.rConc, std.ctls.n1n2.p1, interval = "confidence")
-df.pred.std.rConc = data.frame(pred.std.rConc)
-
-# add to a df
-fit.pred.std.rConc = std.ctls.n1n2.p1 %>% 
-  mutate(fit1 = df.pred.std.rConc[,"fit"],
-         lwr1 = df.pred.std.rConc[,"lwr"],
-         upr1 = df.pred.std.rConc[,"upr"])
-
-# base plot
-p0 = std.ctls.n1n2.p1 %>% 
-  ggplot(aes(x=log10(rConc), y=Value, color=AssayName)) + 
-  geom_point() 
-  
-# plot regression lines
-p.fit = p0 + geom_line(data = fit.pred.std.rConc, 
-                  mapping = aes(x = fit1, y = Value), 
-                  col = "darkgray", size = .5)
-
-# add CI's
-p.fit = p.fit + geom_ribbon(data = fit.pred.std.rConc, 
-                    mapping = aes(y = Value, xmin = lwr1, xmax = upr1),
-                    fill = "gray", alpha = 0.5, inherit.aes = FALSE)
-
-p.fit + ggtitle("SARS-CoV-2 dilution series (Plate 1, N1 & N2 probe sets)")
 ```
 
 
 <!-- ======================================================================= -->
 ### C. Predict viral loads for samples
 
-+ Use the model you just made to make predictions of the viral load for each of
-the samples in your "NYUAD Positives" dataset.
-  + Make sure to use "**prediction**" intervals instead of "confidence" intervals
-  for the prediction (recall that CI is computed from the data we have, whereas
-  PI is for unknown data, so the PI should be wider than the CI).
+First, use the model you just made to make predictions of the viral load for each of
+the samples in your "NYUAD Positives" dataset. Make sure to use "**prediction**" intervals instead of "confidence" intervals for the prediction (recall that CI bands are narrower than PI bands).
 
-**NOTE**: You will need to decide whether to take the mean and then predict on that,
-  or predict on individual measurements and take the mean afterward. **You must do
-  one of these things for your final data report.** 
-  *For simplicity, we have made a placeholder in the code for taking the means first, but you can do it either way.*
-
-+ Make a new data frame that combines the prediction results with your sample
-data, appended as three new columns: the fit, the lower prediction interval
-bound, and the upper prediction interval bound.
+**NOTE**: Since you will report one estimate of viral load for each sample, you will need to decide whether to take the mean of the replicates for each sample and then predict on that, or whether you want to predict on individual measurements and take the mean afterward. **You must do one of these things for your final data report.** *For simplicity, I have made a placeholder in the code for taking the means first, but you can do it either way.*
 
 ```{r}
 # combine sample measurements for N1 and N2 for each sample to a grand mean
 # - you want to end up with one row per sample
-# - you can use `goup_by()` and `summarise()` to do this
-nyuad.pos.sample.means = nyuad.pos.samples %>% 
-  group_by(SampleName, PHD_Class, Plate) %>% 
-  summarize(Value = mean(Value))
+# - you can use `group_by()` and `summarise()` to do this
+nyuad.pos.sample.means = 
 
 # use lm for prediction on controls to get CIs for them
-pred.sample.rConc = data.frame(predict.lm(lm.std.rConc, 
-                                          newdata = nyuad.pos.sample.means, 
-                                          interval = "predict"))
+pred.sample.rConc = predict.lm(... , 
+                               newdata  = ... , 
+                               interval = ...))
 
-# take a look at the result
-head(pred.sample.rConc)
+# make a data frame out of the predictions and take a look at the result
+df.pred.sample.rConc = as.data.frame(pred.sample.rConc)
+head(df.pred.sample.rConc)
+```
 
-# make a data frame adding 3 columns to the sample means with fit, lwr, and upr
-df.pred.sample.rConc = cbind(nyuad.pos.sample.means,
-                             conc.fit = pred.sample.rConc$fit,
-                             conc.lwr = pred.sample.rConc$lwr, 
-                             conc.upr = pred.sample.rConc$upr)
+Next, make a new data frame that combines the prediction results with your sample
+data, appended as three new columns: the fit, the lower prediction interval
+bound, and the upper prediction interval bound.
 
+```{r}
+# make a data frame adding 3 columns to the sample means data frame 
+# with fit, lwr, and upr
+df.pred.sample.rConc = cbind(... ,
+                             conc.fit = ... ,
+                             conc.lwr = ... , 
+                             conc.upr = ... )
+head(df.pred.sample.rConc)
 ```
 
 Finally, to see how your predictions look, plot them along with the control data.
 
 + Create a ggplot object showing:
-  + The regression line from your controls with the control data points,
-  + Points for your predictions, mapping `color` to the PHD diagnosis,
+  + The control data points for the standards
+  + The regression line from your controls
+  + Points for your predictions, mapping `color` to the PHD diagnosis
   + Prediction Intervals (PI's) for the new predictions (use the new columns you just added)
+  + Facet by Plate
+  
+Because this is kind of complicated, I have done this for you below.
 
 ```{r}
 # ============================================================================ #
 # base plot: data points for N1/N2 standards from Plate 1
-p0 = ggplot(std.ctls.n1n2.p1, aes(x=log10(rConc), y=Value, 
-                                  color=AssayName)) +  # map color to assay names
+p0 = ggplot(std.ctls.p1, aes(x=log10(rConc), y=Value, 
+                             color=AssayName)) +       # map color to assay names
   geom_point() +
   scale_color_manual(values=c("gray70","gray50",       # for N1/N2 controls
                               "#F8766D","#00BFC4")) +  # for Neg/Pos classes
   facet_wrap(~Plate)  # wrap by Plate
   
 # add standard controls regression line
-# p.fit = p0 + geom_line(data = fit.pred.std.rConc, 
-#                        mapping = aes(x = fit1, y = Value), 
-#                        col = "black", size = .5)
 p.fit = p0 +
   geom_smooth(method="lm", color="black", size=0.4, se = FALSE)
 
 # add data points for sample predictions
 # (points are the fitted values, map color to PHD classification)
 p.fit = p.fit +
-    geom_point(data = df.pred.sample.rConc, # the data frame containing predicted values
+  geom_point(data = df.pred.sample.rConc, # the data frame containing predicted values
              mapping = aes(x = conc.fit, y = Value, color = PHD_Class), size=0.5)
 
-# add PI for predictions
-# (min and max are the lower and upper PI bounds)
+# add PI for predictions (min and max are the lower and upper PI bounds)
 p.fit = p.fit +
   geom_ribbon(data = df.pred.sample.rConc, # the data frame containing predicted values
               mapping = aes(y = Value, xmin = conc.lwr, xmax = conc.upr),
@@ -1082,33 +916,23 @@ p.fit = p.fit +
   ggtitle("Viral load in clinical samples (with prediction intervals)")
 
 p.fit
-
 ```
 
-If you wanted to show specific confidence intervals for individual samples,
+Note that if you wanted to get specific confidence intervals for individual samples,
 you'd need to do the prediction on each point individually and then calculate
-the statistics for the range afterward. 
+the statistics for the variation afterward.
 
-+ What do you conclude about the sensitivity of the NYUAD Fluidigm system?
+What do you conclude about the sensitivity of the NYUAD Fluidigm system?
 
-```
+```{r eval=FALSE}
 # Your answer here
-
-The assay is very sensitive and can detect viral particles down to less than one
-copy per microliter.
 ```
 
-+ How does the viral load estimated by NYUAD relate to the original diagnoses of
+How does the viral load estimated by NYUAD relate to the original diagnoses of
 the PHD clinical samples as "Negative" or "Positive"? Do you see a trend?
 
-```
+```{r eval=FALSE}
 # Your answer here
-
-Most of the samples detected by NYU that had a "Negative" clinical diagnosis
-also carried very low viral titers, whereas "Positive" samples carried a much
-wider range that approached close to 1M particles / ul. This makes sense that if
-our assays is more sensitive, we would be likely to detect virus in samples with
-low titers that could be missed by the standard diagnostic test.
 ```
 
 
@@ -1122,31 +946,31 @@ reporting, and add this as a new column to `df.pred.sample.rConc`.
   + Call the new column `Copies_per_ul`. 
   + Since these numbers span a huge range and will be ugly, use `signif()` to 
   trim the output to two significant digits.
+
 + Next, prepare a data table containing just the "SampleName", "PHD_Class",
 "NYUAD_Class", and "Copies_per_ul". 
   + You can use `left_join()` to combine `sample.classes` with **selected columns**
   from `df.pred.sample.rConc`. This command will join the data frames based on
   common columns.
   + Make sure to specify `sample.classes` as the first argument.
-+ Finally, write your viral load estimates to a file (please remember to 
-substitute your own name for the placeholder `YOURNAMEHERE`). 
+
++ Finally, write your viral load estimates to a file called "PHD_samples.viral_load.YOURNAMEHERE.csv" (please substitute your own name for the placeholder `YOURNAMEHERE`). 
   + When you submit your work, upload this output file along with your .Rmd file.
 
 ```{r}
 # back-calculate actual viral loads and add as a new column
-df.pred.sample.rConc = df.pred.sample.rConc %>% 
-  mutate(Copies_per_ul = signif(10^conc.fit,2))
+df.pred.sample.rConc = 
 
 # make a file for the final data report
-data.report = left_join(sample.classes, 
-                        select(df.pred.sample.rConc,SampleName,Copies_per_ul))
+data.report = left_join( <df1> , 
+                        select( <df2> , <selected columns> ))
 
-# export data file -- set `row.names = FALSE`
-#write.csv(data.report, "data/PHD_samples.viral_load.YOURNAMEHERE.csv",
-#          row.names = FALSE)
+# export data file
+
 ```
 
 <br>
-<br>
+
+**Congratulations! You've just completed your first COVID PCR testing analysis!**
 
 ---

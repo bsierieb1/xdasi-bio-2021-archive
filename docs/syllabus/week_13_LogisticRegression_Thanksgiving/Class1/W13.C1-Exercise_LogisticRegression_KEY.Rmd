@@ -21,7 +21,7 @@ Logistic regression is a form of machine learning where a generalized linear mod
 *  Grade 1) low-grade: cells are well diﬀerentiated.
 *  Grade 2) intermediate-grade: moderately well diﬀerentiated,
 *  Grade 3) poorly diﬀerentiated and
-*  Grade 4) undiﬀerentiated. 
+*  Grade 4) undifferentiated. 
 
 Grades 3 and 4 are generally associated with poor prognosis.
 
