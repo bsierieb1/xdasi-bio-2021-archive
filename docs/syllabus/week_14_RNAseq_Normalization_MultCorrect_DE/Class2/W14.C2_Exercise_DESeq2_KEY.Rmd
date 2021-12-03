@@ -1,0 +1,306 @@
+---
+title: "DESeq2 tutorial"
+author: "Bogdan Sieriebriennikov"
+date: "December 2-3, 2021"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(parathyroidSE)
+library(pheatmap)
+library(DESeq2)
+library(ggplot2)
+```
+
+## RNA-Seq of primary cultures of parathyroid tumors
+
+We will be working with data that come with the `Bioconductor` package `parathyroidSE`. It is a [published](http://www.ncbi.nlm.nih.gov/pubmed/23024189) RNA-seq data set of primary cultures of parathyroid tumors. The count matrix (counts for each gene in each sample), as well as the metadata table are stored in an object of the type `RangedSummarizedExperiment`. Explore the object and the data.
+
+```{r}
+# load the parathyroidGenesSE data set
+data("parathyroidGenesSE")
+# assign to a variable named se
+se <- parathyroidGenesSE
+
+# se is an object of the class RangedSummarizedExperiment
+class(se)
+# print the summary (default)
+se
+# print the structure
+str(se)
+# look at the raw counts
+head( se@assays[["data"]]@listData[["counts"]] ) # directly
+head( assay(se) ) # using the assay() method
+# look at the metadata
+se@colData # directly
+colData(se) # using the colData() method
+```
+
+## Exploratory analyses
+
+Before proceeding to differential expression testing, it is important to explore your data. You might want to know how different or similar the different samples are, get some idea about the major sources of variation in your data, and detect possible outlier samples.
+
+### Heatmap of sample distances
+
+Euclidean distance is a simple measure of overall dissimilarity between a pair of samples. Let us calculate and plot pairwise distances between all samples in the data. It is important to **transform** (`DESeq2` has functions for regularized log and variance stabilizing transformation) the counts before doing so. Otherwise, there is a risk that a small number of highly expressed genes will drive the general pattern.
+
+```{r}
+# convert the RangedSummarizedExperiment object to a DESeqDataSet object
+dds <- DESeqDataSet(se = se,
+                    design = ~ 1) # ignore the design parameter for now
+
+# apply variance stabilizing transformation
+dds_transformed <- vst(dds)
+# extract the transformed count matrix
+transformed_counts <- assay(dds_transformed)
+# transpose and calculate Euclidean distances
+# (transposition is necessary to calculate distances between samples and not between genes)
+distances <- dist(t(transformed_counts))
+distances
+
+# convert the dist object to a matrix
+distances <- as.matrix(distances)
+# add informative row names (optional, but recommended)
+rownames(distances) <- paste("patient",
+                             dds$patient,
+                             dds$treatment,
+                             dds$time,
+                             sep = "_")
+
+# plot as a heatmap
+pheatmap(distances)
+```
+
+It appears that samples taken from the same patient are much more similar to each other than to any sample from any other patient, regardless of the time point or the treatment applied. Therefore, it is reasonable to expect that our data contain a lot of variation between patients, something that we will actually have to account for later to see the effect of treatment! Additionally, within each patient "block", the two time points, but not the different treatments, are usually separated, suggesting that collection time is the next major source of variance in the data.
+
+### PCA of samples
+
+Another way to explore the relationship between samples and the sources of variation in the data is principal component analysis (PCA).
+
+```{r}
+# plot PC1 and PC2, color by patient
+plotPCA(dds_transformed,
+        intgroup = "patient")
+
+# plot PC1 and PC2, color by time
+plotPCA(dds_transformed,
+        intgroup = "time")
+
+# plot PC1 and PC2, color by treatment
+plotPCA(dds_transformed,
+        intgroup = "treatment")
+```
+
+Once again, we can attribute most of the variation in our data to differences between patients. Unfortunately, the principal components 1 and 2, which explain the majority of variation, do not separate between treatments at all. As for the time points, they appear slightly shifted in relation to each other along PC1, but they are still not fully separated. In such situations, we might want to explore other principal components, as long as they explain a decent amount of variation in the data. Unfortunately, there is no way to plot them using `plotPCA()` directly. There are two solutions: 1. Run the base R function `prcomp()` on the transformed counts, extract coordinates of the desired components from the output and write a code to plot them. 2. Hack `plotPCA()`.
+
+In fact, `DESeq2` developers openly invite you to tweak `plotPCA()` (see Note in the function help file). Just type `DESeq2:::plotPCA.DESeqTransform` in the console to get the function source code:
+
+```
+function (object, intgroup = "condition", ntop = 500, returnData = FALSE) 
+{
+    rv <- rowVars(assay(object))
+    select <- order(rv, decreasing = TRUE)[seq_len(min(ntop, 
+        length(rv)))]
+    pca <- prcomp(t(assay(object)[select, ]))
+    percentVar <- pca$sdev^2/sum(pca$sdev^2)
+    if (!all(intgroup %in% names(colData(object)))) {
+        stop("the argument 'intgroup' should specify columns of colData(dds)")
+    }
+    intgroup.df <- as.data.frame(colData(object)[, intgroup, 
+        drop = FALSE])
+    group <- if (length(intgroup) > 1) {
+        factor(apply(intgroup.df, 1, paste, collapse = ":"))
+    }
+    else {
+        colData(object)[[intgroup]]
+    }
+    d <- data.frame(PC1 = pca$x[, 1], PC2 = pca$x[, 2], group = group, 
+        intgroup.df, name = colnames(object))
+    if (returnData) {
+        attr(d, "percentVar") <- percentVar[1:2]
+        return(d)
+    }
+    ggplot(data = d, aes_string(x = "PC1", y = "PC2", color = "group")) + 
+        geom_point(size = 3) + xlab(paste0("PC1: ", round(percentVar[1] * 
+        100), "% variance")) + ylab(paste0("PC2: ", round(percentVar[2] * 
+        100), "% variance")) + coord_fixed()
+}
+```
+
+It should be pretty obvious which parts you should modify to be able to print other PCs than 1 and 2. Ideally, you should create a new custom function to plot any two PCs, where the specific PCs to plot are set as input parameters (kudos to *Kris*).
+
+```{r}
+# create a new custom function
+plotPCA_custom <- function (object,
+                            intgroup = "condition", 
+                            ntop = 500,
+                            returnData = FALSE,
+                            dim1 = 1,
+                            dim2 = 2) 
+{
+  rv <- rowVars(assay(object))
+  select <- order(rv, decreasing = TRUE)[seq_len(min(ntop, 
+                                                     length(rv)))]
+  pca <- prcomp(t(assay(object)[select, ]))
+  percentVar <- pca$sdev^2/sum(pca$sdev^2)
+  if (!all(intgroup %in% names(colData(object)))) {
+    stop("the argument 'intgroup' should specify columns of colData(dds)")
+  }
+  intgroup.df <- as.data.frame(colData(object)[, intgroup, 
+                                               drop = FALSE])
+  group <- if (length(intgroup) > 1) {
+    factor(apply(intgroup.df, 1, paste, collapse = ":"))
+  }
+  else {
+    colData(object)[[intgroup]]
+  }
+  d <- data.frame(PC1 = pca$x[, dim1], 
+                  PC2 = pca$x[, dim2], 
+                  group = group, intgroup.df, name = colnames(object))
+  if (returnData) {
+    attr(d, "percentVar") <- percentVar[dim1:dim2]
+    return(d)
+  }
+  ggplot(data = d, aes_string(x = "PC1", y = "PC2", color = "group")) + 
+    geom_point(size = 3) + 
+    xlab(paste0("PC",dim1,": ", round(percentVar[dim1] * 100, 1), "% variance")) +
+    ylab(paste0("PC",dim2,": ", round(percentVar[dim2] * 100, 1), "% variance")) + 
+    coord_fixed()
+}
+
+# test and explore the different PCs
+plotPCA_custom(dds_transformed,
+               intgroup = "time")
+
+plotPCA_custom(dds_transformed,
+               intgroup = "time",
+               dim1 = 3,
+               dim2 = 4)
+
+plotPCA_custom(dds_transformed,
+               intgroup = "treatment",
+               dim1 = 3,
+               dim2 = 4)
+
+plotPCA_custom(dds_transformed,
+               intgroup = "treatment",
+               dim1 = 5,
+               dim2 = 6)
+
+plotPCA_custom(dds_transformed,
+               intgroup = "treatment",
+               dim1 = 7,
+               dim2 = 8)
+```
+
+Turns out, PC4 separates between the time points really well! However, none of the principal components 1-8 separates the treatments. We can interpret it as treatment contributing little to the variation between samples. This does not automatically mean that treatment has no effect at all, but it is unlikely that it has a large global effect on the transcriptome.
+
+## Differential expression testing
+
+### Difference between the time points
+
+Even though most variation in our data is attributed to differences between individual patients, we were still able to separate between the time points in both the distance heatmap and the PC plots. Therefore, we should expect a considerable number of genes differentially expressed between the time points. Let us do a simple pairwise comparison.
+
+```{r}
+# create a new DESeqDataSet object, pass the desired formula to the design parameter
+dds <- DESeqDataSet(se = se,
+                    design = ~ time) # important! this is where you specify the grouping variable for DE testing
+
+# fit the model
+dds_de <- DESeq(dds)
+# calculate stats
+res <- results(dds_de)
+res
+
+# keep significantly DE genes only
+significant_indices <- res$padj < 0.05 & !is.na(res$padj)
+res_filtered <- res[significant_indices, ]
+res_filtered
+
+# sanity check - plot the counts for a randomly picked (first) gene in the table
+# and see if the pattern makes sense in the light of the estimated LFC value
+plotCounts(dds_de,
+           gene = rownames(res_filtered)[1],
+           intgroup = "time")
+```
+
+### Difference between the treatments - "simple" design
+
+So, are any genes differentially expressed between the treatments?
+
+```{r}
+# create a new DESeqDataSet object, pass the desired formula to the design parameter
+dds <- DESeqDataSet(se = se,
+                    design = ~ treatment) # important!
+
+# fit the model
+dds_de <- DESeq(dds)
+# calculate stats
+res <- results(dds_de)
+res
+
+# keep significantly DE genes only
+significant_indices <- res$padj < 0.05 & !is.na(res$padj)
+res_filtered <- res[significant_indices, ]
+res_filtered
+
+# the results above are ONLY for the OHT vs Control comparison
+# to calculate stats for the DPN vs Control comparison, you have to set the contrast parameter
+
+# calculate stats
+res <- results(dds_de,
+               contrast = c("treatment", "DPN", "Control")) # kind of a weird but a well-functioning way to specify the contrast
+res
+
+# keep significantly DE genes only
+significant_indices <- res$padj < 0.05 & !is.na(res$padj)
+res_filtered <- res[significant_indices, ]
+res_filtered
+```
+
+Hmmmmm...
+
+### Difference between the treatments - accounting for interindividual variation
+
+Do you remember that most variation in our data is attributed to different patients? Perhaps it is masking the effect of treatment! We can account for inter-individual variation before testing for differences between treatments by passing a more complex formula to the design argument. **Order matters:** by default, `results()` will calculate the Wald statistics and the p-values for the last variable in the formula after accounting for the affect of the preceding variable(s).
+
+```{r}
+# create a new DESeqDataSet object, pass the desired formula to the design parameter
+dds <- DESeqDataSet(se = se,
+                    design = ~ patient + treatment) # important!
+
+# fit the model
+dds_de <- DESeq(dds)
+# calculate stats
+res <- results(dds_de)
+res
+
+# keep significantly DE genes only
+significant_indices <- res$padj < 0.05 & !is.na(res$padj)
+res_filtered <- res[significant_indices, ]
+res_filtered
+
+# the results above are ONLY for the OHT vs Control comparison
+# to calculate stats for the DPN vs Control comparison, you have to set the contrast parameter
+
+# calculate stats
+res <- results(dds_de,
+               contrast = c("treatment", "DPN", "Control")) # kind of a weird but a well-functioning way to specify the contrast
+res
+
+# keep significantly DE genes only
+significant_indices <- res$padj < 0.05 & !is.na(res$padj)
+res_filtered <- res[significant_indices, ]
+res_filtered
+
+# sanity check - plot the counts for a randomly picked (first) gene in the table
+# and see if the pattern makes sense in the light of the estimated LFC values
+plotCounts(dds_de,
+           gene = rownames(res_filtered)[1],
+           intgroup = "treatment")
+
+plotCounts(dds_de,
+           gene = rownames(res_filtered)[1],
+           intgroup = c("patient", "treatment"))
+```
+

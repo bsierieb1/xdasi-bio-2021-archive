@@ -24,7 +24,7 @@ nav_order: 14
 
 # Class - Monday, Nov. 29
 
-### RNA-seq Normalization Strategies, Multiple Hypothesis Correction Testing
+### RNA-seq, Pt. I: Normalization Strategies, Multiple Hypothesis Correction Testing
 
 <details closed markdown="block">
   <summary>Details</summary>
@@ -40,14 +40,14 @@ nav_order: 14
 
 <!-- ########################################################################### -->
 
-# Class - Thursday, Dec. 2 - and Recitation - Friday, Dec. 3
+# Class & Recitation - Thursday-Friday, Dec. 2-3
 
-### RNA-seq Exploratory Analysis and Differential Expression Testing
+### RNA-seq, Pt. II: Exploratory Analyses, Differential Expression Testing
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-<!-- + **Class Exercise (answer key)** - [(zipped .Rmd)](Class1/W14.C1_Exercise_FDR_KEY.Rmd.zip) - [(html)](Class1/W14.C1_Exercise_FDR_KEY.html){: target="blank"} -->
++ **Class Exercise (answer key)** - [(zipped .Rmd)](Class2/W14.C2_Exercise_DESeq2_KEY.Rmd.zip) - [(html)](Class2/W14.C2_Exercise_DESeq2_KEY.html){: target="blank"}
 
 </details>
 
