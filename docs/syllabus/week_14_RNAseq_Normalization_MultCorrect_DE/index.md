@@ -6,7 +6,7 @@ nav_exclude: false
 nav_order: 14
 ---
 
-# Week 14: RNA-seq Analysis, Gene Set Enrichment Analysis
+# Week 14: RNA-seq Analysis, Multiple Hypothesis Correction Testing
 {: .no_toc }
 
 <details closed markdown="block">
@@ -24,7 +24,7 @@ nav_order: 14
 
 # Class - Monday, Nov. 29
 
-### RNA-seq Analysis
+### RNA-seq Normalization Strategies, Multiple Hypothesis Correction Testing
 
 <details closed markdown="block">
   <summary>Details</summary>
@@ -40,22 +40,15 @@ nav_order: 14
 
 <!-- ########################################################################### -->
 
-<!-- # Class - Thursday, Dec. 2
+# Class - Thursday, Dec. 2 - and Recitation - Friday, Dec. 3
+
+### RNA-seq Exploratory Analysis and Differential Expression Testing
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
+<!-- + **Class Exercise (answer key)** - [(zipped .Rmd)](Class1/W14.C1_Exercise_FDR_KEY.Rmd.zip) - [(html)](Class1/W14.C1_Exercise_FDR_KEY.html){: target="blank"} -->
 
-<!-- ########################################################################### -->
-
-<!-- ########################################################################### -->
-
-<!-- # Recitation - Friday, Dec. 3
-
-<details closed markdown="block">
-  <summary>Details</summary>
-
-</details> -->
+</details>
 
 <!-- ########################################################################### -->

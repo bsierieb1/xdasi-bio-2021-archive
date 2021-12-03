@@ -12,7 +12,7 @@ se
 
 # convert SE object to DDS object
 dds <- DESeqDataSet(se = se,
-                    design = ~ time)
+                    design = ~ 1)
 
 # transform counts
 dds_transformed <- vst(dds)
@@ -43,15 +43,48 @@ plotPCA_custom(dds_transformed, intgroup = "patient")
 # talk about NB model
 # talk about log-likelihood and Wald vs LRT vs score-based tests
 
-# perform DE
-dds_de <- dds[, dds$treatment=="Control" ]
+# perform DE - simple pairwise comparison
+dds <- DESeqDataSet(se = se,
+                    design = ~ time)
 dds_de <- DESeq(dds)
 res <- results(dds_de)
 res
-res_filtered <- res[res$padj<=0.05 & !is.na(res$padj),]
+res_filtered <- res[res$padj<=0.05 & !is.na(res$padj), ]
 res_filtered
-
 # plot counts
 plotCounts(dds_de,
            gene = rownames(res_filtered)[1],
            intgroup = "time")
+
+# perform DE - more than pairwise comparison
+dds <- DESeqDataSet(se = se,
+                    design = ~ treatment)
+dds_de <- DESeq(dds)
+res <- results(dds_de)
+res_filtered <- res[res$padj<=0.05 & !is.na(res$padj), ]
+res_filtered
+
+res <- results(dds_de,
+               contrast = c("treatment", "DPN", "Control"))
+res_filtered <- res[res$padj<=0.05 & !is.na(res$padj), ]
+res_filtered
+
+# perform DE - complex models
+dds <- DESeqDataSet(se = se,
+                    design = ~ patient + treatment)
+dds_de <- DESeq(dds)
+res <- results(dds_de)
+res_filtered <- res[res$padj<=0.05 & !is.na(res$padj), ]
+res_filtered
+
+res <- results(dds_de,
+               contrast = c("treatment", "DPN", "Control"))
+res_filtered <- res[res$padj<=0.05 & !is.na(res$padj), ]
+res_filtered
+# plot counts
+plotCounts(dds_de,
+           gene = rownames(res_filtered)[1],
+           intgroup = c("treatment"))
+plotCounts(dds_de,
+           gene = rownames(res_filtered)[1],
+           intgroup = c("patient", "treatment"))

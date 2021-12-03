@@ -18,6 +18,7 @@ dds <- DESeqDataSet(se = se,
 dds_transformed <- vst(dds)
 # extract transformed counts
 transformed_counts <- assay(dds_transformed)
+# calculate and plot distances
 distances <- dist(t(transformed_counts))
 
 pheatmap(distances)
