@@ -4,11 +4,11 @@ subtitle: "XDASI Fall 2021"
 author: "Rob Tibshirani [YOUR NAME HERE]"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  pdf_document: default
   html_document:
     toc: yes
     toc_float: yes
     df_print: paged
+  pdf_document: default
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -727,7 +727,12 @@ the samples?
 ```{r eval=FALSE}
 # Your answer here
 
-The samples do not look normally distributed, but a KS or Wilcoxon rank sum test give p-values > 0.05 (barely), so it seems like it will be ok to use the standards from plate 1 for quantification.
+The samples do not look normally distributed, but both the KS and Wilcoxon rank sum test 
+give p-values > 0.05 (barely), so the samples from both plates seem to come from
+the same distribution.
+
+Therefore it should be ok to use the standards from plate 1 to quanify the samples
+on both plates (we don not have a good alternative choice anyway...)
 ```
 
 
