@@ -1,26 +1,28 @@
 ## Statquest PCA demo
 ## https://github.com/StatQuest/pca_demo/blob/master/pca_demo.R
 
-## In this example, the data is in a matrix called
-## data.matrix
+## In this example, the data is in a matrix called data.matrix
 ## columns are individual samples (i.e. cells)
 ## rows are measurements taken for all the samples (i.e. genes)
+
 ## Just for the sake of the example, here's some made up data...
 data.matrix <- matrix(nrow=100, ncol=10)
 colnames(data.matrix) <- c(
   paste("wt", 1:5, sep=""),
   paste("ko", 1:5, sep=""))
 rownames(data.matrix) <- paste("gene", 1:100, sep="")
+
 for (i in 1:100) {
   wt.values <- rpois(5, lambda=sample(x=10:1000, size=1))
   ko.values <- rpois(5, lambda=sample(x=10:1000, size=1))
-  
+
   data.matrix[i,] <- c(wt.values, ko.values)
 }
 head(data.matrix)
 dim(data.matrix)
 
-pca <- prcomp(t(data.matrix), scale=TRUE) 
+# do PCA
+pca <- prcomp(t(data.matrix), scale=TRUE)
 
 ## plot pc1 and pc2
 plot(pca$x[,1], pca$x[,2])
