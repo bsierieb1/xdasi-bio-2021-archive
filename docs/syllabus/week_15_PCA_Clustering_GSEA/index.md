@@ -51,12 +51,17 @@ nav_order: 15
 
 <!-- ########################################################################### -->
 
-<!-- # Class - Thursday, Dec. 9
+# Class - Thursday, Dec. 9
+
+### Clustering and Gene Set Enrichment Analysis
 
 <details closed markdown="block">
   <summary>Details</summary>
 
-</details> -->
++ **Class Exercise** - [(DATA)](Class2/W15.C2_Exercise_Clustering_DATA.csv)
+<!--	+ **Answer key** - [(zipped .Rmd)](Class1/W13.C1-Exercise_LogisticRegression_KEY.Rmd) - [(html)](Class1/W13.C1-Exercise_LogisticRegression_KEY.html){: target="blank"} -->
+
+</details>
 
 <!-- ########################################################################### -->
 
