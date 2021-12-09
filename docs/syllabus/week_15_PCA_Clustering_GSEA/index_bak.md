@@ -6,7 +6,7 @@ nav_exclude: false
 nav_order: 15
 ---
 
-# Week 15: PCA, Clustering, GSEA
+# Week 15: Title
 {: .no_toc }
 
 <details closed markdown="block">
@@ -41,7 +41,7 @@ nav_order: 15
     + [PCA practical tips (8 min)](https://www.youtube.com/watch?v=oRvgq966yZg){: target="blank"}
     + [PCA in R (9 min)](https://www.youtube.com/watch?v=0Jp4gsfOLMs){: target="blank"}
 
-**Notes: PCA** - [(html)](Class1/W15.C2-Notes_PCA.html){: target="blank"} - [(pdf)](Class1/W15.C2-Notes_PCA.pdf){: target="blank"}
+**Notes: PCA** - [(html)](W15.C2-Notes_PCA.html){: target="blank"} - [(pdf)](W15.C2-Notes_PCA.pdf)
 
 **Example**
 
@@ -53,23 +53,22 @@ nav_order: 15
 
 # Class - Thursday, Dec. 9
 
-### Clustering
+### Clustering Methods
 
 <details closed markdown="block">
   <summary>Details</summary>
 
 **Background Reading**
 
-  + **Computational Genomics with R** _Altuna Akalin_ (2020-09-30) - [HTML](https://compgenomr.github.io/book/clustering-grouping-samples-based-on-their-similarity.html){: target="blank"} - [PDF](https://drive.google.com/file/d/1d0bIgZ1NSdA1AS5Dc-oYwSCm2q54qKn8/view?usp=sharing){: target="blank"}
-  </details>
-  + *Additional references*
-    + **Data Analysis Tools for Microarrays, Chapter 11: Cluster analysis** _Sorin Draghici_ (2003) - [PDF](https://drive.google.com/file/d/0BxPAku5Rir7LNHVXWmRjaHAtOFU/view?usp=sharing&resourcekey=0-0OZD8TVG9yKjKXkAXh4_Og){: target="blank"}
-    + **Practical Guide to Clustering Analysis in R** _Alboukadel Kassambara_ (2017) - [PDF](https://drive.google.com/file/d/1k3nxOhCTzT7XZSZw9LAJ9VTSH3rCTYkA/view?usp=sharing){: target="blank"}
++ **Computational Genomics with R** _Altuna Akalin_ (2020-09-30) - [HTML](https://compgenomr.github.io/book/clustering-grouping-samples-based-on-their-similarity.html){: target="blank"} - [PDF](https://drive.google.com/file/d/1d0bIgZ1NSdA1AS5Dc-oYwSCm2q54qKn8/view?usp=sharing){: target="blank"}
+</details>
++ *Additional references*
+  + **Data Analysis Tools for Microarrays, Chapter 11: Cluster analysis** _Sorin Draghici_ (2003) - [PDF](https://drive.google.com/file/d/0BxPAku5Rir7LNHVXWmRjaHAtOFU/view?usp=sharing&resourcekey=0-0OZD8TVG9yKjKXkAXh4_Og){: target="blank"}
+  + **Practical Guide to Clustering Analysis in R** _Alboukadel Kassambara_ (2017) - [PDF](https://drive.google.com/file/d/1k3nxOhCTzT7XZSZw9LAJ9VTSH3rCTYkA/view?usp=sharing){: target="blank"}
+
 
 **Class Exercise** - [(DATA)](Class2/W15.C2_Exercise_Clustering_DATA.csv)
 <!--	+ **Answer key** - [(zipped .Rmd)](Class1/W13.C1-Exercise_LogisticRegression_KEY.Rmd) - [(html)](Class1/W13.C1-Exercise_LogisticRegression_KEY.html){: target="blank"} -->
-
-</details>
 
 <!-- ########################################################################### -->
 
