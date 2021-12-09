@@ -61,7 +61,7 @@ nav_order: 15
 **Background Reading**
 
   + **Computational Genomics with R** _Altuna Akalin_ (2020-09-30) - [HTML](https://compgenomr.github.io/book/clustering-grouping-samples-based-on-their-similarity.html){: target="blank"} - [PDF](https://drive.google.com/file/d/1d0bIgZ1NSdA1AS5Dc-oYwSCm2q54qKn8/view?usp=sharing){: target="blank"}
-  </details>
+
   + *Additional references*
     + **Data Analysis Tools for Microarrays, Chapter 11: Cluster analysis** _Sorin Draghici_ (2003) - [PDF](https://drive.google.com/file/d/0BxPAku5Rir7LNHVXWmRjaHAtOFU/view?usp=sharing&resourcekey=0-0OZD8TVG9yKjKXkAXh4_Og){: target="blank"}
     + **Practical Guide to Clustering Analysis in R** _Alboukadel Kassambara_ (2017) - [PDF](https://drive.google.com/file/d/1k3nxOhCTzT7XZSZw9LAJ9VTSH3rCTYkA/view?usp=sharing){: target="blank"}
