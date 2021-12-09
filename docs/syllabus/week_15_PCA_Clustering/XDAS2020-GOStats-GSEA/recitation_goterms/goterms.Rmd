@@ -1,0 +1,108 @@
+---
+title: "go term analysis"
+author: "Raza"
+date: "12/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This RNA-Seq dataset is based on differential expression analysis performed between  Wildtype mouse embryonic fibroblasts and mouse embryonic fibroblasts in which the b-actin gene had been knocked out. We will perform go-term enrichment analysis on genes showing most significant changes between these two conditions.
+
+Import the rnaseq results and go term annotations. 
+```{r}
+
+
+```
+
+Filter differentially expressed genes with an adj.pvalue of <0.05 and absolute logfc >5 and store their ids in a variable. We will use these for go term enrichment analysis
+```{r}
+
+
+```
+
+Store the ids of all genes in the dataset in a variable. These will form the background list for the go term analysis 
+```{r}
+
+
+```
+
+Export these lists as txt files. The go term annotation for this exercise was downloaded from  DAVID (http://david.ncifcrf.gov/) so we will use the DAVID website to perform enrichment (other websites/tools might use different annotations so the results maybe slightly different). We will then manually confirm the results in r.  
+```{r}
+
+
+```
+
+We will check if the go-term GO:0030154 (cell differentiation) is enriched in the differentially expressed genes and compare the result with DAVID. 
+
+Filter all genes associated with this go term and store in a variable
+```{r}
+
+
+```
+
+Add a column called "DEG" to the rnaseq results. This column should indicate if a gene is differentially expressed or not (TRUE or FALSE) 
+```{r}
+
+  
+```
+
+Add a column called "CELL_DIFF" to the rnaseq results. This column should indicate whether a gene is associated with the go-term cell differentiation or not (TRUE or FALSE)
+```{r}
+
+
+```
+
+Make a contingency table from the two new columns
+```{r}
+
+
+
+```
+
+Perform a fishers exact test on the contingency table to test if the degs are enriched for 'cell differentiation' genes
+```{r}
+
+
+```
+
+We will also confirm our results using the hypergeometric test. Setup the variables for the hypergeometric test
+```{r}
+
+#total no of degs in our rnaseq data
+k=
+  
+#total no of deg associated with 'cell differentiation' in our rna seq data
+x=
+  
+#total no of genes in our rna seq data associated with the go term 'cell differentiation' 
+m=
+  
+#total no of genes in our rna seq data not associated with 'cell differentiation'
+n=
+  
+
+```
+
+Perform the hypergeometric test. The p.value should match the Fishers Exact test we performed
+```{r}
+
+
+
+```
+
+(Optional) Write a loop that tests all go terms associated with degs and compare results with the DAVID output
+```{r}
+#store all go terms associated with degs in a variable
+
+
+#perform fisher exact test for each term in a loop
+
+
+#store results in a dataframe, filter by pvalue and sort
+
+
+```
+
