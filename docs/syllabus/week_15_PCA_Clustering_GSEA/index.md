@@ -6,7 +6,7 @@ nav_exclude: false
 nav_order: 15
 ---
 
-# Week 15: Title
+# Week 15: PCA, Clustering, GSEA
 {: .no_toc }
 
 <details closed markdown="block">
@@ -41,7 +41,7 @@ nav_order: 15
     + [PCA practical tips (8 min)](https://www.youtube.com/watch?v=oRvgq966yZg){: target="blank"}
     + [PCA in R (9 min)](https://www.youtube.com/watch?v=0Jp4gsfOLMs){: target="blank"}
 
-**Notes: PCA** - [(html)](W15.C2-Notes_PCA.html){: target="blank"} - [(pdf)](W15.C2-Notes_PCA.pdf)
+**Notes: PCA** - [(html)](Class1/W15.C2-Notes_PCA.html){: target="blank"} - [(pdf)](Class1/W15.C2-Notes_PCA.pdf){: target="blank"}
 
 **Example**
 
