@@ -46,25 +46,15 @@ plot(genome0_pca$x[,1:2])
 # plot PC 2 and 3
 plot(genome0_pca$x[,2:3])
 
-# identify outliers by eye
-outlier_indices <- which((genome0_pca$x[,1] < -0.5) | (genome0_pca$x[,2] > 0.15))
 
-# examine TNFs of the outliers - do the make sense?
-genome0[outlier_indices,]
 
-# try to identify outliers via k-means clustering
-clustered <- kmeans(genome0_pca$x[,1:2],
-                    centers = 2)
-plot(genome0_pca$x[,1:2],
-     col = clustered$cluster)
+# k-means clustering
 
-# does not work very well for outliers, but can help explore structure within the bigger bulk of data
+# example
 clustered <- kmeans(genome0_pca$x[,2:3],
                     centers = 3)
-plot(genome0_pca$x[,2:3],
-     col = clustered$cluster)
 
-# elbow plot
+# elbow plot, option 1
 tws <- c()
 for (n_clusters in 1:20){
   clustered <- kmeans(genome0_pca$x[,2:3],
@@ -74,43 +64,71 @@ for (n_clusters in 1:20){
 plot(x = 1:20,
      y = tws)
 
-# since we originally wanted to identify outliers,
-# hierarchical clustering may be a better strategy
-distances <- dist(genome0_pca$x[,1:2])
+# elbow plot, option 2
+tws <- c()
+for (n_clusters in 2:20){
+  clustered <- kmeans(genome0_pca$x[,2:3],
+                      centers = n_clusters)
+  tws <- c(tws, clustered$tot.withinss / clustered$betweenss)
+}
+plot(x = 2:20,
+     y = tws)
+
+# silhouette plot
+library(cluster)
+
+ss <- c()
+for (n_clusters in 2:20){
+  clustered <- kmeans(genome0_pca$x[,2:3],
+                      centers = n_clusters)
+  silhouettes <- silhouette(x = clustered$cluster,
+                            dist = dist(genome0_pca$x[,2:3]))
+  ss <- c(ss, mean(silhouettes[,"sil_width"]))
+}
+plot(x = 2:20,
+     y = ss)
+
+# cluster with chosen k, color on the plot, compare assembly metrics
+clustered <- kmeans(genome0_pca$x[,2:3],
+                    centers = 3)
+
+plot(genome0_pca$x[,2:3],
+     col = clustered$cluster)
+
+boxplot(genome0$gc~clustered$cluster)
+boxplot(genome0$len~clustered$cluster)
+
+
+
+
+# hierarchical clustering
+distances <- dist(genome0_pca$x[,2:3])
 clustered <- hclust(distances)
 plot(clustered,
      labels = F)
 
-plot(genome0_pca$x[,1:2],
-     col = cutree(clustered, k = 2))
-
 # elbow plot
 plot(x=1:20,
      y=rev(clustered$height)[1:20])
 
-###
+# silhouette plot
+ss <- c()
+for (n_clusters in 2:20){
+  silhouettes <- silhouette(x = cutree(clustered,
+                                       k = n_clusters),
+                            dist = dist(genome0_pca$x[,2:3]))
+  ss <- c(ss, mean(silhouettes[,"sil_width"]))
+}
+plot(x = 2:20,
+     y = ss)
 
-# how well would this work for other genomes?
+# cluster with chosen k, color on the plot, compare assembly metrics
+plot(genome0_pca$x[,2:3],
+     col = cutree(clustered, k = 6))
 
-# perform PCA on contigs of the Nth genome
-genomeN <- my_df[my_df$genome == "genome1",]
-genomeN_pca <- prcomp(genomeN[,-(1:5)])
+boxplot(genome0$gc~cutree(clustered, k = 6))
+boxplot(genome0$len~cutree(clustered, k = 6))
 
-# hierarchical clustering
-distances <- dist(genomeN_pca$x[,1:2])
-clustered <- hclust(distances)
 
-plot(genomeN_pca$x[,1:2],
-     col = cutree(clustered, k = 2))
-plot(genomeN_pca$x[,1:2],
-     col = cutree(clustered, k = 3))
-
-# elbow plot
-plot(x=1:20,
-     y=rev(clustered$height)[1:20])
-
-# some genomes are more like 0, some are more like 1
-# one might want to pick an arbitrary cutoff for the jump in TWS when going 1->2 clusters
-# and only remove outliers when the jump is larger than the cutoff
 
 
