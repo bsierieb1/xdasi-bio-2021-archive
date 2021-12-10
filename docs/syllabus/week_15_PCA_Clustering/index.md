@@ -51,7 +51,7 @@ nav_order: 15
 
 <!-- ########################################################################### -->
 
-# Class - Thursday, Dec. 9
+# Class & Recitation - Thursday-Friday, Dec. 9-10
 
 ### Clustering
 
@@ -67,8 +67,9 @@ nav_order: 15
 
 **Class Notes** - [PPTX](Class2/W15.C2-Notes_Clustering_2021.pptx){: target="blank"} - [PDF](Class2/W15.C2-Notes_Clustering_2021.pdf){: target="blank"}
 
-**Class Exercise** - [(DATA)](Class2/W15.C2_Exercise_Clustering_DATA.csv) - [(DRAFT CODE)](Class2/W15.C2_Exercise_Clustering_DRAFT_CODE.R.zip)
-<!--	+ **Answer key** - [(zipped .Rmd)](Class1/W13.C1-Exercise_LogisticRegression_KEY.Rmd) - [(html)](Class1/W13.C1-Exercise_LogisticRegression_KEY.html){: target="blank"} -->
++ **Class Exercise** - [(DATA)](Class2/W15.C2_Exercise_Clustering_DATA.csv)
+	+ **Answer key** - [(zipped .R)](Class2/W15.C2_Exercise_Clustering_KEY.R.zip) - [(html)](Class2/W15.C2_Exercise_Clustering_KEY.html){: target="blank"}
+	+ Note that the code in the key was reorganized a little bit to make the presentation clearer.
 
 </details>
 
