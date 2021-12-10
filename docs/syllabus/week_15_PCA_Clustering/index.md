@@ -6,7 +6,7 @@ nav_exclude: false
 nav_order: 15
 ---
 
-# Week 15: PCA, Clustering, GSEA
+# Week 15: Principal Components Analysis, Clustering
 {: .no_toc }
 
 <details closed markdown="block">
