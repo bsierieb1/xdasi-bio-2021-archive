@@ -65,6 +65,8 @@ nav_order: 15
     + **Data Analysis Tools for Microarrays, Chapter 11: Cluster analysis** _Sorin Draghici_ (2003) - [PDF](https://drive.google.com/file/d/0BxPAku5Rir7LNHVXWmRjaHAtOFU/view?usp=sharing&resourcekey=0-0OZD8TVG9yKjKXkAXh4_Og){: target="blank"}
     + **Practical Guide to Clustering Analysis in R** _Alboukadel Kassambara_ (2017) - [PDF](https://drive.google.com/file/d/1k3nxOhCTzT7XZSZw9LAJ9VTSH3rCTYkA/view?usp=sharing){: target="blank"}
 
+**Class Notes** - [PPTX](Class2/W15.C2-Notes_Clustering_2021.pptx){: target="blank"} - [PDF](Class2/W15.C2-Notes_Clustering_2021.pdf){: target="blank"}
+
 **Class Exercise** - [(DATA)](Class2/W15.C2_Exercise_Clustering_DATA.csv) - [(DRAFT CODE)](Class2/W15.C2_Exercise_Clustering_DRAFT_CODE.R.zip)
 <!--	+ **Answer key** - [(zipped .Rmd)](Class1/W13.C1-Exercise_LogisticRegression_KEY.Rmd) - [(html)](Class1/W13.C1-Exercise_LogisticRegression_KEY.html){: target="blank"} -->
 
