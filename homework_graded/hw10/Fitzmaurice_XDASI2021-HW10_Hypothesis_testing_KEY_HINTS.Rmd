@@ -1,0 +1,577 @@
+---
+title: 'Homework 10: Hypothesis Testing'
+author: "Dylan Fitzmaurice"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document: default
+subtitle: XDASI Fall 2021
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(knitr)
+library(mosaic)
+```
+
+<!-- ======================================================================= -->
+## COVID-19 cases in NYC
+
+"NYC_covid_cases_by_age.csv" contains weekly data of cases in NYC over the course of the pandemic. 
+
+### 1) Import, tidy, and plot the data
+
+#### a) Convert to long format
+
+Read in the data file and convert the data to long format (you will need this in order to make the plot below).
+
+  + You should preserve the `week_ending` column.
+  + Get rid of the `age_all_ages` column.
+  + Convert the rest of the columns to two new columns containing the `age_group` and `cases` information.
+  + Turn the `age_groups` column into a factor (watch out, R likes to put everything in alphabetical order! you can set the levels in the correct order of age group by making a vector of the column names from the original data table and then selecting just columns 3:12)
+  + Make sure the `week_ending` column is properly formatted as a Date type.
+  
+```{r}
+# import file
+NYC_covid_cases_by_age <- read.csv("~/R/Biostats/Week_10/NYC_covid_cases_by_age.csv")
+
+# check structure
+str(NYC_covid_cases_by_age)
+head(NYC_covid_cases_by_age)
+
+# make a data frame in long format
+NYC_covid_cases_by_age_long <- NYC_covid_cases_by_age %>% gather(week_ending)
+head(NYC_covid_cases_by_age_long)
+
+# get rid of what used to be the age_all_ages column
+NYC_covid_cases_by_age_long <- filter(NYC_covid_cases_by_age_long, week_ending != "age_all_ages")
+
+# format age_group as factor in the correct order of age
+#already in correct format
+
+# format week_ending as a Date type (hint: look up `as.Date()`)
+week_ending <- as.Date(NYC_covid_cases_by_age$week_ending, "%m/%d/%y")
+week_ending_rep <- rep(week_ending,10)
+#week_ending_rep[rev(order(as.Date(week_ending_rep, format="%m/%d/%Y")))]###???
+
+NYC_covid_cases_by_age_long$Week <- week_ending_rep
+
+NYC_covid_cases_by_age_long %>% 
+  rename(
+    Age = week_ending,
+    Cases= value
+    )
+```
+
+#### b) Percentage of cases in each age group
+
+As a convenience for questions to come, also add a column containing the percentage of cases observed in each age group out of the total cases per week
+
+Hint: dplyr will be really useful for this. It's a good idea to drop rows with `NA` at this point (look up `drop_na`).
+
+```{r}
+# add pct_cases column
+#Ordered by week
+NYC_covid_cases_by_age_long_by_week <- NYC_covid_cases_by_age_long[order(as.Date(NYC_covid_cases_by_age_long$Week, format="%d/%m/%Y")),]
+head(NYC_covid_cases_by_age_long_by_week)
+
+NYC_covid_cases_by_age_long_by_week <- NYC_covid_cases_by_age_long_by_week %>% drop_na()
+
+date.sum <- aggregate(x = NYC_covid_cases_by_age_long_by_week[c("value")],
+                     FUN = sum,
+                     by = list(Group.date = NYC_covid_cases_by_age_long_by_week$Week))
+
+for(i in 1:nrow(NYC_covid_cases_by_age_long_by_week))
+{
+for(j in 1:nrow(date.sum))
+{
+if (NYC_covid_cases_by_age_long_by_week$Week[i] == date.sum$Group.date[j])
+  NYC_covid_cases_by_age_long_by_week$pct_cases[i] <- NYC_covid_cases_by_age_long_by_week$value[i]/date.sum$value[j]
+}
+}
+
+
+# check weekly totals (should = 100)
+pct_cases.sum <- aggregate(x = NYC_covid_cases_by_age_long_by_week[c("pct_cases")],
+                     FUN = sum,
+                     by = list(Group.date = NYC_covid_cases_by_age_long_by_week$Week))
+```
+
+#### c) Plot cases over time by age group
+
+Create a plot that shows the trajectory of cases over the course of the pandemic broken down by age group.
+
+```{r}
+# ggplot line plot
+ggplot(NYC_covid_cases_by_age_long_by_week, aes(x = Week, y = value, group=week_ending)) +
+  geom_line(aes(color=week_ending))
+```
+
+
+<!-- ======================================================================= -->
+### 2) First and second waves
+
+The plot above shows that the number of cases over time forms "waves". Did the first and the second wave have a similar number of weekly recorded cases in all age groups?
+
+#### a) Total cases in each wave
+
+Subset the data that corresponds to the first wave. You have to decide for yourself where to draw the cutoffs on the time axis. Make a new data frame containing the total weekly number of cases in the first wave (sum them up across all age groups).
+
+Then, do the same for the second wave.
+
+```{r}
+# ============================================================================ #
+# First wave data, until 2020-7
+# ============================================================================ #
+# filtered data
+First_wave_data <- NYC_covid_cases_by_age_long_by_week[NYC_covid_cases_by_age_long_by_week$Week >= "2020-03-14" & NYC_covid_cases_by_age_long_by_week$Week <= "2020-07-11", ]
+
+# summary table (total cases per week in 1st wave)
+ total_cases_per_first_wave_week_summary <- aggregate(x = First_wave_data[c("value")],
+                                            FUN = sum,
+                                            by = list(Group.date = First_wave_data$Week))
+# ============================================================================ #
+# Second wave data, 2020-7 - 2021-7
+# ============================================================================ #
+# filtered data
+Second_wave_data <- NYC_covid_cases_by_age_long_by_week[NYC_covid_cases_by_age_long_by_week$Week >= "2020-09-05" & NYC_covid_cases_by_age_long_by_week$Week <= "2021-06-26", ]
+
+# summary table (total cases per week in 2nd week)
+ total_cases_per_second_wave_week_summary <- aggregate(x = Second_wave_data[c("value")],
+                                            FUN = sum,
+                                            by = list(Group.date = Second_wave_data$Week))
+```
+
+
+#### b) Exploratory analysis
+
+Explore the weekly number of cases for the two waves visually using a boxplot, histograms, and qq plots, and perform a test for normality.
+
+```{r}
+# boxplot
+boxplot(total_cases_per_first_wave_week_summary$value ~total_cases_per_first_wave_week_summary$Group.date) 
+boxplot(total_cases_per_second_wave_week_summary$value ~total_cases_per_second_wave_week_summary$Group.date) 
+  
+# histograms and qqnorm plots
+hist(total_cases_per_first_wave_week_summary$value)
+hist(total_cases_per_second_wave_week_summary$value)
+
+qqnorm(total_cases_per_first_wave_week_summary$value)
+qqline(total_cases_per_first_wave_week_summary$value)
+
+qqnorm(total_cases_per_second_wave_week_summary$value)
+qqline(total_cases_per_second_wave_week_summary$value)
+
+# normality test
+shapiro.test(total_cases_per_first_wave_week_summary$value) #non normal
+shapiro.test(total_cases_per_second_wave_week_summary$value) #non normal
+```
+
+#### c) Data transformations
+
+If the data look highly skewed, it might be useful to transform the data. Try some different transformations and see if they help make the data look more normal.
+
+```{r}
+# try some different transformations
+
+# histograms and qqnorm plots
+hist(log10(total_cases_per_first_wave_week_summary$value))
+hist(log10(total_cases_per_second_wave_week_summary$value))
+
+#qqplot(log10(total_cases_per_first_wave_week_summary$value), total_cases_per_first_wave_week_summary$Group.date)
+qqnorm(log10(total_cases_per_first_wave_week_summary$value))
+qqline(log10(total_cases_per_first_wave_week_summary$value))
+
+#qqplot(log10(total_cases_per_second_wave_week_summary$value), total_cases_per_second_wave_week_summary$Group.date)
+qqnorm(log10(total_cases_per_second_wave_week_summary$value))
+qqline(log10(total_cases_per_second_wave_week_summary$value))
+
+# normality test
+shapiro.test(log10(total_cases_per_first_wave_week_summary$value)) #non normal
+shapiro.test(log10(total_cases_per_second_wave_week_summary$value)) #non normal
+```
+
+```
+
+Did any of the transformations you tried help at all? 
+
+```{r eval=F}
+# your answer here
+# Yes the log10 transformation helped. 
+```
+
+#### d) Statistical test
+
+Run an appropriate statistical test to compare the number of cases in the first and second wave. 
+
+```{r}
+# statistical test
+First_wave_total_cases <- sum(total_cases_per_first_wave_week_summary$value)
+Second_wave_total_cases <- sum(total_cases_per_second_wave_week_summary$value)
+
+First_and_second_wave_cases <- c(First_wave_total_cases,Second_wave_total_cases)
+
+#I'm not sure what to use because they're just two different numbers. 
+```
+
+Which wave was bigger?
+
+```{r eval=F}
+# your answer here
+# The second wave
+```
+
+
+<!-- ======================================================================= -->
+### 3) Changes in case rates over time
+
+We cannot directly compare the number of cases in each age category because we do not know the total number of population in each group (e.g. are there more cases among 75+ year olds than among 0-4 year olds because they get sick more or because there are more of them to begin with?) 
+
+But we can look whether the **proportion** of cases that fall within each age group (out of the total number of weekly cases summed up across all age groups) differs with time. 
+
+For example, is there a significant difference between the proportion of infections among younger adults vs. older adults in the first and second waves? What about before and after the appearance of the Delta variant?
+
+#### a) Younger vs. older adults in waves 1 and 2
+
+Did the age distribution of cases differ between the first two big waves of cases?
+
+First, subset the data to get the percentage of cases in adults under 35 in each wave. Make a box plot to compare them and perform an appropriate statistical test for significance between the rates in the two waves.
+
+Then, do the same thing for adults 65 and up.
+
+```{r}
+# ============================================================================ #
+# young adults (18-34) - 1st vs. 2nd wave
+# ============================================================================ #
+
+# first wave
+total_cases_per_first_wave_group_summary <-  aggregate(x = First_wave_data[c("value")],
+                                             FUN = sum,
+                                             by = list(Group.date = First_wave_data$week_ending))
+
+young_adult_first_wave_cases <- rbind(First_wave_data %>% filter(week_ending == "age_18_24"),                                    First_wave_data %>% filter(week_ending == "age_25_34"))
+
+young_adult_first_wave_cases_by_date <- young_adult_first_wave_cases[order(as.Date(young_adult_first_wave_cases$Week, format="%d/%m/%Y")),]
+
+young_adult_first_wave_cases_by_date_summed <- rowsum(young_adult_first_wave_cases_by_date[,4], as.integer(gl(nrow(young_adult_first_wave_cases_by_date), 2, nrow(young_adult_first_wave_cases_by_date))))
+
+young_adult_first_wave_perc <- young_adult_first_wave_cases_by_date_summed*100
+young_adult_first_wave_perc <- data.frame(young_adult_first_wave_perc)
+young_adult_first_wave_perc <- young_adult_first_wave_perc %>% rename(pct_cases = young_adult_first_wave_perc)
+
+young_adult_first_wave_week <- data.frame(young_adult_first_wave_cases[1:18,3])
+young_adult_first_wave_week <- young_adult_first_wave_week %>% rename(Week = young_adult_first_wave_cases.1.18..3.)
+
+young_adult_first_wave <- cbind(young_adult_first_wave_perc,young_adult_first_wave_week)
+
+# second wave
+total_cases_per_second_wave_group_summary <- aggregate(x = Second_wave_data[c("value")],
+                                              FUN = sum,
+                                              by = list(Group.date = Second_wave_data$week_ending))
+
+young_adult_second_wave_cases <- rbind(Second_wave_data %>% filter(week_ending == "age_18_24"),                                    Second_wave_data %>% filter(week_ending == "age_25_34"))
+
+young_adult_second_wave_cases_by_date <- young_adult_second_wave_cases[order(as.Date(young_adult_second_wave_cases$Week, format="%d/%m/%Y")),]
+
+young_adult_second_wave_cases_by_date_summed <- rowsum(young_adult_second_wave_cases_by_date[,4], as.integer(gl(nrow(young_adult_second_wave_cases_by_date), 2, nrow(young_adult_second_wave_cases_by_date))))
+
+young_adult_second_wave_perc <- young_adult_second_wave_cases_by_date_summed*100
+young_adult_second_wave_perc <- data.frame(young_adult_second_wave_perc)
+young_adult_second_wave_perc <- young_adult_second_wave_perc %>% rename(pct_cases = young_adult_second_wave_perc)
+
+young_adult_second_wave_week <- data.frame(young_adult_second_wave_cases[1:43,3])
+young_adult_second_wave_week <- young_adult_second_wave_week %>% rename(Week = young_adult_second_wave_cases.1.43..3.)
+
+young_adult_second_wave <- cbind(young_adult_second_wave_perc,young_adult_second_wave_week)
+
+# boxplot
+boxplot(young_adult_first_wave[,1],young_adult_second_wave[,1])
+
+# statistical test
+# I'm not sure the appropriate statistical test for proportions between two 
+# groups like this, a lot of the statistical test looked at differences between 
+# means. 
+
+
+# ============================================================================ #
+# older adults (65 and up) - 1st vs. 2nd wave
+# ============================================================================ #
+# first wave
+older_adult_first_wave_cases <- rbind(First_wave_data %>% filter(week_ending == "age_65_74"),                                    First_wave_data %>% filter(week_ending == "age_75up"))
+
+older_adult_first_wave_cases_by_date <- older_adult_first_wave_cases[order(as.Date(older_adult_first_wave_cases$Week, format="%d/%m/%Y")),]
+
+older_adult_first_wave_cases_by_date_summed <- rowsum(older_adult_first_wave_cases_by_date[,4], as.integer(gl(nrow(older_adult_first_wave_cases_by_date), 2, nrow(older_adult_first_wave_cases_by_date))))
+
+older_adult_first_wave_perc <- older_adult_first_wave_cases_by_date_summed*100
+older_adult_first_wave_perc <- data.frame(older_adult_first_wave_perc)
+older_adult_first_wave_perc <- older_adult_first_wave_perc %>% rename(pct_cases = older_adult_first_wave_perc)
+
+older_adult_first_wave_week <- data.frame(older_adult_first_wave_cases[1:18,3])
+older_adult_first_wave_week <- older_adult_first_wave_week %>% rename(Week = older_adult_first_wave_cases.1.18..3.)
+
+older_adult_first_wave <- cbind(older_adult_first_wave_perc,older_adult_first_wave_week)
+
+# second wave
+older_adult_second_wave_cases <- rbind(Second_wave_data %>% filter(week_ending == "age_65_74"),                                    Second_wave_data %>% filter(week_ending == "age_75up"))
+
+older_adult_second_wave_cases_by_date <- older_adult_second_wave_cases[order(as.Date(older_adult_second_wave_cases$Week, format="%d/%m/%Y")),]
+
+older_adult_second_wave_cases_by_date_summed <- rowsum(older_adult_second_wave_cases_by_date[,4], as.integer(gl(nrow(older_adult_second_wave_cases_by_date), 2, nrow(older_adult_second_wave_cases_by_date))))
+
+older_adult_second_wave_perc <- older_adult_second_wave_cases_by_date_summed*100
+older_adult_second_wave_perc <- data.frame(older_adult_second_wave_perc)
+older_adult_second_wave_perc <- older_adult_second_wave_perc %>% rename(pct_cases = older_adult_second_wave_perc)
+
+older_adult_second_wave_week <- data.frame(older_adult_second_wave_cases[1:43,3])
+older_adult_second_wave_week <- older_adult_second_wave_week %>% rename(Week = older_adult_second_wave_cases.1.43..3.)
+
+older_adult_second_wave <- cbind(older_adult_second_wave_perc,older_adult_second_wave_week)
+
+# boxplot
+boxplot(older_adult_first_wave[,1], older_adult_second_wave[,1]) 
+
+# statistical test
+
+```
+
+How did the rates of infection in these two groups differ between the first and second waves? Can you speculate on the reason for any observed differences?
+
+```{r eval=FALSE}
+# your answer here
+# They flipped, where young adults cases increased during the second wave while 
+# older adults cases decreased. 
+```
+
+#### b) Bootstrap confidence intervals
+
+Perform a bootstrap analysis to get estimates for the median and 95% confidence intervals for young adults and older adults in each of the two waves.
+
+```{r}
+# ============================================================================ #
+# young adults (18-34) - 1st vs. 2nd wave
+# ============================================================================ #
+# resampling for first wave
+young_adult_first_wave_value_by_date_summed <- rowsum(young_adult_first_wave_cases_by_date[,2], as.integer(gl(nrow(young_adult_first_wave_cases_by_date), 2, nrow(young_adult_first_wave_cases_by_date))))
+
+n_bootstraps <- 1000 
+
+bootstrap_medians <- c()
+for (i in 1:n_bootstraps){
+  # resample with replacement
+  sample_i <- sample(x = young_adult_first_wave_value_by_date_summed,
+                     size = length(young_adult_first_wave_value_by_date_summed),
+                     replace = TRUE)
+  # calculate the median
+  sample_i_median <- median(sample_i)
+  # append to "bootstrap_medians"
+  bootstrap_medians <- c(bootstrap_medians, sample_i_median)
+}
+
+head(bootstrap_medians)
+
+# quantiles for first wave (2.5%, 50% (median), 95.7%)
+quantile(x = bootstrap_medians,
+         probs = c(0.025, 0.5, 0.975))
+         
+# resampling for second wave
+young_adult_second_wave_value_by_date_summed <- rowsum(young_adult_second_wave_cases_by_date[,2], as.integer(gl(nrow(young_adult_second_wave_cases_by_date), 2, nrow(young_adult_second_wave_cases_by_date))))
+
+n_bootstraps <- 1000 
+
+bootstrap_medians <- c()
+for (i in 1:n_bootstraps){
+  # resample with replacement
+  sample_i <- sample(x = young_adult_second_wave_value_by_date_summed,
+                     size = length(young_adult_second_wave_value_by_date_summed),
+                     replace = TRUE)
+  # calculate the median
+  sample_i_median <- median(sample_i)
+  # append to "bootstrap_medians"
+  bootstrap_medians <- c(bootstrap_medians, sample_i_median)
+}
+
+head(bootstrap_medians)
+
+# quantiles for second wave (2.5%, 50% (median), 95.7%)
+quantile(x = bootstrap_medians,
+         probs = c(0.025, 0.5, 0.975))
+
+# ============================================================================ #
+# older adults (65 and up) - 1st vs. 2nd wave
+# ============================================================================ #
+# resampling for first wave
+older_adult_first_wave_value_by_date_summed <- rowsum(older_adult_first_wave_cases_by_date[,2], as.integer(gl(nrow(older_adult_first_wave_cases_by_date), 2, nrow(older_adult_first_wave_cases_by_date))))
+
+n_bootstraps <- 1000 
+
+bootstrap_medians <- c()
+for (i in 1:n_bootstraps){
+  # resample with replacement
+  sample_i <- sample(x = older_adult_first_wave_value_by_date_summed,
+                     size = length(older_adult_first_wave_value_by_date_summed),
+                     replace = TRUE)
+  # calculate the median
+  sample_i_median <- median(sample_i)
+  # append to "bootstrap_medians"
+  bootstrap_medians <- c(bootstrap_medians, sample_i_median)
+}
+
+head(bootstrap_medians)
+
+# quantiles for first wave (2.5%, 50% (median), 95.7%)
+quantile(x = bootstrap_medians,
+         probs = c(0.025, 0.5, 0.975))
+
+# resampling for second wave
+older_adult_second_wave_cases_by_date_summed <- rowsum(older_adult_second_wave_cases_by_date[,2], as.integer(gl(nrow(older_adult_second_wave_cases_by_date), 2, nrow(older_adult_second_wave_cases_by_date))))
+
+n_bootstraps <- 1000 
+
+bootstrap_medians <- c()
+for (i in 1:n_bootstraps){
+  # resample with replacement
+  sample_i <- sample(x = older_adult_second_wave_cases_by_date_summed,
+                     size = length(older_adult_second_wave_cases_by_date_summed),
+                     replace = TRUE)
+  # calculate the median
+  sample_i_median <- median(sample_i)
+  # append to "bootstrap_medians"
+  bootstrap_medians <- c(bootstrap_medians, sample_i_median)
+}
+
+head(bootstrap_medians)
+
+# quantiles for second wave (2.5%, 50% (median), 95.7%)
+quantile(x = bootstrap_medians,
+         probs = c(0.025, 0.5, 0.975))
+
+```
+
+
+<!-- ======================================================================= -->
+### 4) Delta strain
+
+The Delta strain became prevalent - i.e. started accounting for >50% all cases - on 6/23/21. Is there a significant difference between the proportion of infections among 25-34 year-olds before and after the rise of the Delta strain? 
+
+#### a) Before and after Delta
+
+Extract the data for the 25-34 age group from your long table and add a column that labels the data for each week as "Before_Delta" or "After_Delta" based on the date of appearance of the Delta variant.
+
+```{r}
+# filter by age and label before and after groups
+first_wave_cases_25_34 <- First_wave_data %>% filter(week_ending == "age_25_34")
+
+for(i in 1:nrow(first_wave_cases_25_34)){
+  if (first_wave_cases_25_34$Week[i] < as.Date('2020-06-23')){
+  first_wave_cases_25_34$Delta[i] <- "Before_Delta"
+} else { first_wave_cases_25_34$Delta[i] <- "After_Delta"
+}
+}
+# change factor order (optional)
+
+```
+
+#### b) Violin plot
+
+Make a violin plot of the percentage of cases observed per week in the 25-34-year old group before and after the appearance of the Delta variant.
+
+```{r}
+# ggplot violin plot (optional: put a narrow boxplot inside)
+ggplot(first_wave_cases_25_34, aes(x = Delta, y = pct_cases*100, group=Delta)) +
+  geom_violin(aes(color=Delta))
+
+```
+
+#### c) Permutation test
+
+Perform a permutation ("shuffle") test for the observed median difference in the percentage of total cases in the 25-34 year-old age group before and after Delta. 
+
+```{r}
+# observed difference in rates
+obs = diff(median(pct_cases*100 ~ Delta, data = first_wave_cases_25_34))
+obs
+
+# shuffle test
+# I Tried a diffeent way but couldn't get it to work, with the way showed in 
+# "Non-parametric and permutation tests" notes, because permuation loses the delta grouping
+# using this approach: 
+# first_wave_cases_25_34_for_shuffle <- do(2000) * diff(median(pct_cases*100 ~ shuffle(Delta), data = first_wave_cases_25_34))
+
+#first_wave_cases_25_34_for_shuffle <- data.frame(matrix(rep(t(first_wave_cases_25_34),2000),ncol=ncol(first_wave_cases_25_34),byrow=TRUE))
+
+#first_wave_cases_25_34_for_shuffle[,5]<- shuffle(first_wave_cases_25_34_for_shuffle[,5])
+
+# check column names in permuted data structure and rename (optional)
+# this is because the permutation may change the name for the percent cases column
+#head(first_wave_cases_25_34_for_shuffle)
+
+# draw a histogram (optional)
+#ggplot(first_wave_cases_25_34_for_shuffle, aes(x = pct_cases*100, group=Delta)) +
+#  geom_histogram(aes(color=Delta))
+```
+
+What's the $p$-value you get from the shuffle test? Compare this with with the result of another appropriate statistical test.
+
+```{r}
+# p-value (permutation)
+
+# p-value (statistical test)
+
+```
+
+
+<!-- ======================================================================= -->
+### 5) Breakthrough cases
+
+Consider the following data of the number of NYC documented Covid cases, hospitalizations, and deaths among vaccinated and unvaccinated individuals:
+
++ Cases:
+  + Vaccinated: 820
+  + Unvaccinated: 4140  
+
++ Hospitalizations:
+  + Vaccinated: 32
+  + Unvaccinated: 349
+
++ Deaths:
+  + Vaccinated: 4
+  + Unvaccinated: 39
+
+
+What is an appropriate test you could use to analyze these data? Explain.
+
+```{r eval=FALSE}
+# your answer here
+#Fisher excat because the data is in counts (Nominal) and theres only three groups.
+```
+
+Use this data to create a contingency table, and then perform the appropriate test to determine whether there is a significant difference between the vaccinated and unvaccinated groups.
+
+```{r}
+# data frame for given values
+breakthrough_cases = c(820, 32, 4)
+unvaccinated_cases =  c(4140, 349, 39)
+
+case_table <- rbind(breakthrough_cases,unvaccinated_cases)
+colnames(case_table) =  c("Cases", "Hospitalizations", "Deaths")
+
+# pretty output formatting
+knitr::kable(breakthrough_cases)
+
+# statistical test(s)
+fisher.test(case_table)
+
+```
+
+<!-- THE END! :) =========================================================== -->
+
+
+
+
+
+
+

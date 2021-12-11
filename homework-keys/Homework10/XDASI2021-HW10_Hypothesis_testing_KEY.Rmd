@@ -3,8 +3,8 @@ title: 'Homework 10: Hypothesis Testing'
 author: "ANSWER KEY"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 subtitle: XDASI Fall 2021
 ---
 
@@ -202,7 +202,7 @@ Run an appropriate statistical test to compare the number of cases in the first 
 ```{r}
 wilcox.test(first_wave_all_cases$case_total, second_wave_all_cases$case_total)
 
-# the first wave was bigger
+# the second wave was bigger
 ```
 
 
