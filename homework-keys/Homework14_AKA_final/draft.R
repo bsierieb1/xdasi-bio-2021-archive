@@ -108,7 +108,7 @@ de_results$padj <- p.adjust(de_results$pval,
 library(dplyr)
 de_results %>% filter(l2fc != Inf) %>% filter(l2fc != -Inf) %>% filter(padj <= 0.05) %>% arrange(desc(l2fc)) %>% head()
 
-# plot top 3 markers
+# plot top 5 markers
 library(viridis)
 selected_gene_counts <- factor(counts[rownames(counts)=="FGFBP2",])
 n_levels <- length(levels(selected_gene_counts))
@@ -116,7 +116,8 @@ my_palette <- viridis_pal(option = "H")(n_levels)[selected_gene_counts]
 plot(pca_umap$layout,
      col = my_palette)
 
-
+# are they good markers if you want to perform antibody staining to label all of the cells in the given cluster?
+# how could you change the procedure to further improve marker selection?
 
 
 
