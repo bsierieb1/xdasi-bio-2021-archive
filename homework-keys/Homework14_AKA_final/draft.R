@@ -51,18 +51,21 @@ plot(pca$x[,1:2])
 plot(pca$x[,2:3])
 plot(pca$x[,3:4])
 
-# genes with top contribution to PCs 1-3
+# look at genes with highest loading on PCs 1-3
 
-'''
-TBA
-'''
+sort(pca$rotation[,1],
+     decreasing = TRUE)[1:10]
+sort(pca$rotation[,2],
+     decreasing = TRUE)[1:10]
+sort(pca$rotation[,3],
+     decreasing = TRUE)[1:10]
 
-# UMAP on seleceted PCs
+# UMAP on selected PCs
 pca_umap <- umap(pca$x[,1:8])
 
 plot(pca_umap$layout)
 
-# cluster cells
+# cluster cells using your favorite method
 withinss_vector <- c()
 for (i in 2:20){
   clustered <- kmeans(pca_umap$layout,
@@ -103,11 +106,18 @@ de_results$padj <- p.adjust(de_results$pval,
                             method = "fdr")
 
 library(dplyr)
-de_results %>% filter(padj <= 0.05) %>% arrange(desc(l2fc))
+de_results %>% filter(l2fc != Inf) %>% filter(l2fc != -Inf) %>% filter(padj <= 0.05) %>% arrange(desc(l2fc)) %>% head()
 
 # plot top 3 markers
+library(viridis)
+selected_gene_counts <- factor(counts[rownames(counts)=="FGFBP2",])
+n_levels <- length(levels(selected_gene_counts))
+my_palette <- viridis_pal(option = "H")(n_levels)[selected_gene_counts]
+plot(pca_umap$layout,
+     col = my_palette)
 
-rbPal(10)[as.numeric(cut(dat$y,breaks = 10))]
+
+
 
 
 
