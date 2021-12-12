@@ -6,6 +6,11 @@ counts <- Read10X(data.dir = "/Users/bsierieb/Documents/GitHub/xdasi-bio-2021/ho
 # convert to sparse matrix
 counts <- as.matrix(counts)
 
+# write to file
+write.csv(counts,
+          "/Users/bsierieb/Documents/GitHub/xdasi-bio-2021/homework-keys/Homework14_AKA_final/XDASI2021-FINAL_data.csv",
+          quote = F)
+
 # select highly variable genes (= genes with variance that exceeds variance predicted by expression level)
 gene_means <- apply(X = counts,
                     MARGIN = 1,
@@ -24,7 +29,7 @@ gene_ranks_by_residuals <- rank(var_means_model$residuals,
                                 ties.method = "random")
 
 n_genes <- nrow(counts)
-highly_variable_genes <- which(gene_ranks_by_residuals %in% (n_genes-1000):n_genes)
+highly_variable_genes <- which(gene_ranks_by_residuals %in% (n_genes-999):n_genes)
 
 points(x = gene_means[highly_variable_genes],
        y = gene_variances[highly_variable_genes],
@@ -61,6 +66,7 @@ sort(pca$rotation[,3],
      decreasing = TRUE)[1:10]
 
 # UMAP on selected PCs
+library(umap)
 pca_umap <- umap(pca$x[,1:8])
 
 plot(pca_umap$layout)
