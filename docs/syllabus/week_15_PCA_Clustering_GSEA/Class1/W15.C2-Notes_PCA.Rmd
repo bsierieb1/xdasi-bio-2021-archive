@@ -120,7 +120,6 @@ Now something interesting has happened. We have transformed our original set of 
 We can also see that much more variation is captured in PC1 than in PC2 by plotting each of the original variables against each PC:
 
 ![**Pop and Ad vs. PC1**](Images/Pop and Ad vs PC1.png)
-![**Pop and Ad vs. PC2**](Images/Pop and Ad vs PC2.png)
 
 In this example, that doesn't seem like a big deal, but consider gene expression studies, where we measure thousands of genes (our $n$ variables) across many samples (call this $p$). We can describe this as an $n$ x $p$ matrix.
 
