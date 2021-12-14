@@ -1,0 +1,462 @@
+---
+title: "Homework 11: ANOVA"
+subtitle: "XDASI Fall 2021"
+author: "Shaili Regmi"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+```
+
+
+# Q0: Load the data set and examine it
+
+For this exercise, we will be looking at brood size and fertilization defects in a *C. elegans* gene called *mel-28*, alone and in combination with a mutation in a second gene that suppresses these phenotypes. There are 30 biological replicates for each condition. The measurements taken were:  
+
++ **Brood size** - number of eggs laid by one worm in one day  
++ **Fertilized** - number of eggs laid that were fertilized embryos
+
+First, load the data and take a look at it. Make sure that the `genotype` column is a factor and that you set "WT" as the reference level.
+
+*Hint: you can use either the `factor()` or `relevel()` commands to set/reorder the levels; what weird thing happens if you use `level()` instead?*
+
+```{r}
+# load the data
+mel28 = read.csv("Ce_mel28_Emb_Ste.csv",
+                 stringsAsFactors = TRUE)
+
+# take a look at it (check / fix factor levels)
+mel28
+str(mel28)
+levels(mel28$genotype)
+mel28$genotype = factor(mel28$genotype, levels = c("WT", "A", "A;B"))
+str(mel28)
+mel28
+levels(mel28$genotype)
+```
+
+
+# Q1: Brood size
+
+For this first part, we will be looking just at the ***brood sizes*** in the wild-type N2 strain (WT), in single mutants (A), and in double mutants (A;B).
+
+### a) Strip chart / boxplot
+
+Plot the brood size data, including the individual data points. For readability, make sure that the WT is the leftmost boxplot, followed by the single mutant and then the double mutant.
+
+```{r}
+
+boxplot(brood_size ~ genotype,
+        data = mel28)
+stripchart(brood_size ~ genotype,
+           data = mel28,
+           method = "jitter",
+           pch = 20,
+           vertical = TRUE,
+           add = TRUE)
+```
+
+### b) Histograms
+
+Use histogram plots to visualize the distributions. and perform an appropriate statistical test to determine if the measurements from the different groups are normally distributed.  
+
+```{r}
+hist(mel28$brood_size[mel28$genotype == "WT"])
+hist(mel28$brood_size[mel28$genotype == "A"])
+hist(mel28$brood_size[mel28$genotype == "A;B"])
+
+```
+
+### c) ANOVA assumptions
+
+In order to proceed with ANOVA, what two requirements should the data fulfill?
+
+```{r eval=FALSE}
+# The samples are normal distributed.
+# The variances in the samples are similar.
+```
+
+### d) Check for normality
+
+Perform statistical tests to determine whether the data are normally distributed. (You may find it easier to subset the data at this point.)
+
+```{r}
+wt_brood = mel28$brood_size[mel28$genotype == "WT"]
+a_brood = mel28$brood_size[mel28$genotype == "A"]
+ab_brood = mel28$brood_size[mel28$genotype == "A;B"]
+
+shapiro.test(wt_brood)
+shapiro.test(a_brood)
+shapiro.test(ab_brood)
+```
+
+
+### e) Check for homoscedasticity
+
+Determine if the variation is the same between the groups. This is called ***"homoscedasticity"***.
+
++ First, use the `var.test()` function to make pairwise comparisons between groups.
++ Then, use `bartlett.test()` to perform Bartlett's test on all of the groups at once.
+
+```{r}
+# var.test
+var.test(wt_brood, a_brood)
+var.test(wt_brood, ab_brood)
+var.test(a_brood, ab_brood)
+
+# bartlett.test
+bartlett.test(brood_size ~ genotype,
+              data = mel28)
+```
+
+
+What is the test statistic used by `var.test()`? What is the value of the statistic when the null hypothesis is true?
+
+```{r eval=FALSE}
+# test statistic used by `var.test()` is the F-ratio. The value of the statistic is 1 when the null hypothesis is true because the ratio would be 1 if the two variances are the same.
+```
+
+
+What distribution does Bartlett's test statistic follow?
+
+```{r eval=FALSE}
+# Bartlett's test statistic follows a chi-squared distribution.
+```
+
+
+Are the assumptions for performing ANOVA met for this dataset?
+
+```{r eval=FALSE}
+# Yes, all the p-values (both for normality and variance equality) are above the significance level of 0.05.
+```
+
+
+# Q2: Sum of Squares and F-statistic  
+
+### a) SSE and SSG
+
+Calculate the sum of squares for $SS_{error}$ and $SS_{group}$ (you may use either base R methods or dplyr, as you prefer). Recall the formulas:
+
+$$SS_{total} = SS_{error}+SS_{group}$$ 
+$$SS_{error} = \sum_{i}\sum_{j}(Y−\overline{Y}_i)^{2}$$    
+$$SS_{group} = \sum_{i}n_{i}(\overline{Y}_i−\overline{Y})^{2}$$
+```{r}
+combined = cbind(wt_brood,
+                 a_brood,
+                 ab_brood)
+
+group_means = colMeans(combined)
+
+# SS_error
+SS_error = 0
+for ( i in 1:nrow(combined)) {
+  SS_error = SS_error + sum((combined[i,] - group_means) ^ 2)
+}
+SS_error
+
+
+## SS_group
+SS_group = 0
+for ( i in 1:length(group_means)) {
+ SS_group = SS_group + (nrow(combined) * (group_means[i] - mean(combined)) ^ 2)
+}
+SS_group
+
+```
+
+### b) F-statistic and p-value
+
+Calculate the F-statistic and the p-value using the `pf() function.` Recall that:
+
+$$F=\frac{MS_{groups}}{MS_{error}} = \frac{SS_{groups}/df_{groups}}{SS_{error}/df_{error}}$$
+
+```{r}
+# degrees of freedom for SS_error
+SS_error_df = ncol(combined) * (nrow(combined) - 1)
+SS_error_df
+MS_error = SS_error / SS_error_df
+MS_error
+
+# degrees of freedom for SS_groups
+SS_group_df = ncol(combined) - 1
+SS_group_df
+MS_group = SS_group / SS_group_df
+MS_group
+  
+# F-statistic
+F_stat = (MS_group) / (MS_error)
+F_stat
+
+# p-value using CDF for F-statistic
+pf(F_stat, SS_group_df, SS_error_df, lower.tail = F)
+
+```
+
+
+# Q3: Planned and Unplanned ANOVA
+
+### a) Planned vs. Unplanned
+
+Explain whether this experiment should be treated as a PLANNED or an UNPLANNED dataset. How would the analysis differ between these two scenarios?
+
+```{r eval=FALSE}
+# This should be treated as a UNPLANNED dataset because although we expect the A mutation to have more defects in brood size as compared to WT and the A;B mutation to somewhat decrease these defects, we do not know whether A;B will rescue the phenotype such that it is not significantly different from the WT or if it will still be closer to genotype A than WT. So, all groups need to be compared to each other. In PLANNED analysis, each comparison is only between two pairs of means whereas in UNPLANNED analysis, all groups' means are compared simultaneously.
+```
+
+
+### b) Planned experiment
+
+Assume the data is a planned experiment. Use the `lm()` function to perform the analysis. 
+
+First, use the `anova()` function on the results of of the `lm()` function to look at the overall result. *Note: you can use the special notation `$"Pr(>F)" to get the exact p-value from the `anova()` function.*
+
+```{r}
+# anova for lm of brood_size ~ genotype
+anova(lm(brood_size ~ genotype,
+         data = mel28))
+anova(lm(brood_size ~ genotype,
+         data = mel28))$"Pr(>F)"
+```
+
+How do the $SS_error$, $SS_group$, $MS_error$, $MS_group$, $Fstat$, and $p$-value compare to the ones you calculated by  hand?
+
+```{r eval=FALSE}
+# They are the same.
+These should be exactly the same.
+```
+
+Now, use the `summary()` function on the results of the the linear model.
+
+```{r}
+summary(lm(brood_size ~ genotype,
+         data = mel28))
+```
+
+What do the different parts of the `summary()` output tell you? What is R-squared and what does it mean?
+
+```{r eval=FALSE}
+# It gives us the Estimate of the slope and intercept for the linear regression used to see how much brood size varies with genotype. It also gives the t-statistic and p-value of comparisons between genotype A and WT and between genotype A;B and WT. Finally, it also gives the R-squared value, the F-ratio, and the corresponding p-value which tell us about how much of the variation is explained by our model. R -squared is the amount of variation in the dependent variable (here, brood size) that is explained by our model, relative to the total variation. If it is close to 1, then the model explains most of the variation whereas if it is close to 0, then other factors that are not accounted for in our model may explain the observed variation.
+```
+
+Is the model significant overall? How about the different groups: are they significantly different from the control?
+
+```{r eval=FALSE}
+# Yes, all p-values are less than 0.05, so the model is significant overall and the different genotypes are also significantly different from the control.
+```
+
+
+### c) Unplanned experiment
+
+Now assume the data are from an unplanned experiment. Use the `aov()` function to perform the analysis, and then use the `tukeyHSD()` function on the results of `aov()`.
+
+```{r}
+aov(brood_size ~ genotype,
+         data = mel28)
+```
+
+Use the `tukeyHSD()` function on the results of `aov()` to perform the Tukey-Kramer test to look at all pairwise comparisons.
+
+```{r}
+TukeyHSD(aov(brood_size ~ genotype,
+         data = mel28))
+```
+
+What does Tukey's HSD test do? What do these results tell you? What is the biological interpretation of these results?
+
+```{r eval=FALSE}
+# The Tukey's HSD test gives the pairwise differences between each of the groups for an unplanned experiment. The p-values are all 0 which means that all groups are significantly different from each other. Biologically, genotype A's brood size is significantly different from the WT and although genotype A;B rescues brood size partially, it is still significantly different from both WT and from genotype A. 
+```
+
+
+### d) Residuals
+
+Once you have performed an ANOVA, you can also check your assumption of normality by checking to see if the ANOVA residuals are normally distributed. 
+
++ Do this by first assigning the results of your `aov()` function to a variable (e.g. `res_aov`.
++ Then, make a histogram of the residuals, which can be found in `res_aov$residuals`.
++ Finally, perform a test for normality on the residuals.
+
+```{r}
+res_aov = aov(brood_size ~ genotype,
+              data = mel28)
+hist(res_aov$residuals)
+shapiro.test(res_aov$residuals)
+```
+
+
+### e) ANOVA for unequal variances
+
+If the data look normal, but the variances are unequal, what kind of ANOVA could you do instead? *Hint: what kind of $t$-test would you use in this case?*
+
+```{r eval=FALSE}
+# You can do Welch's ANOVA test.
+```
+
+Perform this test below. Also extract the exact $p$-value from the test.
+
+```{r}
+test = oneway.test(brood_size ~ genotype,
+                   data = mel28,
+                   var.equal = FALSE)
+test
+test$p.value
+```
+
+How does the $p$-value compare with the ANOVA you performed above? Explain.
+
+```{r eval=FALSE}
+# The p-value from the ANOVA performed above was 6.165467e-36 and from the Welch's ANOVA is 7.053586e-28. This difference means that the variances between the groups are not exactly equal. Still both p-values are significant (<0.05), and we also saw from the var.test and Bartlett test earlier that the deviation from the assumption of equal variation is not significant.
+```
+
+
+# Q4: Fertilization phenotype
+
+Now we will look at the fertilization phenotype. 
+
+### a) Percent fertilization
+
++ Add a column to your original data frame containing the ***percent fertilization***.
++ Take a look at the percent fertilization using a strip chart / boxplot (as you did for Q1).
+
+```{r}
+# add percent fertilization column
+mel28$percent_fertilization = (mel28$fertilized / mel28$brood_size) * 100
+  
+# plot it
+boxplot(percent_fertilization ~ genotype,
+        data = mel28)
+stripchart(percent_fertilization ~ genotype,
+           data = mel28,
+           method = "jitter",
+           pch = 20,
+           vertical = TRUE,
+           add = TRUE)
+```
+
+
+### b) Check assumptions for ANOVA
+
+Perform the appropriate tests to check whether you can perform an ANOVA on these data and draw histograms to visualize the distributions. (You may again find it useful at this point to subset the data by group.)
+
+```{r}
+# test for assumptions
+wt_fertilization = mel28$percent_fertilization[mel28$genotype == "WT"]
+a_fertilization = mel28$percent_fertilization[mel28$genotype == "A"]
+ab_fertilization = mel28$percent_fertilization[mel28$genotype == "A;B"]
+
+shapiro.test(wt_fertilization)
+shapiro.test(a_fertilization)
+shapiro.test(ab_fertilization)
+
+# var.test
+var.test(wt_fertilization, a_fertilization)
+var.test(wt_fertilization, ab_fertilization)
+var.test(a_fertilization, ab_fertilization)
+
+# bartlett.test
+bartlett.test(percent_fertilization ~ genotype,
+              data = mel28)
+
+# histograms
+hist(wt_fertilization)
+hist(a_fertilization)
+hist(ab_fertilization)
+```
+
+Do these data meet the assumptions required for ANOVA? If not, what alternative tests could you perform? Explain the conditions under which either test would be appropriate.
+
+```{r eval=FALSE}
+# The p-values from all the tests are smaller than 0.05 so these data are not normally distributed and the variances between the groups are not equal. So, the assumptions required for ANOVA are not met. The alternative tests are Kruskal-Wallace test and pairwise Wilcoxon Rank Sum test. The Kruskal-Wallace test is appropriate for comparing variances of all groups simultaneously whereas the pairwise Wilcoxon Rank Sum test is appropriate for pairwise comparison of variances of each pair of groups.
+```
+
+### c) Statistical test
+
+Perform an appropriate alternative to ANOVA for these data.
+
+```{r}
+pairwise.wilcox.test(mel28$percent_fertilization, mel28$genotype,
+                     p.adjust.method = "BH")
+```
+ 
+ 
+# Q5: Error, Power, and Sample size
+
+Recall that the power is $1−\beta$, where $\beta$ is the Type II error. We can calculate the power of the ANOVA test using the command `power.anova.test()`, which is contained in the base `stats` package. The arguments for the command are:
+
++ **groups** = the number of groups in the dataset  
++ **n** = the number of observations per group  
++ **between.var** = between-group variance, $SS_{group}$
++ **within.var** = within-group variance, $SS_{error}$  
++ **sig.level** = significance cutoff $\alpha$ (Type I error)  
++ **power** = power of the test ($1−\beta = 1$ - Type II error)  
+
+Given all of the arguments except for one, this function will return a value for the missing argument.
+
+### a) Power of ANOVA for this dataset
+
+Given the data that we have been provided and the $p$-value we obtained for the `brood_size`, what is the power of our dataset, given a Type I error rate (significance cutoff) of $\alpha=0.05$?
+
+```{r}
+# first, check the documentation
+help(power.anova.test)
+
+# compute the power
+power.anova.test(groups = length(levels(mel28$genotype)), 
+                 n = nrow(mel28)/length(levels(mel28$genotype)), 
+                 within.var = SS_error, 
+                 between.var = SS_group, 
+                 power = NULL,
+                 sig.level = 0.05)
+```
+
+### b) Sample size
+
+If we would like to achieve a power of 95% with a Type I error rate of $\alpha=0.05$, how many observations for each group would we need? 
+
+```{r}
+# compute the required sample size
+power.anova.test(groups = length(levels(mel28$genotype)), 
+                 n = NULL, 
+                 within.var = SS_error, 
+                 between.var = SS_group, 
+                 power = 0.95,
+                 sig.level = 0.05)
+
+# sample size needed = 2.747844 ~= 3
+
+```
+
+How do you feel about this result?
+
+```{r eval=FALSE}
+# The sample size needed is so small which means that the differences between the groups are so significant that even a small sample size will be enough to detect these differences.
+```
+
+### c) Effect size
+
+The ratio of the between-groups variation to the within-groups variation ($SS_{group}/SS_{error}$) gives us an approximate effect size.
+
+The `brood_size` data here has a pretty big effect size, and we have a lot of power because of this. 
+
+If the effect size were 10 times smaller, how many animals would we need to get a power of 95% at a Type I error threshold of 5%?
+
+```{r}
+power.anova.test(groups = length(levels(mel28$genotype)), 
+                 n = NULL, 
+                 within.var = 10 * SS_error, 
+                 between.var = SS_group, 
+                 power = 0.95,
+                 sig.level = 0.05)
+
+# n = 15.22547 ~= 16
+```
+
+<!-- That's it! Yay! Check to see if your file knits and then send this off! -->
+
+<!-- Note: if you don't have LaTeX installed, or you had problems installing it, then the file may not knit. In that case, type `rm(list = ls())` in the console and then try running the entire file again to make sure that all of your final data structures are what you think they are. -->
