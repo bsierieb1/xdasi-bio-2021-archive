@@ -1,0 +1,817 @@
+---
+title: "Homework 13: Logistic Regression"
+subtitle: "XDASI Fall 2021"
+author: "Ken Tanaka"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error = FALSE)
+rm(list = ls())
+library(ggplot2)
+```
+
+## Review
+
+Before beginning this exercise, please review the lecture notes on logistic regression. In particular, you will want to re-read the sections on **Generalized linear models**, **GLM families**, and **ROC and AUC**.
+
+
+## The Wisconsin Breast Cancer Dataset
+
+The following data was obtained from a study where 3D images were taken of a breast mass. The features are measurements of the mass. We will try to create a logistic regression model to predict the **diagnosis** (M=malignant and B=benign). For a more detail understanding of the values see the link below:
+
+https://www.kaggle.com/uciml/breast-cancer-wisconsin-data
+
+## Q0: Exploratory analysis
+
+The file is provided in as a csv file called *cancer_data.csv*. Read it in and call it **cancer_data**. 
+
+For visualization purposes, we prefer to show "malignant" samples in a warm color and "benign" samples in a cool color for all of our graphs. To do this, **set "stringsAsFactors" to FALSE** during the initial import, and then use the `factor()` function to explicitly set "M" as the first factor level for the "diagnosis" column.
+
+*Note: for very large datasets, you may find it useful to take a quick look at the data using the `glimpse()` function as an alternative to `head()` and `View()`.*
+
+```{r}
+# load the dataset
+cancer_data = read.table("cancer_data.csv", sep = ",", header = T, stringsAsFactors = F)
+
+#cancer_data
+head(cancer_data)
+str(cancer_data)
+  
+# define the factors
+#cancer_data$diagnosis = factor("M")
+cancer_data$diagnosis = factor(cancer_data$diagnosis, levels=c("M","B"))
+str(cancer_data)
+summary(cancer_data)
+#cancer_data$diagnosis
+
+# take a look at the data
+View(cancer_data)
+```
+
+### Data curation
+
+Wow, that's a lot of data! Let's just keep the "diagnosis" column and the 10 columns containing the mean measurements (i.e. get rid of the "se" and "worst" columns). 
+
+Also, let's shorten the column names for convenience. To do this, use the `sub()` function to replace "_mean" with "", passing the column names of the `cancer_data` df as the object to be operated on.
+
+*Hint: It's always good to look up a function in the Help docs when you haven't used it before.*
+
+```{r}
+# make the dataset smaller!
+#cancer_data0 <- cancer_data
+delc <- grep( "(_se$|_worst)", colnames(cancer_data))
+#delc
+cancer_data1 = cancer_data[,-delc]
+str(cancer_data1)
+
+# check it
+head(cancer_data1)
+
+# remove trailing "_mean" from the column names
+cn <- colnames(cancer_data1)
+#cn
+cn1 <- sub("_mean","", cn)
+#cn1
+colnames(cancer_data1) <- cn1
+# examine the resulting df
+head(cancer_data1)
+str(cancer_data1)
+
+```
+
+Whew! That's better. 
+
+
+### Normalization
+
+Let's also **normalize** the data so that the values for each type of measurement are scaled relative to the mean and SD of each column. You can do this using the `scale()` function. Note that you can exclude the diagnosis column by negating it, or by specifying the desired column range explicitly.
+
+*Note: For the sake of clarity, we will create a bunch of separate data frames for this exercise. An alternative would be to munge the original data frame by transforming / deleting / adding columns.*
+
+```{r, message=FALSE}
+# normalize the data
+#cancer_data2a <- cancer_data1[1:2]
+cancer_data2a <- cancer_data1[1]
+cancer_data2b <- cancer_data1[2]
+head(cancer_data2b)
+cancer_data2c <- cancer_data1[3:12]
+head(cancer_data2c)
+
+#scaled_data
+#scaled_data = scale(cancer_data2c)
+scaled_data3 = data.frame(cancer_data2b, scale(cancer_data2c))
+
+# check it
+summary(scaled_data3)
+str(scaled_data3)
+View(scaled_data3)
+
+```
+
+
+### Visualization
+
+We are interested to find variables that will help us predict the diagnosis. Let's make some exploratory plots to visualize how the data are distributed among *malignant* and *benign* outcomes. 
+
+First, use the`melt()` function in the `reshape2` package to get a "long" data frame with three columns: "diagnosis", "variable", and "value". 
+
+Then, use `ggplot2` to create a boxplot for each variable by diagnosis using `facet_wrap` and/or `facet_grid`.
+
+```{r}
+#install.packages("reshape2") # uncomment to install (only needed once)
+library(reshape2)
+
+# melt the dataframe and take a look at it
+scaled_data_melt = melt(scaled_data3, id.vars = "diagnosis")
+  
+# check it
+summary(scaled_data_melt)
+str(scaled_data_melt)
+View(scaled_data_melt)
+
+# make multiple boxplots for M and B outcomes, faceted by features
+ggplot(scaled_data_melt, aes(x = variable, y = value, fill=variable)) +
+  geom_boxplot(width=10) +
+  #facet_grid(value ~ variable) +
+  #facet_grid( ~ value) +
+  #facet_grid( ~ variable) +
+  ###facet_grid(. ~ variable) +
+  #facet_wrap(. ~ variable) +
+  facet_grid(~diagnosis) +
+  theme_classic()
+
+```
+
+Just by eyeballing the data, which of the features do you think should provide the most predictive power for the diagnosis outcome? Do any of the features look potentially uninformative? Explain your reasoning.
+
+```{r eval=FALSE}
+# your answer here
+"Outliers of fractal_dimension seem to be the farthest apart for both M and B."
+```
+
+
+### Remove uninformative features
+
+First, use an appropriate test to determine whether the various measurements show any difference in the distributions of the B and M data.
+
+*Hint: some of the data look like they may not be normally distributed, so don't worry about checking this, just use a test that does not assume normality; in this case the test will have sufficient power to find any non-significant differences.*
+
+*Note: you could use a `for` loop here so you don't have to repeat your code a whole bunch of times. Optional: consider using `paste` or `paste0` to make the output more legible.*
+
+```{r}
+# p-value for observed difference between B and M outcomes for each feature
+
+vars <- colnames(scaled_data3)
+vars
+scaled_data_m <- subset(scaled_data3, scaled_data3$diagnosis == "M")
+scaled_data_b <- subset(scaled_data3, scaled_data3$diagnosis == "B")
+
+v <- ""
+#res <- shapiro.test( scaled_data_m$radius )
+#res <- shapiro.test(ss)
+s = ""
+
+for ( i in 2:11) {
+  v <- vars[i]
+  print(v)
+  s = paste(s, v, "\n")
+
+  res <- shapiro.test( eval(parse(text=paste0("scaled_data_m$", v))) )
+  #print(res)
+  #str(res)
+  sm <- paste("Shapiro-Wilk normality test", vars[i], " M p.value =", res$p.value)
+  print(sm)
+  s = paste(s, sm, "\n")
+  
+  res <- shapiro.test( eval(parse(text=paste0("scaled_data_b$", v))) )
+  sb <- paste("Shapiro-Wilk normality test", vars[i], " B p.value =", res$p.value)
+  print(sb)
+  s = paste(s, sb, "\n")
+
+}
+
+# p-value for observed difference between B and M outcomes for each feature
+#print(s)
+cat(s)
+
+```
+
+Remove any columns from the scaled data frame that do not show a significant difference between the "B" and "M" samples.
+
+```{r}
+#scaled_data4 = scaled_data3[, colnames(scaled_data3) !=  "symmetry"]
+#scaled_data4 = scaled_data3[, colnames(scaled_data3) !=  "perimeter"]
+scaled_data4 = scaled_data3[, colnames(scaled_data3) !=  "fractal_dimension"]
+
+head(scaled_data4)
+str(scaled_data4)
+```
+
+
+### Examine correlations
+
+Take a look at how all the predictive variables correlate with each other using the `cor()` function (use Pearson correlation).
+
+We can get even more fancy and plot the data using `ggpairs()` (this is done for you below).
+
+```{r, message=F}
+###scaled_data <- scaled_data4
+str(scaled_data4)
+
+# just the correlations
+
+colnames(scaled_data4)
+cor(scaled_data4$radius, scaled_data4$texture, method = "pearson")
+cor(scaled_data4$radius, scaled_data4$perimeter, method = "pearson")
+cor(scaled_data4$radius, scaled_data4$area, method = "pearson")
+cor(scaled_data4$radius, scaled_data4$smoothness, method = "pearson")
+cor(scaled_data4$radius, scaled_data4$compactness, method = "pearson")
+cor(scaled_data4$radius, scaled_data4$concavity, method = "pearson")
+cor(scaled_data4$radius, scaled_data4$concave.points, method = "pearson")
+cor(scaled_data4$radius, scaled_data4$symmetry, method = "pearson")
+
+# correlogram plot
+#install.packages("GGally")  # only needed once
+library(GGally)
+#ggpairs(scaled_data, columns = 2:10, title = "Tumor Feature Correlations",
+ggpairs(scaled_data4, columns = 2:10, title = "Tumor Feature Correlations",
+                upper = list(continuous = wrap("cor",size = 3)),
+        lower = list(continuous = wrap("points",
+                                       alpha = 0.3,
+                                       size = 0.1)),
+        mapping = aes(color = diagnosis))
+```
+
+Looking at this pair-wise correlation graph, which variables look so highly correlated with each other that they are essentially redundant?
+
+```{r eval=FALSE}
+# your answer here
+"Since the correlations for radius, perimeter, and area are all close to 1, the radius, perimeter, and area are considered to be highly correlated with each other. "
+```
+
+
+Which variables look *least* correlated with other variables? Are these the same ones that looked the best based on your boxplots and statistical tests above?
+
+```{r eval=FALSE}
+# your answer here
+"Since the correlations for smoothness and texture are negative, the smoothness and texture are considered to be least correlated with each other. This is because the outliers of Smoothness B is farthest apart in the boxplot."
+```
+
+
+Why might you consider a dimensionality reduction method like PCA at this point?
+
+```{r eval=FALSE}
+# your answer here
+"If there are too many dimensions, it is impossible to determine which data are characteristic, so we want to reduce the dimensions."
+```
+
+
+If we want to use individual features as predictors in a logistic model, why might we choose *not* to perform PCA at this step?
+
+```{r eval=FALSE}
+# your answer here
+"This is because the binomial logistic regression may reduce the dimensionality by comparing the coefficients between items."
+```
+
+
+Another option to reduce the complexity of the dataset would be to simply manually remove some of the columns that are most highly correlated with other columns. Let's keep this in mind, but let's just continue with the remaining data for now.
+
+
+## Q1: Prepare the data for modeling
+
+To create our predictive models, we will use the `glm()` function, which stands for **generalized linear model**. Since logistic regression uses binary predictors, we will first encode all Benign outcomes as `0` and all Malignant outcomes as `1`.
+
+
+### Recode binary outcomes
+
+First, split the scaled data into two dataframes: `B_all` (all the Benign data) and `M_all` (all the Malignant data).
+
+Then, recode the diagnosis outcomes as `0` for "B" and `1` for "M".
+
+```{r}
+# subset the data based on B or M diagnosis
+#scaled_data5 <- cancer_data1
+scaled_data5 <- data.frame(cancer_data2a, scaled_data4)
+head(scaled_data5)
+#scaled_data5
+
+B_all = subset(scaled_data5, scaled_data5$diagnosis == "B")
+M_all = subset(scaled_data5, scaled_data5$diagnosis == "M")
+
+
+# recode the diagnoses as binary outcomes
+B_all$diagnosis = 0
+M_all$diagnosis = 1
+head(B_all)
+str(B_all)
+str(M_all)
+```
+
+
+### Create training and test datasets
+
+For this exercise, we will train several predictive models on part of the data and hold out the rest of the data for testing the models to see which one gives the best predictions. Using hold-out data is a common way to test the quality of predictive models.
+
+To generate the **training** and **test** datasets, we will randomly select 20% of the Benign samples and 20% of the Malignant samples and save them in a data frame called *BM_test*. The remaining samples will be stored in a different data frame called *BM_training*.
+
+*Note: there are some data science packages that help with some of the steps below, but we will just do them the old-fashioned way here.*
+
+```{r}
+# select random samples: 80/20 split
+magic = 20211204
+library(dplyr)
+
+#set.seed( ... )  # set a seed for reproducibility
+set.seed(magic)
+size = floor(0.2*nrow(B_all))
+size
+#B_sample = sample(B_all$id, size = size, replace = T)
+B_sample_id = sample(B_all$id, size = size)
+B_sample_id.df <- data.frame(id = B_sample_id)
+#head(B_sample_id.df)
+#B_sample = inner_join(B_sample_id.df, scaled_data5, by = "id")
+B_sample = inner_join(B_sample_id.df, B_all, by = "id")
+str(B_sample)
+head(B_sample)
+#B_sample
+
+#set.seed( ... )  # set a seed for reproducibility
+set.seed(magic)
+size = floor(0.2*nrow(M_all))
+size
+#M_sample = sample(M_all$id, floor(0.2*nrow(M_all)), replace = T)
+M_sample_id = sample(M_all$id, size)
+M_sample_id.df <- data.frame(id = M_sample_id)
+#head(M_sample_id.df)
+M_sample = inner_join(M_sample_id.df, M_all, by = "id")
+str(M_sample)
+head(M_sample)
+#M_sample
+
+# combine the test data into a single data.frame
+BM_test = union(B_sample, M_sample, by = "id")
+str(BM_test)
+head(BM_test)
+
+# combine the training data into a single data.frame
+# (hint: use negation of test data sets)
+B_train = setdiff(B_all, B_sample)
+head(B_train)
+M_train = setdiff(M_all, M_sample)
+head(M_train)
+BM_train = union(B_train, M_train)
+head(BM_train)
+
+# make sure the diagnosis variable in each df is a FACTOR
+BM_test$diagnosis = factor(BM_test$diagnosis)
+BM_train$diagnosis = factor(BM_train$diagnosis)
+head(BM_test)
+head(BM_train)
+
+```
+
+
+## Q2: Binomial logistic regression
+
+Now let's build separate models for each variable alone using `BM_train`, and then build a model using all of the predictors together. Later, we will compare different models by evaluating their performance on the held-out test data.
+
+General linear models come in **families** that describe the **link function** and **error distribution** for each model. Review the lecture notes on regression to refresh your memory about this. You should also check out the documentation on `glm()`.
+
+Logistic regression actually uses an interative maximum likelihood estimation procedure. To make sure the models "converge", we will also specify the number of iterations to perform using the `maxit` parameter. (You can test the models without including that parameter and see what happens.)
+
+### Make alternative models
+
+```{r}
+colnames(BM_train)
+head(BM_train)
+
+# models with individual predictors
+glm_radius = glm(diagnosis ~ radius, 
+                 data = BM_train, family= "binomial", maxit = 100)
+glm_radius
+summary(glm_radius)
+#str(glm_radius)
+
+# etc. for other features ...
+glm_texture = glm(diagnosis ~ texture, data = BM_train, family= "binomial", maxit = 100)
+glm_texture
+summary(glm_texture)
+
+# model with linear combination of all predictors (do not include interaction terms)
+glm_all =  glm(diagnosis ~ radius + texture + perimeter + area + smoothness + 
+                 compactness + concavity + concave.points + symmetry, 
+                 data = BM_train, family= "binomial", maxit = 100)
+glm_all  
+  
+```
+
+
+Huh. It looks like the full model gave us a warning. This is usually due to the presence of some extreme outliers in the data, so that predicted values cannot be distinguished from 0 or 1. 
+
+
+### Coefficients
+
+You can look at the quality of the models using the `summary()` function, just like you did with linear regression. Do this with the full model above.
+
+```{r}
+# summary for glm_all
+summary(glm_all)
+
+```
+
+### Reduce feature set
+
+We can see from this that a few variables seem to have an outsized contribution to the model and also have a very large standard error. If we go back and look at our boxplots, we can see that "area" is the worst offender. 
+
+Since it's highly correlated with two other variables, let's just make a reduced model that includes all of the variables *except* area, and look at the summary for the new model.
+
+```{r}
+# reduced model (-area)
+glm_reduced = glm(diagnosis ~ radius + texture  + perimeter + smoothness + 
+                 compactness + concavity + concave.points + symmetry, 
+                 data = BM_train, family= "binomial", maxit = 100)
+
+# summary
+summary(glm_reduced)
+
+```
+
+What looks different about this model?
+
+```{r eval=FALSE}
+# your answer here
+"The regression coefficients for texture were the highest, and for number 2 and 3, smoothness and concative points were significantly different."
+```
+
+While we're at it, let's go ahead and make a model containing just the non-redundant features. We can see from our correlation matrix above that "perimeter" and "concavity" both show a correlation >0.9 with other variables, so let's make a new model that also excludes these two features and look at the summary.
+
+```{r}
+# logistic regression model (-area, -perimeter, -concavity)
+glm_nonredundant = glm(diagnosis ~ radius + texture + smoothness + 
+                 compactness + concave.points + symmetry, 
+                 data = BM_train, family= "binomial", maxit = 100)
+  
+# summary
+summary(glm_nonredundant)
+
+```
+
+What did this do to the coefficients and the p-values for the remaining non-redundant variables? What do the results suggest about the contribution of different features to the full model?
+
+```{r eval=FALSE}
+# your answer here
+"By reducing the dimensionality, we obtained three useful regression coefficients. "
+```
+
+If we were really working on this dataset for real, we would explore these issues more deeply, but for the purposes of this exercise let's just move on.
+
+
+## Q3: Evaluate model performance
+
+### Predict using held-out data
+
+To test our models, we will apply the `predict.glm()` function to the **BM_test** dataset. The default prediction `type` uses the scale of the linear predictors. We'll use the scale of the **"response"** variable instead.
+
+*Note: The `predict()` function is short-hand for a variety of more specific prediction functions; it will figure out the class of model from the object passed as the first parameter.*
+
+First, make predictions using each of the remaining predictors in the "nonredundant" feature set individually. Then, make predictive models using all of the nonredundant features together.
+
+```{r}
+## Individual predictors
+cancer_pred_radius = predict(glm_radius,
+                             newdata = BM_test , type="response")
+summary(cancer_pred_radius)
+
+# etc. for other individual features
+cancer_pred_texture = predict(glm_texture, newdata = BM_test , type="response")
+summary(cancer_pred_texture)
+
+# predictions for nonredundant feature set
+cancer_pred_nonredundant = predict(glm_nonredundant, newdata = BM_test , type="response")
+summary(cancer_pred_nonredundant)
+str(cancer_pred_nonredundant)
+
+```
+
+Great! Now we have some predictive models! What's next? Below we will explore some of the different ways we can evaluate the results of our predictions.
+
+
+### Histogram
+
+Let's take a quick look at our predictions for the full "nonredundant" model:
+
+```{r}
+ggplot(data.frame(prob=cancer_pred_nonredundant)) +
+  geom_histogram(aes(x=prob))
+```
+
+What does this plot show?
+
+```{r eval=FALSE}
+# your answer here
+"We can see that the probability of matching the regression coefficients obtained by training is polarized between those near 0 and those near 1."
+```
+
+
+### Confusion matrix
+
+We can look at the **confusion matrix**, which is just a table of true or false positives and negatives at a particular probability cutoff. Check this out for the full prediction model (`cancer_pred_nonredundant`) at 20%, 50%, and 80% probability cutoffs.
+
+```{r}
+# 20% probability
+neg_pos = as.numeric(cancer_pred_nonredundant >= 0.2)
+table(neg_pos)                    # predictions
+table(neg_pos, BM_test$diagnosis) # predictions vs. observed
+
+# 50% probability
+neg_pos = as.numeric(cancer_pred_nonredundant >= 0.5)
+table(neg_pos)                    # predictions
+table(neg_pos, BM_test$diagnosis) # predictions vs. observed
+
+# 80% probability
+neg_pos = as.numeric(cancer_pred_nonredundant >= 0.8)
+table(neg_pos)                    # predictions
+table(neg_pos, BM_test$diagnosis) # predictions vs. observed
+```
+
+How do the false negative and false positives change as the threshold is increased?
+
+```{r eval=FALSE}
+# your answer here
+"The False Negative for 20% probability is 11 and the False Positive for 20% probability is 1. The False Negative for 50% probability is 5 and the False Positive for 50% probability is 4. The False Negative for 80% probability is 2 and the False Positive for 80% probability is 5. Therefore, the False Negative will decrease and the False Positive will increase as the threshold is increased."
+```
+
+
+### ROC and AUC
+
+Another way we can assess performance is using the **AUC (area under the curve)** of a kind of plot that is strangely named a **ROC (Receiver Operating Characteristic)** plot. An **ROC plot** compares **sensivity (TP rate)** on the $y$-axis vs. **1-specificity (FP rate)** on the $x$-axis.
+
+If our predictions are no better than random, then we would have an $AUC = 0.5$. We can visualize this by plotting a line from coordinates `0,0` to `1,1`. A straight line with a slope of 1 represents events that would happen just by chance. 
+
+On the other hand, curves that run higher and to the left will have a higher AUC and greater preditive power. So ideally, we will find a good model that has an ROC curve with a much larger area underneath it than the $AUC = 0.5$ line.
+
+To evaluate our models, we will use the `roc()` command in the **AUC** package to compare the **Predicted** values with the **True** values. Once the ROC object is returned, we can get lots of different types of statistics, including **AUC** (by using the `auc()` function), TPR, FPR, specificity, sensitivity, accuracy, etc. and also a plot.
+
+```{r}
+#install.packages("AUC")  # uncomment to install (you only need to do this once)
+library(AUC)
+
+# set up the plots
+par(mfrow=c(2,2))
+
+## individual predictors ===================================================== #
+
+# compare PREDICTIONS on held-out data with TRUE data from BM_test
+
+# radius
+type = "Radius"
+#roc_result = roc(cancer_pred_nonredundant,  # predictions on test set
+roc_result = roc(BM_test$radius,  # predictions on test set
+                 BM_test$diagnosis )  # observed diagnoses from test set
+str(roc_result)
+plot(roc_result, main=paste(type, ": AUC = ", signif(auc(roc_result),3), sep=""))
+
+# texture
+type = "Texture"
+roc_result = roc(BM_test$texture, BM_test$diagnosis)
+plot(roc_result, main=paste0(type, ": AUC = ", signif(auc(roc_result),3)))
+
+# smoothness
+type = "Smoothness"
+roc_result =  roc(BM_test$smoothness, BM_test$diagnosis)
+plot(roc_result, main=paste0(type, ": AUC = ", signif(auc(roc_result),3)))
+
+# compactness
+type = "Compactness"
+roc_result = roc(BM_test$compactness, BM_test$diagnosis)
+plot(roc_result, main=paste0(type, ": AUC = ", signif(auc(roc_result),3)))
+
+par(mfrow=c(2,2))
+
+# concave points
+type = "Concave_points"
+roc_result =  roc(BM_test$concave.points, BM_test$diagnosis)
+plot(roc_result, main=paste0(type, ": AUC = ", signif(auc(roc_result),3)))
+
+# symmetry
+type = "Symmetry"
+roc_result =  roc(BM_test$symmetry, BM_test$diagnosis)
+plot(roc_result, main=paste0(type, ": AUC = ", signif(auc(roc_result),3)))
+
+
+## combined predictors ======================================================= #
+type = "Nonredundant"
+roc_result =  roc(cancer_pred_nonredundant, BM_test$diagnosis)
+plot(roc_result, main=paste0(type, ": AUC = ", signif(auc(roc_result),3)))
+```
+
+Comment on the performance of these models. Which one is best? Explain why you think this is the case.
+
+```{r eval=FALSE}
+# your answer here
+"The AUC of concave points is 0.974, which is the best and closest to 1."
+```
+
+
+## Q4: Model refinement
+
+Using the summary of the full model as a guide, now make a model with just a subset of the strongest 3 predictors. Then, compare the model summary with the full nonredundant model and plot the ROC curve for the two models together.
+
++ Compare the model summaries.
++ Then, use both models to make predictions on the held-out data. 
++ Plot the ROC curves for the two models.
+
+```{r}
+# generate all the objects and plots for comparing models
+
+## top 3 predictors ======================================================== ##
+
+# model
+glm_top.features = glm(diagnosis ~ radius + compactness + concave.points, 
+                 data = BM_train, family= "binomial", maxit = 100)
+
+# summary
+summary(glm_top.features)
+
+# predictions
+cancer_pred_top.features = predict(glm_top.features, newdata = BM_test , type="response")
+
+# ROC
+roc_result_top.features = roc(cancer_pred_top.features, BM_test$diagnosis)
+
+## ROC for nonredundant predictors ========================================= ##
+roc_result_nonredundant = roc(cancer_pred_nonredundant, BM_test$diagnosis)
+
+## alternative method for plotting with ggplot ============================== #
+# install.packages("ggpubr")  # only need to do this once
+library(ggpubr)
+# theme_set(theme_pubr())
+
+p1 = ggplot(data.frame(FPR=roc_result_top.features$fpr,
+                       TPR=roc_result_top.features$tpr)) +
+     geom_line(aes(x=FPR, y=TPR)) +
+     ggtitle(paste("Top features: AUC = ", 
+                   signif(auc(roc_result_top.features),3), sep=" "))
+
+p2 = ggplot(data.frame(FPR=roc_result_nonredundant$fpr,
+                       TPR=roc_result_nonredundant$tpr)) +
+     geom_line(aes(x=FPR, y=TPR)) +
+     ggtitle(paste("All features: AUC = ", 
+                   signif(auc(roc_result_nonredundant),3), sep=" "))
+
+ggarrange(p1, p2, nrow = 1, ncol = 2)
+```
+
+How do these models compare? Would you rather choose the model with as much non-redundant information as possible, or choose the model with fewer predictors? What are the tradeoffs? Explain your reasoning.
+
+```{r eval=FALSE}
+# your answer here.
+"Although both AUCs are the same at 0.984, it is better to be able to predict with fewer factors."
+```
+
+
+### ANOVA 
+
+Just like with linear models, you can also compare two logistic models with the `anova()` function, using the "Chisq" test. Compare the full nonredundant model with one or more of the individual models, and then compare it with the reduced model you just created using the top 3 predictors.
+
+*Note: Remember that when comparing models, you always want to compare the more complex model to the simpler model, so you have to list the simpler model first.*
+
+```{r}
+# simple models vs glm_nonredundant model
+# anova(glm_radius)
+# anova(glm_nonredundant)
+anova(glm_radius, glm_nonredundant)
+
+# glm_top.features vs. glm_nonredundant
+# anova(glm_nonredundant)
+# anova(glm_top.features)
+anova(glm_top.features, glm_nonredundant)
+
+```
+
+From this analysis, can you decide which model seems best? Explain you reasoning.
+
+```{r eval=FALSE}
+# your answer here
+"Since the Residual for Model 2 is smaller than Model 1, the Model 2 seems to be the best."
+```
+
+
+### AIC
+
+**Akaike's Information Criterion** can help with model selection by providing a measure of goodness-of-fit vs. model simplicity, which balances over- and under-fitting. AIC is computed as $-2*ln(likelihood)+2*k$, where k is the number of estimated parameters. AIC is based on information theory, and a lower AIC means that less information is lost, which is better.
+
+AIC is included in the results of the `summary()` function for a general linear model. Compare the AIC from the full model with the AIC from the model using just the top 3 predictors (use the special dollar sign notation to get the `aic` value from the `glm` model).
+
+```{r}
+# AIC for top features glm
+AIC(glm_top.features)
+
+# AIC for nonredundant glm
+AIC(glm_nonredundant)
+
+```
+
+
+Does this change your viewpoint on which model is best? Which model would you choose based on this criterion?
+
+*Note: I don't get the same results every time I knit this document! This is because some of these processes include some stochasticity. So, you may want to re-run the analysis a few times ... even though the results will vary a little bit, overall the broad picture should be similar.*
+
+```{r eval=FALSE}
+# your answer 
+"A good model is one that provides stable estimation with little error even when the same phenomenon occurs again. Therefore, I believe AIC for nonredundant glm is best because they produce lower AIC values even if I run the code multiple times."
+```
+
+
+### Stepwise regression
+
+Instead of comparing all of these models by hand, which we just saw can get a bit tedious (!), you can use stepwise regression instead, which tests the effect of adding and removing predictors. This can help you find the simplest model that gives the smallest AIC value.
+
+Use the `step` function on the full nonredundant model to find the best model according to this method.
+
+```{r}
+# perform step-wise model evaluation of nonredundant glm
+step(glm_nonredundant)
+
+```
+
+
+What is the best model based on the step-wise regression?
+
+```{r eval=FALSE}
+# your answer here
+"Since the combination of smoothness, cancave.points, radius and texture have the smallest AIC value, the combination of smoothness, concave.points, radius and texture is the best model based on the step-wise regression."
+```
+
+
+*Note: If you don't set a seed in making the held-out data, then you won't get exactly the same results every time you knit this document. Even though the results will vary a little bit, overall the broad picture should be similar because you are running a bunch of iterations to get convergence. An alternative to just using one held-out test set is to use k-fold cross-validation, but we won't get into that here.*
+
+
+### K-fold cross-validation
+
+A more robust method of holdout testing is to use K-fold cross-validation. We will use this method to split into 10 parts (K=10), where 9/10 parts are used for training and the other 1 is used for testing. The method does this 10 times for all 10 parts and comes up with a combined performance score across all the trials.
+
+The `DAAG` package provides a simple interface for K-fold cross-validation. `CVbinary` performs a cross-validation of the model and returns the accuracy of the model. 
+
+In the output, "Internal estimate of accuracy" is the AUC for the training data, and "Cross-validation estimate of accuracy" is the AUC for the test data. Accuracy is usually better for the training data than on the test data (for obvious reasons).
+
+Below, perform 10-fold cross-validation on the full nonredundant model and the best stepwise-reduced model. 
+
+*Note that you need to explicitly specify the formulas for the models again below, rather than use the previous models you generated above using the 80/20 method.*
+
+```{r}
+#install.packages("DAAG") # only do this once
+library(DAAG)
+
+# full nonredundant model
+lr.fold = glm(formula = diagnosis ~ radius + texture + smoothness + 
+                compactness + concave.points + symmetry, # fill in the formula here
+              family="binomial", maxit = 100, 
+              data=scaled_data5) 
+nonredundant_10fold = CVbinary(lr.fold,
+                               rand=NULL,
+                               nfolds=10,
+                               print.details=TRUE)
+lr.fold
+nonredundant_10fold
+
+# stepwise-reduced model
+lr.fold = glm(formula = diagnosis ~ radius + compactness + concave.points, # fill in the formula here
+              family="binomial", maxit = 100, 
+              data=scaled_data5) 
+  
+reduced_10fold = CVbinary(lr.fold,
+                               rand=NULL,
+                               nfolds=10,
+                               print.details=TRUE)
+lr.fold
+reduced_10fold
+```
+
+How does this analysis square with your other tests above? Which model would you use in the end?
+
+```{r eval=FALSE}
+# your answer here
+"According too this analysis, the combination of radius + texture + smoothness + compactness + concave.points + symmetry have the smaller AIC value. Therefore, the combination of radius + texture + smoothness + compactness + concave.points + symmetry is the best model according to this analysis. Since this model exactly contains 4 of the same variables such as smoothness, cancave.points, radius and texture from the best model of the above stepwise-regression, this analysis confirms that this model is the best model confirmed by the above multiple other tests."
+```
+
+**Congratulations! You can predict breast cancer malignancy from biopsies with high accuracy!** (Caveat: for clinical purposes, we still need to keep in mind the false negative and false positive rates and how these might affect medical decisions.)
+
+
+## Q5: Convert your analysis to an R script
+
+You can use the `purl()` function in the `knitr` package to convert any R Markdown to an R script that you could easily integrate into a larger analysis workflow. If you want to ignore certain code blocks in a file, you may exclude them from the output by adding `purl=FALSE` in the top line of the chunk (e.g. `{r purl=FALSE}`). *Note: You probably want to make sure you know where your working directory is before you do this!*
+
+Convert this file to an R script by executing the following command in the Console: `knitr::purl("filename.Rmd")` [substitute with the correct filename]. Hand in both this .Rmd file and the .R file you just created.
+
+
+**The End!!! Yay!!!**
