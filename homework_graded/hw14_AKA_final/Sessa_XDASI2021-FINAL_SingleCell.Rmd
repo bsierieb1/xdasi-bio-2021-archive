@@ -1,0 +1,498 @@
+---
+title: 'Take-home final: single-cell analysis'
+author: "Sofia Sessa"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+subtitle: XDASI Fall 2021
+---
+
+```{r setup, include=FALSE}
+# make sure you have these packages installed
+library(umap)
+library(cluster)
+library(dplyr)
+library(pheatmap)
+library(tidyverse)
+```
+
+# Looking under the hood
+
+Single-cell techniques have experienced a real boom in the last several years, and single-cell RNA-seq is progressively becoming as commonplace as "classical" bulk RNA-seq. The computational community has created some tremendous tools that streamline the analyses and make them as user-friendly as possible (think of `Seurat` developed in Satija lab at NYU/NYGC). Here, however, we will do what the majority of non-computational folks do *not* do. We will perform single-cell analysis "by hand", although some steps will be simplified. Why is this useful? First, we will demystify some widely used terms. For example, we will see that a "highly variable" gene and a "marker" gene are very straightforward concepts. Even more importantly, understanding the statistical techniques behind a basic single-cell RNA-seq pipeline will shed light on the limitations of what such analyses can tell us about biology.
+
+Note: if you have previously performed single-cell analyses in Seurat or another package, please do **not** use any of such packages in this exercise!
+
+## 1. Import and clean the data
+
+#### 1.a. Import the counts
+
+Import the count matrix that we provided with this exercise. Determine whether rows or columns contain genes and cells and make sure that you set column and row names correctly.
+
+_Hint: cells are named after the nucleotide sequence of their barcode, and gene names are "MIR1302-10", "FAM138A" etc._
+
+```{r}
+# jingle bells
+
+single_cell=read.csv("/Users/Sofia/Desktop/R/the final HW/XDASI2021-FINAL_data.csv", row.names="X")
+
+str(single_cell)
+
+head(single_cell)
+
+
+#genes in rows
+#cells in columns
+
+```
+
+#### 1.b. Quality control
+
+Remember the homework on Poisson distribution? In droplet-based single-cell sequencing, cell concentration is chosen in such a way that most droplets have no cells (these have already been excluded from our data by read counting software), and those that do mostly contain one cell per droplet. However, there will always be some droplets that contain two or more cells. A simple way to weed out some of them is to discard those cells where the **total** counts are abnormally high. What is abnormal is determined by each researcher individually, and it depends on the biological sample being studied. Our data set includes cells that are similar in size. So, it is safe to assume that they should normally contain similar amount of RNA and cells with unusually high counts are doublets which should be discarded.
+
++ First, calculate the total number of counts in each cell and plot the distribution.
++ Second, select an arbitrary cutoff, and remove the cells that have more counts than the cutoff from the count matrix. 
+
+_Hint: there should be relatively few outliers in our data. We suggest setting the threshold in a way that less than 1% of cells are discarded._
+
+```{r}
+# jingle bells
+#total number of counts for each column
+single_cell_tot= colSums(single_cell)
+
+plot(single_cell_tot)
+hist(single_cell_tot)
+head(single_cell_tot)
+
+
+#number of cells in total
+dim(single_cell)
+
+#remove cells with counts higher than 6000
+
+single_cell_filtered = single_cell %>% select_if(Negate(function(col)sum(col)>6000))
+
+
+
+singlecell_filtered_sum<-colSums(single_cell_filtered)
+
+plot(singlecell_filtered_sum)
+hist(singlecell_filtered_sum)
+head(singlecell_filtered_sum)
+
+```
+
+## 2. Select highly-variable genes
+
+The most popular methods of single-cell library prep fail to capture all transcript in cells, leading to so-called dropouts, where cells that actually express a gene have 0 read counts for it. Additionally, the sequencing is usually quite shallow (~20 *thousand* reads per cell vs 5-20 *million* reads per sample in bulk RNA-seq). Finally, there is real heterogeneity, even among the cells of the same type and in the same cell state. Together, this makes the count data quite noisy. Therefore, the convention is to only perform most of the downstream analyses with a subset of **highly variable genes**. What does this mean? Generally speaking, variance in gene expression between cells is positively correlated with how highly the gene is expressed: highly expressed genes show higher variance between cells and lowly expressed genes show lower variance between cells. **However, some genes vary between cells more than you would expect just given their expression level.** These genes are called "highly variable" and they have proven to be **the most informative** of transcriptomic differences between cells.
+
+#### 2.a. Compare variance with expression level
+
++ First, calculate the mean expression level for each gene across cells. 
++ Second, calculate the variance of each gene across cells. 
++ Third, log-transform both measures to equalize the contribution of highly and lowly expressed genes. 
+
+_Hint: some genes may not be expressed in any cell, resulting in 0 mean and 0 variance. Log(0) equals + or - infinity, so it is a good idea to perform log(N + 1) transformation instead of simply log(N). This is called "adding a pseudocount"._
+
++ Finally, plot log-transformed variance on the Y axis and log-transformed mean on the X axis.
+
+```{r}
+# jingle all the way
+
+#mean for rows
+single_cell_filtered_mean = rowMeans(single_cell_filtered[,1:2674])
+
+head(single_cell_filtered_mean)
+str(single_cell_filtered_mean)
+
+sum(single_cell_filtered[6,])/2674
+
+#variance for rows
+library(matrixStats)
+single_cell_filtered_vars =apply(single_cell_filtered[,1:2674],1, var)
+
+head(single_cell_filtered_vars)
+
+var(single_cell_filtered[6],)
+
+
+#log
+log_sc_filtered_mean=log(single_cell_filtered_mean+1)
+log_sc_filtered_vars=log(single_cell_filtered_vars+1)
+
+
+plot(log_sc_filtered_mean,log_sc_filtered_vars)
+
+
+```
+
+#### 2.b. Identify genes with higher variance than predicted by their expression level
+
+Once again, we are interested in finding genes that vary between cells more than we would expect based on their expression level. A simple strategy is to regress expression variance on mean expression and select the data points that deviate from the predicted relationship the most, i.e. the points that have the highest residuals in the regression model. While linear regression is not necessarily the best choice for this, it is good enough for the sake of this exercise.
+
++ First, regress log-transformed variance on log-transformed mean.
++ Second, extract the residuals from the model.
++ Third, identify the names or indices of the genes with the top 1,000 largest residuals so you can subset them later.
+
+_Hint: there are at least a couple of different ways to do this. You may either `sort()` residuals and extract the names of the largest residuals, which will be corresponding gene names, or `rank()` the residuals and extract the indices of those with the highest ranks._
+
++ Finally, as a sanity check to make sure your code does what you intended, redraw the plot above but highlight the most highly variable genes by drawing them in a different color.
+
+```{r}
+# oh what fun it is to ride
+
+#lm
+model=lm(log_sc_filtered_vars~log_sc_filtered_mean)
+
+summary(model)
+
+#residuals
+model_res=model$residuals
+
+#rank and extract
+top_1000= sort(model_res, decreasing=TRUE)
+
+top_1000_index=top_1000[1:1000]
+
+head(top_1000_index)
+
+top_1000_index2=names(top_1000_index)[1:1000]
+
+#subset
+single_cell_top_1000= single_cell_filtered[top_1000_index2,]
+
+#basic plot
+plot(log_sc_filtered_mean,log_sc_filtered_vars)
+
+#better plot
+#df
+single_cell_filter_mean_var=cbind(log(single_cell_filtered_mean+1),log(single_cell_filtered_vars+1))
+
+single_cell_filter_mean_var_pl.df=as.data.frame(single_cell_filter_mean_var)
+
+colnames(single_cell_filter_mean_var_pl.df)=c("pseudolog_mean","pseudolog_var")
+
+top_1000_pl=single_cell_filter_mean_var_pl.df[top_1000_index2,]
+
+colnames(single_cell_filter_mean_var_pl.df)=c("pseudolog_mean","pseudolog_var")
+
+#ggplot
+library(ggplot2)
+ggplot(single_cell_filter_mean_var_pl.df, 
+       mapping = aes(x = pseudolog_mean,
+                     y = pseudolog_var))+
+  geom_point(col = "magenta", alpha = 0.5) +
+  geom_point(data = top_1000_pl,
+             aes(x = pseudolog_mean,
+                 y = pseudolog_var),
+             col = "blue", alpha = 0.5)
+
+```
+
+## 3. Pre-process count data
+
+Before performing PCA and other downstream analyses, we need to depth-normalize the counts and transform our data to equalize the contribution of lowly and highly expressed genes. 
+
++ First, perform CP10K (counts per 10,000 total counts) normalization.
+
+_Hint: you should start by calculating the total number of counts in each cell._
+
++ Second, log-transform the normalized counts (and remember about what is going to happen to the zeros).
++ Third, subset highly variable genes using the names or indices determined in 2.b. 
++ Fourth, scale and center the log-transformed data such that the mean expression of each gene across cells is ~0 and variance between cells is 1. 
+
+_A very important hint for the last step: you may use `scale()` with default parameters, which will perform centering and scaling in one go. However, be very careful as this function scales columns of the input table and not rows! Ideally, you should build in some sanity checks in your code: after scaling, verify whether the variance of each gene *across cells* really equals 1. If it is not 1, and instead the variance *across genes* equals 1, you need to go back and transpose your data before applying `scale()`._
+
+```{r}
+# in a one-horse open sleigh
+
+#first
+single_cell_normalized= apply(single_cell_filtered, 2, function(x) x*10000/sum(x))
+
+#sanity check for normalize B2M (1st cell AAACATACAACCAC.1)
+(10000 * single_cell_filtered["B2M","AAACATACAACCAC.1"])/colSums(single_cell_filtered[1])
+single_cell_normalized["B2M","AAACATACAACCAC.1"]
+
+#second
+single_cell_normalized_log=log(single_cell_normalized+1)
+
+#double check log transformed
+log((single_cell_normalized["B2M","AAACATACAACCAC.1"])+1)
+single_cell_normalized_log["B2M","AAACATACAACCAC.1"]
+
+#third
+single_cell_normalized_log_top1000=single_cell_normalized_log[top_1000_index2,]
+
+#fourth
+single_cell_normalized_log_top1000_t=t(single_cell_normalized_log_top1000)
+
+single_cell_normalized_log_top1000_scaled=scale(single_cell_normalized_log_top1000_t)
+
+#check
+apply(single_cell_normalized_log_top1000_scaled,2,var)
+
+```
+
+## 4. PCA
+
+Since we are dealing with the expression levels of 1,000 genes, dimensionality reduction can help us summarize and visualize the data, as well as determine the major sources of variance. Let us start by performing PCA and examining which genes contribute the most to the first few principal components.
+
+#### 4.a. Perform PCA
+
++ First, perform PCA on the normalized log-transformed counts of highly variable genes scaled to a mean of 0 and variance of 1 (i.e. on the last thing you created in the previous step). 
+
+_Hint: you may need to transpose your data (yes, again, SORRY!) A useful sanity check is to check the dimensions of the `$x` slot after you have run `prcomp()`: if the number of rows equals the number of cells and the number of columns equals 1,000, all is good. If not, something is wrong and you should try running `prcomp()` on transposed data._
+
++ Second, plot the proportion of variance explained by the first 20-30 PCs.
+
+_Hint: there are at least two ways of getting the proportion of variance explained by each PC. You may extract the corresponding standard deviation values from `$sdev`, square them and divide each squared value by their sum. Alternatively, you may run `summary()` on your PCA object and extract proportions of variance from the table that is stored in the `$importance` slot of the `summary()` output._
+
++ Third, plot the data distribution along the first few PCs (decide for yourself which PCs to plot).
+
+```{r}
+# hey!
+
+#first
+PCA=prcomp(single_cell_normalized_log_top1000_scaled)
+#check
+dim(PCA$x)
+#second
+variance=summary(PCA)$importance["Proportion of Variance", 1:20]
+plot(variance)
+
+#third
+plot(PCA$x[,1:2])
+plot(PCA$x[,2:3])
+plot(PCA$x[,3:4])
+
+```
+
+Do you see any structure in the PC plots? How are the data points distributed?
+
+```
+In the elbow plot the plateau starts from about the 6th PCA, so 6 PC should be a good number to explain the variances in the data. in PC1vsPC2 there seems to be 3 clusters, in PC2vsPC3 and in PC3vsPC4 there seems to be 2 clusters. 
+```
+
+#### 4.b. Identify genes with the highest loading on PCs 1 and 2
+
+Find genes that contribute the most to PCs 1 and 2.
+
+_Hint: if you were using the function `princomp()`, variable loadings would be stored in the slot `$loadings` of the output. Somewhat confusingly (for biologists, although not for mathematicians), an analogous slot in the `prcomp()` output is called `$rotation`._
+
+```{r}
+loading=as.data.frame(PCA$rotation)
+
+PC1_top10=rownames(loading[order(abs(loading$PC1), decreasing=TRUE),])[1:10]
+
+PC2_top10=rownames(loading[order(abs(loading$PC2), decreasing=TRUE),])[1:10]
+
+PC1_top10
+PC2_top10
+```
+
+Describe a situation in which you might want to know which genes contribute the most to a given PC axis.
+
+```
+for example when I want to correlate those genes with a particolar phenotype of interest
+```
+
+## 5. UMAP and clustering
+
+In many single-cell data sets, there is so much structure in the PC space that it warrants further dimensionality reduction of the PCA output. A popular method to represent multidimensional data in two (or three) dimensions is UMAP, and we can use the function `umap()` from the package `umap` to perform it.
+
+#### 5.a. Perform UMAP
+
+Let us take the main output of PCA (i.e. PC coordinates of all data points) as the input to the `umap()` function. While we can use all 1,000 PCs, it may be more useful to only include those PCs that explain a meaningful amount of the variance.
+
++ First, look at the plot above which displays the amount of variance explained by each PC and decide how many of them explain more than a "baseline" amount of variance. 
++ Second, use the coordinates of the selected PCs as an input to `umap()` and run the function with default parameters.
++ Third, plot the output.
+
+_Hint: the coordinates of the two UMAP axes are stored in the `$layout` slot of the `umap()` output._
+
+```{r}
+single_cell_umap=umap(PCA$x[,c(1:5)],)
+
+plot(single_cell_umap$layout)
+```
+
+How does the UMAP plot compare to the PCA plots above?
+
+```
+UMAP shows 3 defined clusters (maybe 4) like in the PCA1vsPCA2.
+```
+
+#### 5.b. Cluster the UMAP output (`$layout`) using your favorite clustering algorithm
+
++ First, build diagnostic plots (elbow plot or the plot of average silhouette widths, or both).
+
+_Hint: refer to the last in-class exercise if you need help creating diagnostic plots._
+
++ Second, decide on the optimum number of clusters and perform clustering with the chosen parameter.
+
+```{r}
+within_vector=c()  # empty vector
+
+between_vector=c()  # empty vector
+
+for (n_centers in 2:20) {
+  # perform k-means clustering with k = n_centers
+  clustered_km <- kmeans(x = PCA$x[,1:2],
+                         centers = n_centers)
+  # extract and store within-cluster variance
+  within_i <- clustered_km$tot.withinss
+  within_vector <- c(within_vector, within_i)
+  # extract and store between-cluster variance
+  between_i <- clustered_km$betweenss
+  between_vector <- c(between_vector, between_i)
+}
+
+plot(x = 2:20,
+     y = within_vector)
+
+#decide on the optimum number of clusters and perform clustering with the chosen parameter.
+
+clustered_km = kmeans(x = PCA$x[,1:2],
+                      centers = 5) #from clustering 
+
+plot(PCA$x[,1:2],
+     col = clustered_km$cluster)
+
+plot(single_cell_umap$layout,
+     col = clustered_km$cluster)
+```
+
+How happy are you with the clustering results? What issues did you encounter?
+
+```
+The UMAP shows 4-5 clusters to be enough.There is one outlier in the UMAP
+```
+
+## 6. Marker genes
+
+Cell type markers, or cluster markers, are nothing else than genes that are specifically expressed in a certain cluster or in a subset of clusters. They are determined by performing differential expression testing with some semi-arbitrary filtering applied afterwards. As for differential expression testing, you may be shocked to find out that it is predominantly performed by doing a bunch of Wilcoxon tests (i.e. the simplest non-parametric test and not some fancy DESeq2-style modeling). A Wilcoxon test is done for each gene, where you compare expression values in cells that belong to a given cluster vs. the rest of the cells.
+
+#### 6.a. Identify markers for cluster 1
+
++ First, for each gene, split the **normalized and log-transformed** expression values into "cells in cluster 1" and "cells NOT in cluster 1" and calculate (a) log2 fold change and (b) Wilcoxon test p-value between the two groups. 
++ Second, perform FDR correction of the p-values. 
++ Third, filter the genes by significant adjusted p-values and sort them by log2 fold change.
+
+_Hint: you may also want to remove genes with + or - infinity log2 fold changes._
+
+```{r}
+#first
+cluster_1=clustered_km$cluster[clustered_km$cluster==1]
+head(cluster_1)
+
+cluster_not1=clustered_km$cluster[clustered_km$cluster!=1]
+head(cluster_not1)
+
+cluster_1_gene=single_cell_normalized_log[,names(cluster_1)]
+
+cluster_not1_gene=single_cell_normalized_log[,names(cluster_not1)]
+
+dim(cluster_1_gene)
+dim(cluster_not1_gene)
+
+#log2 fold change
+
+cluster_1_gene_mean=rowMeans(cluster_1_gene)
+cluster_not1_gene_mean=rowMeans(cluster_not1_gene)
+binded_cluster_1_and_not_mean=cbind(cluster_1_gene_mean,cluster_not1_gene_mean)
+
+binded_cluster_1_and_not_mean_log2=transform(binded_cluster_1_and_not_mean,log2foldchange=log2((cluster_1_gene_mean/cluster_not1_gene_mean)))
+
+#wilcoxon
+combined=data.frame("p_values" =  rep(NA, 32738))
+for (i in 1:nrow(combined)) {
+  pvalue = wilcox.test(cluster_1_gene[i,],cluster_not1_gene[i,])$p.value
+  combined$p_values[i] = pvalue
+}
+head(combined)
+
+
+binded_cluster_1_and_not_mean_log2$p.value.wilcox=combined$p_values
+
+#remove NA and infinite
+final_combined=binded_cluster_1_and_not_mean_log2 %>% mutate_all(~ifelse(is.nan(.), NA, .))
+final_combined=final_combined %>% mutate_all(~ifelse(is.infinite(.), NA, .))
+final_combined=final_combined %>% drop_na() 
+
+
+#second
+
+final_combined$pvalues_adj_r=
+  p.adjust(final_combined$p.value.wilcox,method = "fdr")
+
+### filter
+sig_pvalues_adj <- final_combined %>% 
+  filter(pvalues_adj_r < 0.05) %>%  
+  arrange(desc(log2foldchange))
+
+```
+
+#### 6.b. Plot expression of the top markers across clusters
+
+Let us create a heatmap with the average expression of selected markers in each cluster. 
+
++ First, select several (e.g. 10) top genes from the filtered list of cluster 1 markers above. 
++ Second, for each of these genes, average the **normalized and log-transformed** counts between all cells of each cluster. 
+
+_Hint: you may find it useful to arrange the data as a matrix or data.frame with clusters as rows and genes as columns. Each cell should then contain an average expression value for a given gene in the given cluster._ 
+
++ Third, plot the data on a heatmap.
+
+_Hint: base R has the function `heatmap()`, but `pheatmap()` from the package `pheatmap` is much nicer._
+
+```{r}
+#traspose
+single_cell_normalized_log_t=as.data.frame(t(single_cell_normalized_log))
+
+# add the cluster number for each cell 
+single_cell_normalized_log_t$cluster = clustered_km$cluster
+
+# transpose back
+single_cell_normalized_log_t<-as.data.frame(t(single_cell_normalized_log_t))
+
+#find the top10 for cluster 1
+cluster_1_top10_index=rownames(sig_pvalues_adj[c(1:10),])
+print(cluster_1_top10_index)
+
+#second
+
+#prep
+single_cell_normalized_log_top10= single_cell_normalized_log_t[cluster_1_top10_index,]
+top10_gene_diff_cluster = rbind(single_cell_normalized_log_top10 , single_cell_normalized_log_t[32739, ])
+head(top10_gene_diff_cluster)
+
+#for heatmap
+library(reshape2)
+top10_gene_diff_cluster_t = as.data.frame(t(top10_gene_diff_cluster))
+top10_gene_long = melt(top10_gene_diff_cluster_t, id.vars =c("cluster"), value.name = "count", variable.name = "gene") 
+head(top10_gene_long)
+dim(top10_gene_long)
+
+top10_gene_long_sum= top10_gene_long %>% group_by(gene,cluster) %>% summarize(average = mean(count))
+
+#converted 
+top10_gene_wide_sum = spread(top10_gene_long_sum, gene, average)
+top10_gene_wide_sum = as.data.frame(top10_gene_wide_sum)
+rownames(top10_gene_wide_sum) = top10_gene_wide_sum$cluster
+top10_gene_wide_sum= select(top10_gene_wide_sum, -1)
+
+head(top10_gene_wide_sum)
+
+#heatmap
+pheatmap(top10_gene_wide_sum, main = "no scale")
+#with scale 
+pheatmap(scale(top10_gene_wide_sum), main = "scaled")
+
+
+
+```
+
+Does the heatmap pattern correspond to your expectations? Try scaling the data (hint: use parameter `scale` inside `pheatmap()`). Was it useful? How did it affect your interpretation of the results?
+
+```
+Genes are highly expressed in cluster 1. The scaling helped highlighting the presence of the 10 highly expressed genes. 
+```
+
+# THE END! ENJOY YOUR WINTER BREAK!
