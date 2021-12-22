@@ -11,6 +11,9 @@ library(umap)
 library(cluster)
 library(dplyr)
 library(pheatmap)
+library(ggplot2)
+library(reshape)
+library(tidyr)
 ```
 
 # Looking under the hood
@@ -28,16 +31,14 @@ Import the count matrix that we provided with this exercise. Determine whether r
 _Hint: cells are named after the nucleotide sequence of their barcode, and gene names are "MIR1302-10", "FAM138A" etc._
 
 ```{r}
-# import data
-counts <- read.csv("XDASI2021-FINAL_data.csv",
-                   header = T,
-                   row.names = 1)
+scseq_data = read.csv('/Users/eladerman/NYU/Classes/Biostatistics/Week16/XDASI2021-FINAL_data.csv')
 
-# quick look to make sure data were imported correctly
-counts[1:3, 1:3]
+scseq_data$Gene = scseq_data$X
+scseq_data$X = NULL
+melted_scseq_data = melt(scseq_data, id=c('Gene'))
+colnames(melted_scseq_data) = c('Gene', 'Cell', 'Count')
 
-# check structure - number of genes should be in the range of tens of thousands
-dim(counts)
+
 ```
 
 #### 1.b. Quality control
@@ -50,14 +51,15 @@ Remember the homework on Poisson distribution? In droplet-based single-cell sequ
 _Hint: there should be relatively few outliers in our data. We suggest setting the threshold in a way that less than 1% of cells are discarded._
 
 ```{r}
-# total counts per cell (cells are in columns)
-total_counts_per_cell <- colSums(counts)
 
-# plot the distribution
-hist(total_counts_per_cell)
+total_counts_per_cell = melted_scseq_data %>% group_by(Cell) %>% summarise(TotalCounts = sum(Count))
+quantile(total_counts_per_cell$TotalCounts, 0.99)
 
-# only keep cells with less than 10,000 counts
-counts <- counts[ , total_counts_per_cell < 10000]
+# I will set the threshold to 6000 and plot that on the graph
+ggplot(data = total_counts_per_cell, mapping = aes(x = TotalCounts)) + geom_histogram(fill = 'aquamarine', color = 'black') + geom_vline(xintercept = 6000)
+
+melted_scseq_data_no_double_cells = melted_scseq_data %>% group_by(Cell) %>% filter(sum(Count) < 6000)
+
 ```
 
 ## 2. Select highly-variable genes
@@ -75,21 +77,9 @@ _Hint: some genes may not be expressed in any cell, resulting in 0 mean and 0 va
 + Finally, plot log-transformed variance on the Y axis and log-transformed mean on the X axis.
 
 ```{r}
-# calculate mean expression level for each gene
-gene_means <- rowMeans(counts)
 
-# calculate variance for each gene
-gene_variances <- apply(X = counts,
-                        MARGIN = 1,
-                        FUN = var)
-
-# log-transform
-gene_means_log <- log(gene_means + 1)
-gene_variances_log <- log(gene_variances + 1)
-
-# plot
-plot(x = gene_means_log,
-     y = gene_variances_log)
+melted_scseq_data_no_double_cells_log_mean_var = melted_scseq_data_no_double_cells %>% ungroup() %>% group_by(Gene) %>% summarise(LogMean = log(mean(Count) + 1), LogVar = log(sd(Count) ^ 2 + 1))
+ggplot(data = melted_scseq_data_no_double_cells_log_mean_var, mapping = aes(LogMean, LogVar)) + geom_point()
 
 ```
 
@@ -106,27 +96,15 @@ _Hint: there are at least a couple of different ways to do this. You may either 
 + Finally, as a sanity check to make sure your code does what you intended, redraw the plot above but highlight the most highly variable genes by drawing them in a different color.
 
 ```{r}
-# regression
-my_model <- lm(gene_variances_log ~ gene_means_log)
+var_mean_reg = lm(LogVar ~ LogMean, data = melted_scseq_data_no_double_cells_log_mean_var)
 
-# extract residuals
-my_model_residuals <- my_model$residuals
+melted_scseq_data_no_double_cells_log_mean_var$Residual = var_mean_reg$residuals
+thousandth_resid = rev(sort(var_mean_reg$residuals))[1000]
+scseq_with_residual_info = melted_scseq_data_no_double_cells_log_mean_var %>% mutate('HighlyVariable' = ifelse(Residual >= thousandth_resid, 'Yes', 'No'))
 
-# sort residuals
-residuals_high_to_low <- sort(my_model_residuals,
-                              decreasing = TRUE)
+most_variable_genes = scseq_with_residual_info$Gene[which(scseq_with_residual_info$HighlyVariable == 'Yes')]
 
-# extract names (these will be gene names) of the top 1,000 residuals
-highly_variable_genes <- names(residuals_high_to_low[1:1000])
-
-# plot
-plot(x = gene_means_log,
-     y = gene_variances_log)
-
-points(x = gene_means_log[highly_variable_genes],
-       y = gene_variances_log[highly_variable_genes],
-       col = 'red')
-
+ggplot(data = scseq_with_residual_info, mapping = aes(x = LogMean, y = LogVar, color = HighlyVariable)) + geom_point() + geom_abline(slope = var_mean_reg$coefficients[2], intercept = var_mean_reg$coefficients[1])
 ```
 
 ## 3. Pre-process count data
@@ -144,25 +122,35 @@ _Hint: you should start by calculating the total number of counts in each cell._
 _A very important hint for the last step: you may use `scale()` with default parameters, which will perform centering and scaling in one go. However, be very careful as this function scales columns of the input table and not rows! Ideally, you should build in some sanity checks in your code: after scaling, verify whether the variance of each gene *across cells* really equals 1. If it is not 1, and instead the variance *across genes* equals 1, you need to go back and transpose your data before applying `scale()`._
 
 ```{r}
-# CP10K normalization
-total_counts_per_cell <- colSums(counts)
-counts_norm <- t( 1E4 * t(counts) / total_counts_per_cell) # without transposition, each column and not each row would be divided by total_counts_per_cell
+# some dplyr code to get the appropriate normalization
 
-# log-transform
-counts_norm_log <- log(counts_norm + 1)
+log_cp10k_norm_data_most_variable = melted_scseq_data_no_double_cells %>% ungroup() %>% group_by(Cell) %>% mutate(CP10K = ((Count + 1) / (sum(Count)) * 10000)) %>% mutate(log_CP10K = log(CP10K + 1)) %>% ungroup() %>% filter(Gene %in% most_variable_genes)
 
-# subset highly variable genes
-count_norm_log_hv <- counts_norm_log[highly_variable_genes , ]
+log_cp10k_norm_data_most_variable_to_reshape = as.data.frame(log_cp10k_norm_data_most_variable)
 
-# scale data
-count_norm_log_hv_scaled <- t( scale( t(count_norm_log_hv) ) )
+log_cp10k_norm_data_most_variable_to_reshape = log_cp10k_norm_data_most_variable_to_reshape[,c('Gene', 'Cell', 'log_CP10K')]
 
-# sanity checks - mean expression of each gene should be 0 (or close to it) and variance should be 1
-head(rowMeans(count_norm_log_hv_scaled)) # mean expression for each gene
+# now I need to put the data back to wide form
 
-head(apply(X = count_norm_log_hv_scaled,
-           MARGIN = 1,
-           FUN = var )) # variance of each gene
+wide_log_CP10K = reshape(data = log_cp10k_norm_data_most_variable_to_reshape, idvar = 'Gene', timevar = 'Cell', direction = 'wide')
+
+pretty_wide_colnames = gsub('log_CP10K.', '', colnames(wide_log_CP10K))
+colnames(wide_log_CP10K) = pretty_wide_colnames
+
+scaled_data = as.data.frame(scale(wide_log_CP10K[,2:ncol(wide_log_CP10K)]))
+scaled_data$Gene = wide_log_CP10K$Gene
+rownames(scaled_data) = wide_log_CP10K$Gene
+
+long_scaled_data_to_check = melt(scaled_data, id = 'Gene')
+colnames(long_scaled_data_to_check) = c('Gene', 'Cell', 'ScaledLogCP10K')
+
+df_to_check_with = long_scaled_data_to_check %>% group_by(Cell) %>% summarise(Variance = sd(ScaledLogCP10K) ^ 2)
+unique(df_to_check_with$Variance)
+
+scaled_data_pca = scaled_data
+scaled_data_pca$Gene = NULL
+
+
 ```
 
 ## 4. PCA
@@ -182,30 +170,26 @@ _Hint: there are at least two ways of getting the proportion of variance explain
 + Third, plot the data distribution along the first few PCs (decide for yourself which PCs to plot).
 
 ```{r}
-# PCA
-pca <- prcomp( t(count_norm_log_hv_scaled) )
+pca_most_var = prcomp(t(scaled_data_pca))
 
-# sanity check
-dim(pca$x) # is it number of cells x 1,000?
+sum_pca_most_var = summary(pca_most_var)
 
-# proportion of variance explained by top PCs
-variance_top20 <- summary(pca)$importance["Proportion of Variance" , 1:20]
-barplot(variance_top20)
+prop_vars = ((sum_pca_most_var$sdev[1:30] ^ 2) / (sum(sum_pca_most_var$sdev[1:30] ^ 2)))
 
-# plot the data on PCs 1 and 2
-plot(pca$x[,1:2])
+barplot(prop_vars)
 
-# plot the data on PCs 2 and 3
-plot(pca$x[,2:3])
 
-# plot the data on PCs 3 and 4
-plot(pca$x[,3:4])
+plot(pca_most_var$x[,1], pca_most_var$x[,2])
+plot(pca_most_var$x[,2], pca_most_var$x[,3])
+plot(pca_most_var$x[,3], pca_most_var$x[,4])
+
+
 ```
 
 Do you see any structure in the PC plots? How are the data points distributed?
 
 ```
-Your answer here.
+The plot with PC1 and PC2 shows three clear clusters that are about equidistant from each other, the plot with PC2 and PC3 shows one clear cluster far away from two other clusters which are close to each other and then a smear of points near those two clusters. The plot with PC3 and PC4 does not show any clear clustering.
 ```
 
 #### 4.b. Identify genes with the highest loading on PCs 1 and 2
@@ -215,21 +199,17 @@ Find genes that contribute the most to PCs 1 and 2.
 _Hint: if you were using the function `princomp()`, variable loadings would be stored in the slot `$loadings` of the output. Somewhat confusingly (for biologists, although not for mathematicians), an analogous slot in the `prcomp()` output is called `$rotation`._
 
 ```{r}
-loadings_pc1 <- pca$rotation[,1]
-loadings_pc1_sorted <- sort(abs(loadings_pc1), # sort by absolute values because some contributions are negative
-                            decreasing = TRUE)
-loadings_pc1_sorted[1:10]
+most_on_pc1_genes = rev(sort(pca_most_var$rotation[,1]))[1:10]
+most_on_pc1_genes
 
-loadings_pc2 <- pca$rotation[,2]
-loadings_pc2_sorted <- sort(abs(loadings_pc2), # sort by absolute values because some contributions are negative
-                            decreasing = TRUE)
-loadings_pc2_sorted[1:10]
+most_on_pc2_genes = rev(sort(pca_most_var$rotation[,2]))[1:10]
+most_on_pc2_genes
 ```
 
 Describe a situation in which you might want to know which genes contribute the most to a given PC axis.
 
 ```
-Your answer here.
+Assuming that these three clusters represent different cell types these are the genes that are more highly expressed in some cells and not others.
 ```
 
 ## 5. UMAP and clustering
@@ -247,20 +227,17 @@ Let us take the main output of PCA (i.e. PC coordinates of all data points) as t
 _Hint: the coordinates of the two UMAP axes are stored in the `$layout` slot of the `umap()` output._
 
 ```{r}
-# decide on the number of PCs to include
-umap_input <- pca$x[,1:7]
 
-# perform UMAP
-umap_output <- umap(umap_input)
+umap_out = umap(pca_most_var$x[,c(1:3)])
 
-# plot
-plot(umap_output$layout)
+plot(umap_out$layout)
+
 ```
 
 How does the UMAP plot compare to the PCA plots above?
 
 ```
-Your answer here.
+It shows three clusters but it also shows another mini cluster and then a smear of points. All of the features show what look like sub clusters but these are hard to tell apart from noise.
 ```
 
 #### 5.b. Cluster the UMAP output (`$layout`) using your favorite clustering algorithm
@@ -272,55 +249,26 @@ _Hint: refer to the last in-class exercise if you need help creating diagnostic 
 + Second, decide on the optimum number of clusters and perform clustering with the chosen parameter.
 
 ```{r}
-# we have chosen k-means clustering
-
-# elbow plot
-withinss_vector <- c()
-for (n_centers in 2:20){
-  # perform k-means clustering with k = n_centers
-  clustered <- kmeans(umap_output$layout,
-                      centers = n_centers)
-  # record total within-cluster variance
-  withinss_vector <- c(withinss_vector, clustered$tot.withinss)
-}
-plot(x = 2:20,
-     y = withinss_vector)
-
-# plot of average silhouette widths
-silhouette_vector <- c()
+silhouette_vector = c()
 for (n_centers in 2:20) {
-  # perform k-means clustering with k = n_centers
-  clustered_km <- kmeans(x = umap_output$layout,
-                         centers = n_centers)
-  # extract assigned cluster identities
-  clustering_identities <- clustered_km$cluster
-  # calculate silhouettes for all data points
-  silhouettes <- silhouette(x = clustering_identities,
-                            dist = dist(umap_output$layout))
-  # average silhouette width across all data points
-  silhouette_i <- mean(silhouettes[,"sil_width"])
-  # record average silhouette width
-  silhouette_vector <- c(silhouette_vector, silhouette_i)
+  clustered_km = kmeans(x = umap_out$layout, centers = n_centers, iter.max = 1000)
+  silhouettes = silhouette(x = clustered_km$cluster, dist = dist(umap_out$layout))
+  silhouette_index = mean(silhouettes[,3])
+  silhouette_vector = c(silhouette_vector, silhouette_index)
 }
-plot(x = 2:20,
-     y = silhouette_vector)
+plot(x = 2:20, y = silhouette_vector)
 
-# we have chosen k = 7
+clustered_km_4 = kmeans(x = umap_out$layout, centers = 4)
+plot(umap_out$layout, col = clustered_km_4$cluster)
 
-# perform clustering with k = 7
-clustered <- kmeans(umap_output$layout,
-                    centers = 7)
 
-# plot cluster identities
-cluster_identities <- clustered$cluster
-plot(umap_output$layout,
-     col = cluster_identities)
+
 ```
 
 How happy are you with the clustering results? What issues did you encounter?
 
 ```
-Your answer here.
+I am pretty happy with these results, I think the green and black clusters are a little wonky but overall things are good and the other two clusters are great
 ```
 
 ## 6. Marker genes
@@ -336,44 +284,45 @@ Cell type markers, or cluster markers, are nothing else than genes that are spec
 _Hint: you may also want to remove genes with + or - infinity log2 fold changes._
 
 ```{r}
-# binarize cluster_identities into "cluster 1" (1) and "not cluster 1" (2)
-cluster_identities_1vsrest <- ifelse(test = cluster_identities==1,
-                                     yes = 1,
-                                     no = 2)
-# check on the plot
-plot(umap_output$layout,
-     col = cluster_identities_1vsrest)
 
-# create an empty data frame to store gene names, log2FC and p-values
-de_results <- data.frame("gene" = rownames(counts_norm_log),
-                         "l2fc" = NA,
-                         "pval" = NA)
+cluster1_cells = names(which(clustered_km_4$cluster == 1))
 
-# calculate log2FC and perform Wilcoxon test
-for (i in 1:nrow(counts_norm_log)){
-  # split counts_norm_log for given gene into counts_norm_log in cluster 1 and counts_norm_log not in cluster 1
-  counts_norm_log_in_cluster_1 <- as.numeric( counts_norm_log[i , cluster_identities_1vsrest==1] )
-  counts_norm_log_not_in_cluster_1 <- as.numeric( counts_norm_log[i , cluster_identities_1vsrest==2] )
-  # calculate log2FC
-  fc <- mean(counts_norm_log_in_cluster_1) / mean(counts_norm_log_not_in_cluster_1)
-  log2fc <- log(fc, base = 2)
-  de_results$l2fc[i] <- log2fc
-  # perform wilcoxon test and record the p-value
-  de_results$pval[i] <- wilcox.test(counts_norm_log_in_cluster_1, counts_norm_log_not_in_cluster_1)$p.value
+head(long_scaled_data_to_check)
+
+norm_data_clust_num = log_cp10k_norm_data_most_variable_to_reshape %>% ungroup() %>% mutate(ClusterNumber = ifelse(Cell %in% cluster1_cells, 'Clust1', 'Other'))
+
+norm_data_clust_num$Cell = as.character(norm_data_clust_num$Cell)
+
+genes = unique(norm_data_clust_num$Gene)
+length(genes)
+
+genes_for_df = c()
+l2fcs_for_df = c()
+pvalues_for_df = c()
+
+
+for (gene in genes) {
+  
+  clust1s = long_scaled_data_to_check$ScaledLogCP10K[which(norm_data_clust_num$ClusterNumber == 'Clust1' & norm_data_clust_num$Gene == gene)]
+  
+  not_clust1s = long_scaled_data_to_check$ScaledLogCP10K[which(norm_data_clust_num$ClusterNumber == 'Other' & norm_data_clust_num$Gene == gene)]
+  
+  l2fcs_for_df = c(l2fcs_for_df, log2(mean(clust1s) / mean(not_clust1s)))
+  pvalues_for_df = c(pvalues_for_df, wilcox.test(clust1s, not_clust1s)$p.value)
+  genes_for_df = c(genes_for_df, gene)
+  
 }
 
-# perform FDR adjustment of the p-values
-de_results$padj <- p.adjust(de_results$pval,
-                            method = "fdr")
+pvalue_and_l2fc_df = data.frame('Gene' = genes_for_df, 'Pvalue' = pvalues_for_df, 'L2FC' = l2fcs_for_df)
+padjs = p.adjust(pvalue_and_l2fc_df$Pvalue, method = 'fdr')
+pvalue_and_l2fc_df$Padj = padjs
 
-# filter and sort
-de_results_filtered <- de_results %>%
-  filter(padj <= 0.05) %>%
-  filter(l2fc != Inf) %>%
-  filter(l2fc != -Inf) %>%
-  arrange(desc(l2fc))
+filtered_pvalue_and_l2fc_df = pvalue_and_l2fc_df %>% filter(Padj < 0.05) %>% arrange(desc(L2FC))
+best_genes = filtered_pvalue_and_l2fc_df$Gene[1:10]
+best_genes
 
-head(de_results_filtered)
+head(filtered_pvalue_and_l2fc_df)
+
 ```
 
 #### 6.b. Plot expression of the top markers across clusters
@@ -390,32 +339,45 @@ _Hint: you may find it useful to arrange the data as a matrix or data.frame with
 _Hint: base R has the function `heatmap()`, but `pheatmap()` from the package `pheatmap` is much nicer._
 
 ```{r}
-# select top 10 markers
-selected_genes <- de_results_filtered$gene[1:10]
+clusters = c(1:4)
 
-# create an empty matrix with the dimensions number of clusters x number of selected genes
-data_for_heatmap <- matrix(nrow = length(unique(cluster_identities)),
-                           ncol = length(selected_genes))
-colnames(data_for_heatmap) <- selected_genes
+clusters
 
-# loop through clusters and average counts for each selected gene
-for (cluster_i in unique(cluster_identities)){
-  counts_selected_genes_in_cluster_i <- counts_norm_log[selected_genes , cluster_identities==cluster_i]
-  data_for_heatmap[cluster_i ,] <- rowMeans(counts_selected_genes_in_cluster_i)
+data_with_actual_cluster_numbers = norm_data_clust_num %>% mutate(ClustNumberFull = clustered_km_4$cluster[Cell])
+
+clustered_km_4$cluster['TTTGCATGCCTCAC.1']
+tail(data_with_actual_cluster_numbers)
+df_for_heatmap = data.frame(matrix(NA, nrow = 0, ncol = 4))
+
+unique(data_with_actual_cluster_numbers$ClustNumberFull)
+
+mock_select = data_with_actual_cluster_numbers %>% filter(ClustNumberFull == 1, Gene == 'SNX17')
+mock_select
+for (cluster in clusters) {
+  running_means = c()
+  for (gene in best_genes) {
+    correct_data = data_with_actual_cluster_numbers %>% filter(ClustNumberFull == cluster & Gene == gene) %>% select(log_CP10K)
+    running_means = c(running_means, mean(correct_data$log_CP10K))
+  }
+  df_for_heatmap = rbind(df_for_heatmap, running_means)
 }
 
-# plot
-pheatmap(data_for_heatmap)
+df_for_heatmap
 
-# plot, with scaling
-pheatmap(data_for_heatmap,
-         scale = "column")
+rownames(df_for_heatmap) = clusters
+colnames(df_for_heatmap) = best_genes
+
+df_for_heatmap
+
+pheatmap(df_for_heatmap)
+pheatmap(scale(df_for_heatmap))
+
 ```
 
 Does the heatmap pattern correspond to your expectations? Try scaling the data (hint: use parameter `scale` inside `pheatmap()`). Was it useful? How did it affect your interpretation of the results?
 
 ```
-Your answer here.
+When the data is not scaled it is hard to see any patterns. When the data is scaled most genes look as I would expect with high lfcs in 1 and low lfcs in other clusters. However, this doesn't perfectly hold as some have artifactually high lfcs as they have small negative lfcs but the other clusters also have on average a small negative lfc.
 ```
 
 # THE END! ENJOY YOUR WINTER BREAK!
