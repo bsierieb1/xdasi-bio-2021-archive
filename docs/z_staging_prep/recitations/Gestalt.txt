@@ -1,0 +1,21 @@
+- familiar is more important than impressive
+find an example for this
+
+- each graph consists of 3 elements:
+	Data elements: the numbers and the categories visually represented + the title.
+	Structural elements: the axes, the ticks, the legend, the grid, etc.
+	Decorations: extra colors, shapes, artistic drawings etc.
+Maximizing the data elements ensures the audience's attention is on the data
+show this gif: https://s3.amazonaws.com/dq-content/525/data-ink.gif
+AKA maximizing the data-ink ratio sensu Tufte
+
+- Gestalt principles: humans generally perceive patterns rather than individual objects!
+	* similarity: we perceive similar objects as a group
+	* proximity: when we see distinct objects close to each other, we perceive them as a group
+	* enclosure: when we see a set of distinct elements enclosed inside a visual form, we perceive them as a group
+	* connection: when we see distinct objects connected by some kind of a visual form (e.g. a line), we perceive them as a group
+connection & enclosure are stronger than proximity & similarity
+
+- how to choose aspect ratio?
+	if a panel of a large "Cell" figure - whatever fits
+	if a separate figure - think of people with smartphones and tablets (mention posting it on twitter)
