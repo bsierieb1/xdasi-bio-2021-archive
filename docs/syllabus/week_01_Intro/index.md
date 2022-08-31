@@ -34,7 +34,7 @@ nav_order: 1
 
 We will use three main resources for the course:
 
-+ [**Brightspace**](https://brightspace.nyu.edu/d2l/home/79522){: target="blank"}
++ [**Brightspace**](https://brightspace.nyu.edu/){: target="blank"}
   - Quizzes and Homeworks will be posted here.
 
 + [**XDASI 2021 Website**](https://bsierieb1.github.io/xdasi-bio-2021-archive/){: target="blank"}
