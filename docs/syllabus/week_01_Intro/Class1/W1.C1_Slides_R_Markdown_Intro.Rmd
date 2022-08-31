@@ -23,7 +23,7 @@ This is an R Markdown presentation.
 
 Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. 
 
-For more details on using R Markdown consult the [R Markdown page](https://kriscgun.github.io/xdasi-bio-2021/r_resources/1_r_rstudio/5_r_markdown.html)
+For more details on using R Markdown consult the [R Markdown page](https://bsierieb1.github.io/xdasi-bio-2021-archive/r_resources/1_r_rstudio/5_r_markdown.html)
 on the course website.
 
 ## Overview

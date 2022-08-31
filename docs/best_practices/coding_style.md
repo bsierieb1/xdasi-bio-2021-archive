@@ -68,7 +68,7 @@ This example is taken from the same source used for the movie clip shown above:
   </a>
 </p> -->
 
-[![Manuscript template](images/Rmd_manuscript_framework.png)](https://kriscgun.github.io/xdasi-bio-2021/best_practices/images/Rmd_manuscript_framework.png){: title="Open in new window" target="blank"}
+[![Manuscript template](images/Rmd_manuscript_framework.png)](https://bsierieb1.github.io/xdasi-bio-2021-archive/best_practices/images/Rmd_manuscript_framework.png){: title="Open in new window" target="blank"}
 
 You will get plenty of practice with R Markdowns in this class!
 
@@ -76,7 +76,7 @@ You will get plenty of practice with R Markdowns in this class!
 ### R Markdown Resources
 {: .no_toc}
 
-A list of resources for working with R Markdowns is included in the **Learning R**](https://kriscgun.github.io/xdasi-bio-2021/learning_r/7_r_resources/r_markdown.html) section of the course website.
+A list of resources for working with R Markdowns is included in the **Learning R**](https://bsierieb1.github.io/xdasi-bio-2021-archive/learning_r/7_r_resources/r_markdown.html) section of the course website.
 
 
 # Style Guides

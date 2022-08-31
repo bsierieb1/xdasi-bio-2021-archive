@@ -254,7 +254,7 @@ plot(x=iris$Sepal.Length,
      col=c("red","green","blue"))
 ```
 
-For more on palettes, see the <a href="https://kriscgun.github.io/xdasi-bio-2021/r_resources/4_graphics/4_color.html#palettes"
+For more on palettes, see the <a href="https://bsierieb1.github.io/xdasi-bio-2021-archive/r_resources/4_graphics/4_color.html#palettes"
 
 target="_blank">**Palettes**</a> 
 section of the course website ("R Resources=>Data Visualization=> Working with Color").
@@ -656,7 +656,7 @@ legend(x=9.5,
 To make a barplot grouped by **Condition** in ggplot2, we will need to transform `sampleData.df` into a different format. 
 
 Let's review what **tidy** data is first by looking at the
-<a href="https://kriscgun.github.io/xdasi-bio-2021/best_practices/tidy_data.html" 
+<a href="https://bsierieb1.github.io/xdasi-bio-2021-archive/best_practices/tidy_data.html" 
 
 target="_blank">**Tidy Data**</a>
 page on the course website (see "Best Practices=>Tidy Data").
